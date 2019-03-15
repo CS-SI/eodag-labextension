@@ -1,0 +1,65 @@
+*.py[cod]
+
+# C extensions
+*.so
+
+# Packages
+*.egg
+*.egg-info
+dist
+build
+eggs
+parts
+bin
+var
+sdist
+develop-eggs
+.installed.cfg
+lib
+lib64
+
+# Installer logs
+pip-log.txt
+
+# Unit test / coverage reports
+.coverage
+.tox
+nosetests.xml
+
+# Translations
+*.mo
+
+# Eclipse
+.settings
+.project
+.pydevproject
+
+# Static files compilation
+storm-server/static
+
+# Docker specific
+/geo_links.yaml
+/layers.yaml
+
+site_media
+private
+
+*.swp
+
+.idea
+
+# ignore backup files from futurize
+*.py.bak
+
+# Built doc
+docs/_build
+
+# Coverage html report
+htmlcov
+
+locale
+
+# JupyterHub specifics
+jupyterhub.sqlite
+jupyterhub_cookie_secret
+jupyterhub-proxy.pid
