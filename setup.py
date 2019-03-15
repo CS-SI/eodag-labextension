@@ -7,31 +7,35 @@ from setuptools import find_packages
 from codecs import open
 from os import path
 
-from eodag_nbextension import __version__
+from eodag_labextension import __version__
 
 here = path.abspath(path.dirname(__file__))
 
 # Get the long description from the README file
-with open(path.join(here, 'README.md'), encoding='utf-8') as f:
+with open(path.join(here, "README.md"), encoding="utf-8") as f:
     description_from_readme = f.read()
 
 setup(
-    name='eodag-nbextension',
+    name="eodag-labextension",
     version=__version__,
-    description='Jupyter notebook eodag service extension',
+    description="JupyterLab eodag service extension",
     long_description=description_from_readme,
-    url='http://www.c-s.fr',
+    url="http://www.c-s.fr",
     classifiers=[
-        'Topic :: Utilities',
-        'Operating System :: OS Independent',
-        'Programming Language :: Python :: 3.6'
+        "Topic :: Utilities",
+        "Operating System :: OS Independent",
+        "Programming Language :: Python :: 3.6",
+    ],
+    include_package_data=True,
+    data_files=[
+        (
+            "etc/jupyter/jupyter_notebook_config.d",
+            ["jupyter-config/jupyter_notebook_config.d/eodag_labextension.json"],
+        )
     ],
     packages=find_packages(),
-    install_requires=[
-        ],
+    install_requires=[],
     # Install with: pip install -e .[tests]
-    extras_require={
-        'tests': [
-        ],
-    },
+    extras_require={"tests": []},
+    zip_safe=False,
 )

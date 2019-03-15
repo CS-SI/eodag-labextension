@@ -1,4 +1,4 @@
-# eodag-nbextension
+# eodag-labextension
 
 ## Setup
 
@@ -12,9 +12,9 @@ npm install -g configurable-http-proxy
 pip install -r requirements.txt
 pip install -e .
 
-# Enables extension
+# Enables extension: required if package installed in editable mode!
 # --sys-prefix if running into virtual env
-jupyter serverextension enable --py eodag_nbextension --sys-prefix
+jupyter serverextension enable --py eodag_labextension --sys-prefix
 ```
 
 ## Run

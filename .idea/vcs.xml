@@ -2,8 +2,5 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/../eodag-rest" vcs="Git" />
-    <mapping directory="/projects/geostorm/eodag" vcs="Git" />
-    <mapping directory="/projects/geostorm/eodag-server" vcs="Git" />
   </component>
 </project>

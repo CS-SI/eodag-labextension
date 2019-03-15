@@ -1,3 +1,4 @@
 jupyterhub
 jupyterlab
+jupyter_contrib_nbextensions
 eodag

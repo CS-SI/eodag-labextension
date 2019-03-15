@@ -7,7 +7,7 @@ __version__ = "0.1.0"
 
 
 def _jupyter_server_extension_paths():
-    return [{"module": "eodag_nbextension"}]
+    return [{"module": "eodag_labextension"}]
 
 
 def load_jupyter_server_extension(nb_server_app):
