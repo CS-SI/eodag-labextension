@@ -17,6 +17,17 @@ pip install -e .
 jupyter serverextension enable --py eodag_labextension --sys-prefix
 ```
 
+To be able to access path to eodag configuration file into environment, activate following setting into jupyterhub_config.py file:
+```python
+c.Spawner.env_keep = ['PATH', 'PYTHONPATH', 'CONDA_ROOT', 'CONDA_DEFAULT_ENV', 'VIRTUAL_ENV', 'LANG', 'LC_ALL', 'EODAG_CFG_FILE']
+```
+
+and add into yout bashrc:
+
+```bash
+export EODAG_CFG_FILE=path_to_eodag_cfg_file
+```
+
 ## Run
 
 ```bash
