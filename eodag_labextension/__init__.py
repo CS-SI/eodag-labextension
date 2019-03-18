@@ -4,10 +4,12 @@
 """Jupyter Notebook server extension for eodag REST service"""
 import json
 
+import geojson
 from eodag.rest.utils import (
     get_home_page_content,
     get_templates_path,
     get_product_types,
+    search_products,
 )
 from notebook.base.handlers import IPythonHandler, APIHandler
 from notebook.utils import url_path_join
@@ -24,7 +26,7 @@ class RootHandler(IPythonHandler):
     """Home page request handler return HTML page"""
 
     @web.authenticated
-    def get(self, cluster_id: str = "") -> None:
+    def get(self):
         """Get endpoint"""
 
         # Update templates_path for Jinja FileSystemLoader
@@ -34,7 +36,7 @@ class RootHandler(IPythonHandler):
                 loader.searchpath.append(get_templates_path())
 
         r = self.request
-        base_url = f"{r.protocol}://{r.host}{r.path}/"
+        base_url = f"{r.protocol}://{r.host}{r.path}"
         self.write(
             self.render_template("index.html", content=get_home_page_content(base_url))
         )
@@ -44,10 +46,20 @@ class ProductTypeHandler(APIHandler):
     """Product type listing handler"""
 
     @web.authenticated
-    def get(self, cluster_id: str = "") -> None:
+    def get(self):
         """Get endpoint"""
 
         self.write(json.dumps(get_product_types()))
+
+
+class SearchHandler(APIHandler):
+    """Search products handler"""
+
+    @web.authenticated
+    def get(self, product_type):
+        """Get endpoint"""
+
+        self.write(geojson.dumps(search_products(product_type)))
 
 
 def load_jupyter_server_extension(nb_server_app):
@@ -66,14 +78,18 @@ def load_jupyter_server_extension(nb_server_app):
 
     web_app = nb_server_app.web_app
     host_pattern = ".*$"
-    home_pattern = url_path_join(web_app.settings["base_url"], "/eodag")
+    home_pattern = url_path_join(web_app.settings["base_url"], "/eodag/")
     product_types_pattern = url_path_join(
-        web_app.settings["base_url"], "/eodag/product-types"
+        web_app.settings["base_url"], "/eodag/product-types/"
+    )
+    search_pattern = url_path_join(
+        web_app.settings["base_url"], "/eodag/" + r"(?P<product_type>[\w-]+)/"
     )
 
     handlers = [
         (home_pattern, RootHandler),
         (product_types_pattern, ProductTypeHandler),
+        (search_pattern, SearchHandler),
     ]
 
     web_app.add_handlers(host_pattern, handlers)
