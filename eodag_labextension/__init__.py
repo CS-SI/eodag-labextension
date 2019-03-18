@@ -30,9 +30,10 @@ def load_jupyter_server_extension(nb_server_app):
     """
 
     # Printed into JupyterHub console logs
-    nb_server_app.log.info("#" * 25)
-    nb_server_app.log.info(f"{__package__} enabled!")
-    nb_server_app.log.info("#" * 25)
+    log = f"{__package__} enabled!"
+    nb_server_app.log.info("#" * len(log))
+    nb_server_app.log.info(log)
+    nb_server_app.log.info("#" * len(log))
 
     # XXX dummy service
     web_app = nb_server_app.web_app

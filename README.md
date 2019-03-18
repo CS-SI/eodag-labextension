@@ -24,3 +24,9 @@ jupyterhub
 ```
 
 and browse http://localhost:8000
+
+## Contributing
+
+```bash
+pre-commit install
+```
