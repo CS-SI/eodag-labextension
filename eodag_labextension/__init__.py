@@ -3,11 +3,10 @@
 # All rights reserved
 """Jupyter Notebook server extension for eodag REST service"""
 
+from eodag.rest.utils import get_home_page_content, get_templates_path
 from notebook.base.handlers import IPythonHandler
 from notebook.utils import url_path_join
 from tornado import web
-
-from eodag.rest.service import get_home_page_content, get_templates_path
 
 __version__ = "0.1.0"
 
@@ -29,7 +28,10 @@ class EodagHandler(IPythonHandler):
             if hasattr(loader, "searchpath"):
                 loader.searchpath.append(get_templates_path())
 
-        self.write(self.render_template("index.html", content=get_home_page_content()))
+        base_url = "http://localhost/"
+        self.write(
+            self.render_template("index.html", content=get_home_page_content(base_url))
+        )
 
 
 def load_jupyter_server_extension(nb_server_app):
