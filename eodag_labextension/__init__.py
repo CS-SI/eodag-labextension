@@ -28,7 +28,8 @@ class EodagHandler(IPythonHandler):
             if hasattr(loader, "searchpath"):
                 loader.searchpath.append(get_templates_path())
 
-        base_url = "http://localhost/"
+        r = self.request
+        base_url = f"{r.protocol}://{r.host}{r.path}/"
         self.write(
             self.render_template("index.html", content=get_home_page_content(base_url))
         )
