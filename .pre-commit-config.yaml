@@ -46,8 +46,8 @@ repos:
             '--match=(?!test).*\.py'
         ]
 
--   repo: https://github.com/pre-commit/mirrors-isort
-    # v4.3.15
-    rev: v4.3.15
-    hooks:
-    -   id: isort
+#-   repo: https://github.com/pre-commit/mirrors-isort
+#    # v4.3.15
+#    rev: v4.3.15
+#    hooks:
+#    -   id: isort
