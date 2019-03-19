@@ -40,20 +40,14 @@ setup(
         )
     ],
     packages=find_packages(),
-    install_requires=[
-        "tornado",
-        "notebook",
-        "geojson",
-        "eodag",
-        "PyYAML==3.13",  # Eodag issue currently on latest PyYAML 5.1
-    ],
+    install_requires=["tornado==6.0.1", "notebook==5.7.6", "eodag"],
     extras_require={
         "dev": [
-            "jupyterhub",
-            "jupyterlab",
-            "jupyter_contrib_nbextensions",
-            "black",
-            "pre-commit",
+            "jupyterhub==0.9.4",
+            "jupyterlab==0.35.4",
+            "jupyter_contrib_nbextensions==0.5.1",
+            "black==19.3b0",
+            "pre-commit==1.14.4",
         ]
     },
     zip_safe=False,
