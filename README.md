@@ -13,10 +13,8 @@ The products search is based on the [eodag](https://bitbucket.org/geostorm/eodag
 See [Distributing Jupyter Extensions as Python Packages](https://jupyter-notebook.readthedocs.io/en/latest/examples/Notebook/Distributing%20Jupyter%20Extensions%20as%20Python%20Packages.html#Distributing-Jupyter-Extensions-as-Python-Packages)
 
 ```bash
-# FIXME install from setup.py
-pip install -r requirements.txt
-pip install .
-jupyter labextension install jupyterlab-eodag
+pip install eodag-labextension
+jupyter labextension install eodag-labextension
 ```
 
 ### Configuration
@@ -46,9 +44,10 @@ and browse http://localhost:8000
 
 ```bash
 pre-commit install
+
 npm install -g configurable-http-proxy
 
-pip install -e .
+pip install -e .[dev]
 
 # Enables extension: required if package installed in editable mode!
 # --sys-prefix if running into virtual env

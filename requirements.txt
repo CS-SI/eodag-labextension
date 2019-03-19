@@ -1,9 +1,1 @@
-tornado
-notebook
-jupyterhub
-jupyterlab
-jupyter_contrib_nbextensions
-geojson
-eodag
-# Eodag issue currently on latest PyYAML 5.1
-PyYAML==3.13
+.

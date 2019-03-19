@@ -1,23 +1,28 @@
 # -*- coding: utf-8 -*-
 # Copyright 2015-2017 CS Systemes d'Information (CS SI)
 # All rights reserved
+"""Setup file"""
 
-from setuptools import setup
-from setuptools import find_packages
 from codecs import open
 from os import path
+import os
 
-from eodag_labextension import __version__
+from setuptools import find_packages
+from setuptools import setup
 
-here = path.abspath(path.dirname(__file__))
+HERE = path.abspath(path.dirname(__file__))
+
+metadata = {}
+with open(os.path.join(HERE, "eodag_labextension", "__meta__.py"), "r") as f:
+    exec(f.read(), metadata)
 
 # Get the long description from the README file
-with open(path.join(here, "README.md"), encoding="utf-8") as f:
+with open(path.join(HERE, "README.md"), encoding="utf-8") as f:
     description_from_readme = f.read()
 
 setup(
     name="eodag-labextension",
-    version=__version__,
+    version=metadata["__version__"],
     description="JupyterLab eodag service extension",
     long_description=description_from_readme,
     url="http://www.c-s.fr",
@@ -26,6 +31,7 @@ setup(
         "Operating System :: OS Independent",
         "Programming Language :: Python :: 3.6",
     ],
+    python_requires=">=3.6",
     include_package_data=True,
     data_files=[
         (
@@ -34,8 +40,21 @@ setup(
         )
     ],
     packages=find_packages(),
-    install_requires=[],
-    # Install with: pip install -e .[tests]
-    extras_require={"tests": []},
+    install_requires=[
+        "tornado",
+        "notebook",
+        "geojson",
+        "eodag",
+        "PyYAML==3.13",  # Eodag issue currently on latest PyYAML 5.1
+    ],
+    extras_require={
+        "dev": [
+            "jupyterhub",
+            "jupyterlab",
+            "jupyter_contrib_nbextensions",
+            "black",
+            "pre-commit",
+        ]
+    },
     zip_safe=False,
 )
