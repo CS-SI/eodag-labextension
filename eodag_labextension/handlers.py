@@ -4,9 +4,8 @@
 """Tornado web requests handlers"""
 
 import json
-from tornado import web
 
-import geojson
+from eodag.api.core import DEFAULT_ITEMS_PER_PAGE
 from eodag.rest.utils import (
     get_home_page_content,
     get_templates_path,
@@ -15,6 +14,7 @@ from eodag.rest.utils import (
 )
 from eodag.utils.exceptions import ValidationError, UnsupportedProductType
 from notebook.base.handlers import IPythonHandler, APIHandler
+from tornado import web
 
 
 class RootHandler(IPythonHandler):
@@ -33,7 +33,10 @@ class RootHandler(IPythonHandler):
         r = self.request
         base_url = f"{r.protocol}://{r.host}{r.path}"
         self.write(
-            self.render_template("index.html", content=get_home_page_content(base_url))
+            self.render_template(
+                "index.html",
+                content=get_home_page_content(base_url, DEFAULT_ITEMS_PER_PAGE),
+            )
         )
 
 
@@ -62,7 +65,7 @@ class SearchHandler(APIHandler):
         arguments = {k: v[0].decode() for k, v in self.request.arguments.items()}
 
         try:
-            products = search_products(product_type, arguments)
+            response = search_products(product_type, arguments)
         except ValidationError as e:
             self.set_status(400)
             self.write({"error": e.message})
@@ -76,4 +79,4 @@ class SearchHandler(APIHandler):
             self.write({"error": "Not Found: {}".format(e.product_type)})
             return
 
-        self.write(geojson.dumps(products))
+        self.write(response)
