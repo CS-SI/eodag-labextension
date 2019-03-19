@@ -1,7 +1,9 @@
 /**
  * Adress used to contact the EODAG server
+ *
+ * This is the notebook server REST API extension
  */
-export const EODAG_SERVER_ADRESS = "http://127.0.0.1:5000";
+export const EODAG_SERVER_ADRESS = "eodag";
 
 /**
  * Adress used to retrieve tiles
