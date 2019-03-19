@@ -1,5 +1,5 @@
 {
-  "name": "jupyterlab-eodag",
+  "name": "eodag-labextension",
   "version": "0.1.0",
   "description": "Searching remote sensed imagery from various image providers",
   "keywords": [
@@ -7,9 +7,9 @@
     "jupyterlab",
     "jupyterlab-extension"
   ],
-  "homepage": "https://odin.si.c-s.fr/plugins/git/ia3d-demo/jupyterlab-eodag",
+  "homepage": "https://odin.si.c-s.fr/plugins/git/ia3d-demo/eodag-labextension",
   "bugs": {
-    "url": "https://odin.si.c-s.fr/plugins/git/ia3d-demo/jupyterlab-eodag/issues"
+    "url": "https://odin.si.c-s.fr/plugins/git/ia3d-demo/eodag-labextension/issues"
   },
   "license": "BSD-3-Clause",
   "author": "CS-SI",
@@ -23,7 +23,7 @@
   "types": "lib/index.d.ts",
   "repository": {
     "type": "git",
-    "url": "https://odin.si.c-s.fr/plugins/git/ia3d-demo/jupyterlab-eodag.git"
+    "url": "https://odin.si.c-s.fr/plugins/git/ia3d-demo/eodag-labextension.git"
   },
   "scripts": {
     "build": "tsc",

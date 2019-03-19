@@ -12,10 +12,10 @@ import { EodagWidget } from './widget';
 const NAMESPACE = 'eodag-widget';
 
 /**
- * Initialization data for the jupyterlab-eodag extension.
+ * Initialization data for the eodag-labextension extension.
  */
 const extension: JupyterLabPlugin<void> = {
-  id: 'jupyterlab-eodag',
+  id: 'eodag-labextension',
   autoStart: true,
   activate,
   requires: [INotebookTracker, ILayoutRestorer]

@@ -1,6 +1,6 @@
-# Jupyterlab-eodag - Manuel d'utilisation
+# eodag-labextension - Manuel d'utilisation
 
-Le plugin de recherche jupyterlab-eodag permet de réaliser une recherche de produits satellites, d'examiner le résultat et si ce résultat est conforme au besoin, de générer dans un notebook le code Python permettant d'accéder aux mêmes produits via la librairie Python eodag.
+Le plugin de recherche eodag-labextension permet de réaliser une recherche de produits satellites, d'examiner le résultat et si ce résultat est conforme au besoin, de générer dans un notebook le code Python permettant d'accéder aux mêmes produits via la librairie Python eodag.
 
 ## Recherche
 
