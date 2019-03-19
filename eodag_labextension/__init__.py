@@ -2,6 +2,7 @@
 # Copyright 2015-2017 CS Systemes d'Information (CS SI)
 # All rights reserved
 """Jupyter Notebook server extension for eodag REST service"""
+
 import json
 
 import geojson
