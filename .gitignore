@@ -63,3 +63,10 @@ locale
 jupyterhub.sqlite
 jupyterhub_cookie_secret
 jupyterhub-proxy.pid
+
+# Node
+*.bundle.*
+lib/
+node_modules/
+.ipynb_checkpoints
+.history

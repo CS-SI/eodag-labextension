@@ -1,0 +1,117 @@
+.jp-EodagWidget {
+    display: flex;
+    flex-direction: column;
+    color: var(--jp-ui-font-color1);
+    background:var(--jp-layout-color1);
+    font-size: var(--jp-ui-font-size1);
+    overflow: auto;
+    padding: 5px;
+}
+
+.eodag-Logo {
+    background-image: url(icon.svg);
+    background-repeat: no-repeat;
+    background-size: 85%;
+    background-position: center;
+    width: 26px;
+}
+
+.jp-EodagWidget-header {
+    border-bottom: var(--jp-border-width) solid var(--jp-border-color2);
+    flex: 0 0 auto;
+    font-size: var(--jp-ui-font-size0);
+    font-weight: 600;
+    letter-spacing: 1px;
+    margin: 0px;
+    padding: 8px 12px;
+    text-transform: uppercase;
+}
+.leaflet-container {
+    height: 300px;
+    width: 100%;
+}
+.leaflet-bar a.leaflet-disabled {
+    background-color: #e0e0e0 !important;
+}
+.jp-EodagWidget .jp-EodagWidget-form {
+    display: flex;
+    flex-direction: column;
+}
+.jp-EodagWidget .jp-EodagWidget-form .jp-EodagWidget-buttons{
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+}
+.jp-EodagWidget .jp-EodagWidget-form .jp-EodagWidget-buttons button{
+    margin: 0 15px;
+}
+.jp-EodagWidget .jp-EodagWidget-form .jp-EodagWidget-field {
+    margin-top: 10px;
+}
+.jp-EodagWidget .jp-EodagWidget-form .react-datepicker-popper {
+    z-index: 1000;
+}
+.jp-EodagWidget .jp-EodagWidget-form .jp-EodagWidget-input-name {
+    transform: translate(0, 1.5px) scale(0.75);
+    transform-origin: top left;
+}
+.jp-EodagWidget .jp-EodagWidget-form .jp-EodagWidget-slider {
+    display: flex;
+    align-items: center;
+    height: 30px;
+    padding: 15px 20px 10px;
+    overflow: hidden;
+}
+
+
+.jp-EodagWidget-modal .jp-EodagWidget-quicklook-wrapper {
+    display: flex;
+    justify-content: center;
+}
+.jp-EodagWidget-modal .jp-EodagWidget-small-quicklook {
+    max-height: 200px;
+    max-width: 200px;
+    cursor: zoom-in;
+}
+
+.jp-EodagWidget-modal .jp-EodagWidget-modal-container {
+    display: flex;
+    height: calc(100vh - 48px);
+}
+
+.jp-EodagWidget-modal .jp-EodagWidget-product-wrapper {
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+}
+
+.jp-EodagWidget-modal .jp-EodagWidget-browse-wrapper {
+    height: calc(100% - 130px);
+}
+.jp-EodagWidget-modal .jp-EodagWidget-loading-wrapper {
+    margin-right: 10px;
+}
+.jp-EodagWidget-modal .jp-EodagWidget-browse-title {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin: 5px 0;
+    font-style: italic;
+    font-size: 0.9em;
+    height: 18px;
+}
+
+.jp-EodagWidget-modal .jp-EodagWidget-desc-wrapper {
+    height: 100%;
+    width: 50%;
+    overflow: auto;
+}
+
+.jp-EodagWidget-modal .jp-EodagWidget-right-buttons-wrapper {
+    display: flex;
+    justify-content: right;
+}
+
+.jp-EodagWidget-modal .jp-EodagWidget-title {
+    flex-grow: 1
+}

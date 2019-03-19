@@ -1,0 +1,8 @@
+{
+  "title": "EODAG",
+  "description": "Some EODAG description.",
+  "jupyter.lab.setting-icon-class": "eodag-Logo",
+  "jupyter.lab.setting-icon-label": "Some EODAG label",
+  "additionalProperties": false,
+  "type": "object"
+}

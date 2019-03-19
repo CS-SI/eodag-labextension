@@ -1,0 +1,19 @@
+version: '2'
+services:
+  rs-postgres:
+    image: ia3d:withproxy
+    container_name: jupyterlab
+    # restart: always
+    # mem_limit: 400m
+    volumes:
+      - ./:/plugin
+    ports:
+      - "8888:8888"
+      - "8787:8787"
+    environment:
+      - HTTP_PROXY="http://proxy2.si.c-s.fr:3128"
+      - HTTPS_PROXY="http://proxy2.si.c-s.fr:3128"
+      - http_proxy="http://proxy2.si.c-s.fr:3128"
+      - https_proxy="http://proxy2.si.c-s.fr:3128"
+      - no_proxy="localhost,127.0.0.1"
+    command: "jupyter lab --allow-root --watch --no-browser --ip=0.0.0.0"
