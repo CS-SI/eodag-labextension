@@ -43,7 +43,11 @@ class RootHandler(IPythonHandler):
 
 
 class ProductTypeHandler(APIHandler):
-    """Product type listing handler"""
+    """Product type listing handler
+
+    .. note::
+
+        Product types endpoint filtered by provider not implemented"""
 
     @web.authenticated
     def get(self):
@@ -59,7 +63,10 @@ class SearchHandler(APIHandler):
     def get(self, product_type):
         """Get endpoint"""
 
-        self.write(geojson.dumps(search_products(product_type)))
+        # Transform dict values from list with unique element to string
+        arguments = {k: v[0].decode() for k, v in self.request.arguments.items()}
+
+        self.write(geojson.dumps(search_products(product_type, arguments)))
 
 
 def load_jupyter_server_extension(nb_server_app):
@@ -79,6 +86,7 @@ def load_jupyter_server_extension(nb_server_app):
     web_app = nb_server_app.web_app
     host_pattern = ".*$"
     home_pattern = url_path_join(web_app.settings["base_url"], "/eodag/")
+
     product_types_pattern = url_path_join(
         web_app.settings["base_url"], "/eodag/product-types/"
     )
