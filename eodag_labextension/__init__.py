@@ -11,6 +11,7 @@ from eodag.rest.utils import (
     get_product_types,
     search_products,
 )
+from eodag.utils.exceptions import ValidationError, UnsupportedProductType
 from notebook.base.handlers import IPythonHandler, APIHandler
 from notebook.utils import url_path_join
 from tornado import web
@@ -66,7 +67,22 @@ class SearchHandler(APIHandler):
         # Transform dict values from list with unique element to string
         arguments = {k: v[0].decode() for k, v in self.request.arguments.items()}
 
-        self.write(geojson.dumps(search_products(product_type, arguments)))
+        try:
+            products = search_products(product_type, arguments)
+        except ValidationError as e:
+            self.set_status(400)
+            self.write({"error": e.message})
+            return
+        except RuntimeError as e:
+            self.set_status(400)
+            self.write({"error": e})
+            return
+        except UnsupportedProductType as e:
+            self.set_status(404)
+            self.write({"error": "Not Found: {}".format(e.product_type)})
+            return
+
+        self.write(geojson.dumps(products))
 
 
 def load_jupyter_server_extension(nb_server_app):
