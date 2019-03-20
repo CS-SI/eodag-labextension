@@ -1,1 +1,2 @@
+git+https://bitbucket.org/geostorm/eodag.git@rest_refactoring_new#egg=eodag
 .
