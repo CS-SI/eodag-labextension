@@ -32,7 +32,7 @@ export default class FormComponent extends React.Component<IProps, IState> {
     componentDidMount() {
       // Fetch product types
       // @ts-ignore
-      fetch(`${EODAG_SERVER_ADRESS}/product-types/`).then((response) => {
+      fetch(`${EODAG_SERVER_ADRESS}/product-types/`, {credentials: 'same-origin'}).then((response) => {
         if (response.status >= 400) {
           showErrorMessage(`Unable to contact the EODAG server. Are you sure the adress is ${EODAG_SERVER_ADRESS} ?`, {})
           throw new Error("Bad response from server");

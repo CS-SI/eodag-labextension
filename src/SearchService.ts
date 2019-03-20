@@ -43,7 +43,7 @@ class SearchService {
    */
   search(page = 1) {
     const url = this.getSearchURL(page)
-    return fetch(url).then((response) => {
+    return fetch(url, {credentials: 'same-origin'}).then((response) => {
       if (response.status >= 400) {
         throw new Error("Bad response from server");
       }
