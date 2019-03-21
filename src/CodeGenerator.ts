@@ -26,7 +26,7 @@ product_type = '${productType}'
     code += `end = '${end}'
 `
   }
-  code += `search_results = dag.search(
+  code += `search_results, estimated_total_nbr_of_results = dag.search(
   product_type,
 `
   if (extent.lonMin && extent.latMin && extent.lonMax && extent.latMax) {
