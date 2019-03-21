@@ -10,10 +10,8 @@ The products search is based on the [eodag](https://bitbucket.org/geostorm/eodag
 
 ## Setup
 
-See [Distributing Jupyter Extensions as Python Packages](https://jupyter-notebook.readthedocs.io/en/latest/examples/Notebook/Distributing%20Jupyter%20Extensions%20as%20Python%20Packages.html#Distributing-Jupyter-Extensions-as-Python-Packages)
-
 ```bash
-pip install eodag-labextension
+pip install -r requirements.txt
 jupyter labextension install eodag-labextension
 ```
 
@@ -50,7 +48,7 @@ npm install -g configurable-http-proxy
 pip install -e .[dev]
 
 # Enables extension: required if package installed in editable mode!
-# --sys-prefix if running into virtual env
+# --sys-prefix required if running into virtual env
 jupyter serverextension enable --py eodag_labextension --sys-prefix
 ```
 
@@ -70,3 +68,7 @@ To rebuild the package and the JupyterLab app:
 npm run build
 jupyter lab build
 ```
+
+## Reference
+
+[Distributing Jupyter Extensions as Python Packages](https://jupyter-notebook.readthedocs.io/en/latest/examples/Notebook/Distributing%20Jupyter%20Extensions%20as%20Python%20Packages.html#Distributing-Jupyter-Extensions-as-Python-Packages)
