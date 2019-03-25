@@ -38,9 +38,9 @@ export default class MapExtentComponent extends React.Component<IProps, IState> 
     constructor(props: IProps) {
         super(props);
         this.state = {
-            lat: 43,
-            lon: 0,
-            zoom: 8,
+            lat: 46.8,
+            lon: 1.8,
+            zoom: 4,
             latMin: null,
             latMax: null,
             lonMin: null,
