@@ -1,4 +1,1 @@
-# Commit before configuration file refactoring
-git+https://bitbucket.org/geostorm/eodag.git@1a65c173483c4ac46577bd5164f97bce8939d7e9#egg=eodag
-
 .

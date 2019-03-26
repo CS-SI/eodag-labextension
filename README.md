@@ -2,7 +2,7 @@
 
 JupyterLab extension used to search remote sensed imagery from various image providers.
 
-The products search is based on the [eodag](https://bitbucket.org/geostorm/eodag) library.
+The products search is based on the [eodag](https://eodag.readthedocs.io) library.
 
 ## Prerequisites
 
@@ -11,22 +11,14 @@ The products search is based on the [eodag](https://bitbucket.org/geostorm/eodag
 ## Setup
 
 ```bash
-pip install -r requirements.txt
-jupyter labextension install eodag-labextension
+pip install .
+jupyter labextension install .
 ```
 
 ### Configuration
 
-To be able to access path to eodag configuration file into environment, activate following setting into jupyterhub_config.py file:
-```python
-c.Spawner.env_keep = ['PATH', 'PYTHONPATH', 'CONDA_ROOT', 'CONDA_DEFAULT_ENV', 'VIRTUAL_ENV', 'LANG', 'LC_ALL', 'EODAG_CFG_FILE']
-```
-
-and add into your bashrc file:
-
-```bash
-export EODAG_CFG_FILE=path_to_eodag_cfg_file
-```
+eodag configuration file should be localized at `.config/eodag/eodag.yaml` (see [eodag documentation](https://eodag.readthedocs.io)).
+Make sure that that file is configured properly.
 
 ## Run
 

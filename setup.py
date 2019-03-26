@@ -40,7 +40,7 @@ setup(
         )
     ],
     packages=find_packages(),
-    install_requires=["tornado==6.0.1", "notebook==5.7.6", "eodag"],
+    install_requires=["tornado==6.0.1", "notebook==5.7.6", "eodag==0.7.2"],
     extras_require={
         "dev": [
             "jupyterhub==0.9.4",
