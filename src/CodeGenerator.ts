@@ -5,7 +5,7 @@ const formatCode = (start, end, productType, extent, cloud) => {
 
   let code = `import os
 from eodag import EODataAccessGateway
-dag = EODataAccessGateway(user_conf_file_path=os.environ["EODAG_CFG_FILE"])
+dag = EODataAccessGateway()
 product_type = '${productType}'
 `
   if (extent.lonMin && extent.latMin && extent.lonMax && extent.latMax) {
