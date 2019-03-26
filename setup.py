@@ -3,9 +3,9 @@
 # All rights reserved
 """Setup file"""
 
+import os
 from codecs import open
 from os import path
-import os
 
 from setuptools import find_packages
 from setuptools import setup
