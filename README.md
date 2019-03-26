@@ -2,11 +2,12 @@
 
 JupyterLab extension used to search remote sensed imagery from various image providers.
 
+This extension is composed of to parts:
+
+* a React client plugin adding a tab into Jupyter Lab left panel,
+* a Python Jupyter notebook REST service consumed by the client and served at `/user/<username>/eodag/` (a home page is available at that URL).
+
 The products search is based on the [eodag](https://eodag.readthedocs.io) library.
-
-## Prerequisites
-
-* JupyterLab
 
 ## Setup
 
@@ -17,7 +18,7 @@ jupyter labextension install .
 
 ### Configuration
 
-eodag configuration file should be localized at `.config/eodag/eodag.yaml` (see [eodag documentation](https://eodag.readthedocs.io)).
+eodag configuration file should be localized at `.config/eodag/eodag.yaml` (see [eodag documentation](https://eodag.readthedocs.io/en/latest/intro.html?highlight=eodag.yml#how-to-configure-authentication-for-available-providers)).
 Make sure that that file is configured properly.
 
 ## Run
