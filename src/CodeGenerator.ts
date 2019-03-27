@@ -3,8 +3,7 @@
  */
 const formatCode = (start, end, productType, extent, cloud) => {
 
-  let code = `import os
-from eodag import EODataAccessGateway
+  let code = `from eodag import EODataAccessGateway
 dag = EODataAccessGateway()
 product_type = '${productType}'
 `
