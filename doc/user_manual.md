@@ -41,14 +41,13 @@ Si le résultat de la recherche est satisfaisant, cliquer sur le bouton "Apply" 
 Voici un exemple de code généré dans le notebook :
 
 ```python
-import os
 from eodag import EODataAccessGateway
-dag = EODataAccessGateway(user_conf_file_path=os.environ["EODAG_CFG_FILE"])
+dag = EODataAccessGateway()
     product_type = 'S2_MSI_L1C'
     footprint = {'lonmin': 0.660957, 'latmin': 43.149093, 'lonmax': 2.388008, 'latmax': 44.190082}
     cloud_cover = 15
     start, end = '2019-02-01', '2019-02-15'
-search_results = dag.search(
+search_results, estimated_total_nbr_of_results = dag.search(
     product_type,
     geometry=footprint,
     startTimeFromAscendingNode=start,
@@ -57,7 +56,7 @@ search_results = dag.search(
 )
 ```
 
-*Note : la variable d'environnement EODAG_CFG_FILE insérée dans le code ci-dessus doit avoir été définie dans le kernel iPython utilisé pour l'exécution du notebook.*
+Le fichier de configuration d'eodag doit-être placé dans `$HOME/.config/eodag/eodag.yml` (voir [la documentation d'eodag](https://eodag.readthedocs.io/en/latest/intro.html#how-to-configure-authentication-for-available-providers)).
 
 ## Utilisation des résultats
 
@@ -77,9 +76,3 @@ search_results[0].download()
 ```
 
 Consulter la page https://eodag.readthedocs.io/en/latest/ pour plus d'informations sur l'utilisation de la librairie eodag.
-
-## Trouble-shooting
-
-![](./img/jleodag_error.png)
-
-L'erreur ci-dessus apparaît au chargement de JupyterLab dans le cas d'utilisation d'un certificat TLS autosigné pour l'accès au service de recherche eodag. Pour résoudre ce problème, il est nécessaire de charger l'URL indiquée dans le message dans un nouvel onglet du navigateur web et de suivre les indications pour ajouter une exception de sécurité. JupyterLab peut alors être rechargé normalement.
