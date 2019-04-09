@@ -145,7 +145,7 @@ export default class ModalComponent extends React.Component<IProps, IState> {
                       </Tooltip>
                     </div>
                   ) : null}
-                  {get(features, 'features', []).length} results
+                  {get(features, 'features', []).length} results (total: {get(features, 'properties.totalResults', 0)})
                 </InputLabel>
                 <div className="jp-EodagWidget-browse-wrapper">
                   <BrowseComponent

@@ -286,7 +286,7 @@ function BrowseComponent({ features, handleClickFeature, handleZoomFeature, hand
   }
   return (
     <WrappedVirtualizedTable
-      rowCount={features.features.length}
+      rowCount={features.properties.totalResults}
       displayedRowCount={features.features.length}
       rowGetter={getRowData(features)}
       onRowClick={handleRowClick}
