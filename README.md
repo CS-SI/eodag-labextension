@@ -34,8 +34,6 @@ and browse http://localhost:8000
 ### Server notebook extension
 
 ```bash
-pre-commit install
-
 npm install -g configurable-http-proxy
 
 pip install -e .[dev]
@@ -43,6 +41,8 @@ pip install -e .[dev]
 # Enables extension: required if package installed in editable mode!
 # --sys-prefix required if running into virtual env
 jupyter serverextension enable --py eodag_labextension --sys-prefix
+
+pre-commit install
 ```
 
 ### Client JupyterLab plugin
