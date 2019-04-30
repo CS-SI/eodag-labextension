@@ -26,18 +26,18 @@ product_type = '${productType}'
 `
   }
   code += `search_results, estimated_total_nbr_of_results = dag.search(
-  product_type,
+  productType=product_type,
 `
   if (extent.lonMin && extent.latMin && extent.lonMax && extent.latMax) {
-    code += `  geometry=footprint,
+    code += `  box=footprint,
 `
   }
   if (start) {
-    code += `  startTimeFromAscendingNode=start,
+    code += `  start=start,
 `
   } 
   if (end) {
-    code += `  completionTimeFromAscendingNode=end,
+    code += `  end=end,
 `
   } 
   if (cloud) {
