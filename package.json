@@ -41,7 +41,7 @@
     "@material-ui/lab": "^3.0.0-alpha.30",
     "@types/leaflet-draw": "^0.4.13",
     "@types/lodash": "4.14.120",
-    "@types/react-dom": "^16.0.11",
+    "@types/react-dom": "~16.0.7",
     "@types/react-leaflet": "^1.1.6",
     "@types/react-virtualized": "^9.18.12",
     "isomorphic-fetch": "^2.2.1",
@@ -62,7 +62,8 @@
     "typescript": "~3.1.1"
   },
   "resolutions": {
-    "**/@types/react": "~16.7.22"
+    "**/@types/react": "~16.4.13",
+    "**/@types/react-dom": "~16.0.7"
   },
   "jupyterlab": {
     "extension": true,
