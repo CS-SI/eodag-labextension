@@ -49,10 +49,30 @@ pre-commit install
 
 For a development install (requires npm version 4 or later), do the following in the repository directory:
 
+With host computer run this in the repository:
 ```bash
 npm install
 npm run build
+```
+
+Create the container:
+```bash
+docker-compose up -d
+```
+
+Connect to the container with 
+```bash
+docker exec -ti [container_name] bash
+```
+
+Go to /plugin and connect eodag plugin:
+```bash
 jupyter labextension link .
+```
+
+On host computer to watch the change you're making:
+```bash
+npm run watch
 ```
 
 To rebuild the package and the JupyterLab app:
@@ -61,6 +81,7 @@ To rebuild the package and the JupyterLab app:
 npm run build
 jupyter lab build
 ```
+
 
 ## Reference
 
