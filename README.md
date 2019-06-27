@@ -47,13 +47,8 @@ pre-commit install
 
 ### Client JupyterLab plugin
 
+Link to repository [Eodag Plugin](https://odin.si.c-s.fr/plugins/git/ia3d-demo/eodag-labextension)
 For a development install (requires npm version 4 or later), do the following in the repository directory:
-
-With host computer run this in the repository:
-```bash
-npm install
-npm run build
-```
 
 Create the container:
 ```bash
@@ -65,23 +60,69 @@ Connect to the container with
 docker exec -ti [container_name] bash
 ```
 
-Go to /plugin and connect eodag plugin:
+Then install eodag plugin:
 ```bash
+cd /plugin
+jlpm install
+jupyter labextension install . --no-build
 jupyter labextension link .
+jupyter labextension list
+jlpm run watch
 ```
 
-On host computer to watch the change you're making:
+List result should be like this:
 ```bash
-npm run watch
+JupyterLab v0.35.6
+Known labextensions:
+   app dir: /usr/local/share/jupyter/lab
+        eodag-labextension v0.1.0  enabled  OK*
+
+   local extensions:
+        eodag-labextension: /plugin
 ```
 
-To rebuild the package and the JupyterLab app:
-
+Once you finished this installation you can watch docker's logs
 ```bash
-npm run build
-jupyter lab build
+docker-compose logs -f
 ```
 
+Finally when you develop eodag plugin just run this to watch changes:
+```bash
+cd /plugin
+jlpm run watch
+```
+
+
+## Launch Jupyter with eodag & watch
+
+### First install
+
+1. `cd <your-extension-repository>`
+2. `docker-compose -f docker-compose.yml up -d`
+3. `sudo docker exec -ti jupyterlab bash`
+4. `cd /plugin/`
+5. `pip install jupyterlab`
+6. `pip install .`
+7. `jupyter labextension install .`
+8. `jupyter lab --allow-root --watch --no-browser --ip=0.0.0.0`
+9. Set a new password for jupyter user :
+10. `docker exec -ti jupyterlab passwd jupyter`
+11. Open [http://localhost:8000/](http://localhost:8000/)  and connect yourself
+
+#### Second console
+
+1. `sudo docker exec -ti jupyterlab bash`
+2. `cd /plugin/`
+3. `jlpm run watch`
+
+### Relaunch (already installed)
+
+1. `docker-compose -f docker-compose.yml up -d`
+2. In two different console : `sudo docker exec -ti jupyterlab bash` 
+3. Then in both console `cd /plugin/`
+     1. Console 1 `jlpm run watch`
+     2. Console 2 `jupyter lab --allow-root --watch --no-browser --ip=0.0.0.0`
+4. Open [http://localhost:8000/](http://localhost:8000/) and connect yourself
 
 ## Reference
 
