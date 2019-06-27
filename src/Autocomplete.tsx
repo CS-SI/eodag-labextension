@@ -1,10 +1,10 @@
 import * as React from 'react';
-import Select from 'react-select';
-import { Typography, TextField, Paper, MenuItem, FormControl, InputLabel, Tooltip  } from '@material-ui/core';
+import Select, { components } from 'react-select';
+import * as ReactTooltip from 'react-tooltip';
 
 function NoOptionsMessage(props) {
   return (
-    <Typography
+    <div
       color="textSecondary"
       style={{
         padding: `8px 16px`,
@@ -12,75 +12,29 @@ function NoOptionsMessage(props) {
       {...props.innerProps}
     >
       {props.children}
-    </Typography>
-  );
-}
-
-function inputComponent({ inputRef, ...props }) {
-  return <div ref={inputRef} {...props} />;
-}
-
-function Control(props) {
-  return (
-    <TextField
-      fullWidth
-      InputProps={{
-        inputComponent,
-        inputProps: {
-          style: {
-            display: 'flex',
-            padding: 0,
-          },
-          inputRef: props.innerRef,
-          children: props.children,
-          ...props.innerProps,
-        },
-      }}
-      {...props.selectProps.textFieldProps}
-    />
+    </div>
   );
 }
 
 function Option(props) {
+  // Tooltip on the right
   return (
-    <Tooltip title={props.data.description} placement="right">
-      <MenuItem
-        buttonRef={props.innerRef}
-        selected={props.isFocused}
-        style={{
-          fontWeight: props.isSelected ? 500 : 400,
-        }}
-        {...props.innerProps}
-      >
+    <div data-for={props.label} data-tip={props.data.description}>
+      <components.Option {...props}>
         {props.children}
-      </MenuItem>
-    </Tooltip>
-  );
-}
-
-function Placeholder(props) {
-  return (
-    <Typography
-      color="textSecondary"
-      style={{
-        position: 'absolute',
-        left: 2,
-        fontSize: 16,
-      }}
-      {...props.innerProps}
-    >
-      {props.children}
-    </Typography>
+      </components.Option>
+      <ReactTooltip id={props.label} className="jp-Eodag-tooltip" place="right" type="dark" effect="solid" />
+    </div>
   );
 }
 
 function SingleValue(props) {
   return (
-    <Typography style={{
-      fontSize: 16,
+    <div style={{
+      fontSize: 14,
     }} {...props.innerProps}>
       {props.children}
-    </Typography>
+    </div>
   );
 }
 
@@ -89,36 +43,18 @@ function ValueContainer(props) {
     display: 'flex',
     flexWrap: 'wrap',
     flex: 1,
+    paddingLeft: 5,
     alignItems: 'center',
     overflow: 'hidden',
   }}>{props.children}</div>;
 }
 
-
-function Menu(props) {
-  return (
-    <Paper square style={{
-      position: 'absolute',
-      zIndex: 10,
-      marginTop: 8,
-      left: 0,
-      right: 0,
-    }} {...props.innerProps}>
-      {props.children}
-    </Paper>
-  );
-}
-
-const components = {
-  Control,
-  Menu,
+const listcomponents = {
   NoOptionsMessage,
   Option,
-  Placeholder,
   SingleValue,
   ValueContainer,
 };
-
 
 interface IProps {
   suggestions: any,
@@ -128,7 +64,6 @@ interface IProps {
 
 interface IState {
 }
-
 
 class IntegrationReactSelect extends React.Component<IProps, IState> {
 
@@ -143,15 +78,10 @@ class IntegrationReactSelect extends React.Component<IProps, IState> {
       }
     }
     return (
-      <FormControl className="jp-EodagWidget-field">
-        <InputLabel
-          style={{
-            transform: 'translate(0, 1.5px) scale(0.75)',
-            transformOrigin: 'top left'
-          }}
-        >
+      <div className="jp-EodagWidget-field">
+        <label className="jp-EodagWidget-input-name">
           Product type (*)
-        </InputLabel>
+        </label>
         <div 
           style={{
             marginTop: 10
@@ -159,17 +89,30 @@ class IntegrationReactSelect extends React.Component<IProps, IState> {
         >
           <Select
             options={suggestions}
-            components={components}
+            components={listcomponents}
             value={currentValue}
             onChange={handleChange}
+            styles={{
+              option: base => ({
+                ...base,
+                height: `100%`
+              }),
+              indicatorSeparator: base => ({
+                ...base,
+                margin: '0px'
+              })
+            }}
+            theme={theme => ({
+              ...theme,
+              borderRadius: 0
+            })}
             placeholder="S3_..."
             isClearable
           />
         </div>
-      </FormControl>
+      </div>
     );
   }
 }
-
 
 export default IntegrationReactSelect;

@@ -1,6 +1,4 @@
 import * as React from 'react';
-import { Button, FormControl, InputLabel, Input, FormHelperText } from '@material-ui/core';
-import { Slider } from '@material-ui/lab';
 import { showErrorMessage } from '@jupyterlab/apputils';
 import { map, has } from 'lodash'
 import DatePicker from "react-datepicker";
@@ -43,7 +41,7 @@ export default class FormComponent extends React.Component<IProps, IState> {
         const productTypes = map(products, product => ({
           value: product.ID,
           label: product.ID,
-          description: product.desc,
+          description: product.abstract,
         }))
         this.setState({
           productTypes: productTypes,
@@ -97,9 +95,9 @@ export default class FormComponent extends React.Component<IProps, IState> {
       });
     };
 
-    handleChangeCloud = (event, value) => {
+    handleChangeCloud = (event) => {
       this.setState({
-        cloud: parseInt(value, 10)
+        cloud: parseInt(event.target.value, 10)
       })
     }
     saveFormValues = () => {
@@ -117,73 +115,75 @@ export default class FormComponent extends React.Component<IProps, IState> {
             value={productType}
             handleChange={this.handleChangeProductType}
           />
-          <FormControl className="jp-EodagWidget-field">
-            <InputLabel
+          <div className="jp-EodagWidget-field">
+            <label
               htmlFor="startDate"
               className="jp-EodagWidget-input-name"
             >
               Start date
-            </InputLabel>
+            </label>
+            <div className="jp-EodagWidget-input-wrapper">
+              <DatePicker
+                className="jp-EodagWidget-input"
+                selected={this.state.startDate}
+                onChange={this.handleChangeStartDate}
+                dateFormat={"dd/MM/yyyy"}
+                showMonthDropdown
+                showYearDropdown
+                dropdownMode="select"
+              />
+            </div>
+          </div>
 
-            <Input
-              onChange={this.handleChangeStartDate}
-              inputComponent={DatePicker}
-              inputProps={{
-                dateFormat: "dd/MM/yyyy",
-                selected: startDate,
-                showMonthDropdown: true,
-                showYearDropdown: true,
-              }}
-            />
-          </FormControl>
-
-
-          <FormControl className="jp-EodagWidget-field">
-            <InputLabel
+          <div className="jp-EodagWidget-field">
+            <label
               htmlFor="startDate"
               className="jp-EodagWidget-input-name"
             >
               End date
-            </InputLabel>
-            <Input
-              onChange={this.handleChangeEndDate}
-              inputComponent={DatePicker}
-              aria-describedby="endDate-error-text"
-              inputProps={{
-                dateFormat: "dd/MM/yyyy",
-                selected: endDate,
-                showMonthDropdown: true,
-                showYearDropdown: true,
-              }}
-            />
-            { isEndDateLowerThanStartDate ? 
-              (<FormHelperText id="endDate-error-text" error>End date must be after start date</FormHelperText>)
-              : null
-            }
-          </FormControl>
-          <FormControl className="jp-EodagWidget-field">
-            <InputLabel
+            </label>
+            <div className="jp-EodagWidget-input-wrapper">
+              <DatePicker
+                className="jp-EodagWidget-input"
+                selected={this.state.endDate}
+                onChange={this.handleChangeEndDate}
+                dateFormat={"dd/MM/yyyy"}
+                showMonthDropdown
+                showYearDropdown
+                dropdownMode="select"
+              />
+              { isEndDateLowerThanStartDate ? 
+                (<div id="endDate-error-text">End date must be after start date</div>)
+                : null
+              }
+            </div>
+          </div>
+          <div className="jp-EodagWidget-field">
+            <label
               htmlFor="cloud"
               className="jp-EodagWidget-input-name"
             >
               Max cloud cover {cloud}%
-            </InputLabel>
+            </label>
             <div className="jp-EodagWidget-slider">
-              <Slider
-                value={cloud}
+              <input 
+                type="range" 
+                min="0" 
+                max="100" 
+                value={cloud} 
                 aria-labelledby="cloud"
-                onChange={this.handleChangeCloud}
+                onChange={this.handleChangeCloud} 
               />
             </div>
-          </FormControl>
+          </div>
           <div className="jp-EodagWidget-buttons">
-            <Button
+            <button
               color="primary" 
               onClick={this.handleSearch}
               disabled={isSearchDisabled}
             >
               {isLoadingSearch ? 'Searching...' : 'Search'}
-            </Button>
+            </button>
           </div>
         </div>
       );

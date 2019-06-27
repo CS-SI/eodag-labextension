@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import { NotebookActions, INotebookTracker } from '@jupyterlab/notebook';
 import { CodeCellModel } from '@jupyterlab/cells';
 import { showErrorMessage } from '@jupyterlab/apputils';
@@ -10,31 +9,6 @@ import ModalComponent from './ModalComponent'
 import formatCode from './CodeGenerator'
 import StorageService from './StorageService'
 import SearchService from './SearchService'
-
-// Override the Mui theme
-// @see https://material-ui.com/customization/themes/#css
-const theme = createMuiTheme({
-    typography: {
-        useNextVariants: true,
-    },
-    overrides: {
-        MuiExpansionPanelDetails: {
-            root: {
-                padding: 0
-            }
-        },
-        MuiExpansionPanelSummary: {
-            content: {
-                margin: '3px 0'
-            }
-        },
-        MuiExpansionPanel: {
-            expanded: {
-                margin: '0',
-            }
-        }
-    },
-});
 
 export interface IProps {
     tracker:INotebookTracker 
@@ -134,8 +108,6 @@ export class EodagBrowser extends React.Component<IProps, IState> {
     render() {
         const { openDialog, features, } = this.state
         return (
-            <MuiThemeProvider theme={theme}>
-
             <div>
                 <header className="jp-EodagWidget-header">Products search</header>
                 <MapExtentComponent />
@@ -151,7 +123,6 @@ export class EodagBrowser extends React.Component<IProps, IState> {
                     handleRetrieveMoreFeature={this.handleRetrieveMoreFeature}
                 />
             </div>
-            </MuiThemeProvider>
         );
     }
 }
