@@ -1,45 +1,21 @@
 import * as React from 'react';
 import classNames from 'classnames';
-import { withStyles } from '@material-ui/core/styles';
-import TableCell from '@material-ui/core/TableCell';
-import TableSortLabel from '@material-ui/core/TableSortLabel';
-import { AutoSizer, Column, SortDirection, Table, InfiniteLoader } from 'react-virtualized';
+import { AutoSizer, SortDirection, Column, Table, InfiniteLoader } from 'react-virtualized';
 import { get } from 'lodash'
-import { IconButton, Checkbox } from '@material-ui/core';
-import { ZoomIn } from '@material-ui/icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faSearchPlus } from '@fortawesome/free-solid-svg-icons'
 
-
-const styles = theme => ({
-  table: {
-    fontFamily: theme.typography.fontFamily,
-  },
-  flexContainer: {
-    display: 'flex',
-    alignItems: 'center',
-    boxSizing: 'border-box',
-    justifyContent: 'center'
-  },
-  tableRow: {
-    cursor: 'pointer',
-  },
-  tableRowHover: {
-    '&:hover': {
-      backgroundColor: theme.palette.grey[200],
-    },
-  },
-  tableCell: {
-    flex: 1,
-  },
-  noClick: {
-    cursor: 'initial',
-  },
-});
+const TableSortLabelWithoutMUI = ( {active, direction, children }) => (
+  <div>TableSortLabel</div>
+)
 
 export interface IMuiVirtualizedTableProps {
   classes: any;
   columns: any;
   headerHeight: any;
   onRowClick: any;
+  onRowMouseOver: any;
+  onRowMouseOut: any;
   rowClassName: any;
   rowHeight: any;
   sort: any;
@@ -61,11 +37,10 @@ class MuiVirtualizedTable extends React.PureComponent<IMuiVirtualizedTableProps,
     rowHeight: 56,
   };
   getRowClassName = ({ index }) => {
-    const { classes, rowClassName, onRowClick } = this.props;
-
-    return classNames(classes.tableRow, classes.flexContainer, rowClassName, {
-      [classes.tableRowHover]: index !== -1 && onRowClick != null,
-    });
+    if (index < 0) {
+      return " headerRow flexContainer";
+    }
+    return "tableRow flexContainer";
   };
 
   getRowStyle = ({ index, ...rowData}) => {
@@ -82,78 +57,39 @@ class MuiVirtualizedTable extends React.PureComponent<IMuiVirtualizedTableProps,
   };
 
   cellRenderer = ({ cellData, columnIndex = null }) => {
-    const { columns, classes, rowHeight, onRowClick } = this.props;
+    const { columns } = this.props;
     let isPercent = false;
     if (columnIndex != null && columns[columnIndex].percent) {
       isPercent = columns[columnIndex].percent === true;
     }
     return (
-      <TableCell
-        component="div"
-        className={classNames(classes.tableCell, classes.flexContainer, {
-          [classes.noClick]: onRowClick == null,
-        })}
-        variant="body"
-        style={{ height: rowHeight }}
-        align="center"
-      >
-        {isPercent ? `${parseInt(cellData, 10)} %`: cellData}
-      </TableCell>
+      <div>{isPercent ? `${parseInt(cellData, 10)} %`: cellData}</div>
     );
   };
 
   buttonRenderer = ({ columnIndex = null, rowData }) => {
-    const { columns, classes, rowHeight, onRowClick } = this.props;
+    const { columns } = this.props;
     // Retrieve event handler from column def
     let handleClick = (dataId) => {}
     if (columnIndex != null && columns[columnIndex].handleClick) {
       handleClick = columns[columnIndex].handleClick
     }
     return (
-      <TableCell
-        component="div"
-        className={classNames(classes.tableCell, classes.flexContainer, {
-          [classes.noClick]: onRowClick == null,
-        })}
-        variant="body"
-        style={{ height: rowHeight }}
-        align='center'
-      >
-        <IconButton onClick={() => {handleClick(rowData.id)}}>
-          <ZoomIn />
-        </IconButton>
-      </TableCell>
+      <button onClick={() => {handleClick(rowData.id)}}>
+        <FontAwesomeIcon icon={faSearchPlus} />
+      </button> 
     );
   };
 
   selectorRenderer = ({ columnIndex = null }) => {
-    const { columns, classes, rowHeight, onRowClick } = this.props;
-    let handleClick = () => {}
-    if (columnIndex != null && columns[columnIndex].handleClick) {
-      handleClick = columns[columnIndex].handleClick
-    }
+    // Not used right now
     return (
-      <TableCell
-        component="div"
-        className={classNames(classes.tableCell, classes.flexContainer, {
-          [classes.noClick]: onRowClick == null,
-        })}
-        variant="body"
-        style={{ height: rowHeight }}
-        align='right'
-      >
-        <Checkbox
-          // checked={this.state.checkedB}
-          onChange={handleClick}
-          value="checkedB"
-          color="primary"
-        />
-      </TableCell>
+      <div>Cellule  selector</div>
     );
   };
 
   headerRenderer = ({ label, columnIndex, dataKey, sortBy, sortDirection }) => {
-    const { headerHeight, columns, classes, sort } = this.props;
+    const {  columns, sort } = this.props;
     const direction = {
       [SortDirection.ASC]: 'asc',
       [SortDirection.DESC]: 'desc',
@@ -161,23 +97,15 @@ class MuiVirtualizedTable extends React.PureComponent<IMuiVirtualizedTableProps,
 
     const inner =
       !columns[columnIndex].disableSort && sort != null ? (
-        <TableSortLabel active={dataKey === sortBy} direction={direction[sortDirection]}>
+        <TableSortLabelWithoutMUI active={dataKey === sortBy} direction={direction[sortDirection]}>
           {label}
-        </TableSortLabel>
+        </TableSortLabelWithoutMUI>
       ) : (
         label
       );
 
     return (
-      <TableCell
-        component="div"
-        className={classNames(classes.tableCell, classes.flexContainer, classes.noClick)}
-        variant="head"
-        style={{ height: headerHeight }}
-        align="center"
-      >
-        {inner}
-      </TableCell>
+      <div> {inner} </div>
     );
   };
 
@@ -203,7 +131,7 @@ class MuiVirtualizedTable extends React.PureComponent<IMuiVirtualizedTableProps,
                 ref={registerChild}
                 onRowsRendered={onRowsRendered}
                 key="table"
-                className={classes.table}
+                className="table"
                 height={height}
                 width={width}
                 {...tableProps}
@@ -238,7 +166,7 @@ class MuiVirtualizedTable extends React.PureComponent<IMuiVirtualizedTableProps,
                           columnIndex: index,
                         })
                       }
-                      className={classNames(classes.flexContainer, className)}
+                      className={classNames(className)}
                       cellRenderer={renderer}
                       dataKey={dataKey}
                       {...other}
@@ -253,11 +181,6 @@ class MuiVirtualizedTable extends React.PureComponent<IMuiVirtualizedTableProps,
     );
   }
 }
-
-
-// @ts-ignore
-const WrappedVirtualizedTable = withStyles(styles)(MuiVirtualizedTable);
-
 
 function BrowseComponent({ features, handleClickFeature, handleZoomFeature, handleHoverFeature, highlightFeature, isRetrievingMoreFeature, handleRetrieveMoreFeature }) {
   /**
@@ -285,7 +208,7 @@ function BrowseComponent({ features, handleClickFeature, handleZoomFeature, hand
     return index < features.features.length;
   }
   return (
-    <WrappedVirtualizedTable
+    <MuiVirtualizedTable
       rowCount={features.properties.totalResults}
       displayedRowCount={features.features.length}
       rowGetter={getRowData(features)}

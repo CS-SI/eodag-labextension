@@ -1,11 +1,29 @@
 import * as React from 'react';
-import { Button, Dialog, AppBar, Toolbar, IconButton, Typography, Slide, Tooltip, InputLabel, CircularProgress } from '@material-ui/core';
 import "react-datepicker/dist/react-datepicker.css";
-import { Close } from '@material-ui/icons';
 import { find, isEqual, get } from 'lodash'
+import * as Modal from 'react-modal';
 import MapFeatureComponent from './MapFeatureComponent'
 import BrowseComponent from './BrowseComponent'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faTimes, faSpinner } from '@fortawesome/free-solid-svg-icons'
 import DescriptionProductComponent from './DescriptionProductComponent'
+import * as ReactTooltip from 'react-tooltip';
+
+const customStyles = {
+  content : {
+    top                   : '0px',
+    left                  : '0px',
+    right                 : 'auto',
+    bottom                : 'auto',
+    height                : 'auto',
+    width                 : '100%',
+    zIndex                : '4',
+    marginRight           : '0',
+    padding               : '0',
+    borderRadius          : 'none',
+    border                : 'none'
+  }
+};
 
 export interface IProps {
   open: any;
@@ -26,9 +44,12 @@ export interface IState {
 
 
 function Transition(props) {
-  return <Slide direction="up" {...props} />;
+  return <div direction="up" {...props} />;
 }
 
+// Override modal's default style 
+Modal.defaultStyles.overlay.zIndex = '4';
+Modal.setAppElement('body');
 export default class ModalComponent extends React.Component<IProps, IState> {
     state = {
       features: [],
@@ -103,32 +124,23 @@ export default class ModalComponent extends React.Component<IProps, IState> {
     }
     
     render() {
-      const { features, open, handleClose, handleGenerateQuery, isRetrievingMoreFeature, handleRetrieveMoreFeature } = this.props
-      const { displayFeature, zoomFeature, highlightOnMapFeature, highlightOnTableFeature } = this.state
+      const { features, open, handleClose,  isRetrievingMoreFeature, handleRetrieveMoreFeature, handleGenerateQuery } = this.props
+      const { zoomFeature, highlightOnMapFeature, highlightOnTableFeature, displayFeature } = this.state
       return (
-        <Dialog
-          fullScreen
-          open={open}
-          TransitionComponent={Transition}
+        <Modal
+          isOpen={open}
+          contentLabel="Modal"
+          style={customStyles}
+          data-TransitionComponent={Transition}
         >
           <div className="jp-EodagWidget-modal">
-            <AppBar position="static" square elevation={0}>
-              <Toolbar variant="dense">
-                <IconButton color="inherit" onClick={handleClose} aria-label="Close">
-                  <Close />
-                </IconButton>
-                <Typography variant="h6" color="inherit" className="jp-EodagWidget-title">
-                  Search results
-                </Typography>
-                <div className="jp-EodagWidget-right-buttons-wrapper">
-                <Tooltip title="Generate the python code" placement="bottom-start">
-                    <Button variant="contained" onClick={handleGenerateQuery}>
-                      Apply
-                    </Button>
-                  </Tooltip>
-                </div>
-              </Toolbar>
-            </AppBar>
+            <div className="jp-EodagWidget-appbar">
+              <button onClick={handleClose}><FontAwesomeIcon icon={faTimes} /></button>
+              Search results
+
+              <button data-for="apply-tooltip" data-tip="Generate the python code" className="jp-EodagWidget-apply" onClick={handleGenerateQuery}>Apply</button>
+              <ReactTooltip id="apply-tooltip" className="jp-Eodag-tooltip" place="bottom" type="dark" effect="solid" />
+            </div>
             <div className="jp-EodagWidget-modal-container">
               <div className="jp-EodagWidget-product-wrapper">
                 <MapFeatureComponent 
@@ -137,16 +149,15 @@ export default class ModalComponent extends React.Component<IProps, IState> {
                   highlightFeature={highlightOnMapFeature}
                   handleHoverFeature={this.handleHoverMapFeature}
                 />
-                <InputLabel className="jp-EodagWidget-browse-title">
+                <div className="jp-EodagWidget-browse-title">
                   {isRetrievingMoreFeature() ? (
-                    <div className="jp-EodagWidget-loading-wrapper">
-                      <Tooltip title="Loading more products" placement="top">
-                        <CircularProgress size={17}/>
-                      </Tooltip>
+                    <div data-for="load-tooltip" data-tip="Loading more products" className="jp-EodagWidget-loading-wrapper">
+                      <FontAwesomeIcon icon={faSpinner} spin/>
+                      <ReactTooltip id="load-tooltip" className="jp-Eodag-tooltip" place="bottom" type="dark" effect="solid" />
                     </div>
                   ) : null}
                   {get(features, 'features', []).length} results (total: {get(features, 'properties.totalResults', 0)})
-                </InputLabel>
+                </div>
                 <div className="jp-EodagWidget-browse-wrapper">
                   <BrowseComponent
                     features={features}
@@ -165,8 +176,8 @@ export default class ModalComponent extends React.Component<IProps, IState> {
                 />
               </div>
             </div>
-          </div>
-        </Dialog>
+          </div> 
+        </Modal>
       );
     }
 }
