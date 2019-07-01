@@ -47,6 +47,7 @@ private
 *.swp
 
 .idea
+.vscode
 
 # ignore backup files from futurize
 *.py.bak
