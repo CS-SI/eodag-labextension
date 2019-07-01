@@ -43,15 +43,15 @@ Voici un exemple de code généré dans le notebook :
 ```python
 from eodag import EODataAccessGateway
 dag = EODataAccessGateway()
-    product_type = 'S2_MSI_L1C'
-    footprint = {'lonmin': 0.660957, 'latmin': 43.149093, 'lonmax': 2.388008, 'latmax': 44.190082}
-    cloud_cover = 15
-    start, end = '2019-02-01', '2019-02-15'
+product_type = 'S2_MSI_L1C'
+footprint = {'lonmin': 0.660957, 'latmin': 43.149093, 'lonmax': 2.388008, 'latmax': 44.190082}
+cloud_cover = 15
+start, end = '2019-02-01', '2019-02-15'
 search_results, estimated_total_nbr_of_results = dag.search(
-    product_type,
-    geometry=footprint,
-    startTimeFromAscendingNode=start,
-    completionTimeFromAscendingNode=end,
+    productType=product_type,
+    box=footprint,
+    start=start,
+    end=end,
     cloudCover=cloud_cover,
 )
 ```
