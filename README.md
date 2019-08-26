@@ -13,6 +13,7 @@ The products search is based on the [eodag](https://eodag.readthedocs.io) librar
 
 ```bash
 pip install .
+yarn install # or npm install
 jupyter labextension install .
 ```
 
@@ -55,7 +56,7 @@ Create the container:
 docker-compose up -d
 ```
 
-Connect to the container with 
+Connect to the container with
 ```bash
 docker exec -ti [container_name] bash
 ```
@@ -118,7 +119,7 @@ jlpm run watch
 ### Relaunch (already installed)
 
 1. `docker-compose -f docker-compose.yml up -d`
-2. In two different console : `sudo docker exec -ti jupyterlab bash` 
+2. In two different console : `sudo docker exec -ti jupyterlab bash`
 3. Then in both console `cd /plugin/`
      1. Console 1 `jlpm run watch`
      2. Console 2 `jupyter lab --allow-root --watch --no-browser --ip=0.0.0.0`
