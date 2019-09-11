@@ -28,7 +28,7 @@ Make sure that that file is configured properly.
 jupyterhub
 ```
 
-and browse http://localhost:8000
+and browse <http://localhost:8000>
 
 ## Contributing
 
@@ -52,16 +52,19 @@ Link to repository [Eodag Plugin](https://odin.si.c-s.fr/plugins/git/ia3d-demo/e
 For a development install (requires npm version 4 or later), do the following in the repository directory:
 
 Create the container:
+
 ```bash
 docker-compose up -d
 ```
 
 Connect to the container with
+
 ```bash
 docker exec -ti [container_name] bash
 ```
 
 Then install eodag plugin:
+
 ```bash
 cd /plugin
 jlpm install
@@ -72,6 +75,7 @@ jlpm run watch
 ```
 
 List result should be like this:
+
 ```bash
 JupyterLab v0.35.6
 Known labextensions:
@@ -83,16 +87,17 @@ Known labextensions:
 ```
 
 Once you finished this installation you can watch docker's logs
+
 ```bash
 docker-compose logs -f
 ```
 
 Finally when you develop eodag plugin just run this to watch changes:
+
 ```bash
 cd /plugin
 jlpm run watch
 ```
-
 
 ## Launch Jupyter with eodag & watch
 
