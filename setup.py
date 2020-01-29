@@ -43,11 +43,11 @@ setup(
     install_requires=["tornado", "notebook", "eodag>=1.2.3"],
     extras_require={
         "dev": [
-            "jupyterhub==0.9.4",
-            "jupyterlab==0.35.4",
-            "jupyter_contrib_nbextensions==0.5.1",
-            "black==19.3b0",
-            "pre-commit==1.14.4",
+            "jupyterhub",
+            "jupyterlab",
+            "jupyter_contrib_nbextensions",
+            "black",
+            "pre-commit",
         ]
     },
     zip_safe=False,

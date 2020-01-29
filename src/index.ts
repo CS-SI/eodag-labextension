@@ -1,6 +1,5 @@
-import {
-  ILayoutRestorer, JupyterLab, JupyterLabPlugin
-} from '@jupyterlab/application';
+
+import { ILayoutRestorer, JupyterFrontEnd, JupyterFrontEndPlugin } from '@jupyterlab/application';
 import { INotebookTracker } from '@jupyterlab/notebook';
 
 import '../style/index.css';
@@ -14,20 +13,20 @@ const NAMESPACE = 'eodag-widget';
 /**
  * Initialization data for the eodag-labextension extension.
  */
-const extension: JupyterLabPlugin<void> = {
-  id: 'eodag-labextension',
-  autoStart: true,
+const plugin: JupyterFrontEndPlugin<void> = {
   activate,
-  requires: [INotebookTracker, ILayoutRestorer]
+  autoStart: true,
+  id: 'eodag-labextension',
+  requires: [INotebookTracker, ILayoutRestorer],
 };
 
 /**
  * Activate the extension.
  */
-function activate(app: JupyterLab, tracker: INotebookTracker, restorer: ILayoutRestorer) {
+function activate(app: JupyterFrontEnd, tracker: INotebookTracker, restorer: ILayoutRestorer) {
   const eodagBrowser = new EodagWidget(tracker);
   restorer.add(eodagBrowser, NAMESPACE);
-  app.shell.addToLeftArea(eodagBrowser, {rank:700});
+  app.shell.add(eodagBrowser, 'left', {rank:700});
 }
 
-export default extension;
+export default plugin;
