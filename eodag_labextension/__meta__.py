@@ -3,4 +3,4 @@
 # All rights reserved
 """Jupyter Notebook server extension metadata"""
 
-__version__ = "1.1.1"
+__version__ = "2.0.0"
