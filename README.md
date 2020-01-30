@@ -37,6 +37,8 @@ and browse <http://localhost:8000>
 ```bash
 npm install -g configurable-http-proxy
 
+virtualenv -p `which python3.6` venv
+venv/bin/activate
 pip install -e .[dev]
 
 # Enables extension: required if package installed in editable mode!
@@ -45,6 +47,12 @@ jupyter serverextension enable --py eodag_labextension --sys-prefix
 
 pre-commit install
 ```
+
+#### Troubleshooting
+
+On `jupyterhub` version upgrade and if `jupyterhub` command fails, it can be required to do a `jupyterhub upgrade-db`.
+
+On build error, try running `npm prune && npm run clean && npm install`.
 
 ### Client JupyterLab plugin
 
