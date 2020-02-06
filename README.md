@@ -46,7 +46,11 @@ pip install -e .[dev]
 jupyter serverextension enable --py eodag_labextension --sys-prefix
 
 pre-commit install
+
+jupyterhub
 ```
+
+then browse http://loclhost:8000.
 
 #### Troubleshooting
 
