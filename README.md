@@ -50,7 +50,7 @@ pre-commit install
 jupyterhub
 ```
 
-then browse http://loclhost:8000.
+then browse <http://localhost:8000.>
 
 #### Troubleshooting
 
