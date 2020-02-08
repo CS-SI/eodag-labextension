@@ -1,5 +1,7 @@
 import * as React from 'react';
 import { showErrorMessage } from '@jupyterlab/apputils';
+import { URLExt } from '@jupyterlab/coreutils';
+import { ServerConnection } from '@jupyterlab/services';
 import { map, has } from 'lodash'
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -30,9 +32,11 @@ export default class FormComponent extends React.Component<IProps, IState> {
     componentDidMount() {
       // Fetch product types
       // @ts-ignore
-      fetch(`${EODAG_SERVER_ADRESS}/product-types/`, {credentials: 'same-origin'}).then((response) => {
+      let _serverSettings = ServerConnection.makeSettings();
+      let _eodag_server = URLExt.join(_serverSettings.baseUrl, `${EODAG_SERVER_ADRESS}`)
+      fetch(URLExt.join(_eodag_server, 'product-types/'), {credentials: 'same-origin'}).then((response) => {
         if (response.status >= 400) {
-          showErrorMessage(`Unable to contact the EODAG server. Are you sure the adress is ${EODAG_SERVER_ADRESS} ?`, {})
+          showErrorMessage(`Unable to contact the EODAG server. Are you sure the adress is ${_eodag_server}/ ?`, {})
           throw new Error("Bad response from server");
         }
         return response.json();
@@ -48,7 +52,7 @@ export default class FormComponent extends React.Component<IProps, IState> {
         })
       })
       .catch(() => {
-        showErrorMessage(`Unable to contact the EODAG server. Are you sure the adress is ${EODAG_SERVER_ADRESS} ?`, {})
+        showErrorMessage(`Unable to contact the EODAG server. Are you sure the adress is ${_eodag_server}/ ?`, {})
       })
     }
     handleSearch = () => {
@@ -69,7 +73,9 @@ export default class FormComponent extends React.Component<IProps, IState> {
         this.props.handleShowFeature(features)
       })
       .catch(() => {
-        showErrorMessage(`Unable to contact the EODAG server. Are you sure the adress is ${EODAG_SERVER_ADRESS} ?`, {})
+        let _serverSettings = ServerConnection.makeSettings();
+        let _eodag_server = URLExt.join(_serverSettings.baseUrl, `${EODAG_SERVER_ADRESS}`)
+        showErrorMessage(`Unable to contact the EODAG server. Are you sure the adress is ${_eodag_server}/ ?`, {})
         this.setState({
           isLoadingSearch: false
         })
