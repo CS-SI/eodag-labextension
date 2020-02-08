@@ -26,9 +26,8 @@ class RootHandler(IPythonHandler):
 
         # Update templates_path for Jinja FileSystemLoader
         jinja_env = self.settings["jinja2_env"]
-        for loader in jinja_env.loader.loaders:
-            if hasattr(loader, "searchpath"):
-                loader.searchpath.append(get_templates_path())
+        if hasattr(jinja_env.loader, "searchpath"):
+            jinja_env.loader.searchpath.append(get_templates_path())
 
         r = self.request
         base_url = f"{r.protocol}://{r.host}{r.path}"
