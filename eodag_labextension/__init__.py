@@ -20,12 +20,15 @@ def load_jupyter_server_extension(nb_server_app):
     """
 
     # Printed into JupyterHub console logs
-    log = f"{__package__} enabled!"
+    log = f"[{__package__}] jupyter lab extension enabled"
     nb_server_app.log.info(log)
 
     web_app = nb_server_app.web_app
     host_pattern = ".*$"
     home_pattern = url_path_join(web_app.settings["base_url"], "/eodag/")
+    nb_server_app.log.info(
+        f"[{__package__}] eodag service starting at '{home_pattern}'"
+    )
 
     product_types_pattern = url_path_join(
         web_app.settings["base_url"], "/eodag/product-types/"
