@@ -64,6 +64,11 @@ On `jupyterhub` version upgrade and if `jupyterhub` command fails, it can be req
 
 On build error, try running `npm prune && npm run clean && npm install`.
 
+## Known issues
+
+At statup, console prints a warning: `Failed to fetch package metadata for 'eodag-labextension': <HTTPError 404: 'Not Found'>`.
+This is because extension is not deployed on npm registry (see [source](https://github.com/jupyterlab/jupyterlab/blob/f3550a540b5beeaf750ac5badb42b61bf4efdf3e/jupyterlab/commands.py#L2195)).
+
 ## Reference
 
 [Distributing Jupyter Extensions as Python Packages](https://jupyter-notebook.readthedocs.io/en/latest/examples/Notebook/Distributing%20Jupyter%20Extensions%20as%20Python%20Packages.html#Distributing-Jupyter-Extensions-as-Python-Packages)
