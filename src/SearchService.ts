@@ -1,6 +1,8 @@
 import "react-datepicker/dist/react-datepicker.css";
 import 'isomorphic-fetch';
 import { EODAG_SERVER_ADRESS } from './config'
+import { ServerConnection } from '@jupyterlab/services';
+import { URLExt } from '@jupyterlab/coreutils';
 import StorageService from './StorageService'
 
 class SearchService {
@@ -25,7 +27,10 @@ class SearchService {
   getSearchURL (page = 1) {
     const { productType, startDate, endDate, cloud } = StorageService.getFormValues();
     const { lonMin, latMin, lonMax, latMax } = StorageService.getExtent();
-    let url = `${EODAG_SERVER_ADRESS}/${productType}/?box=${lonMin},${latMin},${lonMax},${latMax}&cloudCover=${cloud}&page=${page}`
+    let _serverSettings = ServerConnection.makeSettings();
+    let _eodag_server = URLExt.join(_serverSettings.baseUrl, `${EODAG_SERVER_ADRESS}`);
+    let _searchParams = `?box=${lonMin},${latMin},${lonMax},${latMax}&cloudCover=${cloud}&page=${page}`;
+    let url = URLExt.join(_eodag_server, `${productType}`, _searchParams);
     if (startDate) {
       url += `&dtstart=${this.formatDate(startDate)}`
     }
