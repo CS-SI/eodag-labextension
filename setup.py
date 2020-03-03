@@ -40,14 +40,18 @@ setup(
         )
     ],
     packages=find_packages(),
-    install_requires=["tornado", "notebook", "eodag>=1.2.3"],
+    install_requires=[
+        "tornado>=6.0.3,<7.0.0",
+        "notebook>=6.0.3,<7.0.0",
+        "eodag>=1.4.0,<2.0.0",
+    ],
     extras_require={
         "dev": [
-            "jupyterhub",
-            "jupyterlab",
-            "jupyter_contrib_nbextensions",
-            "black",
-            "pre-commit",
+            "jupyterhub>=1.0.0,<2.0.0",
+            "jupyterlab>=1.2.0,<2.0.0",
+            "jupyter_contrib_nbextensions==0.5.1",
+            "black>=19.10b,<20.0",
+            "pre-commit==2.1.1",
         ]
     },
     zip_safe=False,
