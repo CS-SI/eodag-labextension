@@ -33,7 +33,7 @@ export default class FormComponent extends React.Component<IProps, IState> {
       // Fetch product types
       // @ts-ignore
       let _serverSettings = ServerConnection.makeSettings();
-      let _eodag_server = URLExt.join(_serverSettings.baseUrl, `${EODAG_SERVER_ADRESS}`)
+      let _eodag_server = URLExt.join(_serverSettings.baseUrl, `${EODAG_SERVER_ADRESS}`);
       fetch(URLExt.join(_eodag_server, 'product-types/'), {credentials: 'same-origin'}).then((response) => {
         if (response.status >= 400) {
           showErrorMessage(`Unable to contact the EODAG server. Are you sure the adress is ${_eodag_server}/ ?`, {})
@@ -74,7 +74,7 @@ export default class FormComponent extends React.Component<IProps, IState> {
       })
       .catch(() => {
         let _serverSettings = ServerConnection.makeSettings();
-        let _eodag_server = URLExt.join(_serverSettings.baseUrl, `${EODAG_SERVER_ADRESS}`)
+        let _eodag_server = URLExt.join(_serverSettings.baseUrl, `${EODAG_SERVER_ADRESS}`);
         showErrorMessage(`Unable to contact the EODAG server. Are you sure the adress is ${_eodag_server}/ ?`, {})
         this.setState({
           isLoadingSearch: false
