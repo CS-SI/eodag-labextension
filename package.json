@@ -32,25 +32,25 @@
     "watch": "tsc -w"
   },
   "dependencies": {
-    "@fortawesome/fontawesome-svg-core": "~1.2.26",
-    "@fortawesome/free-solid-svg-icons": "~5.12.0",
-    "@fortawesome/react-fontawesome": "~0.1.8",
-    "@jupyterlab/application": "~1.2.1",
-    "@jupyterlab/apputils": "~1.2.1",
-    "@jupyterlab/cells": "~1.2.2",
-    "@jupyterlab/notebook": "~1.2.2",
-    "@types/leaflet-draw": "~1.0.1",
-    "@types/lodash": "~4.14.149",
-    "@types/prop-types": "~15.7.3",
+    "@fortawesome/fontawesome-svg-core": "^1.2.26",
+    "@fortawesome/free-solid-svg-icons": "^5.12.0",
+    "@fortawesome/react-fontawesome": "^0.1.8",
+    "@jupyterlab/application": "^1.2.1",
+    "@jupyterlab/apputils": "^1.2.1",
+    "@jupyterlab/cells": "^1.2.2",
+    "@jupyterlab/notebook": "^1.2.2",
+    "@types/leaflet-draw": "^1.0.1",
+    "@types/lodash": "^4.14.149",
+    "@types/prop-types": "^15.7.3",
     "@types/react-dom": "~16.9.5",
     "@types/react-leaflet": "~2.5.0",
     "@types/react-tooltip": "~3.11.0",
     "@types/react-virtualized": "~9.21.7",
-    "isomorphic-fetch": "~2.2.1",
-    "leaflet": "~1.6.0",
-    "leaflet-draw": "~1.0.4",
-    "lodash": "~4.17.15",
-    "prop-types": "~15.7.2",
+    "isomorphic-fetch": "^2.2.1",
+    "leaflet": "^1.6.0",
+    "leaflet-draw": "^1.0.4",
+    "lodash": "^4.17.15",
+    "prop-types": "^15.7.2",
     "react": "~16.8.4",
     "react-datepicker": "~2.0.0",
     "react-dom": "~16.8.4",
@@ -62,13 +62,13 @@
     "react-virtualized": "~9.21.0"
   },
   "devDependencies": {
-    "rimraf": "~2.6.1",
-    "typescript": "~3.1.1"
+    "rimraf": "^2.6.1",
+    "typescript": "^3.1.1"
   },
   "resolutions": {
     "**/@types/react": "~16.8.4",
     "**/@types/react-dom": "~16.8.4",
-    "**/@types/prop-types": "~15.5.8"
+    "**/@types/prop-types": "^15.5.8"
   },
   "jupyterlab": {
     "extension": true,
