@@ -1,4 +1,9 @@
 /**
+ * Copyright 2020 CS GROUP - France, http://www.c-s.fr
+ * All rights reserved
+*/
+
+/**
  * Adress used to contact the EODAG server
  *
  * This is the notebook server REST API extension

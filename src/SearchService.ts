@@ -1,3 +1,8 @@
+/**
+ * Copyright 2020 CS GROUP - France, http://www.c-s.fr
+ * All rights reserved
+*/
+
 import "react-datepicker/dist/react-datepicker.css";
 import 'isomorphic-fetch';
 import { EODAG_SERVER_ADRESS } from './config'

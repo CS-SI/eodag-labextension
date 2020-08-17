@@ -1,6 +1,10 @@
 /**
  * Generate the Python code for the notebook
- */
+ *
+ * Copyright 2020 CS GROUP - France, http://www.c-s.fr
+ * All rights reserved
+*/
+
 const formatCode = (start, end, productType, extent, cloud) => {
 
   let code = `from eodag import EODataAccessGateway

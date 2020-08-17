@@ -1,3 +1,8 @@
+/**
+ * Copyright 2020 CS GROUP - France, http://www.c-s.fr
+ * All rights reserved
+*/
+
 import * as React from 'react';
 import Select, { components } from 'react-select';
 import * as ReactTooltip from 'react-tooltip';

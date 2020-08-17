@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
-# Copyright 2019 CS Systemes d'Information (CS SI)
+# Copyright 2020 CS GROUP - France, http://www.c-s.fr
 # All rights reserved
+
 """Tornado web requests handlers"""
 
 import json

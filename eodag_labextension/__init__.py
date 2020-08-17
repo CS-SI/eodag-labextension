@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
-# Copyright 2019 CS Systemes d'Information (CS SI)
+# Copyright 2020 CS GROUP - France, http://www.c-s.fr
 # All rights reserved
+
 """Jupyter Notebook server extension for eodag REST service"""
 
 from eodag_labextension.handlers import RootHandler, ProductTypeHandler, SearchHandler

@@ -72,3 +72,6 @@ This is because extension is not deployed on npm registry (see [source](https://
 ## Reference
 
 [Distributing Jupyter Extensions as Python Packages](https://jupyter-notebook.readthedocs.io/en/latest/examples/Notebook/Distributing%20Jupyter%20Extensions%20as%20Python%20Packages.html#Distributing-Jupyter-Extensions-as-Python-Packages)
+
+*Copyright 2020 CS GROUP - France
+All rights reserved*

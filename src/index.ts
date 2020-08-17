@@ -1,3 +1,7 @@
+/**
+ * Copyright 2020 CS GROUP - France, http://www.c-s.fr
+ * All rights reserved
+*/
 
 import { ILayoutRestorer, JupyterFrontEnd, JupyterFrontEndPlugin } from '@jupyterlab/application';
 import { INotebookTracker } from '@jupyterlab/notebook';
