@@ -1,6 +1,6 @@
 {
   "name": "eodag-labextension",
-  "version": "2.0.3",
+  "version": "3.0.0",
   "description": "Searching remote sensed imagery from various image providers",
   "keywords": [
     "jupyter",
@@ -35,25 +35,24 @@
     "@fortawesome/fontawesome-svg-core": "^1.2.26",
     "@fortawesome/free-solid-svg-icons": "^5.12.0",
     "@fortawesome/react-fontawesome": "^0.1.8",
-    "@jupyterlab/application": "^1.2.1",
-    "@jupyterlab/apputils": "^1.2.1",
-    "@jupyterlab/cells": "^1.2.2",
-    "@jupyterlab/notebook": "^1.2.2",
+    "@jupyterlab/application": "^2.2.1",
+    "@jupyterlab/apputils": "^2.2.1",
+    "@jupyterlab/cells": "^2.2.1",
+    "@jupyterlab/notebook": "^2.2.2",
     "@types/leaflet-draw": "^1.0.1",
     "@types/lodash": "^4.14.149",
     "@types/prop-types": "^15.7.3",
     "@types/react-dom": "~16.9.5",
     "@types/react-leaflet": "~2.5.0",
-    "@types/react-tooltip": "~3.11.0",
     "@types/react-virtualized": "~9.21.7",
     "isomorphic-fetch": "^2.2.1",
     "leaflet": "^1.6.0",
     "leaflet-draw": "^1.0.4",
     "lodash": "^4.17.15",
     "prop-types": "^15.7.2",
-    "react": "~16.8.4",
+    "react": "~16.9.0",
     "react-datepicker": "~2.0.0",
-    "react-dom": "~16.8.4",
+    "react-dom": "~16.9.0",
     "react-leaflet": "~2.0.0",
     "react-leaflet-draw": "~0.19.0",
     "react-modal": "~3.8.1",
@@ -63,7 +62,7 @@
   },
   "devDependencies": {
     "rimraf": "^2.6.1",
-    "typescript": "^3.1.1"
+    "typescript": "^3.7.3"
   },
   "resolutions": {
     "**/@types/react": "~16.8.4",

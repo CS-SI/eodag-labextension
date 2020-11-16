@@ -7,7 +7,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import {
     Widget
-} from '@phosphor/widgets';
+} from '@lumino/widgets';
 import { INotebookTracker } from '@jupyterlab/notebook';
 import { EodagBrowser } from './browser';
 

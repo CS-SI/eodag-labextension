@@ -48,7 +48,7 @@ setup(
     extras_require={
         "dev": [
             "jupyterhub>=1.0.0,<2.0.0",
-            "jupyterlab>=1.2.0,<2.0.0",
+            "jupyterlab>=2.0.0,<3.0.0",
             "jupyter_contrib_nbextensions==0.5.1",
             "black>=19.10b,<20.0",
             "pre-commit==2.1.1",
