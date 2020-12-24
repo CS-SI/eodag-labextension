@@ -43,7 +43,7 @@ setup(
     install_requires=[
         "tornado>=6.0.3,<7.0.0",
         "notebook>=6.0.3,<7.0.0",
-        "eodag>=1.4.0,<2.0.0",
+        "eodag~=2.0b2",
     ],
     extras_require={
         "dev": [
