@@ -7,12 +7,12 @@ import * as React from 'react';
 import { showErrorMessage } from '@jupyterlab/apputils';
 import { URLExt } from '@jupyterlab/coreutils';
 import { ServerConnection } from '@jupyterlab/services';
-import { map, has } from 'lodash'
+import { map, has } from 'lodash'
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import 'isomorphic-fetch';
 import Autocomplete from './Autocomplete';
-import { EODAG_SERVER_ADRESS } from './config'
+import { EODAG_SERVER_ADRESS } from './config'
 import StorageService from './StorageService'
 import SearchService from './SearchService'
 
@@ -116,7 +116,7 @@ export default class FormComponent extends React.Component<IProps, IState> {
       StorageService.setFormValues(productType, SearchService.formatDate(startDate), SearchService.formatDate(endDate), cloud);
     }
     render() {
-      const { productTypes, productType, startDate, endDate, cloud, isLoadingSearch } = this.state
+      const { productTypes, productType, startDate, endDate, cloud, isLoadingSearch } = this.state
       const isEndDateLowerThanStartDate = startDate instanceof Date && endDate instanceof Date && startDate.getTime() > endDate.getTime(); 
       const isSearchDisabled = !productType || isLoadingSearch;
       return (

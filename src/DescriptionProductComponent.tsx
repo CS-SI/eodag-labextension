@@ -18,14 +18,14 @@ export default class DescriptionProductComponent extends React.Component<IProps,
     smallQuicklook: true
   }
   toggleQuicklookSize = () => {
-    const { smallQuicklook } = this.state
+    const { smallQuicklook } = this.state
     this.setState({
-       smallQuicklook: !smallQuicklook,
+       smallQuicklook: !smallQuicklook,
     })
   }
   render() {
     const { feature } = this.props
-    const { smallQuicklook } = this.state
+    const { smallQuicklook } = this.state
     if (!feature) {
       return null;
     }

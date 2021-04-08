@@ -6,7 +6,7 @@
 import * as React from 'react';
 import classNames from 'classnames';
 import { AutoSizer, SortDirection, Column, Table, InfiniteLoader } from 'react-virtualized';
-import { get } from 'lodash'
+import { get } from 'lodash'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSearchPlus } from '@fortawesome/free-solid-svg-icons'
 
@@ -116,7 +116,7 @@ class MuiVirtualizedTable extends React.PureComponent<IMuiVirtualizedTableProps,
 
   render() {
     const { classes, columns, rowCount, displayedRowCount, isRowLoaded, isRetrievingMoreFeature, handleRetrieveMoreFeature, ...tableProps } = this.props;
-    const loadMoreRows = () =>  {
+    const loadMoreRows = () =>  {
       return isRetrievingMoreFeature()
       ? false
       : handleRetrieveMoreFeature()

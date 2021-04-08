@@ -3,7 +3,7 @@
  * All rights reserved
 */
 
-import { isNull } from 'lodash'
+import { isNull } from 'lodash'
 
 class StorageService {
   /**

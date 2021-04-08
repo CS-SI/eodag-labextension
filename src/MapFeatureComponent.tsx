@@ -122,9 +122,9 @@ export default class MapFeatureComponent extends React.Component<IProps, IState>
      * and on every component redraw
      */
     getStyle = (feature) => {
-        const { highlightFeature } = this.props
+        const { highlightFeature } = this.props
         const { featureHover } = this.state
-        if (get(highlightFeature, 'id') === feature.id || featureHover === feature.id) {
+        if (get(highlightFeature, 'id') === feature.id || featureHover === feature.id) {
             return MapFeatureComponent.HIGHLIGHT_EXTENT_STYLE;
         }
         return MapFeatureComponent.DEFAULT_EXTENT_STYLE;

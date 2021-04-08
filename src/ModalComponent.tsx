@@ -5,7 +5,7 @@
 
 import * as React from 'react';
 import "react-datepicker/dist/react-datepicker.css";
-import { find, isEqual, get } from 'lodash'
+import { find, isEqual, get } from 'lodash'
 import * as Modal from 'react-modal';
 import MapFeatureComponent from './MapFeatureComponent'
 import BrowseComponent from './BrowseComponent'
@@ -74,7 +74,7 @@ export default class ModalComponent extends React.Component<IProps, IState> {
     }
 
     getFeature = (productId) => {
-      const { features } = this.props
+      const { features } = this.props
       return find(features.features, (feature) => (
         feature.id === productId
       ))
@@ -129,8 +129,8 @@ export default class ModalComponent extends React.Component<IProps, IState> {
     }
     
     render() {
-      const { features, open, handleClose,  isRetrievingMoreFeature, handleRetrieveMoreFeature, handleGenerateQuery } = this.props
-      const { zoomFeature, highlightOnMapFeature, highlightOnTableFeature, displayFeature } = this.state
+      const { features, open, handleClose,  isRetrievingMoreFeature, handleRetrieveMoreFeature, handleGenerateQuery } = this.props
+      const { zoomFeature, highlightOnMapFeature, highlightOnTableFeature, displayFeature } = this.state
       return (
         <Modal
           isOpen={open}

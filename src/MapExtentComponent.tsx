@@ -10,7 +10,7 @@ import {
 import {
     EditControl
 } from 'react-leaflet-draw'
-import { throttle, isNull } from 'lodash'
+import { throttle, isNull } from 'lodash'
 import { EODAG_TILE_URL, EODAG_TILE_COPYRIGHT } from './config'
 import StorageService from './StorageService'
   
@@ -80,7 +80,7 @@ export default class MapExtentComponent extends React.Component<IProps, IState> 
      * source: https://stackoverflow.com/a/49747203
      */
     truncateNumberOfDigits(number: number) {
-        if (isNull(number)) {
+        if (isNull(number)) {
             return number;
         }
         return parseInt(`${number * 1000000}`, 10) / 1000000
@@ -118,7 +118,7 @@ export default class MapExtentComponent extends React.Component<IProps, IState> 
      * Function called every time the map should change its width,
      * but only redraw every 500ms thanks to throttle
      */
-    invalidateMapSize =  throttle(() => {
+    invalidateMapSize =  throttle(() => {
         this.map.leafletElement.invalidateSize();
     }, 500);
 

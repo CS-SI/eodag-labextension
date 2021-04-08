@@ -7,7 +7,7 @@ import * as React from 'react';
 import { NotebookActions, INotebookTracker } from '@jupyterlab/notebook';
 import { CodeCellModel } from '@jupyterlab/cells';
 import { showErrorMessage } from '@jupyterlab/apputils';
-import { concat, get } from 'lodash' 
+import { concat, get } from 'lodash' 
 import MapExtentComponent from './MapExtentComponent'
 import FormComponent from './FormComponent'
 import ModalComponent from './ModalComponent'
@@ -40,7 +40,7 @@ export class EodagBrowser extends React.Component<IProps, IState> {
         })
     }
     handleRetrieveMoreFeature = () => {
-        const { features } = this.state
+        const { features } = this.state
         this.setState({
             searching: true,
         })
@@ -96,7 +96,7 @@ export class EodagBrowser extends React.Component<IProps, IState> {
           showErrorMessage("Unable to inject cell into read-only notebook", {})
           return;
         }
-        const { startDate, endDate, productType, cloud } = StorageService.getFormValues();
+        const { startDate, endDate, productType, cloud } = StorageService.getFormValues();
         const extent = StorageService.getExtent();
         const code = formatCode(startDate, endDate, productType, extent, cloud);
         const cell = this.getCodeCell(code);

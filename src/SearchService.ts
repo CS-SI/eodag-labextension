@@ -5,7 +5,7 @@
 
 import "react-datepicker/dist/react-datepicker.css";
 import 'isomorphic-fetch';
-import { EODAG_SERVER_ADRESS } from './config'
+import { EODAG_SERVER_ADRESS } from './config'
 import { ServerConnection } from '@jupyterlab/services';
 import { URLExt } from '@jupyterlab/coreutils';
 import StorageService from './StorageService'
