@@ -126,9 +126,9 @@ export default class MapExtentComponent extends React.Component<IProps, IState> 
     /**
      * When the user starts to draw a new extent, we try to remove any extent already existing
      */
-    onDrawStart = (e) => {
+    onDrawStart = (e: any) => {
         let layerToRemove;
-        e.target.eachLayer((method, context) => {
+        e.target.eachLayer((method: any) => {
             if (method.getBounds && method.getBounds().isValid()) {
                 // if the layer has a valid bounds, we can safely remove it
                 layerToRemove = method;
@@ -139,7 +139,7 @@ export default class MapExtentComponent extends React.Component<IProps, IState> 
         }
     }
 
-    onCreated = (e) => {
+    onCreated = (e: any) => {
         this.setState({
             latMin: e.layer.getBounds().getSouth(),
             latMax: e.layer.getBounds().getNorth(),
@@ -150,7 +150,7 @@ export default class MapExtentComponent extends React.Component<IProps, IState> 
         })
     }
 
-    onEditStop = (e) => {
+    onEditStop = (e: any) => {
         if (e.layers.getLayers().length > 0) {
             this.setState({
                 latMin: e.layers.getLayers()[0].getBounds().getSouth(),
@@ -163,7 +163,7 @@ export default class MapExtentComponent extends React.Component<IProps, IState> 
         }
     }
 
-    onDeleted = (e) => {
+    onDeleted = (e: any) => {
         this.setState({
             latMin: null,
             latMax: null,

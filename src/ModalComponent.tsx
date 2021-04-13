@@ -6,15 +6,15 @@
 import * as React from 'react';
 import "react-datepicker/dist/react-datepicker.css";
 import { find, isEqual, get } from 'lodash'
-import * as Modal from 'react-modal';
+import Modal, { Styles } from 'react-modal';
 import MapFeatureComponent from './MapFeatureComponent'
 import BrowseComponent from './BrowseComponent'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTimes, faSpinner } from '@fortawesome/free-solid-svg-icons'
 import DescriptionProductComponent from './DescriptionProductComponent'
-import * as ReactTooltip from 'react-tooltip';
+import ReactTooltip from 'react-tooltip';
 
-const customStyles = {
+const customStyles : Styles = {
   content : {
     top                   : '0px',
     left                  : '0px',
@@ -22,7 +22,7 @@ const customStyles = {
     bottom                : 'auto',
     height                : 'auto',
     width                 : '100%',
-    zIndex                : '4',
+    zIndex                : 4,
     marginRight           : '0',
     padding               : '0',
     borderRadius          : 'none',
@@ -35,8 +35,8 @@ export interface IProps {
   handleClose: any;
   handleGenerateQuery: any;
   features: any;
-  isRetrievingMoreFeature: any;
-  handleRetrieveMoreFeature: any;
+  isRetrievingMoreFeature: () => boolean;
+  handleRetrieveMoreFeature: () => Promise<void>;
 }
 
 export interface IState {
@@ -48,23 +48,26 @@ export interface IState {
 }
 
 
-function Transition(props) {
+function Transition(props: any) {
   return <div direction="up" {...props} />;
 }
 
 // Override modal's default style 
-Modal.defaultStyles.overlay.zIndex = '4';
+Modal.defaultStyles.overlay.zIndex = 4;
 Modal.setAppElement('body');
 export default class ModalComponent extends React.Component<IProps, IState> {
-    state = {
+  constructor(props: IProps){
+    super(props);
+    this.state = {
       features: [],
       displayFeature: null,
       highlightOnMapFeature: null,
       highlightOnTableFeature: null,
       zoomFeature: null,
     }
+  }
 
-    componentDidUpdate(prevProps) {
+    componentDidUpdate(prevProps: IProps) {
       // If the features list change, remove the displayed feature
       if (!isEqual(prevProps.features, this.props.features)) {
         this.setState({
@@ -73,14 +76,14 @@ export default class ModalComponent extends React.Component<IProps, IState> {
       }
     }
 
-    getFeature = (productId) => {
+    getFeature = (productId: string) => {
       const { features } = this.props
       return find(features.features, (feature) => (
         feature.id === productId
       ))
     }
 
-    handleClickFeature = (productId) => {
+    handleClickFeature = (productId: string) => {
       const feature = this.getFeature(productId);
       if (feature) {
         this.setState({
@@ -89,7 +92,7 @@ export default class ModalComponent extends React.Component<IProps, IState> {
       }
     }
 
-    handleHoverMapFeature = (productId) => {
+    handleHoverMapFeature = (productId: string) => {
       if (!productId) {
         this.setState({
           highlightOnTableFeature: null,
@@ -104,7 +107,7 @@ export default class ModalComponent extends React.Component<IProps, IState> {
       }
     }
 
-    handleHoverTableFeature = (productId) => {
+    handleHoverTableFeature = (productId: string) => {
       if (!productId) {
         this.setState({
           highlightOnMapFeature: null,
@@ -119,7 +122,7 @@ export default class ModalComponent extends React.Component<IProps, IState> {
       }
     }
 
-    handleZoomFeature = (productId) => {
+    handleZoomFeature = (productId: string) => {
       const feature = this.getFeature(productId);
       if (feature) {
         this.setState({

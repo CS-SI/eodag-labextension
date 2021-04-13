@@ -15,17 +15,27 @@ import Autocomplete from './Autocomplete';
 import { EODAG_SERVER_ADRESS } from './config'
 import StorageService from './StorageService'
 import SearchService from './SearchService'
+import { ChangeEvent } from 'react';
+import { OptionTypeBase } from 'react-select';
 
 export interface IProps {
   handleShowFeature: any,
 }
 
 export interface IState {
+      startDate: Date|undefined,
+      endDate: Date|undefined,
+      productType: OptionTypeBase;
+      productTypes: OptionTypeBase[],
+      isLoadingSearch: boolean,
+      cloud: number,
 }
 
 export default class FormComponent extends React.Component<IProps, IState> {
 
-    state = {
+  constructor(props: IProps){
+    super(props);
+    this.state = {
       startDate: undefined,
       endDate: undefined,
       productType: undefined,
@@ -33,6 +43,7 @@ export default class FormComponent extends React.Component<IProps, IState> {
       isLoadingSearch: false,
       cloud: 100,
     }
+  }
     
     componentDidMount() {
       // Fetch product types
@@ -86,17 +97,17 @@ export default class FormComponent extends React.Component<IProps, IState> {
         })
       })
     }
-    handleChangeEndDate = (date) => {
+    handleChangeEndDate = (date: Date) => {
       this.setState({
         endDate: date
       })
     }
-    handleChangeStartDate = (date) => {
+    handleChangeStartDate = (date: Date) => {
       this.setState({
         startDate: date
       })
     }
-    handleChangeProductType = val => {
+    handleChangeProductType = (val:OptionTypeBase) => {
       let nextValue = undefined
       if (has(val,'value')) {
         nextValue = val.value
@@ -106,14 +117,14 @@ export default class FormComponent extends React.Component<IProps, IState> {
       });
     };
 
-    handleChangeCloud = (event) => {
+    handleChangeCloud = (event: ChangeEvent<HTMLInputElement> ) => {
       this.setState({
         cloud: parseInt(event.target.value, 10)
       })
     }
     saveFormValues = () => {
       const { productType, startDate, endDate, cloud } = this.state
-      StorageService.setFormValues(productType, SearchService.formatDate(startDate), SearchService.formatDate(endDate), cloud);
+      StorageService.setFormValues({productType: productType.value, startDate: startDate, endDate: endDate, cloud});
     }
     render() {
       const { productTypes, productType, startDate, endDate, cloud, isLoadingSearch } = this.state

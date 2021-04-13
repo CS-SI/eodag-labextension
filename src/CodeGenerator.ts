@@ -5,7 +5,17 @@
  * All rights reserved
 */
 
-const formatCode = (start, end, productType, extent, cloud) => {
+import { Extent, SearchDTO } from "./types"
+import { formatDate } from "./utils";
+
+export interface FormatCodeProps extends SearchDTO {
+  extent: Extent,
+}
+
+const formatCode = ({startDate, endDate, productType, extent, cloud}: FormatCodeProps) => {
+
+  const start = startDate ? formatDate(startDate) : undefined;
+  const end = endDate ? formatDate(endDate) : undefined;
 
   let code = `from eodag import EODataAccessGateway
 dag = EODataAccessGateway()

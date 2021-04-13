@@ -5,18 +5,26 @@
 
 import * as React from 'react';
 import classNames from 'classnames';
-import { AutoSizer, SortDirection, Column, Table, InfiniteLoader } from 'react-virtualized';
+import { AutoSizer, SortDirection, Column, Table, InfiniteLoader, TableCellProps, TableHeaderProps, ColumnProps } from 'react-virtualized';
 import { get } from 'lodash'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSearchPlus } from '@fortawesome/free-solid-svg-icons'
 
-const TableSortLabelWithoutMUI = ( {active, direction, children }) => (
+const TableSortLabelWithoutMUI = ( {active, direction, children }: {active: any, direction: any, children: any}) => (
   <div>TableSortLabel</div>
 )
 
+interface MuiColumnProps extends ColumnProps {
+cellContentRenderer?: any,
+buttons?: any,
+selector?: any,
+percent?: boolean,
+handleClick?: (id: number|string) => void,
+}
+
 export interface IMuiVirtualizedTableProps {
   classes: any;
-  columns: any;
+  columns: MuiColumnProps[];
   headerHeight: any;
   onRowClick: any;
   onRowMouseOver: any;
@@ -41,14 +49,14 @@ class MuiVirtualizedTable extends React.PureComponent<IMuiVirtualizedTableProps,
     headerHeight: 56,
     rowHeight: 56,
   };
-  getRowClassName = ({ index }) => {
+  getRowClassName = ({ index }:{index: number}) => {
     if (index < 0) {
       return " headerRow flexContainer";
     }
     return "tableRow flexContainer";
   };
 
-  getRowStyle = ({ index, ...rowData}) => {
+  getRowStyle = ({ index }: {index: number}) => {
     if (index >= 0) {
       const { rowGetter, highlightFeature } = this.props
       const rowData = rowGetter({index})
@@ -61,7 +69,7 @@ class MuiVirtualizedTable extends React.PureComponent<IMuiVirtualizedTableProps,
     return {}
   };
 
-  cellRenderer = ({ cellData, columnIndex = null }) => {
+  cellRenderer = ({ cellData, columnIndex = null }: TableCellProps) => {
     const { columns } = this.props;
     let isPercent = false;
     if (columnIndex != null && columns[columnIndex].percent) {
@@ -72,10 +80,10 @@ class MuiVirtualizedTable extends React.PureComponent<IMuiVirtualizedTableProps,
     );
   };
 
-  buttonRenderer = ({ columnIndex = null, rowData }) => {
+  buttonRenderer = ({ columnIndex = null, rowData }: TableCellProps) => {
     const { columns } = this.props;
     // Retrieve event handler from column def
-    let handleClick = (dataId) => {}
+    let handleClick = (dataId: number|string) => {}
     if (columnIndex != null && columns[columnIndex].handleClick) {
       handleClick = columns[columnIndex].handleClick
     }
@@ -93,15 +101,15 @@ class MuiVirtualizedTable extends React.PureComponent<IMuiVirtualizedTableProps,
     );
   };
 
-  headerRenderer = ({ label, columnIndex, dataKey, sortBy, sortDirection }) => {
-    const {  columns, sort } = this.props;
+  headerRenderer = ({ label, disableSort, dataKey, sortBy, sortDirection }: TableHeaderProps) => {
+    const { sort } = this.props;
     const direction = {
       [SortDirection.ASC]: 'asc',
       [SortDirection.DESC]: 'desc',
     };
 
     const inner =
-      !columns[columnIndex].disableSort && sort != null ? (
+      !disableSort && sort != null ? (
         <TableSortLabelWithoutMUI active={dataKey === sortBy} direction={direction[sortDirection]}>
           {label}
         </TableSortLabelWithoutMUI>
@@ -144,14 +152,14 @@ class MuiVirtualizedTable extends React.PureComponent<IMuiVirtualizedTableProps,
                 rowStyle={this.getRowStyle}
                 rowCount={displayedRowCount}
               >
-                {columns.map(({ cellContentRenderer = null, className, dataKey, buttons, selector, ...other }, index) => {
+                {columns.map(({ cellContentRenderer = null, className, dataKey, buttons, selector, ...other }: MuiColumnProps, index: number) => {
                   let renderer;
                   if (cellContentRenderer != null) {
-                    renderer = cellRendererProps =>
+                    renderer = (cellRendererProps: TableCellProps) =>
                       this.cellRenderer({
                         cellData: cellContentRenderer(cellRendererProps),
                         columnIndex: index,
-                      });
+                      } as TableCellProps);
                   } else if (buttons) {
                     renderer = this.buttonRenderer;
                   } else if (selector) {
@@ -165,10 +173,9 @@ class MuiVirtualizedTable extends React.PureComponent<IMuiVirtualizedTableProps,
                     <Column
                       key={dataKey}
                       headerRenderer={headerProps =>
-                        // @ts-ignore
                         this.headerRenderer({
                           ...headerProps,
-                          columnIndex: index,
+                          disableSort: columns[index].disableSort 
                         })
                       }
                       className={classNames(className)}
@@ -187,11 +194,21 @@ class MuiVirtualizedTable extends React.PureComponent<IMuiVirtualizedTableProps,
   }
 }
 
-function BrowseComponent({ features, handleClickFeature, handleZoomFeature, handleHoverFeature, highlightFeature, isRetrievingMoreFeature, handleRetrieveMoreFeature }) {
+export interface BrowseComponentProps {
+  features: any;
+  handleClickFeature: any;
+  handleZoomFeature: any;
+  handleHoverFeature: any;
+  highlightFeature: any;
+  isRetrievingMoreFeature: () => boolean;
+  handleRetrieveMoreFeature: () => Promise<void>;
+}
+
+function BrowseComponent({ features, handleClickFeature, handleZoomFeature, handleHoverFeature, highlightFeature, isRetrievingMoreFeature, handleRetrieveMoreFeature }: BrowseComponentProps) {
   /**
    * Return an object with its id and all its properties
    */
-  const getRowData = (features) => ({index}) => {
+  const getRowData = (features: { features: string | any[]; }) => ({index}:{index: number}) => {
     if (index >= features.features.length) {
       return {}
     }
@@ -200,16 +217,16 @@ function BrowseComponent({ features, handleClickFeature, handleZoomFeature, hand
       id: features.features[index].id
     }
   }
-  const handleRowClick = ({rowData}) => {
+  const handleRowClick = ({rowData}:{rowData: any}) => {
     handleClickFeature(rowData.id)
   }
-  const handleRowMouseOver = ({rowData}) => {
+  const handleRowMouseOver = ({rowData}:{rowData: any}) => {
     handleHoverFeature(rowData.id)
   }
   const handleRowMouseOut = () => {
     handleHoverFeature(null)
   }
-  const isRowLoaded = ({ index }) => {
+  const isRowLoaded = ({ index }: {index: number}) => {
     return index < features.features.length;
   }
   return (

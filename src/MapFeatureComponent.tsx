@@ -10,6 +10,7 @@ import {
 import { isEmpty, get } from 'lodash'
 import { EODAG_TILE_URL, EODAG_TILE_COPYRIGHT } from './config'
 import StorageService from './StorageService'
+import { FeatureGroup, LeafletMouseEvent } from 'leaflet';
   
 export interface IProps {
     features: any
@@ -61,13 +62,13 @@ export default class MapFeatureComponent extends React.Component<IProps, IState>
         };
     }
 
-    componentDidUpdate(prevProps) {
+    componentDidUpdate(prevProps: IProps) {
         if (this.map) {
             if (prevProps.zoomFeature !== this.props.zoomFeature) {
                 // Handle zoom on a product
                 if (this.props.zoomFeature) {
                     let bounds;
-                    this.map.leafletElement.eachLayer((layer) => {
+                    this.map.leafletElement.eachLayer((layer: FeatureGroup) => {
                         if (get(layer, 'feature.id', null) === prevProps.highlightFeature.id) {
                             bounds = layer.getBounds()
                         }
@@ -81,7 +82,7 @@ export default class MapFeatureComponent extends React.Component<IProps, IState>
                 // Handle set feature (un)highlighted
                 if (this.props.highlightFeature) {
                     // Highlight a feature
-                    this.map.leafletElement.eachLayer((layer) => {
+                    this.map.leafletElement.eachLayer((layer: FeatureGroup) => {
                         if (get(layer, 'feature.id', null) === this.props.highlightFeature.id) {
                             layer.bringToFront()
                             layer.setStyle(MapFeatureComponent.HIGHLIGHT_EXTENT_STYLE)
@@ -89,7 +90,7 @@ export default class MapFeatureComponent extends React.Component<IProps, IState>
                     })
                 } else {
                     // Remove highlight on feature
-                    this.map.leafletElement.eachLayer((layer) => {
+                    this.map.leafletElement.eachLayer((layer: FeatureGroup) => {
                         if (get(layer, 'feature.id', null) === prevProps.highlightFeature.id) {
                             layer.setStyle(MapFeatureComponent.DEFAULT_EXTENT_STYLE)
                         }
@@ -99,7 +100,7 @@ export default class MapFeatureComponent extends React.Component<IProps, IState>
         }
     }
 
-    onMouseOver = (e) => {
+    onMouseOver = (e: LeafletMouseEvent) => {
         const productId = e.layer.feature.id;
         this.props.handleHoverFeature(productId)
         e.layer.setStyle(MapFeatureComponent.HIGHLIGHT_EXTENT_STYLE)
@@ -109,7 +110,7 @@ export default class MapFeatureComponent extends React.Component<IProps, IState>
         })
     }
 
-    onMouseOut = (e) => {
+    onMouseOut = (e:LeafletMouseEvent) => {
         this.props.handleHoverFeature(null)
         e.layer.setStyle(MapFeatureComponent.DEFAULT_EXTENT_STYLE)
         this.setState({
@@ -121,7 +122,7 @@ export default class MapFeatureComponent extends React.Component<IProps, IState>
      * Generate the style for GeoJSON features. This function is used at the initialisation,
      * and on every component redraw
      */
-    getStyle = (feature) => {
+    getStyle = (feature: any) => {
         const { highlightFeature } = this.props
         const { featureHover } = this.state
         if (get(highlightFeature, 'id') === feature.id || featureHover === feature.id) {

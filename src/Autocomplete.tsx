@@ -5,9 +5,10 @@
 
 import * as React from 'react';
 import Select, { components } from 'react-select';
-import * as ReactTooltip from 'react-tooltip';
+import ReactTooltip from 'react-tooltip';
+import { OptionTypeBase, Theme } from 'react-select/src/types';
 
-function NoOptionsMessage(props) {
+function NoOptionsMessage(props: any) {
   return (
     <div
       color="textSecondary"
@@ -21,7 +22,7 @@ function NoOptionsMessage(props) {
   );
 }
 
-function Option(props) {
+function Option(props: any) {
   // Tooltip on the right
   return (
     <div data-for={props.label} data-tip={props.data.description}>
@@ -33,7 +34,7 @@ function Option(props) {
   );
 }
 
-function SingleValue(props) {
+function SingleValue(props: any) {
   return (
     <div style={{
       fontSize: 14,
@@ -43,7 +44,7 @@ function SingleValue(props) {
   );
 }
 
-function ValueContainer(props) {
+function ValueContainer(props: any) {
   return <div style={{
     display: 'flex',
     flexWrap: 'wrap',
@@ -74,14 +75,7 @@ class IntegrationReactSelect extends React.Component<IProps, IState> {
 
   render() {
     const { suggestions, value, handleChange } = this.props;
-    let currentValue = '';
-    if (value) {
-      // @ts-ignore
-      currentValue = {
-        label: value,
-        value: value
-      }
-    }
+    let currentValue: OptionTypeBase = value ? {label: value, value: value} : {label: undefined, value: undefined};
     return (
       <div className="jp-EodagWidget-field">
         <label className="jp-EodagWidget-input-name">
@@ -98,16 +92,16 @@ class IntegrationReactSelect extends React.Component<IProps, IState> {
             value={currentValue}
             onChange={handleChange}
             styles={{
-              option: base => ({
+              option: (base: React.CSSProperties) => ({
                 ...base,
                 height: `100%`
               }),
-              indicatorSeparator: base => ({
+              indicatorSeparator: (base: React.CSSProperties) => ({
                 ...base,
                 margin: '0px'
               })
             }}
-            theme={theme => ({
+            theme={( theme: Theme ) => ({
               ...theme,
               borderRadius: 0
             })}

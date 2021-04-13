@@ -4,6 +4,7 @@
 */
 
 import { isNull } from 'lodash'
+import { Extent, SearchDTO } from './types';
 
 class StorageService {
   /**
@@ -22,7 +23,7 @@ class StorageService {
   static ZOOM = 'eodag_zoom';
   
   
-  getExtent () {
+  getExtent () : Extent {
     const extent = sessionStorage.getItem(StorageService.EXTENT);
     if (extent) {
       return JSON.parse(extent);
@@ -38,7 +39,7 @@ class StorageService {
   /**
    * Save the extent in the session storage (object removed when browser closed)
    */
-  setExtent(extent) {
+  setExtent(extent: Extent) {
     sessionStorage.setItem(StorageService.EXTENT, JSON.stringify(extent));
   }
 
@@ -47,7 +48,7 @@ class StorageService {
     return !isNull(extent.lonMin) && !isNull(extent.latMin) && !isNull(extent.lonMax) && !isNull(extent.latMax);
   }
 
-  setFormValues(productType, startDate, endDate, cloud) {
+  setFormValues({productType, startDate, endDate, cloud}: SearchDTO) {
     sessionStorage.setItem(StorageService.FORM_VALUES, JSON.stringify({
       productType,
       startDate,
@@ -59,7 +60,7 @@ class StorageService {
   getFormValues() {
     const formValues = sessionStorage.getItem(StorageService.FORM_VALUES);
     if (formValues) {
-      return JSON.parse(formValues);
+      return <SearchDTO>JSON.parse(formValues);
     }
     return {
       productType: null,
@@ -69,8 +70,8 @@ class StorageService {
     };
   }
 
-  setZoom(zoom) {
-    sessionStorage.setItem(StorageService.ZOOM, zoom);
+  setZoom(zoom: number) {
+    sessionStorage.setItem(StorageService.ZOOM, zoom.toString(10));
   }
 
   getZoom() {

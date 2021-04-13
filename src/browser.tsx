@@ -33,7 +33,7 @@ export class EodagBrowser extends React.Component<IProps, IState> {
         searching: false,
     }
 
-    handleShowFeature = (features) => {
+    handleShowFeature = (features: any) => {
         this.setState({
             features,
             openDialog: true,
@@ -98,7 +98,7 @@ export class EodagBrowser extends React.Component<IProps, IState> {
         }
         const { startDate, endDate, productType, cloud } = StorageService.getFormValues();
         const extent = StorageService.getExtent();
-        const code = formatCode(startDate, endDate, productType, extent, cloud);
+        const code = formatCode({ startDate, endDate, productType, extent, cloud });
         const cell = this.getCodeCell(code);
         const activeCellIndex = notebook.activeCellIndex;
         model.cells.insert(activeCellIndex + 1, cell);
