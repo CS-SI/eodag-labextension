@@ -18,6 +18,7 @@ from jinja2.loaders import ChoiceLoader, FileSystemLoader
 from notebook.base.handlers import IPythonHandler, APIHandler
 from tornado import web
 
+
 class RootHandler(IPythonHandler):
     """Home page request handler return HTML page"""
 
