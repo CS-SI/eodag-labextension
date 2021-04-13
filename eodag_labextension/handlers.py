@@ -14,6 +14,7 @@ from eodag.rest.utils import (
     search_products,
 )
 from eodag.utils.exceptions import ValidationError, UnsupportedProductType
+from jinja2.loaders import ChoiceLoader, FileSystemLoader
 from notebook.base.handlers import IPythonHandler, APIHandler
 from tornado import web
 
@@ -29,6 +30,10 @@ class RootHandler(IPythonHandler):
         jinja_env = self.settings["jinja2_env"]
         if hasattr(jinja_env.loader, "searchpath"):
             jinja_env.loader.searchpath.append(get_templates_path())
+        else:
+            if isinstance(jinja_env.loader, ChoiceLoader):
+                fs_loader = FileSystemLoader(get_templates_path())
+                jinja_env.loader.loaders.append(fs_loader)
 
         r = self.request
         base_url = f"{r.protocol}://{r.host}{r.path}"
