@@ -58,9 +58,17 @@ class StorageService {
   }
 
   getFormValues() {
+    const  reviver = (key, value) => {
+      const dateKeys = ["startDate", "endDate"];
+      if (dateKeys.includes(key)) {
+        return new Date(value);
+      }
+      return value;
+    }
+
     const formValues = sessionStorage.getItem(StorageService.FORM_VALUES);
     if (formValues) {
-      return <SearchDTO>JSON.parse(formValues);
+      return <SearchDTO>JSON.parse(formValues, reviver);
     }
     return {
       productType: null,

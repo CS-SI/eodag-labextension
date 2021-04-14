@@ -2,7 +2,7 @@
   "compilerOptions": {
     "declaration": true,
     "esModuleInterop": true,
-    "lib": ["ES6", "DOM"],
+    "lib": ["es2017", "DOM"],
     "module": "commonjs",
     "moduleResolution": "node",
     "noEmitOnError": false,
@@ -13,7 +13,7 @@
     "outDir": "lib",
     "rootDir": "src",
     "strict": true,
-    "target": "ES6",
+    "target": "es2017",
     "types": [],
     "jsx": "react"
   },
