@@ -7,7 +7,7 @@ import * as React from 'react';
 import { showErrorMessage } from '@jupyterlab/apputils';
 import { URLExt } from '@jupyterlab/coreutils';
 import { ServerConnection } from '@jupyterlab/services';
-import { map, has } from 'lodash'
+import { map } from 'lodash'
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import 'isomorphic-fetch';
@@ -23,9 +23,9 @@ export interface IProps {
 }
 
 export interface IState {
-      startDate: Date|undefined,
-      endDate: Date|undefined,
-      productType: OptionTypeBase;
+      startDate: Date,
+      endDate: Date,
+      productType: string;
       productTypes: OptionTypeBase[],
       isLoadingSearch: boolean,
       cloud: number,
@@ -108,12 +108,8 @@ export default class FormComponent extends React.Component<IProps, IState> {
       })
     }
     handleChangeProductType = (val:OptionTypeBase) => {
-      let nextValue = undefined
-      if (has(val,'value')) {
-        nextValue = val.value
-      }
       this.setState({
-        productType: nextValue,
+        productType: val.value,
       });
     };
 
@@ -124,7 +120,7 @@ export default class FormComponent extends React.Component<IProps, IState> {
     }
     saveFormValues = () => {
       const { productType, startDate, endDate, cloud } = this.state
-      StorageService.setFormValues({productType: productType.value, startDate: startDate, endDate: endDate, cloud});
+      StorageService.setFormValues({productType: productType, startDate: startDate, endDate: endDate, cloud});
     }
     render() {
       const { productTypes, productType, startDate, endDate, cloud, isLoadingSearch } = this.state
