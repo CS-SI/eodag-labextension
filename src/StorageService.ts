@@ -58,7 +58,7 @@ class StorageService {
   }
 
   getFormValues() {
-    const  reviver = (key, value) => {
+    const  reviver = (key: string, value: string | number | Date) => {
       const dateKeys = ["startDate", "endDate"];
       if (dateKeys.includes(key)) {
         return new Date(value);
