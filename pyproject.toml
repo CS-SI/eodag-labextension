@@ -12,4 +12,4 @@ force_grid_wrap = 0
 use_parentheses = true
 ensure_newline_before_comments = true
 line_length = 120
-known_third_party = ["eodag", "notebook", "setuptools", "tornado"]
+known_third_party = ["eodag", "jupyter_packaging", "jupyter_server", "notebook", "setuptools", "tornado"]

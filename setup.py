@@ -1,54 +1,86 @@
-# -*- coding: utf-8 -*-
-# Copyright 2015-2017 CS Systemes d'Information (CS SI)
-# All rights reserved
-"""Setup file"""
+"""eodag-labextension setup."""
 
-import os
-from codecs import open
-from os import path
+import json
+from pathlib import Path
 
-from setuptools import find_packages
-from setuptools import setup
+import setuptools
+from jupyter_packaging import combine_commands, create_cmdclass, ensure_targets, install_npm, skip_if_exists
 
-HERE = path.abspath(path.dirname(__file__))
+HERE = Path(__file__).parent.resolve()
 
-metadata = {}
-with open(os.path.join(HERE, "eodag_labextension", "__meta__.py"), "r") as f:
-    exec(f.read(), metadata)
+# The name of the project
+name = "eodag-labextension"
 
-# Get the long description from the README file
-with open(path.join(HERE, "README.md"), encoding="utf-8") as f:
-    description_from_readme = f.read()
+lab_path = HERE / name / "labextension"
 
-setup(
-    name="eodag-labextension",
-    version=metadata["__version__"],
-    description="JupyterLab eodag service extension",
-    long_description=description_from_readme,
-    url="http://www.c-s.fr",
-    classifiers=[
-        "Topic :: Utilities",
-        "Operating System :: OS Independent",
-        "Programming Language :: Python :: 3.6",
+# Representative files that should exist after a successful build
+jstargets = [str(lab_path / "package.json")]
+
+package_data_spec = {name: ["*"]}
+
+labext_name = "eodag-labextension"
+
+data_files_spec = [
+    ("share/jupyter/labextensions/%s" % labext_name, str(lab_path), "**"),
+    ("share/jupyter/labextensions/%s" % labext_name, str(HERE), "install.json"),
+    (
+        "etc/jupyter/jupyter_server_config.d",
+        "jupyter-config",
+        "eodag-labextension.json",
+    ),
+]
+
+cmdclass = create_cmdclass("jsdeps", package_data_spec=package_data_spec, data_files_spec=data_files_spec)
+
+js_command = combine_commands(install_npm(HERE, build_cmd="build:prod", npm=["jlpm"]), ensure_targets(jstargets))
+
+is_repo = (HERE / ".git").exists()
+if is_repo:
+    cmdclass["jsdeps"] = js_command
+else:
+    cmdclass["jsdeps"] = skip_if_exists(jstargets, js_command)
+
+long_description = (HERE / "README.md").read_text()
+
+# Get the package info from package.json
+pkg_json = json.loads((HERE / "package.json").read_bytes())
+
+setup_args = dict(
+    name=name,
+    version=pkg_json["version"],
+    url=pkg_json["homepage"],
+    author=pkg_json["author"]["name"],
+    author_email=pkg_json["author"]["email"],
+    description=pkg_json["description"],
+    license=pkg_json["license"],
+    long_description=long_description,
+    long_description_content_type="text/markdown",
+    cmdclass=cmdclass,
+    packages=setuptools.find_packages(),
+    install_requires=[
+        "jupyterlab~=3.0",
+        "tornado>=6.0.3,<7.0.0",
+        "notebook>=6.0.3,<7.0.0",
+        "eodag~=2.0",
     ],
-    python_requires=">=3.6",
-    include_package_data=True,
-    data_files=[
-        (
-            "etc/jupyter/jupyter_notebook_config.d",
-            ["jupyter-config/jupyter_notebook_config.d/eodag_labextension.json"],
-        )
-    ],
-    packages=find_packages(),
-    install_requires=["tornado>=6.0.3,<7.0.0", "notebook>=6.0.3,<7.0.0", "eodag~=2.0"],
-    extras_require={
-        "dev": [
-            "jupyterhub>=1.0.0,<2.0.0",
-            "jupyterlab>=2.0.0,<3.0.0",
-            "jupyter_contrib_nbextensions==0.5.1",
-            "black>=19.10b,<20.0",
-            "pre-commit==2.1.1",
-        ]
-    },
+    extras_require={"dev": ["black>=21", "pre-commit==2.12.1"]},
     zip_safe=False,
+    include_package_data=True,
+    python_requires=">=3.6",
+    platforms="Linux, Mac OS X, Windows",
+    keywords=["Jupyter", "JupyterLab", "JupyterLab3"],
+    classifiers=[
+        "License :: OSI Approved :: BSD License",
+        "Programming Language :: Python",
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
+        "Framework :: Jupyter",
+    ],
 )
+
+
+if __name__ == "__main__":
+    setuptools.setup(**setup_args)
