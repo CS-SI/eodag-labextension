@@ -1,9 +1,9 @@
 /**
  * Copyright 2020 CS GROUP - France, http://www.c-s.fr
  * All rights reserved
-*/
+ */
 
-import { isNull } from 'lodash'
+import { isNull } from 'lodash';
 import { Extent, SearchDTO } from './types';
 
 class StorageService {
@@ -11,19 +11,18 @@ class StorageService {
    * Key used to store extent in storage
    */
   static EXTENT = 'eodag_extent';
-  
+
   /**
    * Key used to store form values in storage
    */
   static FORM_VALUES = 'eodag_form_values';
-  
+
   /**
    * Key used to store the zoom in storage
    */
   static ZOOM = 'eodag_zoom';
-  
-  
-  getExtent () : Extent {
+
+  getExtent(): Extent {
     const extent = sessionStorage.getItem(StorageService.EXTENT);
     if (extent) {
       return JSON.parse(extent);
@@ -43,28 +42,36 @@ class StorageService {
     sessionStorage.setItem(StorageService.EXTENT, JSON.stringify(extent));
   }
 
-  isExtentDefined () {
+  isExtentDefined() {
     const extent = this.getExtent();
-    return !isNull(extent.lonMin) && !isNull(extent.latMin) && !isNull(extent.lonMax) && !isNull(extent.latMax);
+    return (
+      !isNull(extent.lonMin) &&
+      !isNull(extent.latMin) &&
+      !isNull(extent.lonMax) &&
+      !isNull(extent.latMax)
+    );
   }
 
-  setFormValues({productType, startDate, endDate, cloud}: SearchDTO) {
-    sessionStorage.setItem(StorageService.FORM_VALUES, JSON.stringify({
-      productType,
-      startDate,
-      endDate,
-      cloud
-    }));
+  setFormValues({ productType, startDate, endDate, cloud }: SearchDTO) {
+    sessionStorage.setItem(
+      StorageService.FORM_VALUES,
+      JSON.stringify({
+        productType,
+        startDate,
+        endDate,
+        cloud
+      })
+    );
   }
 
   getFormValues() {
-    const  reviver = (key: string, value: string | number | Date) => {
-      const dateKeys = ["startDate", "endDate"];
+    const reviver = (key: string, value: string | number | Date) => {
+      const dateKeys = ['startDate', 'endDate'];
       if (dateKeys.includes(key)) {
         return new Date(value);
       }
       return value;
-    }
+    };
 
     const formValues = sessionStorage.getItem(StorageService.FORM_VALUES);
     if (formValues) {
@@ -74,7 +81,7 @@ class StorageService {
       productType: null,
       startDate: null,
       endDate: null,
-      cloud: null,
+      cloud: null
     };
   }
 
@@ -91,4 +98,4 @@ class StorageService {
   }
 }
 
-export default new StorageService()
+export default new StorageService();

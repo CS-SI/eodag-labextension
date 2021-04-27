@@ -1,7 +1,7 @@
 /**
  * Copyright 2020 CS GROUP - France, http://www.c-s.fr
  * All rights reserved
-*/
+ */
 
 import * as React from 'react';
 
@@ -13,19 +13,22 @@ export interface IState {
   smallQuicklook: any;
 }
 
-export default class DescriptionProductComponent extends React.Component<IProps, IState> {
+export default class DescriptionProductComponent extends React.Component<
+  IProps,
+  IState
+> {
   state = {
     smallQuicklook: true
-  }
+  };
   toggleQuicklookSize = () => {
-    const { smallQuicklook } = this.state
+    const { smallQuicklook } = this.state;
     this.setState({
-       smallQuicklook: !smallQuicklook,
-    })
-  }
+      smallQuicklook: !smallQuicklook
+    });
+  };
   render() {
-    const { feature } = this.props
-    const { smallQuicklook } = this.state
+    const { feature } = this.props;
+    const { smallQuicklook } = this.state;
     if (!feature) {
       return null;
     }
@@ -36,7 +39,7 @@ export default class DescriptionProductComponent extends React.Component<IProps,
           <img
             src={feature.properties.quicklook}
             alt="Quicklook not available"
-            className={smallQuicklook ? "jp-EodagWidget-small-quicklook" : ""}
+            className={smallQuicklook ? 'jp-EodagWidget-small-quicklook' : ''}
             onClick={this.toggleQuicklookSize}
           />
         </div>

@@ -11,10 +11,10 @@ Activer l'onglet du plugin grâce à l'icone correspondante.
 
 Le formulaire permet la saisie de l'emprise de recherche et des critères suivants :
 
-* Product type : le type de produit recherché. Pour chaque produit dans la liste déroulante, un tooltip descriptif s'affiche au survol.
-* Start date : la date minimale de la fenêtre de recherche temporelle des produits.
-* End date : la date maximale de la fenêtre de recherche temporelle des produits.
-* Max cloud cover : le taux de couverture nuageuse maximum accepté dans les résultats de recherche en pourcentage.
+- Product type : le type de produit recherché. Pour chaque produit dans la liste déroulante, un tooltip descriptif s'affiche au survol.
+- Start date : la date minimale de la fenêtre de recherche temporelle des produits.
+- End date : la date maximale de la fenêtre de recherche temporelle des produits.
+- Max cloud cover : le taux de couverture nuageuse maximum accepté dans les résultats de recherche en pourcentage.
 
 L'emprise et le product type sont des critères obligatoires. Les autres sont optionnels.
 
@@ -26,9 +26,9 @@ Une fois les critères de recherche renseignés, cliquer sur le bouton "search",
 
 La popup d'affichage des résultats de recherche est composée de 3 parties :
 
-* la carte affichant les emprises des produits,
-* le tableau listant les produits,
-* l'affichage des métadonnées des produits.
+- la carte affichant les emprises des produits,
+- le tableau listant les produits,
+- l'affichage des métadonnées des produits.
 
 Le tableau des résultats permet d'accéder aux métadonnées des produits par un clic sur la ligne du produit souhaité. Le bouton loupe permet de zoomer sur l'emprise du produit dans la vue cartographique. En descendant dans la liste des résultats, la recherche est automatiquement relancée pour rapatrier les résultats suivants.
 

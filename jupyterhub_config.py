@@ -1,4 +1,4 @@
-# Configuration file for jupyterhub.
+"""Configuration file for jupyterhub."""
 
 # ------------------------------------------------------------------------------
 # Application(SingletonConfigurable) configuration

@@ -7,15 +7,10 @@
 import json
 
 from eodag.api.core import DEFAULT_ITEMS_PER_PAGE
-from eodag.rest.utils import (
-    get_home_page_content,
-    get_templates_path,
-    get_product_types,
-    search_products,
-)
-from eodag.utils.exceptions import ValidationError, UnsupportedProductType
+from eodag.rest.utils import get_home_page_content, get_product_types, get_templates_path, search_products
+from eodag.utils.exceptions import UnsupportedProductType, ValidationError
 from jinja2.loaders import ChoiceLoader, FileSystemLoader
-from notebook.base.handlers import IPythonHandler, APIHandler
+from notebook.base.handlers import APIHandler, IPythonHandler
 from tornado import web
 
 

@@ -1,308 +1,311 @@
 .jp-EodagWidget {
-    display: flex;
-    flex-direction: column;
-    color: var(--jp-ui-font-color1);
-    background:var(--jp-layout-color1);
-    font-size: var(--jp-ui-font-size1);
-    overflow: auto;
-    padding: 5px;
+  display: flex;
+  flex-direction: column;
+  color: var(--jp-ui-font-color1);
+  background: var(--jp-layout-color1);
+  font-size: var(--jp-ui-font-size1);
+  overflow: auto;
+  padding: 5px;
 }
 
 .eodag-Logo {
-    background-image: url(icon.svg);
-    background-repeat: no-repeat;
-    background-size: 85%;
-    background-position: center;
-    width: 26px;
+  background-image: url(icon.svg);
+  background-repeat: no-repeat;
+  background-size: 85%;
+  background-position: center;
+  width: 26px;
 }
 
 .jp-EodagWidget-header {
-    border-bottom: var(--jp-border-width) solid var(--jp-border-color2);
-    flex: 0 0 auto;
-    font-size: var(--jp-ui-font-size0);
-    font-weight: 600;
-    letter-spacing: 1px;
-    margin: 0px;
-    padding: 8px 12px;
-    text-transform: uppercase;
+  border-bottom: var(--jp-border-width) solid var(--jp-border-color2);
+  flex: 0 0 auto;
+  font-size: var(--jp-ui-font-size0);
+  font-weight: 600;
+  letter-spacing: 1px;
+  margin: 0px;
+  padding: 8px 12px;
+  text-transform: uppercase;
 }
 
 .jp-EodagWidget .jp-EodagWidget-form {
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 }
-.jp-EodagWidget .jp-EodagWidget-form .jp-EodagWidget-buttons{
-    display: flex;
-    justify-content: center;
-    margin-top: 10px;
+.jp-EodagWidget .jp-EodagWidget-form .jp-EodagWidget-buttons {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
 }
 .jp-EodagWidget .jp-EodagWidget-form .jp-EodagWidget-buttons button {
-    margin: 0 15px;
-    font-size: 16px;
-    padding: 5px;
-    background: var(--jp-layout-color1);
-    border: none;
-    box-sizing: border-box;
-    outline: none;
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    padding: 7px;
-    margin: 0px;
-    border-radius: var(--jp-border-radius);
-    display: flex;
-    align-items: center;
+  margin: 0 15px;
+  font-size: 16px;
+  padding: 5px;
+  background: var(--jp-layout-color1);
+  border: none;
+  box-sizing: border-box;
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  padding: 7px;
+  margin: 0px;
+  border-radius: var(--jp-border-radius);
+  display: flex;
+  align-items: center;
 }
-.jp-EodagWidget .jp-EodagWidget-form .jp-EodagWidget-buttons button:hover{
-    background: var(--jp-layout-color2);
+.jp-EodagWidget .jp-EodagWidget-form .jp-EodagWidget-buttons button:hover {
+  background: var(--jp-layout-color2);
 }
 .jp-EodagWidget .jp-EodagWidget-form .react-datepicker-popper {
-    z-index: 1000;
+  z-index: 1000;
 }
 .jp-EodagWidget .jp-EodagWidget-form .jp-EodagWidget-slider {
-    display: flex;
-    align-items: center;
-    height: 30px;
-    overflow: hidden;
+  display: flex;
+  align-items: center;
+  height: 30px;
+  overflow: hidden;
 }
 
 .jp-EodagWidget .jp-EodagWidget-form .jp-EodagWidget-field {
-    margin-top: 10px;
-    padding: 0 10px;
+  margin-top: 10px;
+  padding: 0 10px;
 }
 .jp-EodagWidget .jp-EodagWidget-form .jp-EodagWidget-input-name {
-    transform: translate(0, 1.5px) scale(0.75);
-    transform-origin: top left;
+  transform: translate(0, 1.5px) scale(0.75);
+  transform-origin: top left;
 }
 .jp-EodagWidget .jp-EodagWidget-form .jp-EodagWidget-input-wrapper {
-    padding: 0px 8px;
-    border: 1px solid var(--jp-border-color0);
-    background:var(--jp-layout-color0);
-    height: 30px;
-    position: relative;
+  padding: 0px 8px;
+  border: 1px solid var(--jp-border-color0);
+  background: var(--jp-layout-color0);
+  height: 30px;
+  position: relative;
 }
 .jp-EodagWidget .jp-EodagWidget-form .jp-EodagWidget-input-wrapper:after {
-    content: ' ';
-    position: absolute;
-    right: 5px;
-    top: 5px;
+  content: ' ';
+  position: absolute;
+  right: 5px;
+  top: 5px;
 }
-.jp-EodagWidget .jp-EodagWidget-form .jp-EodagWidget-input-wrapper:focus-within {
-    border: 1px solid #2196f3;
+.jp-EodagWidget
+  .jp-EodagWidget-form
+  .jp-EodagWidget-input-wrapper:focus-within {
+  border: 1px solid #2196f3;
 }
 .jp-EodagWidget .jp-EodagWidget-form .jp-EodagWidget-input {
-    background: transparent;
-    width: calc(100% - 18px);
-    float: left;
-    border: none;
-    outline: none;
-    font-size: var(--jp-ui-font-size1);
-    color: var(--jp-ui-font-color0);
-    line-height: var(--jp-private-commandpalette-search-height);
+  background: transparent;
+  width: calc(100% - 18px);
+  float: left;
+  border: none;
+  outline: none;
+  font-size: var(--jp-ui-font-size1);
+  color: var(--jp-ui-font-color0);
+  line-height: var(--jp-private-commandpalette-search-height);
 }
-.jp-EodagWidget .jp-EodagWidget-form .react-datepicker-wrapper,.jp-EodagWidget .jp-EodagWidget-form .react-datepicker__input-container {
-    width: 100%;
+.jp-EodagWidget .jp-EodagWidget-form .react-datepicker-wrapper,
+.jp-EodagWidget .jp-EodagWidget-form .react-datepicker__input-container {
+  width: 100%;
 }
-.jp-EodagWidget input[type=range] {
-    width: 100%;
-    -webkit-appearance: none;
-    outline: none;
+.jp-EodagWidget input[type='range'] {
+  width: 100%;
+  -webkit-appearance: none;
+  outline: none;
 }
-.jp-EodagWidget input[type=range]::-webkit-slider-runnable-track{
-    width: 100%;
-    height: 7px;
-    cursor: pointer;
-    background: var(--jp-layout-color0);
-    border-radius: 0px;
-    border: 1px solid var(--jp-border-color0);
+.jp-EodagWidget input[type='range']::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 7px;
+  cursor: pointer;
+  background: var(--jp-layout-color0);
+  border-radius: 0px;
+  border: 1px solid var(--jp-border-color0);
 }
-.jp-EodagWidget input[type=range]::-webkit-slider-thumb{
-    -webkit-appearance: none;
-    appearance: none;
-    padding: 0;
-    height: 20px;
-    width: 20px;
-    border-radius: 50%;
-    background-color: var(--jp-brand-color1);
-    cursor: pointer;
-    outline: none;
-    color: var(--jp-brand-color1);
-    margin-top: -8px;
+.jp-EodagWidget input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  padding: 0;
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  background-color: var(--jp-brand-color1);
+  cursor: pointer;
+  outline: none;
+  color: var(--jp-brand-color1);
+  margin-top: -8px;
 }
-.jp-EodagWidget input[type=range]::-moz-range-track {
-    width: 100%;
-    height: 7px;
-    cursor: pointer;
-    background: var(--jp-layout-color0);
-    border-radius: 0px;
-    border: 1px solid var(--jp-border-color0);
+.jp-EodagWidget input[type='range']::-moz-range-track {
+  width: 100%;
+  height: 7px;
+  cursor: pointer;
+  background: var(--jp-layout-color0);
+  border-radius: 0px;
+  border: 1px solid var(--jp-border-color0);
 }
-.jp-EodagWidget input[type=range]::-moz-range-thumb {
-    appearance: none;
-    padding: 0;
-    height: 20px;
-    width: 20px;
-    border-radius: 50%;
-    background-color: var(--jp-brand-color1);
-    cursor: pointer;
-    outline: none;
-    color: var(--jp-brand-color1);
-    margin-top: -8px;
+.jp-EodagWidget input[type='range']::-moz-range-thumb {
+  appearance: none;
+  padding: 0;
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  background-color: var(--jp-brand-color1);
+  cursor: pointer;
+  outline: none;
+  color: var(--jp-brand-color1);
+  margin-top: -8px;
 }
-.jp-EodagWidget input[type=range]::-moz-range-progress {
-    height: 0;
-    background: transparent;
+.jp-EodagWidget input[type='range']::-moz-range-progress {
+  height: 0;
+  background: transparent;
 }
-.jp-EodagWidget input[type=range]::-ms-track {
-    width: 100%;
-    height: 7px;
-    cursor: pointer;
-    background: var(--jp-layout-color0);
-    border-radius: 0px;
-    border: 1px solid var(--jp-border-color0);
-    color: transparent;
+.jp-EodagWidget input[type='range']::-ms-track {
+  width: 100%;
+  height: 7px;
+  cursor: pointer;
+  background: var(--jp-layout-color0);
+  border-radius: 0px;
+  border: 1px solid var(--jp-border-color0);
+  color: transparent;
 }
-.jp-EodagWidget input[type=range]::-ms-thumb {
-    appearance: none;
-    padding: 0;
-    height: 20px;
-    width: 20px;
-    border-radius: 50%;
-    background-color: var(--jp-brand-color1);
-    cursor: pointer;
-    outline: none;
-    color: var(--jp-brand-color1);
-    margin-top: -8px;
+.jp-EodagWidget input[type='range']::-ms-thumb {
+  appearance: none;
+  padding: 0;
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  background-color: var(--jp-brand-color1);
+  cursor: pointer;
+  outline: none;
+  color: var(--jp-brand-color1);
+  margin-top: -8px;
 }
-.jp-EodagWidget input[type=range]::-ms-tooltip {
-    display: none;
+.jp-EodagWidget input[type='range']::-ms-tooltip {
+  display: none;
 }
-.jp-EodagWidget input[type=range]::-ms-fill-lower {
-    background: transparent;
+.jp-EodagWidget input[type='range']::-ms-fill-lower {
+  background: transparent;
 }
-.jp-EodagWidget input[type=range]::-ms-fill-upper {
-    background: transparent;
+.jp-EodagWidget input[type='range']::-ms-fill-upper {
+  background: transparent;
 }
 
 .jp-EodagWidget-modal .jp-EodagWidget-quicklook-wrapper {
-    display: flex;
-    justify-content: center;
+  display: flex;
+  justify-content: center;
 }
 .jp-EodagWidget-modal .jp-EodagWidget-small-quicklook {
-    max-height: 200px;
-    max-width: 200px;
-    cursor: zoom-in;
+  max-height: 200px;
+  max-width: 200px;
+  cursor: zoom-in;
 }
 
 .jp-EodagWidget-modal .jp-EodagWidget-modal-container {
-    display: flex;
-    height: calc(100vh - 48px);
+  display: flex;
+  height: calc(100vh - 48px);
 }
 
 .jp-EodagWidget-modal .jp-EodagWidget-product-wrapper {
-    display: flex;
-    flex-direction: column;
-    width: 50%;
+  display: flex;
+  flex-direction: column;
+  width: 50%;
 }
 
 .jp-EodagWidget-modal .jp-EodagWidget-browse-wrapper {
-    height: calc(100% - 130px);
+  height: calc(100% - 130px);
 }
 .jp-EodagWidget-modal .jp-EodagWidget-loading-wrapper {
-    margin-right: 10px;
+  margin-right: 10px;
 }
 .jp-EodagWidget-modal .jp-EodagWidget-browse-title {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    margin: 5px 0;
-    font-style: italic;
-    font-size: 0.9em;
-    height: 18px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin: 5px 0;
+  font-style: italic;
+  font-size: 0.9em;
+  height: 18px;
 }
 
 .jp-EodagWidget-modal .jp-EodagWidget-desc-wrapper {
-    height: 100%;
-    width: 50%;
-    overflow: auto;
+  height: 100%;
+  width: 50%;
+  overflow: auto;
 }
 
 .jp-EodagWidget-modal .jp-EodagWidget-right-buttons-wrapper {
-    display: flex;
-    justify-content: right;
+  display: flex;
+  justify-content: right;
 }
 
 .jp-EodagWidget-modal .jp-EodagWidget-title {
-    flex-grow: 1;
+  flex-grow: 1;
 }
 
 .jp-EodagWidget-appbar {
-    flex: 1 100%;
-    background-color: var(--jp-brand-color1);
-    padding: 12px 10px;
-    font-size: 20px;
-    color: white;
+  flex: 1 100%;
+  background-color: var(--jp-brand-color1);
+  padding: 12px 10px;
+  font-size: 20px;
+  color: white;
 }
 
 .jp-Eodag-tooltip {
-    max-width: 250px;
-    padding-right: 15px;
-    word-wrap: break-word;
+  max-width: 250px;
+  padding-right: 15px;
+  word-wrap: break-word;
 }
 
 #jp-left-stack {
-    z-index: 2;
+  z-index: 2;
 }
 .jp-EodagWidget::-webkit-scrollbar {
-    z-index: 0;
+  z-index: 0;
 }
 
 /* Design Table */
 
-.jp-EodagWidget-browse-wrapper .noClick{
-    cursor: initial;
+.jp-EodagWidget-browse-wrapper .noClick {
+  cursor: initial;
 }
-.jp-EodagWidget-browse-wrapper .tableCell{
-    flex: 1;
+.jp-EodagWidget-browse-wrapper .tableCell {
+  flex: 1;
 }
-.jp-EodagWidget-browse-wrapper .headerRow{
-    height: 40px;
-    border-bottom: 2px solid #2196f3;
-    color: #818181;
+.jp-EodagWidget-browse-wrapper .headerRow {
+  height: 40px;
+  border-bottom: 2px solid #2196f3;
+  color: #818181;
 }
-.jp-EodagWidget-browse-wrapper .tableRow{
-    cursor: pointer;
-    border-bottom: 1px solid rgba(180, 180, 180, 0.719);
+.jp-EodagWidget-browse-wrapper .tableRow {
+  cursor: pointer;
+  border-bottom: 1px solid rgba(180, 180, 180, 0.719);
 }
-.jp-EodagWidget-browse-wrapper .tableRow:hover{
-    background-color: rgba(180, 180, 180, 0.747);
+.jp-EodagWidget-browse-wrapper .tableRow:hover {
+  background-color: rgba(180, 180, 180, 0.747);
 }
-.jp-EodagWidget-browse-wrapper .flexContainer{
-    text-align: center;
-    font-size: 14px;
-    display: flex;
-    align-items: center;
-    box-sizing: border-box;
-    justify-content: center;
+.jp-EodagWidget-browse-wrapper .flexContainer {
+  text-align: center;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  justify-content: center;
 }
-.jp-EodagWidget-appbar button, .jp-EodagWidget-browse-wrapper button {
-    background: none;
-    border: none;
-    outline: none;
-    font-size: 18px;
-    cursor: pointer;
+.jp-EodagWidget-appbar button,
+.jp-EodagWidget-browse-wrapper button {
+  background: none;
+  border: none;
+  outline: none;
+  font-size: 18px;
+  cursor: pointer;
 }
 .jp-EodagWidget-appbar button {
-    color: white;
+  color: white;
 }
 .jp-EodagWidget-apply {
-    float: right;
-    padding: 3px 6px;
+  float: right;
+  padding: 3px 6px;
 }
 .jp-EodagWidget-apply:hover {
-    background-color: rgba(255, 255, 255, 0.5);
+  background-color: rgba(255, 255, 255, 0.5);
 }
 .jp-EodagWidget-product h4 {
-    padding-left: 20px;
-
+  padding-left: 20px;
 }

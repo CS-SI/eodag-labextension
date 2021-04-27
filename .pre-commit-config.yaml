@@ -1,4 +1,3 @@
-exclude: '^.*\.ts|.*\.tsx$'
 fail_fast: false
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks.git
@@ -27,9 +26,9 @@ repos:
         name: isort (pyi)
         types: [pyi]
 
-  -   repo: https://github.com/pycqa/pydocstyle
-      rev: 6.0.0
-      hooks:
+  - repo: https://github.com/pycqa/pydocstyle
+    rev: 6.0.0
+    hooks:
       - id: pydocstyle
         language_version: python3.6
 
@@ -43,3 +42,16 @@ repos:
     rev: 3.9.1
     hooks:
       - id: flake8
+
+  - repo: https://github.com/pre-commit/mirrors-eslint
+    rev: v7.25.0
+    hooks:
+      - id: eslint
+        additional_dependencies:
+          - eslint-config-prettier@^6.15.0
+          - eslint-plugin-prettier@^3.1.4
+
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: v2.2.1
+    hooks:
+      - id: prettier

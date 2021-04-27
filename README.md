@@ -5,13 +5,12 @@
 
 Searching remote sensed imagery from various image providers
 
-
 This extension is composed of a Python package named `eodag-labextension`
 for the server extension and a NPM package named `eodag-labextension`
 for the frontend extension.
 
-* Frontend extension consist in adding a tab into Jupyter Lab left panel.
-* Backend extension consist of a Python Jupyter notebook REST service consumed
+- Frontend extension consist in adding a tab into Jupyter Lab left panel.
+- Backend extension consist of a Python Jupyter notebook REST service consumed
   by the client and served at `/eodag/` or `/user/<username>/eodag/` for
   JupyterHub (a home page is available at that URL).
 
@@ -19,7 +18,7 @@ The products search is based on the [eodag](https://eodag.readthedocs.io) librar
 
 ## Requirements
 
-* JupyterLab >= 3.0
+- JupyterLab >= 3.0
 
 ## Install
 
@@ -31,7 +30,6 @@ pip install eodag-labextension
 
 eodag configuration file should be localized at `.config/eodag/eodag.yaml` (see [eodag documentation](https://eodag.readthedocs.io/en/latest/intro.html?highlight=eodag.yml#how-to-configure-authentication-for-available-providers)).
 Make sure that that file is configured properly.
-
 
 ## Troubleshoot
 
@@ -113,5 +111,5 @@ pre-commit install
 pip uninstall eodag-labextension
 ```
 
-*Copyright 2020 CS GROUP - France
-All rights reserved*
+_Copyright 2020 CS GROUP - France
+All rights reserved_

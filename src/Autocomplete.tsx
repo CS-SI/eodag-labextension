@@ -1,7 +1,7 @@
 /**
  * Copyright 2020 CS GROUP - France, http://www.c-s.fr
  * All rights reserved
-*/
+ */
 
 import * as React from 'react';
 import Select, { components } from 'react-select';
@@ -13,7 +13,7 @@ function NoOptionsMessage(props: any) {
     <div
       color="textSecondary"
       style={{
-        padding: `8px 16px`,
+        padding: `8px 16px`
       }}
       {...props.innerProps}
     >
@@ -26,62 +26,73 @@ function Option(props: any) {
   // Tooltip on the right
   return (
     <div data-for={props.label} data-tip={props.data.description}>
-      <components.Option {...props}>
-        {props.children}
-      </components.Option>
-      <ReactTooltip id={props.label} className="jp-Eodag-tooltip" place="right" type="dark" effect="solid" />
+      <components.Option {...props}>{props.children}</components.Option>
+      <ReactTooltip
+        id={props.label}
+        className="jp-Eodag-tooltip"
+        place="right"
+        type="dark"
+        effect="solid"
+      />
     </div>
   );
 }
 
 function SingleValue(props: any) {
   return (
-    <div style={{
-      fontSize: 14,
-    }} {...props.innerProps}>
+    <div
+      style={{
+        fontSize: 14
+      }}
+      {...props.innerProps}
+    >
       {props.children}
     </div>
   );
 }
 
 function ValueContainer(props: any) {
-  return <div style={{
-    display: 'flex',
-    flexWrap: 'wrap',
-    flex: 1,
-    paddingLeft: 5,
-    alignItems: 'center',
-    overflow: 'hidden',
-  }}>{props.children}</div>;
+  return (
+    <div
+      style={{
+        display: 'flex',
+        flexWrap: 'wrap',
+        flex: 1,
+        paddingLeft: 5,
+        alignItems: 'center',
+        overflow: 'hidden'
+      }}
+    >
+      {props.children}
+    </div>
+  );
 }
 
 const listcomponents = {
   NoOptionsMessage,
   Option,
   SingleValue,
-  ValueContainer,
+  ValueContainer
 };
 
 interface IProps {
-  suggestions: any,
-  value: any,
-  handleChange: any,
+  suggestions: any;
+  value: any;
+  handleChange: any;
 }
 
-interface IState {
-}
+interface IState {}
 
 class IntegrationReactSelect extends React.Component<IProps, IState> {
-
   render() {
     const { suggestions, value, handleChange } = this.props;
-    let currentValue: OptionTypeBase = value ? {label: value, value: value} : {label: undefined, value: undefined};
+    let currentValue: OptionTypeBase = value
+      ? { label: value, value: value }
+      : { label: undefined, value: undefined };
     return (
       <div className="jp-EodagWidget-field">
-        <label className="jp-EodagWidget-input-name">
-          Product type (*)
-        </label>
-        <div 
+        <label className="jp-EodagWidget-input-name">Product type (*)</label>
+        <div
           style={{
             marginTop: 10
           }}
@@ -101,7 +112,7 @@ class IntegrationReactSelect extends React.Component<IProps, IState> {
                 margin: '0px'
               })
             }}
-            theme={( theme: Theme ) => ({
+            theme={(theme: Theme) => ({
               ...theme,
               borderRadius: 0
             })}

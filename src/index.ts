@@ -1,7 +1,7 @@
 /**
  * Copyright 2020 CS GROUP - France, http://www.c-s.fr
  * All rights reserved
-*/
+ */
 
 import {
   ILayoutRestorer,
@@ -25,16 +25,20 @@ const extension: JupyterFrontEndPlugin<void> = {
   id: 'eodag-labextension:plugin',
   autoStart: true,
   requires: [INotebookTracker, ILayoutRestorer],
-  activate: activate,
+  activate: activate
 };
 
 /**
  * Activate the extension.
  */
-function activate(app: JupyterFrontEnd, tracker: INotebookTracker, restorer: ILayoutRestorer) {
+function activate(
+  app: JupyterFrontEnd,
+  tracker: INotebookTracker,
+  restorer: ILayoutRestorer
+) {
   const eodagBrowser = new EodagWidget(tracker);
   restorer.add(eodagBrowser, NAMESPACE);
-  app.shell.add(eodagBrowser, 'left', {rank:700});
+  app.shell.add(eodagBrowser, 'left', { rank: 700 });
 }
 
 export default extension;
