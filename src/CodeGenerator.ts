@@ -48,7 +48,7 @@ product_type = '${productType}'
   productType=product_type,
 `;
   if (extent.lonMin && extent.latMin && extent.lonMax && extent.latMax) {
-    code += `  box=footprint,
+    code += `  geom=footprint,
 `;
   }
   if (start) {
