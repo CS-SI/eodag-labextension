@@ -1,4 +1,8 @@
-"""eodag-labextension initialisation."""
+# -*- coding: utf-8 -*-
+# Copyright 2020 CS GROUP - France, http://www.c-s.fr
+# All rights reserved
+
+"""Jupyter Notebook server extension for eodag REST service"""
 
 import json
 from pathlib import Path
@@ -28,5 +32,10 @@ def _load_jupyter_server_extension(server_app):
     server_app: jupyterlab.labapp.LabApp
         JupyterLab application instance
     """
-    setup_handlers(server_app.web_app)
-    server_app.log.info("Registered HelloWorld extension at URL path /eodag-labextension")
+    url_path = "eodag"
+    setup_handlers(server_app.web_app, url_path)
+    server_app.log.info(f"Registered eodag-labextension extension at URL path /{url_path}")
+
+
+# For backward compatibility with the classical notebook
+load_jupyter_server_extension = _load_jupyter_server_extension
