@@ -63,7 +63,7 @@ setup_args = dict(
         "notebook>=6.0.3,<7.0.0",
         "eodag~=2.0",
     ],
-    extras_require={"dev": ["black>=21", "pre-commit==2.12.1"]},
+    extras_require={"dev": ["black", "pre-commit"]},
     zip_safe=False,
     include_package_data=True,
     python_requires=">=3.6",
