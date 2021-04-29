@@ -9,6 +9,14 @@ import { Widget } from '@lumino/widgets';
 import { INotebookTracker } from '@jupyterlab/notebook';
 import { EodagBrowser } from './browser';
 
+import { LabIcon } from '@jupyterlab/ui-components';
+import iconSvgStr from '../style/icon.svg';
+
+export const logoIcon = new LabIcon({
+  name: 'eodag-labextension:logo',
+  svgstr: iconSvgStr
+});
+
 export class EodagWidget extends Widget {
   tracker: INotebookTracker;
   /**
@@ -17,7 +25,7 @@ export class EodagWidget extends Widget {
   constructor(tracker: INotebookTracker) {
     super();
     this.title.caption = 'EODAG';
-    this.title.iconClass = 'eodag-Logo';
+    this.title.icon = logoIcon;
     this.id = 'eodag-widget';
     this.tracker = tracker;
     this.addClass('jp-EodagWidget');

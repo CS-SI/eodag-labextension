@@ -8,14 +8,6 @@
   padding: 5px;
 }
 
-.eodag-Logo {
-  background-image: url(icon.svg);
-  background-repeat: no-repeat;
-  background-size: 85%;
-  background-position: center;
-  width: 26px;
-}
-
 .jp-EodagWidget-header {
   border-bottom: var(--jp-border-width) solid var(--jp-border-color2);
   flex: 0 0 auto;
@@ -102,6 +94,24 @@
   color: var(--jp-ui-font-color0);
   line-height: var(--jp-private-commandpalette-search-height);
 }
+
+.jp-EodagWidget-select__control {
+  background-color: var(--jp-layout-color0) !important;
+}
+
+.jp-EodagWidget-select__input,
+.jp-EodagWidget-select__control,
+.jp-EodagWidget-select__value-container,
+.jp-EodagWidget-select__indicatorindicators,
+.jp-EodagWidget-select__menu,
+.jp-EodagWidget-select__menu-list,
+.jp-EodagWidget-select__optiooption {
+  background-color: var(--jp-layout-color0);
+  font-size: var(--jp-ui-font-size1);
+  color: var(--jp-ui-font-color0);
+  line-height: var(--jp-private-commandpalette-search-height);
+}
+
 .jp-EodagWidget .jp-EodagWidget-form .react-datepicker-wrapper,
 .jp-EodagWidget .jp-EodagWidget-form .react-datepicker__input-container {
   width: 100%;

@@ -103,6 +103,8 @@ class IntegrationReactSelect extends React.Component<IProps, IState> {
           }}
         >
           <Select
+            className="jp-EodagWidget-select"
+            classNamePrefix="jp-EodagWidget-select"
             options={suggestions}
             components={listcomponents}
             value={currentValue}
