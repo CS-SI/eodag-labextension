@@ -1,6 +1,5 @@
 # eodag-labextension
 
-![Github Actions Status](https://odin.si.c-s.fr/plugins/git/ia3d-demo/eodag-labextension.git/workflows/Build/badge.svg)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 Searching remote sensed imagery from various image providers
