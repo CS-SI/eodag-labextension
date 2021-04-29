@@ -110,3 +110,7 @@ dmypy.json
 
 # OSX files
 .DS_Store
+
+# IDE
+.idea
+.vscode
