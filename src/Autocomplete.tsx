@@ -4,9 +4,14 @@
  */
 
 import * as React from 'react';
-import Select, { components } from 'react-select';
+import Select, {
+  components,
+  OptionProps,
+  SingleValueProps,
+  ValueContainerProps
+} from 'react-select';
 import ReactTooltip from 'react-tooltip';
-import { OptionTypeBase, Theme } from 'react-select/src/types';
+import { OptionTypeBase } from 'react-select/src/types';
 
 function NoOptionsMessage(props: any) {
   return (
@@ -22,7 +27,7 @@ function NoOptionsMessage(props: any) {
   );
 }
 
-function Option(props: any) {
+function Option(props: OptionProps<OptionTypeBase, false>) {
   // Tooltip on the right
   return (
     <div data-for={props.label} data-tip={props.data.description}>
@@ -38,7 +43,7 @@ function Option(props: any) {
   );
 }
 
-function SingleValue(props: any) {
+function SingleValue(props: SingleValueProps<OptionTypeBase>) {
   return (
     <div
       style={{
@@ -51,7 +56,7 @@ function SingleValue(props: any) {
   );
 }
 
-function ValueContainer(props: any) {
+function ValueContainer(props: ValueContainerProps<OptionTypeBase, false>) {
   return (
     <div
       style={{
@@ -76,8 +81,8 @@ const listcomponents = {
 };
 
 interface IProps {
-  suggestions: any;
-  value: any;
+  suggestions: OptionTypeBase[];
+  value: string;
   handleChange: any;
 }
 
@@ -102,20 +107,6 @@ class IntegrationReactSelect extends React.Component<IProps, IState> {
             components={listcomponents}
             value={currentValue}
             onChange={handleChange}
-            styles={{
-              option: (base: React.CSSProperties) => ({
-                ...base,
-                height: `100%`
-              }),
-              indicatorSeparator: (base: React.CSSProperties) => ({
-                ...base,
-                margin: '0px'
-              })
-            }}
-            theme={(theme: Theme) => ({
-              ...theme,
-              borderRadius: 0
-            })}
             placeholder="S3_..."
             isClearable
           />
