@@ -21,7 +21,7 @@ def _jupyter_labextension_paths():
 
 
 def _jupyter_server_extension_points():
-    return [{"module": "eodag-labextension"}]
+    return [{"module": "eodag_labextension"}]
 
 
 def _load_jupyter_server_extension(server_app):
@@ -34,7 +34,7 @@ def _load_jupyter_server_extension(server_app):
     """
     url_path = "eodag"
     setup_handlers(server_app.web_app, url_path)
-    server_app.log.info(f"Registered eodag-labextension extension at URL path /{url_path}")
+    server_app.log.info(f"Registered eodag_labextension extension at URL path /{url_path}")
 
 
 # For backward compatibility with the classical notebook

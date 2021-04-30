@@ -1,14 +1,14 @@
 include LICENSE
 include README.md
 include pyproject.toml
-include jupyter-config/eodag-labextension.json
+include jupyter-config/eodag_labextension.json
 
 include package.json
 include install.json
 include ts*.json
 include yarn.lock
 
-graft eodag-labextension/labextension
+graft eodag_labextension/labextension
 
 # Javascript files
 graft src

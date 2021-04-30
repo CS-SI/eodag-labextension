@@ -1,4 +1,4 @@
-"""eodag-labextension setup."""
+"""eodag_labextension setup."""
 
 import json
 from pathlib import Path
@@ -9,7 +9,7 @@ from jupyter_packaging import combine_commands, create_cmdclass, ensure_targets,
 HERE = Path(__file__).parent.resolve()
 
 # The name of the project
-name = "eodag-labextension"
+name = "eodag_labextension"
 
 lab_path = HERE / name / "labextension"
 
@@ -26,7 +26,7 @@ data_files_spec = [
     (
         "etc/jupyter/jupyter_server_config.d",
         "jupyter-config",
-        "eodag-labextension.json",
+        "eodag_labextension.json",
     ),
 ]
 

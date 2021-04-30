@@ -1,7 +1,7 @@
 {
   "ServerApp": {
     "jpserver_extensions": {
-      "eodag-labextension": true
+      "eodag_labextension": true
     }
   }
 }
