@@ -92,8 +92,8 @@ class IntegrationReactSelect extends React.Component<IProps, IState> {
   render() {
     const { suggestions, value, handleChange } = this.props;
     let currentValue: OptionTypeBase = value
-      ? { label: value, value: value }
-      : { label: undefined, value: undefined };
+      ? suggestions.find(e => e.value === value)
+      : undefined;
     return (
       <div className="jp-EodagWidget-field">
         <label className="jp-EodagWidget-input-name">Product type (*)</label>
