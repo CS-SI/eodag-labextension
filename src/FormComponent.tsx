@@ -124,9 +124,9 @@ export default class FormComponent extends React.Component<IProps, IState> {
       startDate: date
     });
   };
-  handleChangeProductType = (val: OptionTypeBase) => {
+  handleChangeProductType = (val: OptionTypeBase | null) => {
     this.setState({
-      productType: val.value
+      productType: val?.value
     });
   };
 
