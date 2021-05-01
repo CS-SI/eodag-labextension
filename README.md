@@ -1,19 +1,28 @@
 # eodag-labextension
 
-JupyterLab extension used to search remote sensed imagery from various image providers.
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
-This extension is composed of to parts:
+Searching remote sensed imagery from various image providers
 
-* a React client plugin adding a tab into Jupyter Lab left panel,
-* a Python Jupyter notebook REST service consumed by the client and served at `/eodag/` or `/user/<username>/eodag/` for JupyterHub (a home page is available at that URL).
+This extension is composed of a Python package named `eodag-labextension`
+for the server extension and a NPM package named `eodag-labextension`
+for the frontend extension.
+
+- Frontend extension consist in adding a tab into Jupyter Lab left panel.
+- Backend extension consist of a Python Jupyter notebook REST service consumed
+  by the client and served at `/eodag/` or `/user/<username>/eodag/` for
+  JupyterHub (a home page is available at that URL).
 
 The products search is based on the [eodag](https://eodag.readthedocs.io) library.
 
-## Setup
+## Requirements
+
+- JupyterLab >= 3.0
+
+## Install
 
 ```bash
-pip install .
-jupyter labextension install .
+pip install eodag-labextension
 ```
 
 ### Configuration
@@ -21,57 +30,85 @@ jupyter labextension install .
 eodag configuration file should be localized at `.config/eodag/eodag.yaml` (see [eodag documentation](https://eodag.readthedocs.io/en/latest/intro.html?highlight=eodag.yml#how-to-configure-authentication-for-available-providers)).
 Make sure that that file is configured properly.
 
-## Run
+## Troubleshoot
+
+If you are seeing the frontend extension, but it is not working, check
+that the server extension is enabled:
 
 ```bash
-jupyter lab
-# or
-jupyterhub
+jupyter server extension list
 ```
 
-and browse <http://localhost:8888> or <http://localhost:8000>.
+If the server extension is installed and enabled, but you are not seeing
+the frontend extension, check the frontend extension is installed:
 
-*Adjust port number.*
+```bash
+jupyter labextension list
+```
 
 ## Contributing
 
+### Development install
+
+Note: You will need NodeJS to build the extension package.
+
+The `jlpm` command is JupyterLab's pinned version of
+[yarn](https://yarnpkg.com/) that is installed with JupyterLab. You may use
+`yarn` or `npm` in lieu of `jlpm` below.
+
 ```bash
-npm install -g configurable-http-proxy
-
+# Clone the repo to your local environment
+# Change directory to the eodag-labextension directory
+# If you want to work in a virtual environment
 virtualenv -p `which python3.6` venv
-venv/bin/activate
+source venv/bin/activate
+# Install package in development mode
 pip install -e .[dev]
-
-# Enables extension: required if package installed in editable mode!
-# --sys-prefix required if running into virtual env
-jupyter serverextension enable --py eodag_labextension --sys-prefix
-
-pre-commit install
-
-# Into first terminal
-jlpm run watch
-# Into second terminal
-jupyter lab --watch --no-browser --ip=0.0.0.0
+# Link your development version of the extension with JupyterLab
+jupyter labextension develop . --overwrite
+# Rebuild extension Typescript source after making changes
+jlpm run build
 ```
 
-then browse <http://localhost:8888>
+You can watch the source directory and run JupyterLab at the same time in
+different terminals to watch for changes in the extension's source and
+automatically rebuild the extension.
 
-Alternatively, plugin can be tested with JupyterHub with command `jupyterhub` at URL <http://localhost:8000>.
+```bash
+# Watch the source directory in one terminal, automatically rebuilding when
+# needed
+jlpm run watch
+# Run JupyterLab in another terminal
+jupyter lab
+```
 
-### Troubleshooting
+With the watch command running, every saved change will immediately be built
+locally and available in your running JupyterLab. Refresh JupyterLab to load
+the change in your browser (you may need to wait several seconds for the
+extension to be rebuilt).
 
-On `jupyterhub` version upgrade and if `jupyterhub` command fails, it can be required to do a `jupyterhub upgrade-db`.
+By default, the `jlpm run build` command generates the source maps for this
+extension to make it easier to debug using the browser dev tools. To also
+generate source maps for the JupyterLab core extensions, you can run the
+following command:
 
-On build error, try running `npm prune && npm run clean && npm install`.
+```bash
+jupyter lab build --minimize=False
+```
 
-## Known issues
+### Commit
 
-At statup, console prints a warning: `Failed to fetch package metadata for 'eodag-labextension': <HTTPError 404: 'Not Found'>`.
-This is because extension is not deployed on npm registry (see [source](https://github.com/jupyterlab/jupyterlab/blob/f3550a540b5beeaf750ac5badb42b61bf4efdf3e/jupyterlab/commands.py#L2195)).
+Before commiting run (need to be run only once):
 
-## Reference
+```bash
+pre-commit install
+```
 
-[Distributing Jupyter Extensions as Python Packages](https://jupyter-notebook.readthedocs.io/en/latest/examples/Notebook/Distributing%20Jupyter%20Extensions%20as%20Python%20Packages.html#Distributing-Jupyter-Extensions-as-Python-Packages)
+### Uninstall
 
-*Copyright 2020 CS GROUP - France
-All rights reserved*
+```bash
+pip uninstall eodag-labextension
+```
+
+_Copyright 2020 CS GROUP - France
+All rights reserved_

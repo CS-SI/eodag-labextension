@@ -1,48 +1,44 @@
 /**
  * Copyright 2020 CS GROUP - France, http://www.c-s.fr
  * All rights reserved
-*/
+ */
 
-import "react-datepicker/dist/react-datepicker.css";
+import 'react-datepicker/dist/react-datepicker.css';
 import 'isomorphic-fetch';
-import { EODAG_SERVER_ADRESS } from './config'
+import { EODAG_SERVER_ADRESS } from './config';
 import { ServerConnection } from '@jupyterlab/services';
 import { URLExt } from '@jupyterlab/coreutils';
-import StorageService from './StorageService'
+import StorageService from './StorageService';
+import { formatDate } from './utils';
 
 class SearchService {
-  /**
-   * @param date A Date object
-   * @returns a string like YYYY-MM-DD
-   */
-  formatDate (date) {
-    if (date instanceof Date) {
-      var local = new Date(date);
-      local.setMinutes(date.getMinutes() - date.getTimezoneOffset());
-      return local.toJSON().slice(0, 10);
-    }
-    return date
-  }
-  
   /**
    * This methods internaly uses the StorageService to retrieve form data
    * @param page The page to fetch
    * @returns the URL to fetch from the EODAG server to get products
    */
-  getSearchURL (page = 1) {
-    const { productType, startDate, endDate, cloud } = StorageService.getFormValues();
+  getSearchURL(page = 1) {
+    const {
+      productType,
+      startDate,
+      endDate,
+      cloud
+    } = StorageService.getFormValues();
     const { lonMin, latMin, lonMax, latMax } = StorageService.getExtent();
     let _serverSettings = ServerConnection.makeSettings();
-    let _eodag_server = URLExt.join(_serverSettings.baseUrl, `${EODAG_SERVER_ADRESS}`);
+    let _eodag_server = URLExt.join(
+      _serverSettings.baseUrl,
+      `${EODAG_SERVER_ADRESS}`
+    );
     let _searchParams = `?box=${lonMin},${latMin},${lonMax},${latMax}&cloudCover=${cloud}&page=${page}`;
     let url = URLExt.join(_eodag_server, `${productType}`, _searchParams);
     if (startDate) {
-      url += `&dtstart=${this.formatDate(startDate)}`
+      url += `&dtstart=${formatDate(startDate)}`;
     }
     if (endDate) {
-      url += `&dtend=${this.formatDate(endDate)}`
+      url += `&dtend=${formatDate(endDate)}`;
     }
-    return url
+    return url;
   }
 
   /**
@@ -52,13 +48,13 @@ class SearchService {
    * @return a promise that will receive features
    */
   search(page = 1) {
-    const url = this.getSearchURL(page)
-    return fetch(url, {credentials: 'same-origin'}).then((response) => {
+    const url = this.getSearchURL(page);
+    return fetch(url, { credentials: 'same-origin' }).then(response => {
       if (response.status >= 400) {
-        throw new Error("Bad response from server");
+        throw new Error('Bad response from server');
       }
       return response.json();
-    })
+    });
   }
 }
 

@@ -4,44 +4,38 @@
 
 """Jupyter Notebook server extension for eodag REST service"""
 
-from eodag_labextension.handlers import RootHandler, ProductTypeHandler, SearchHandler
-from notebook.utils import url_path_join
+import json
+from pathlib import Path
+
+from ._version import __version__  # noqa: F401
+from .handlers import setup_handlers
+
+HERE = Path(__file__).parent.resolve()
+
+with (HERE / "labextension" / "package.json").open() as fid:
+    data = json.load(fid)
 
 
-def _jupyter_server_extension_paths():
+def _jupyter_labextension_paths():
+    return [{"src": "labextension", "dest": data["name"]}]
+
+
+def _jupyter_server_extension_points():
     return [{"module": "eodag_labextension"}]
 
 
-def load_jupyter_server_extension(nb_server_app):
+def _load_jupyter_server_extension(server_app):
+    """Registers the API handler to receive HTTP requests from the frontend extension.
+
+    Parameters
+    ----------
+    server_app: jupyterlab.labapp.LabApp
+        JupyterLab application instance
     """
-    Called when the extension is loaded.
+    url_path = "eodag"
+    setup_handlers(server_app.web_app, url_path)
+    server_app.log.info(f"Registered eodag_labextension extension at URL path /{url_path}")
 
-    Args:
-        nb_server_app (NotebookWebApplication): handle to the Notebook webserver instance.
-    """
 
-    # Printed into JupyterHub console logs
-    log = f"[{__package__}] jupyter lab extension enabled"
-    nb_server_app.log.info(log)
-
-    web_app = nb_server_app.web_app
-    host_pattern = ".*$"
-    home_pattern = url_path_join(web_app.settings["base_url"], "/eodag/")
-    nb_server_app.log.info(
-        f"[{__package__}] eodag service starting at '{home_pattern}'"
-    )
-
-    product_types_pattern = url_path_join(
-        web_app.settings["base_url"], "/eodag/product-types/"
-    )
-    search_pattern = url_path_join(
-        web_app.settings["base_url"], "/eodag/" + r"(?P<product_type>[\w-]+)/"
-    )
-
-    handlers_list = [
-        (home_pattern, RootHandler),
-        (product_types_pattern, ProductTypeHandler),
-        (search_pattern, SearchHandler),
-    ]
-
-    web_app.add_handlers(host_pattern, handlers_list)
+# For backward compatibility with the classical notebook
+load_jupyter_server_extension = _load_jupyter_server_extension

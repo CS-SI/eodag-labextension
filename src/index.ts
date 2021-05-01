@@ -1,9 +1,13 @@
 /**
  * Copyright 2020 CS GROUP - France, http://www.c-s.fr
  * All rights reserved
-*/
+ */
 
-import { ILayoutRestorer, JupyterFrontEnd, JupyterFrontEndPlugin } from '@jupyterlab/application';
+import {
+  ILayoutRestorer,
+  JupyterFrontEnd,
+  JupyterFrontEndPlugin
+} from '@jupyterlab/application';
 import { INotebookTracker } from '@jupyterlab/notebook';
 
 import '../style/index.css';
@@ -17,20 +21,24 @@ const NAMESPACE = 'eodag-widget';
 /**
  * Initialization data for the eodag-labextension extension.
  */
-const plugin: JupyterFrontEndPlugin<void> = {
-  activate,
+const extension: JupyterFrontEndPlugin<void> = {
+  id: 'eodag-labextension:plugin',
   autoStart: true,
-  id: 'eodag-labextension',
   requires: [INotebookTracker, ILayoutRestorer],
+  activate: activate
 };
 
 /**
  * Activate the extension.
  */
-function activate(app: JupyterFrontEnd, tracker: INotebookTracker, restorer: ILayoutRestorer) {
+function activate(
+  app: JupyterFrontEnd,
+  tracker: INotebookTracker,
+  restorer: ILayoutRestorer
+) {
   const eodagBrowser = new EodagWidget(tracker);
   restorer.add(eodagBrowser, NAMESPACE);
-  app.shell.add(eodagBrowser, 'left', {rank:700});
+  app.shell.add(eodagBrowser, 'left', { rank: 700 });
 }
 
-export default plugin;
+export default extension;

@@ -1,22 +1,45 @@
 /**
  * Copyright 2020 CS GROUP - France, http://www.c-s.fr
  * All rights reserved
-*/
+ */
 
 import * as React from 'react';
 import classNames from 'classnames';
-import { AutoSizer, SortDirection, Column, Table, InfiniteLoader } from 'react-virtualized';
-import { get } from 'lodash'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faSearchPlus } from '@fortawesome/free-solid-svg-icons'
+import {
+  AutoSizer,
+  SortDirection,
+  Column,
+  Table,
+  InfiniteLoader,
+  TableCellProps,
+  TableHeaderProps,
+  ColumnProps
+} from 'react-virtualized';
+import { get } from 'lodash';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSearchPlus } from '@fortawesome/free-solid-svg-icons';
 
-const TableSortLabelWithoutMUI = ( {active, direction, children }) => (
-  <div>TableSortLabel</div>
-)
+const TableSortLabelWithoutMUI = ({
+  active,
+  direction,
+  children
+}: {
+  active: any;
+  direction: any;
+  children: any;
+}) => <div>TableSortLabel</div>;
+
+interface MuiColumnProps extends ColumnProps {
+  cellContentRenderer?: any;
+  buttons?: any;
+  selector?: any;
+  percent?: boolean;
+  handleClick?: (id: number | string) => void;
+}
 
 export interface IMuiVirtualizedTableProps {
   classes: any;
-  columns: any;
+  columns: MuiColumnProps[];
   headerHeight: any;
   onRowClick: any;
   onRowMouseOver: any;
@@ -33,94 +56,110 @@ export interface IMuiVirtualizedTableProps {
   displayedRowCount: any;
 }
 
-export interface IMuiVirtualizedTableState {
-}
+export interface IMuiVirtualizedTableState {}
 
-class MuiVirtualizedTable extends React.PureComponent<IMuiVirtualizedTableProps, IMuiVirtualizedTableState> {
+class MuiVirtualizedTable extends React.PureComponent<
+  IMuiVirtualizedTableProps,
+  IMuiVirtualizedTableState
+> {
   static defaultProps: Partial<IMuiVirtualizedTableProps> = {
     headerHeight: 56,
-    rowHeight: 56,
+    rowHeight: 56
   };
-  getRowClassName = ({ index }) => {
+  getRowClassName = ({ index }: { index: number }) => {
     if (index < 0) {
-      return " headerRow flexContainer";
+      return ' headerRow flexContainer';
     }
-    return "tableRow flexContainer";
+    return 'tableRow flexContainer';
   };
 
-  getRowStyle = ({ index, ...rowData}) => {
+  getRowStyle = ({ index }: { index: number }) => {
     if (index >= 0) {
-      const { rowGetter, highlightFeature } = this.props
-      const rowData = rowGetter({index})
+      const { rowGetter, highlightFeature } = this.props;
+      const rowData = rowGetter({ index });
       if (get(highlightFeature, 'id') === get(rowData, 'id')) {
         return {
           backgroundColor: '#eeeeee'
-        }
+        };
       }
     }
-    return {}
+    return {};
   };
 
-  cellRenderer = ({ cellData, columnIndex = null }) => {
+  cellRenderer = ({ cellData, columnIndex = null }: TableCellProps) => {
     const { columns } = this.props;
     let isPercent = false;
     if (columnIndex != null && columns[columnIndex].percent) {
       isPercent = columns[columnIndex].percent === true;
     }
-    return (
-      <div>{isPercent ? `${parseInt(cellData, 10)} %`: cellData}</div>
-    );
+    return <div>{isPercent ? `${parseInt(cellData, 10)} %` : cellData}</div>;
   };
 
-  buttonRenderer = ({ columnIndex = null, rowData }) => {
+  buttonRenderer = ({ columnIndex = null, rowData }: TableCellProps) => {
     const { columns } = this.props;
     // Retrieve event handler from column def
-    let handleClick = (dataId) => {}
+    let handleClick = (dataId: number | string) => {};
     if (columnIndex != null && columns[columnIndex].handleClick) {
-      handleClick = columns[columnIndex].handleClick
+      handleClick = columns[columnIndex].handleClick;
     }
     return (
-      <button onClick={() => {handleClick(rowData.id)}}>
+      <button
+        onClick={() => {
+          handleClick(rowData.id);
+        }}
+      >
         <FontAwesomeIcon icon={faSearchPlus} />
-      </button> 
+      </button>
     );
   };
 
   selectorRenderer = ({ columnIndex = null }) => {
     // Not used right now
-    return (
-      <div>Cellule  selector</div>
-    );
+    return <div>Cellule selector</div>;
   };
 
-  headerRenderer = ({ label, columnIndex, dataKey, sortBy, sortDirection }) => {
-    const {  columns, sort } = this.props;
+  headerRenderer = ({
+    label,
+    disableSort,
+    dataKey,
+    sortBy,
+    sortDirection
+  }: TableHeaderProps) => {
+    const { sort } = this.props;
     const direction = {
       [SortDirection.ASC]: 'asc',
-      [SortDirection.DESC]: 'desc',
+      [SortDirection.DESC]: 'desc'
     };
 
     const inner =
-      !columns[columnIndex].disableSort && sort != null ? (
-        <TableSortLabelWithoutMUI active={dataKey === sortBy} direction={direction[sortDirection]}>
+      !disableSort && sort != null ? (
+        <TableSortLabelWithoutMUI
+          active={dataKey === sortBy}
+          direction={direction[sortDirection]}
+        >
           {label}
         </TableSortLabelWithoutMUI>
       ) : (
         label
       );
 
-    return (
-      <div> {inner} </div>
-    );
+    return <div> {inner} </div>;
   };
 
   render() {
-    const { classes, columns, rowCount, displayedRowCount, isRowLoaded, isRetrievingMoreFeature, handleRetrieveMoreFeature, ...tableProps } = this.props;
-    const loadMoreRows = () =>  {
-      return isRetrievingMoreFeature()
-      ? false
-      : handleRetrieveMoreFeature()
-    }
+    const {
+      classes,
+      columns,
+      rowCount,
+      displayedRowCount,
+      isRowLoaded,
+      isRetrievingMoreFeature,
+      handleRetrieveMoreFeature,
+      ...tableProps
+    } = this.props;
+    const loadMoreRows = () => {
+      return isRetrievingMoreFeature() ? false : handleRetrieveMoreFeature();
+    };
     return (
       <AutoSizer>
         {({ height, width }) => (
@@ -144,40 +183,51 @@ class MuiVirtualizedTable extends React.PureComponent<IMuiVirtualizedTableProps,
                 rowStyle={this.getRowStyle}
                 rowCount={displayedRowCount}
               >
-                {columns.map(({ cellContentRenderer = null, className, dataKey, buttons, selector, ...other }, index) => {
-                  let renderer;
-                  if (cellContentRenderer != null) {
-                    renderer = cellRendererProps =>
-                      this.cellRenderer({
-                        cellData: cellContentRenderer(cellRendererProps),
-                        columnIndex: index,
-                      });
-                  } else if (buttons) {
-                    renderer = this.buttonRenderer;
-                  } else if (selector) {
-                    renderer = this.selectorRenderer;
-                  } else {
-                    renderer = this.cellRenderer;
-                  }
+                {columns.map(
+                  (
+                    {
+                      cellContentRenderer = null,
+                      className,
+                      dataKey,
+                      buttons,
+                      selector,
+                      ...other
+                    }: MuiColumnProps,
+                    index: number
+                  ) => {
+                    let renderer;
+                    if (cellContentRenderer != null) {
+                      renderer = (cellRendererProps: TableCellProps) =>
+                        this.cellRenderer({
+                          cellData: cellContentRenderer(cellRendererProps),
+                          columnIndex: index
+                        } as TableCellProps);
+                    } else if (buttons) {
+                      renderer = this.buttonRenderer;
+                    } else if (selector) {
+                      renderer = this.selectorRenderer;
+                    } else {
+                      renderer = this.cellRenderer;
+                    }
 
-                  return (
-                    // @ts-ignore
-                    <Column
-                      key={dataKey}
-                      headerRenderer={headerProps =>
-                        // @ts-ignore
-                        this.headerRenderer({
-                          ...headerProps,
-                          columnIndex: index,
-                        })
-                      }
-                      className={classNames(className)}
-                      cellRenderer={renderer}
-                      dataKey={dataKey}
-                      {...other}
-                    />
-                  );
-                })}
+                    return (
+                      // @ts-ignore
+                      <Column
+                        key={dataKey}
+                        headerRenderer={headerProps =>
+                          this.headerRenderer({
+                            ...headerProps,
+                            disableSort: columns[index].disableSort
+                          })
+                        }
+                        className={classNames(className)}
+                        cellRenderer={renderer}
+                        dataKey={dataKey}
+                        {...other}
+                      />
+                    );
+                  }
+                )}
               </Table>
             )}
           </InfiniteLoader>
@@ -187,31 +237,53 @@ class MuiVirtualizedTable extends React.PureComponent<IMuiVirtualizedTableProps,
   }
 }
 
-function BrowseComponent({ features, handleClickFeature, handleZoomFeature, handleHoverFeature, highlightFeature, isRetrievingMoreFeature, handleRetrieveMoreFeature }) {
+export interface BrowseComponentProps {
+  features: any;
+  handleClickFeature: any;
+  handleZoomFeature: any;
+  handleHoverFeature: any;
+  highlightFeature: any;
+  isRetrievingMoreFeature: () => boolean;
+  handleRetrieveMoreFeature: () => Promise<void>;
+}
+
+function BrowseComponent({
+  features,
+  handleClickFeature,
+  handleZoomFeature,
+  handleHoverFeature,
+  highlightFeature,
+  isRetrievingMoreFeature,
+  handleRetrieveMoreFeature
+}: BrowseComponentProps) {
   /**
    * Return an object with its id and all its properties
    */
-  const getRowData = (features) => ({index}) => {
+  const getRowData = (features: { features: string | any[] }) => ({
+    index
+  }: {
+    index: number;
+  }) => {
     if (index >= features.features.length) {
-      return {}
+      return {};
     }
     return {
       ...features.features[index].properties,
       id: features.features[index].id
-    }
-  }
-  const handleRowClick = ({rowData}) => {
-    handleClickFeature(rowData.id)
-  }
-  const handleRowMouseOver = ({rowData}) => {
-    handleHoverFeature(rowData.id)
-  }
+    };
+  };
+  const handleRowClick = ({ rowData }: { rowData: any }) => {
+    handleClickFeature(rowData.id);
+  };
+  const handleRowMouseOver = ({ rowData }: { rowData: any }) => {
+    handleHoverFeature(rowData.id);
+  };
   const handleRowMouseOut = () => {
-    handleHoverFeature(null)
-  }
-  const isRowLoaded = ({ index }) => {
+    handleHoverFeature(null);
+  };
+  const isRowLoaded = ({ index }: { index: number }) => {
     return index < features.features.length;
-  }
+  };
   return (
     <MuiVirtualizedTable
       rowCount={features.properties.totalResults}
@@ -236,20 +308,20 @@ function BrowseComponent({ features, handleClickFeature, handleZoomFeature, hand
           width: 100,
           flexGrow: 3.0,
           label: 'Start time',
-          dataKey: 'startTimeFromAscendingNode',
+          dataKey: 'startTimeFromAscendingNode'
         },
         {
           width: 100,
           flexGrow: 3.0,
           label: 'End time',
-          dataKey: 'startTimeFromAscendingNode',
+          dataKey: 'startTimeFromAscendingNode'
         },
         {
           width: 100,
           flexGrow: 1.0,
           label: 'Cloud cover',
           dataKey: 'cloudCover',
-          percent: true,
+          percent: true
         },
         {
           width: 100,
@@ -258,7 +330,7 @@ function BrowseComponent({ features, handleClickFeature, handleZoomFeature, hand
           dataKey: '',
           buttons: true,
           handleClick: handleZoomFeature
-        },
+        }
       ]}
     />
   );
