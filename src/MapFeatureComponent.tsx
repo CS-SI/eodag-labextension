@@ -15,6 +15,7 @@ export interface IProps {
   zoomFeature: any;
   highlightFeature: any;
   handleHoverFeature: any;
+  handleClickFeature: (productId: string) => void;
 }
 
 export interface IState {
@@ -125,6 +126,11 @@ export default class MapFeatureComponent extends React.Component<
     });
   };
 
+  onClick = (e: LeafletMouseEvent) => {
+    const productId = e.propagatedFrom.feature.id;
+    this.props.handleClickFeature(productId);
+  };
+
   /**
    * Generate the style for GeoJSON features. This function is used at the initialisation,
    * and on every component redraw
@@ -162,6 +168,7 @@ export default class MapFeatureComponent extends React.Component<
             style={this.getStyle}
             onMouseOut={this.onMouseOut}
             onMouseOver={this.onMouseOver}
+            onclick={this.onClick}
           />
         ) : null}
       </Map>

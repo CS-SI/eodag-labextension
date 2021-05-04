@@ -179,6 +179,7 @@ export default class ModalComponent extends React.Component<IProps, IState> {
                 zoomFeature={zoomFeature}
                 highlightFeature={highlightOnMapFeature}
                 handleHoverFeature={this.handleHoverMapFeature}
+                handleClickFeature={this.handleClickFeature}
               />
               <div className="jp-EodagWidget-browse-title">
                 {isRetrievingMoreFeature() ? (
