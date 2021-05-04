@@ -10,6 +10,7 @@ import { ServerConnection } from '@jupyterlab/services';
 import { URLExt } from '@jupyterlab/coreutils';
 import StorageService from './StorageService';
 import { formatDate } from './utils';
+import { SearchParameters } from './types';
 
 class SearchService {
   /**
@@ -17,44 +18,67 @@ class SearchService {
    * @param page The page to fetch
    * @returns the URL to fetch from the EODAG server to get products
    */
-  getSearchURL(page = 1) {
-    const {
-      productType,
-      startDate,
-      endDate,
-      cloud
-    } = StorageService.getFormValues();
-    const { lonMin, latMin, lonMax, latMax } = StorageService.getExtent();
+  getSearchURL(productType: string) {
     let _serverSettings = ServerConnection.makeSettings();
     let _eodag_server = URLExt.join(
       _serverSettings.baseUrl,
       `${EODAG_SERVER_ADRESS}`
     );
-    let _searchParams = `?box=${lonMin},${latMin},${lonMax},${latMax}&cloudCover=${cloud}&page=${page}`;
-    let url = URLExt.join(_eodag_server, `${productType}`, _searchParams);
-    if (startDate) {
-      url += `&dtstart=${formatDate(startDate)}`;
-    }
-    if (endDate) {
-      url += `&dtend=${formatDate(endDate)}`;
-    }
-    return url;
+    return URLExt.join(_eodag_server, `${productType}`);
   }
 
   /**
    * Contact the EODAG server to retrieve products
    * This methods internaly uses the StorageService to retrieve form data
    * @param page The page to fetch
+   * @param parameters parameters to pass to EODAG search
    * @return a promise that will receive features
    */
   search(page = 1) {
-    const url = this.getSearchURL(page);
-    return fetch(url, { credentials: 'same-origin' }).then(response => {
+    const formValues = StorageService.getFormValues();
+    const url = this.getSearchURL(formValues.productType);
+    const parameters: SearchParameters = {
+      dtstart: formatDate(formValues.startDate),
+      dtend: formatDate(formValues.endDate),
+      cloudCover: formValues.cloud,
+      page: page,
+      geom: StorageService.getGeometry()
+    };
+
+    const headers = new Headers({
+      'Content-Type': 'application/json'
+    });
+
+    // Set cross-site cookie header
+    if (typeof document !== 'undefined' && document?.cookie) {
+      const xsrfToken = this.getCookie('_xsrf');
+      if (xsrfToken !== undefined) {
+        headers.append('X-XSRFToken', xsrfToken);
+      }
+    }
+
+    const request = new Request(url, {
+      credentials: 'same-origin',
+      method: 'POST',
+      body: JSON.stringify(parameters),
+      headers: headers
+    });
+
+    return fetch(request).then(response => {
       if (response.status >= 400) {
         throw new Error('Bad response from server');
       }
       return response.json();
     });
+  }
+
+  /**
+   * Get a cookie from the document.
+   */
+  getCookie(name: string): string | undefined {
+    // From http://www.tornadoweb.org/en/stable/guide/security.html
+    const matches = document.cookie.match('\\b' + name + '=([^;]*)\\b');
+    return matches?.[1];
   }
 }
 

@@ -5,29 +5,32 @@
  * All rights reserved
  */
 
-import { Extent, SearchDTO } from './types';
+import { FormDTO, Geometry } from './types';
 import { formatDate } from './utils';
 
-export interface FormatCodeProps extends SearchDTO {
-  extent: Extent;
+export interface FormatCodeProps extends FormDTO {
+  geometry: Geometry;
 }
 
 const formatCode = ({
   startDate,
   endDate,
   productType,
-  extent,
+  geometry,
   cloud
 }: FormatCodeProps) => {
   const start = startDate ? formatDate(startDate) : undefined;
   const end = endDate ? formatDate(endDate) : undefined;
 
+  const geometryIsOk = geometry.type && geometry.coordinates;
+
   let code = `from eodag import EODataAccessGateway
+from shapely.geometry import shape
 dag = EODataAccessGateway()
 product_type = '${productType}'
 `;
-  if (extent.lonMin && extent.latMin && extent.lonMax && extent.latMax) {
-    code += `footprint = {'lonmin': ${extent.lonMin}, 'latmin': ${extent.latMin}, 'lonmax': ${extent.lonMax}, 'latmax': ${extent.latMax}}
+  if (geometryIsOk) {
+    code += `footprint = shape(${JSON.stringify(geometry)})
 `;
   }
   if (cloud) {
@@ -47,7 +50,7 @@ product_type = '${productType}'
   code += `search_results, estimated_total_nbr_of_results = dag.search(
   productType=product_type,
 `;
-  if (extent.lonMin && extent.latMin && extent.lonMax && extent.latMax) {
+  if (geometryIsOk) {
     code += `  geom=footprint,
 `;
   }

@@ -9,6 +9,8 @@ import { EditControl } from 'react-leaflet-draw';
 import { throttle, isNull } from 'lodash';
 import { EODAG_TILE_URL, EODAG_TILE_COPYRIGHT } from './config';
 import StorageService from './StorageService';
+import { Geometry } from './types';
+import { LeafletMouseEvent } from 'leaflet';
 
 export interface IProps {}
 
@@ -20,6 +22,7 @@ export interface IState {
   latMax: number;
   lonMin: number;
   lonMax: number;
+  geometry: Geometry;
 }
 
 export default class MapExtentComponent extends React.Component<
@@ -33,7 +36,7 @@ export default class MapExtentComponent extends React.Component<
 
   EditOptions = {
     polyline: false,
-    polygon: false,
+    polygon: true,
     circle: false,
     marker: false,
     circlemarker: false
@@ -47,7 +50,8 @@ export default class MapExtentComponent extends React.Component<
       latMin: null,
       latMax: null,
       lonMin: null,
-      lonMax: null
+      lonMax: null,
+      geometry: undefined
     };
   }
 
@@ -131,15 +135,19 @@ export default class MapExtentComponent extends React.Component<
     }
   };
 
-  onCreated = (e: any) => {
+  onCreated = (e: LeafletMouseEvent) => {
+    const geometry = e.layer.toGeoJSON()['geometry'];
+    const bounds = e.layer.getBounds();
     this.setState(
       {
-        latMin: e.layer.getBounds().getSouth(),
-        latMax: e.layer.getBounds().getNorth(),
-        lonMin: e.layer.getBounds().getWest(),
-        lonMax: e.layer.getBounds().getEast()
+        geometry,
+        latMin: bounds.getSouth(),
+        latMax: bounds.getNorth(),
+        lonMin: bounds.getWest(),
+        lonMax: bounds.getEast()
       },
       () => {
+        StorageService.setGeometry(geometry);
         this.saveExtent();
       }
     );
@@ -147,15 +155,19 @@ export default class MapExtentComponent extends React.Component<
 
   onEditStop = (e: any) => {
     if (e.layers.getLayers().length > 0) {
+      const layer = e.layers.getLayers()[0];
+      const bounds = layer.getBounds();
+      const geometry = layer.toGeoJSON()['geometry'];
       this.setState(
         {
-          latMin: e.layers.getLayers()[0].getBounds().getSouth(),
-          latMax: e.layers.getLayers()[0].getBounds().getNorth(),
-          lonMin: e.layers.getLayers()[0].getBounds().getWest(),
-          lonMax: e.layers.getLayers()[0].getBounds().getEast()
+          geometry,
+          latMin: bounds.getSouth(),
+          latMax: bounds.getNorth(),
+          lonMin: bounds.getWest(),
+          lonMax: bounds.getEast()
         },
         () => {
-          this.saveExtent();
+          StorageService.setGeometry(geometry);
         }
       );
     }
@@ -164,12 +176,14 @@ export default class MapExtentComponent extends React.Component<
   onDeleted = (e: any) => {
     this.setState(
       {
+        geometry: undefined,
         latMin: null,
         latMax: null,
         lonMin: null,
         lonMax: null
       },
       () => {
+        StorageService.setGeometry(undefined);
         this.saveExtent();
       }
     );

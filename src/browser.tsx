@@ -111,8 +111,14 @@ export class EodagBrowser extends React.Component<IProps, IState> {
       productType,
       cloud
     } = StorageService.getFormValues();
-    const extent = StorageService.getExtent();
-    const code = formatCode({ startDate, endDate, productType, extent, cloud });
+    const geometry = StorageService.getGeometry();
+    const code = formatCode({
+      startDate,
+      endDate,
+      productType,
+      geometry,
+      cloud
+    });
     const cell = this.getCodeCell(code);
     const activeCellIndex = notebook.activeCellIndex;
     model.cells.insert(activeCellIndex + 1, cell);

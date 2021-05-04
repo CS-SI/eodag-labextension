@@ -62,28 +62,27 @@ class SearchHandler(APIHandler):
     """Search products handler"""
 
     @tornado.web.authenticated
-    def get(self, product_type):
-        """Get endpoint"""
+    def post(self, product_type):
+        """Post endpoint"""
 
-        # Transform dict values from list with unique element to string
-        arguments = {k: v[0].decode() for k, v in self.request.arguments.items()}
+        arguments = json.loads(self.request.body)
 
         try:
             response = search_products(product_type, arguments)
         except ValidationError as e:
             self.set_status(400)
-            self.write({"error": e.message})
+            self.finish({"error": e.message})
             return
         except RuntimeError as e:
             self.set_status(400)
-            self.write({"error": e})
+            self.finish({"error": e})
             return
         except UnsupportedProductType as e:
             self.set_status(404)
-            self.write({"error": "Not Found: {}".format(e.product_type)})
+            self.finish({"error": "Not Found: {}".format(e.product_type)})
             return
 
-        self.write(response)
+        self.finish(response)
 
 
 def setup_handlers(web_app, url_path):

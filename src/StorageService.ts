@@ -4,13 +4,18 @@
  */
 
 import { isNull } from 'lodash';
-import { Extent, SearchDTO } from './types';
+import { Extent, FormDTO, Geometry } from './types';
 
 class StorageService {
   /**
    * Key used to store extent in storage
    */
   static EXTENT = 'eodag_extent';
+
+  /**
+   * Key used to store geometry in storage
+   */
+  static GEOMETRY = 'eodag_geometry';
 
   /**
    * Key used to store form values in storage
@@ -52,7 +57,18 @@ class StorageService {
     );
   }
 
-  setFormValues({ productType, startDate, endDate, cloud }: SearchDTO) {
+  setGeometry(geometry: Geometry) {
+    sessionStorage.setItem(StorageService.GEOMETRY, JSON.stringify(geometry));
+  }
+
+  getGeometry(): Geometry {
+    const geometry = sessionStorage.getItem(StorageService.GEOMETRY);
+    if (geometry) {
+      return JSON.parse(geometry);
+    }
+  }
+
+  setFormValues({ productType, startDate, endDate, cloud }: FormDTO) {
     sessionStorage.setItem(
       StorageService.FORM_VALUES,
       JSON.stringify({
@@ -64,7 +80,7 @@ class StorageService {
     );
   }
 
-  getFormValues() {
+  getFormValues(): FormDTO {
     const reviver = (key: string, value: string | number | Date) => {
       const dateKeys = ['startDate', 'endDate'];
       if (dateKeys.includes(key)) {
@@ -75,7 +91,7 @@ class StorageService {
 
     const formValues = sessionStorage.getItem(StorageService.FORM_VALUES);
     if (formValues) {
-      return <SearchDTO>JSON.parse(formValues, reviver);
+      return <FormDTO>JSON.parse(formValues, reviver);
     }
     return {
       productType: null,
