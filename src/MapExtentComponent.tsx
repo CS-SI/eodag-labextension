@@ -77,22 +77,21 @@ export default class MapExtentComponent extends React.Component<
     this.map.leafletElement.invalidateSize();
   }, 500);
 
-  onCreated = (e: LeafletMouseEvent) => {
-    const geometry = e.layer.toGeoJSON()['geometry'];
-    this.setState(
-      {
-        geometry
-      },
-      () => {
-        StorageService.setGeometry(geometry);
-      }
-    );
+  onDrawStop = (e: LeafletMouseEvent) => {
+    // We use drawStop instead of onCreated because the latter gives same geometry multiple times
+    this.saveGeometry(e.target);
   };
 
   onEditStop = (e: any) => {
-    if (e.layers.getLayers().length > 0) {
-      const layer = e.layers.getLayers()[0];
-      const geometry = layer.toGeoJSON()['geometry'];
+    this.saveGeometry(e.target);
+  };
+
+  onDeleted = (e: any) => {
+    try {
+      this.saveGeometry(e.target);
+    } catch (TypeError) {
+      // When clearAll `updateMapProperties` crash
+      const geometry: Geometry = undefined;
       this.setState(
         {
           geometry
@@ -104,16 +103,45 @@ export default class MapExtentComponent extends React.Component<
     }
   };
 
-  onDeleted = (e: any) => {
+  /**
+   *  Save geometry in state and storage
+   *
+   * @param target
+   * @returns
+   */
+  saveGeometry = (target: any) => {
+    const geometry = this.getGeometry(target);
     this.setState(
       {
-        geometry: undefined
+        geometry
       },
       () => {
-        StorageService.setGeometry(undefined);
-        this.saveExtent();
+        StorageService.setGeometry(geometry);
       }
     );
+  };
+
+  /**
+   * Get Geometry as Polygon or MultiPolygon
+   */
+  getGeometry = (target: any) => {
+    // I didn’t found a method from leaflet that returns a Multipolygon so we build it if there are more than one polygon
+    const layers: any[] = [];
+    let geometry: Geometry;
+    target.eachLayer((l: any) => layers.push(l.toGeoJSON?.()));
+    const geo = layers
+      .filter(e => e?.type === 'Feature')
+      .map(e => e.geometry)
+      .filter(e => e.type === 'Polygon');
+    if (geo.length > 1) {
+      geometry = {
+        type: 'MultiPolygon',
+        coordinates: geo.map(e => e.coordinates)
+      };
+    } else {
+      geometry = geo?.[0];
+    }
+    return geometry;
   };
 
   render() {
@@ -132,7 +160,7 @@ export default class MapExtentComponent extends React.Component<
           <EditControl
             position="topright"
             draw={this.EditOptions}
-            onCreated={this.onCreated}
+            onDrawStop={this.onDrawStop}
             onEdited={this.onEditStop}
             onDeleted={this.onDeleted}
           />
