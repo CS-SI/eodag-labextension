@@ -88,8 +88,8 @@ export class EodagBrowser extends React.Component<IProps, IState> {
     if (!this.props.tracker.currentWidget) {
       return;
     }
-    if (!StorageService.isExtentDefined()) {
-      showErrorMessage('You first need to set an extent on the map', {});
+    if (!StorageService.isGeometryDefined()) {
+      showErrorMessage('You first need to set a geometry on the map', {});
       return;
     }
     const notebook = this.props.tracker.currentWidget.content;

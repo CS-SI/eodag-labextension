@@ -7,8 +7,7 @@ import * as React from 'react';
 import { Map, TileLayer, GeoJSON } from 'react-leaflet';
 import { isEmpty, get } from 'lodash';
 import { EODAG_TILE_URL, EODAG_TILE_COPYRIGHT } from './config';
-import StorageService from './StorageService';
-import { FeatureGroup, LeafletMouseEvent } from 'leaflet';
+import L, { FeatureGroup, LeafletMouseEvent } from 'leaflet';
 
 export interface IProps {
   features: any;
@@ -19,9 +18,7 @@ export interface IProps {
 }
 
 export interface IState {
-  lat: number;
-  lon: number;
-  zoom: number;
+  bounds: L.LatLngBounds;
   featureHover: any;
 }
 
@@ -53,13 +50,10 @@ export default class MapFeatureComponent extends React.Component<
   };
   constructor(props: IProps) {
     super(props);
-    // Use the extent and the previous zoom used to init the map centered on it
-    const extent = StorageService.getExtent();
-    const zoom = StorageService.getZoom();
+    const featureGeoJSONs = new L.GeoJSON(props.features.features);
+    const bounds = featureGeoJSONs.getBounds();
     this.state = {
-      lat: (extent.latMax + extent.latMin) / 2,
-      lon: (extent.lonMin + extent.lonMax) / 2,
-      zoom: zoom - 2,
+      bounds,
       featureHover: null
     };
   }
@@ -148,12 +142,10 @@ export default class MapFeatureComponent extends React.Component<
   };
 
   render() {
-    const { zoom, lat, lon } = this.state;
-    const position: [number, number] = [lat, lon];
+    const { bounds } = this.state;
     return (
       <Map
-        center={position}
-        zoom={zoom}
+        bounds={bounds}
         ref={ref => {
           this.map = ref;
         }}

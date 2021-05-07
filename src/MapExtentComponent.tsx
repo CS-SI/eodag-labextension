@@ -6,7 +6,7 @@
 import * as React from 'react';
 import { Map, TileLayer, FeatureGroup } from 'react-leaflet';
 import { EditControl } from 'react-leaflet-draw';
-import { throttle, isNull } from 'lodash';
+import { throttle } from 'lodash';
 import { EODAG_TILE_URL, EODAG_TILE_COPYRIGHT } from './config';
 import StorageService from './StorageService';
 import { Geometry } from './types';
@@ -18,10 +18,6 @@ export interface IState {
   lat: number;
   lon: number;
   zoom: number;
-  latMin: number;
-  latMax: number;
-  lonMin: number;
-  lonMax: number;
   geometry: Geometry;
 }
 
@@ -47,10 +43,6 @@ export default class MapExtentComponent extends React.Component<
       lat: 46.8,
       lon: 1.8,
       zoom: 4,
-      latMin: null,
-      latMax: null,
-      lonMin: null,
-      lonMax: null,
       geometry: undefined
     };
   }
@@ -59,8 +51,8 @@ export default class MapExtentComponent extends React.Component<
    * Waiting the app to load before attaching an observer to watch for plugin width change
    */
   componentDidMount() {
-    // Reinit the extent stored in storage
-    this.saveExtent();
+    // Reinit the geometry stored in storage
+    StorageService.setGeometry(undefined);
     const that = this;
     const timer = setInterval(function () {
       var observer = new MutationObserver(function (mutations) {
@@ -78,40 +70,6 @@ export default class MapExtentComponent extends React.Component<
   }
 
   /**
-   * Truncate the number to 6 digits
-   * source: https://stackoverflow.com/a/49747203
-   */
-  truncateNumberOfDigits(number: number) {
-    if (isNull(number)) {
-      return number;
-    }
-    return parseInt(`${number * 1000000}`, 10) / 1000000;
-  }
-
-  /**
-   * Save the extent in the session storage (object removed when browser closed)
-   */
-  saveExtent = () => {
-    const { latMin, latMax, lonMin, lonMax } = this.state;
-    const extent = {
-      latMin: this.truncateNumberOfDigits(latMin),
-      latMax: this.truncateNumberOfDigits(latMax),
-      lonMin: this.truncateNumberOfDigits(lonMin),
-      lonMax: this.truncateNumberOfDigits(lonMax)
-    };
-    StorageService.setExtent(extent);
-  };
-
-  /**
-   * Function called every time the user (un)zoom,
-   * but store that value max every 500 ms thanks to throttle
-   */
-  handleZoomEnd = throttle(e => {
-    const zoom = e.target.getZoom();
-    StorageService.setZoom(zoom);
-  }, 500);
-
-  /**
    * Function called every time the map should change its width,
    * but only redraw every 500ms thanks to throttle
    */
@@ -119,36 +77,14 @@ export default class MapExtentComponent extends React.Component<
     this.map.leafletElement.invalidateSize();
   }, 500);
 
-  /**
-   * When the user starts to draw a new extent, we try to remove any extent already existing
-   */
-  onDrawStart = (e: any) => {
-    let layerToRemove;
-    e.target.eachLayer((method: any) => {
-      if (method.getBounds && method.getBounds().isValid()) {
-        // if the layer has a valid bounds, we can safely remove it
-        layerToRemove = method;
-      }
-    });
-    if (layerToRemove) {
-      e.target.removeLayer(layerToRemove);
-    }
-  };
-
   onCreated = (e: LeafletMouseEvent) => {
     const geometry = e.layer.toGeoJSON()['geometry'];
-    const bounds = e.layer.getBounds();
     this.setState(
       {
-        geometry,
-        latMin: bounds.getSouth(),
-        latMax: bounds.getNorth(),
-        lonMin: bounds.getWest(),
-        lonMax: bounds.getEast()
+        geometry
       },
       () => {
         StorageService.setGeometry(geometry);
-        this.saveExtent();
       }
     );
   };
@@ -156,15 +92,10 @@ export default class MapExtentComponent extends React.Component<
   onEditStop = (e: any) => {
     if (e.layers.getLayers().length > 0) {
       const layer = e.layers.getLayers()[0];
-      const bounds = layer.getBounds();
       const geometry = layer.toGeoJSON()['geometry'];
       this.setState(
         {
-          geometry,
-          latMin: bounds.getSouth(),
-          latMax: bounds.getNorth(),
-          lonMin: bounds.getWest(),
-          lonMax: bounds.getEast()
+          geometry
         },
         () => {
           StorageService.setGeometry(geometry);
@@ -176,11 +107,7 @@ export default class MapExtentComponent extends React.Component<
   onDeleted = (e: any) => {
     this.setState(
       {
-        geometry: undefined,
-        latMin: null,
-        latMax: null,
-        lonMin: null,
-        lonMax: null
+        geometry: undefined
       },
       () => {
         StorageService.setGeometry(undefined);
@@ -199,14 +126,12 @@ export default class MapExtentComponent extends React.Component<
         ref={ref => {
           this.map = ref;
         }}
-        onzoomend={this.handleZoomEnd}
       >
         <TileLayer url={EODAG_TILE_URL} attribution={EODAG_TILE_COPYRIGHT} />
         <FeatureGroup>
           <EditControl
             position="topright"
             draw={this.EditOptions}
-            onDrawStart={this.onDrawStart}
             onCreated={this.onCreated}
             onEdited={this.onEditStop}
             onDeleted={this.onDeleted}

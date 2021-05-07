@@ -83,9 +83,9 @@ export default class FormComponent extends React.Component<IProps, IState> {
       });
   }
   handleSearch = () => {
-    // Prevent user not having configure an extent to make the request
-    if (!StorageService.isExtentDefined()) {
-      showErrorMessage('You first need to set an extent on the map', {});
+    // Prevent user not having configure a geometry to make the request
+    if (!StorageService.isGeometryDefined()) {
+      showErrorMessage('You first need to set a geometry on the map', {});
       return;
     }
     this.saveFormValues();
