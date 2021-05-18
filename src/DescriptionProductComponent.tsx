@@ -3,7 +3,22 @@
  * All rights reserved
  */
 
+import _ from 'lodash';
 import * as React from 'react';
+import { FeaturePropertie } from './types';
+
+const MEANPROPERTIES = [
+  'platformSerialIdentifier',
+  'instrument',
+  'productType',
+  'processingLevel',
+  'sensorMode',
+  'startTimeFromAscendingNode',
+  'completionTimeFromAscendingNode',
+  'orbitDirection',
+  'orbitNumber',
+  'cloudCover'
+];
 
 export interface IProps {
   feature: any;
@@ -11,25 +26,75 @@ export interface IProps {
 
 export interface IState {
   smallQuicklook: any;
+  featureProperties: FeaturePropertie[];
 }
 
 export default class DescriptionProductComponent extends React.Component<
   IProps,
   IState
 > {
-  state = {
-    smallQuicklook: true
-  };
+  constructor(props: IProps) {
+    super(props);
+    this.state = {
+      smallQuicklook: true,
+      featureProperties: undefined
+    };
+  }
   toggleQuicklookSize = () => {
     const { smallQuicklook } = this.state;
     this.setState({
       smallQuicklook: !smallQuicklook
     });
   };
+
+  componentDidUpdate(prevProps: IProps) {
+    if (
+      prevProps.feature !== this.props.feature &&
+      Boolean(this.props.feature)
+    ) {
+      const featureProperties = this.organizeProperties();
+      this.setState({ featureProperties });
+    }
+  }
+
+  organizeProperties(): FeaturePropertie[] {
+    const { properties } = this.props.feature;
+    const meanProperties: [string, any][] = [];
+    MEANPROPERTIES.forEach(p => {
+      const fp = properties[p];
+      if (fp !== undefined && fp !== null && fp !== '' && fp.length !== 0) {
+        meanProperties.push([p, fp]);
+      }
+    });
+    const otherProperties = _.toPairs(
+      _.pickBy(
+        properties,
+        (v, k) =>
+          (_.isNumber(v) ||
+            _.isString(v) ||
+            (_.isArray(v) && v.length !== 0 && v.every(_.isString))) &&
+          !MEANPROPERTIES.includes(k) &&
+          !k.startsWith('eodag') &&
+          v !== undefined &&
+          v !== null &&
+          v !== ''
+      )
+    ).sort();
+
+    // Split keys on Upper letters and make a new capitalized string
+    const featureProperties: FeaturePropertie[] = meanProperties
+      .concat(otherProperties)
+      .map(([k, v]: [string, any]) => ({
+        key: _.capitalize(k.split(/(?=[A-Z])/).join(' ')),
+        value: v
+      }));
+    return featureProperties;
+  }
+
   render() {
     const { feature } = this.props;
-    const { smallQuicklook } = this.state;
-    if (!feature) {
+    const { featureProperties, smallQuicklook } = this.state;
+    if (!feature || !featureProperties) {
       return null;
     }
     return (
@@ -45,46 +110,12 @@ export default class DescriptionProductComponent extends React.Component<
         </div>
         <h4>Metadata</h4>
         <table className="result-table">
-          <tr>
-            <td>Platform</td>
-            <td>{feature.properties.platformSerialIdentifier}</td>
-          </tr>
-          <tr>
-            <td>Instrument</td>
-            <td>{feature.properties.instrument}</td>
-          </tr>
-          <tr>
-            <td>Product type</td>
-            <td>{feature.properties.productType}</td>
-          </tr>
-          <tr>
-            <td>Processing level</td>
-            <td>{feature.properties.processingLevel}</td>
-          </tr>
-          <tr>
-            <td>Sensor mode</td>
-            <td>{feature.properties.sensorMode}</td>
-          </tr>
-          <tr>
-            <td>Start time from ascending node</td>
-            <td>{feature.properties.startTimeFromAscendingNode}</td>
-          </tr>
-          <tr>
-            <td>End time from ascending node</td>
-            <td>{feature.properties.completionTimeFromAscendingNode}</td>
-          </tr>
-          <tr>
-            <td>Orbit direction</td>
-            <td>{feature.properties.orbitDirection}</td>
-          </tr>
-          <tr>
-            <td>Orbit number</td>
-            <td>{feature.properties.orbitNumber}</td>
-          </tr>
-          <tr>
-            <td>Cloud cover</td>
-            <td>{feature.properties.cloudCover} %</td>
-          </tr>
+          {featureProperties.map(({ key, value }: FeaturePropertie) => (
+            <tr>
+              <td>{key}</td>
+              <td>{value}</td>
+            </tr>
+          ))}
         </table>
       </div>
     );

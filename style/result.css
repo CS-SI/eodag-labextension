@@ -1,5 +1,6 @@
 .result-table {
   width: 100%;
+  table-layout: fixed;
   border-collapse: collapse;
 }
 .result-table tr {
@@ -9,6 +10,7 @@
   background-color: rgba(180, 180, 180, 0.747);
 }
 .result-table td {
+  width: 50%;
   padding: 18px 20px;
   font-size: 15px;
   border-bottom: 1px solid rgba(180, 180, 180, 0.719);

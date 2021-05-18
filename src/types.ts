@@ -23,3 +23,9 @@ export interface Extent {
   lonMin: number;
   lonMax: number;
 }
+
+// export type FeaturePropertie = [string, any];
+export interface FeaturePropertie {
+  key: string;
+  value: any;
+}
