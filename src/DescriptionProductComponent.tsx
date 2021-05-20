@@ -120,7 +120,15 @@ export default class DescriptionProductComponent extends React.Component<
           {featureProperties.map(({ key, value }: FeaturePropertie) => (
             <tr>
               <td>{key}</td>
-              <td>{value}</td>
+              <td>
+                {typeof value === 'string' && value.startsWith('http') ? (
+                  <a href={value} target="_blank">
+                    {value}
+                  </a>
+                ) : (
+                  value
+                )}
+              </td>
             </tr>
           ))}
         </table>
