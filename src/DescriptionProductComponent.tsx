@@ -20,6 +20,13 @@ const MEANPROPERTIES = [
   'cloudCover'
 ];
 
+const formatProperty: any = (name: string, value: unknown) => {
+  if (name === 'cloudCover') {
+    return `${Math.round(value as number)} %`;
+  }
+  return value;
+};
+
 export interface IProps {
   feature: any;
 }
@@ -61,9 +68,9 @@ export default class DescriptionProductComponent extends React.Component<
     const { properties } = this.props.feature;
     const meanProperties: [string, any][] = [];
     MEANPROPERTIES.forEach(p => {
-      const fp = properties[p];
+      let fp = properties[p];
       if (fp !== undefined && fp !== null && fp !== '' && fp.length !== 0) {
-        meanProperties.push([p, fp]);
+        meanProperties.push([p, formatProperty(p, fp)]);
       }
     });
     const otherProperties = _.toPairs(
