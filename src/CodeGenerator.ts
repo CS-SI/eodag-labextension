@@ -5,12 +5,8 @@
  * All rights reserved
  */
 
-import { FormDTO, Geometry } from './types';
+import { IFormInput } from './types';
 import { formatDate } from './utils';
-
-export interface FormatCodeProps extends FormDTO {
-  geometry: Geometry;
-}
 
 const formatCode = ({
   startDate,
@@ -18,7 +14,7 @@ const formatCode = ({
   productType,
   geometry,
   cloud
-}: FormatCodeProps) => {
+}: IFormInput) => {
   const start = startDate ? formatDate(startDate) : undefined;
   const end = endDate ? formatDate(endDate) : undefined;
 

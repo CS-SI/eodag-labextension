@@ -165,12 +165,10 @@ class MuiVirtualizedTable extends React.PureComponent<
         {({ height, width }) => (
           <InfiniteLoader
             isRowLoaded={isRowLoaded}
-            // @ts-ignore
             loadMoreRows={loadMoreRows}
             rowCount={rowCount}
           >
             {({ onRowsRendered, registerChild }) => (
-              // @ts-ignore
               <Table
                 ref={registerChild}
                 onRowsRendered={onRowsRendered}
@@ -211,7 +209,6 @@ class MuiVirtualizedTable extends React.PureComponent<
                     }
 
                     return (
-                      // @ts-ignore
                       <Column
                         key={dataKey}
                         headerRenderer={headerProps =>

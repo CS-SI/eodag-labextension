@@ -3,7 +3,8 @@
  * All rights reserved
  */
 
-import * as React from 'react';
+import React, { FC, useEffect, useState } from 'react';
+import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 import { showErrorMessage } from '@jupyterlab/apputils';
 import { URLExt } from '@jupyterlab/coreutils';
 import { ServerConnection } from '@jupyterlab/services';
@@ -13,40 +14,36 @@ import 'react-datepicker/dist/react-datepicker.css';
 import 'isomorphic-fetch';
 import Autocomplete from './Autocomplete';
 import { EODAG_SERVER_ADRESS } from './config';
-import StorageService from './StorageService';
 import SearchService from './SearchService';
 import { ChangeEvent } from 'react';
 import { OptionTypeBase } from 'react-select';
+import MapExtentComponent from './MapExtentComponent';
+import _ from 'lodash';
+import { IFormInput } from './types';
 
 export interface IProps {
   handleShowFeature: any;
+  saveFormValues: (formValue: IFormInput) => void;
 }
+export const FormComponent: FC<IProps> = ({
+  handleShowFeature,
+  saveFormValues
+}) => {
+  const [productTypes, setProductTypes] = useState<OptionTypeBase[]>();
+  const [cloud, setCloud] = useState(100);
+  const [isLoadingSearch, setIsLoadingSearch] = useState(false);
 
-export interface IState {
-  startDate: Date;
-  endDate: Date;
-  productType: string;
-  productTypes: OptionTypeBase[];
-  isLoadingSearch: boolean;
-  cloud: number;
-}
+  const {
+    control,
+    handleSubmit,
+    clearErrors,
+    formState: { errors }
+  } = useForm<IFormInput>({
+    defaultValues: { cloud: 100 }
+  });
 
-export default class FormComponent extends React.Component<IProps, IState> {
-  constructor(props: IProps) {
-    super(props);
-    this.state = {
-      startDate: undefined,
-      endDate: undefined,
-      productType: undefined,
-      productTypes: [],
-      isLoadingSearch: false,
-      cloud: 100
-    };
-  }
-
-  componentDidMount() {
+  useEffect(() => {
     // Fetch product types
-    // @ts-ignore
     let _serverSettings = ServerConnection.makeSettings();
     let _eodag_server = URLExt.join(
       _serverSettings.baseUrl,
@@ -71,9 +68,7 @@ export default class FormComponent extends React.Component<IProps, IState> {
           label: product.ID,
           description: product.abstract
         }));
-        this.setState({
-          productTypes: productTypes
-        });
+        setProductTypes(productTypes);
       })
       .catch(() => {
         showErrorMessage(
@@ -81,23 +76,39 @@ export default class FormComponent extends React.Component<IProps, IState> {
           {}
         );
       });
-  }
-  handleSearch = () => {
-    // Prevent user not having configure a geometry to make the request
-    if (!StorageService.isGeometryDefined()) {
-      showErrorMessage('You first need to set a geometry on the map', {});
-      return;
-    }
-    this.saveFormValues();
-    this.setState({
-      isLoadingSearch: true
-    });
-    SearchService.search(1)
+  }, []);
+
+  useEffect(
+    () => {
+      if (errors.geometry) {
+        showErrorMessage(
+          'You first need to set a geometry on the map',
+          {}
+        ).then(() => clearErrors());
+      } else if (!_.isEmpty(errors)) {
+        showErrorMessage(
+          'The following fields are required',
+          _.keys(errors).join(', ')
+        ).then(() => clearErrors());
+      }
+    },
+    // useEffect is not triggered with only errors as dependency thus we need to list all its elements
+    [
+      errors.geometry,
+      errors.productType,
+      errors.startDate,
+      errors.endDate,
+      errors.cloud
+    ]
+  );
+
+  const onSubmit: SubmitHandler<IFormInput> = data => {
+    saveFormValues(data);
+    setIsLoadingSearch(true);
+    SearchService.search(1, data)
       .then(features => {
-        this.setState({
-          isLoadingSearch: false
-        });
-        this.props.handleShowFeature(features);
+        setIsLoadingSearch(false);
+        handleShowFeature(features);
       })
       .catch(() => {
         let _serverSettings = ServerConnection.makeSettings();
@@ -109,125 +120,113 @@ export default class FormComponent extends React.Component<IProps, IState> {
           `Unable to contact the EODAG server. Are you sure the adress is ${_eodag_server}/ ?`,
           {}
         );
-        this.setState({
-          isLoadingSearch: false
-        });
+        setIsLoadingSearch(false);
       });
   };
-  handleChangeEndDate = (date: Date) => {
-    this.setState({
-      endDate: date
-    });
-  };
-  handleChangeStartDate = (date: Date) => {
-    this.setState({
-      startDate: date
-    });
-  };
-  handleChangeProductType = (val: OptionTypeBase | null) => {
-    this.setState({
-      productType: val?.value
-    });
-  };
 
-  handleChangeCloud = (event: ChangeEvent<HTMLInputElement>) => {
-    this.setState({
-      cloud: parseInt(event.target.value, 10)
-    });
-  };
-  saveFormValues = () => {
-    const { productType, startDate, endDate, cloud } = this.state;
-    StorageService.setFormValues({
-      productType: productType,
-      startDate: startDate,
-      endDate: endDate,
-      cloud
-    });
-  };
-  render() {
-    const {
-      productTypes,
-      productType,
-      startDate,
-      endDate,
-      cloud,
-      isLoadingSearch
-    } = this.state;
-    const isEndDateLowerThanStartDate =
-      startDate instanceof Date &&
-      endDate instanceof Date &&
-      startDate.getTime() > endDate.getTime();
-    const isSearchDisabled = !productType || isLoadingSearch;
-    return (
-      <div className="jp-EodagWidget-form">
-        <Autocomplete
-          suggestions={productTypes}
-          value={productType}
-          handleChange={this.handleChangeProductType}
+  return (
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <Controller
+        name="geometry"
+        control={control}
+        rules={{ required: 'You first need to set a geometry on the map' }}
+        render={({ field: { onChange, value } }) => (
+          <MapExtentComponent geometry={value} onChange={onChange} />
+        )}
+      />
+      <div className="jp-EodagWidget-field">
+        <Controller
+          name="productType"
+          control={control}
+          rules={{ required: true }}
+          render={({ field: { onChange, value } }) => (
+            <Autocomplete
+              suggestions={productTypes}
+              value={value}
+              handleChange={(e: OptionTypeBase | null) => onChange(e?.value)}
+            />
+          )}
         />
-        <div className="jp-EodagWidget-field">
-          <label htmlFor="startDate" className="jp-EodagWidget-input-name">
-            Start date
-          </label>
-          <div className="jp-EodagWidget-input-wrapper">
-            <DatePicker
-              className="jp-EodagWidget-input"
-              selected={this.state.startDate}
-              onChange={this.handleChangeStartDate}
-              dateFormat={'dd/MM/yyyy'}
-              showMonthDropdown
-              showYearDropdown
-              dropdownMode="select"
-            />
-          </div>
-        </div>
-
-        <div className="jp-EodagWidget-field">
-          <label htmlFor="startDate" className="jp-EodagWidget-input-name">
-            End date
-          </label>
-          <div className="jp-EodagWidget-input-wrapper">
-            <DatePicker
-              className="jp-EodagWidget-input"
-              selected={this.state.endDate}
-              onChange={this.handleChangeEndDate}
-              dateFormat={'dd/MM/yyyy'}
-              showMonthDropdown
-              showYearDropdown
-              dropdownMode="select"
-            />
-            {isEndDateLowerThanStartDate ? (
-              <div id="endDate-error-text">
-                End date must be after start date
-              </div>
-            ) : null}
-          </div>
-        </div>
-        <div className="jp-EodagWidget-field">
-          <label htmlFor="cloud" className="jp-EodagWidget-input-name">
-            Max cloud cover {cloud}%
-          </label>
-          <div className="jp-EodagWidget-slider">
-            <input
-              type="range"
-              min="0"
-              max="100"
-              value={cloud}
-              aria-labelledby="cloud"
-              onChange={this.handleChangeCloud}
-            />
-          </div>
-        </div>
-        <div className="jp-EodagWidget-buttons">
-          <button
-            color="primary"
-            onClick={this.handleSearch}
-            disabled={isSearchDisabled}
-          >
-            {isLoadingSearch ? 'Searching...' : 'Search'}
-          </button>
+        <label htmlFor="startDate" className="jp-EodagWidget-input-name">
+          Start date
+        </label>
+        <div className="jp-EodagWidget-input-wrapper">
+          <Controller
+            name="startDate"
+            control={control}
+            rules={{ required: true }}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <DatePicker
+                className="jp-EodagWidget-input"
+                onChange={(d: Date) => {
+                  onChange(d);
+                }}
+                onBlur={onBlur}
+                selected={value}
+                dateFormat={'dd/MM/yyyy'}
+                showMonthDropdown
+                showYearDropdown
+                dropdownMode="select"
+              />
+            )}
+          />
         </div>
       </div>
-    );
-  }
-}
+      <label htmlFor="endDate" className="jp-EodagWidget-input-name">
+        End date
+      </label>
+      <div className="jp-EodagWidget-input-wrapper">
+        <Controller
+          name="endDate"
+          control={control}
+          rules={{ required: true }}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <DatePicker
+              className="jp-EodagWidget-input"
+              onChange={(d: Date) => {
+                onChange(d);
+              }}
+              onBlur={onBlur}
+              selected={value}
+              dateFormat={'dd/MM/yyyy'}
+              showMonthDropdown
+              showYearDropdown
+              dropdownMode="select"
+            />
+          )}
+        />
+      </div>
+      <div className="jp-EodagWidget-field">
+        <label htmlFor="cloud" className="jp-EodagWidget-input-name">
+          Max cloud cover {cloud}%
+        </label>
+        <div className="jp-EodagWidget-slider">
+          <Controller
+            name="cloud"
+            control={control}
+            rules={{ required: true }}
+            render={({ field: { onChange, value } }) => (
+              <input
+                type="range"
+                min="0"
+                max="100"
+                value={value}
+                aria-labelledby="cloud"
+                onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                  const value = parseInt(event.target.value, 10);
+                  onChange(value);
+                  setCloud(value);
+                }}
+              />
+            )}
+          />
+        </div>
+      </div>
+      <div className="jp-EodagWidget-buttons">
+        <button type="submit" color="primary" disabled={isLoadingSearch}>
+          {isLoadingSearch ? 'Searching...' : 'Search'}
+        </button>
+      </div>
+    </form>
+  );
+};

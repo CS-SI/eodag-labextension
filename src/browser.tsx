@@ -8,12 +8,11 @@ import { NotebookActions, INotebookTracker } from '@jupyterlab/notebook';
 import { CodeCellModel } from '@jupyterlab/cells';
 import { showErrorMessage } from '@jupyterlab/apputils';
 import { concat, get } from 'lodash';
-import MapExtentComponent from './MapExtentComponent';
-import FormComponent from './FormComponent';
+import { FormComponent } from './FormComponent';
 import ModalComponent from './ModalComponent';
 import formatCode from './CodeGenerator';
-import StorageService from './StorageService';
 import SearchService from './SearchService';
+import { IFormInput } from './types';
 
 export interface IProps {
   tracker: INotebookTracker;
@@ -23,14 +22,19 @@ export interface IState {
   features: any;
   openDialog: any;
   searching: any;
+  formValues: IFormInput;
 }
 
 export class EodagBrowser extends React.Component<IProps, IState> {
-  state = {
-    features: {},
-    openDialog: false,
-    searching: false
-  };
+  constructor(props: IProps) {
+    super(props);
+    this.state = {
+      features: {},
+      openDialog: false,
+      searching: false,
+      formValues: undefined
+    };
+  }
 
   handleShowFeature = (features: any) => {
     this.setState({
@@ -43,7 +47,10 @@ export class EodagBrowser extends React.Component<IProps, IState> {
     this.setState({
       searching: true
     });
-    return SearchService.search(get(features, 'properties.page', 1) + 1)
+    return SearchService.search(
+      get(features, 'properties.page', 1) + 1,
+      this.state.formValues
+    )
       .then(results => {
         const featureList = concat(
           get(features, 'features', []),
@@ -88,10 +95,6 @@ export class EodagBrowser extends React.Component<IProps, IState> {
     if (!this.props.tracker.currentWidget) {
       return;
     }
-    if (!StorageService.isGeometryDefined()) {
-      showErrorMessage('You first need to set a geometry on the map', {});
-      return;
-    }
     const notebook = this.props.tracker.currentWidget.content;
     const model = notebook.model;
     if (model.defaultKernelLanguage !== 'python') {
@@ -109,9 +112,9 @@ export class EodagBrowser extends React.Component<IProps, IState> {
       startDate,
       endDate,
       productType,
-      cloud
-    } = StorageService.getFormValues();
-    const geometry = StorageService.getGeometry();
+      cloud,
+      geometry
+    } = this.state.formValues;
     const code = formatCode({
       startDate,
       endDate,
@@ -135,8 +138,12 @@ export class EodagBrowser extends React.Component<IProps, IState> {
     return (
       <div>
         <header className="jp-EodagWidget-header">Products search</header>
-        <MapExtentComponent />
-        <FormComponent handleShowFeature={this.handleShowFeature} />
+        <FormComponent
+          handleShowFeature={this.handleShowFeature}
+          saveFormValues={(formValues: IFormInput) =>
+            this.setState({ formValues })
+          }
+        />
         <ModalComponent
           open={openDialog}
           features={features}

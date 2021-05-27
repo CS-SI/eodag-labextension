@@ -8,13 +8,11 @@ import 'isomorphic-fetch';
 import { EODAG_SERVER_ADRESS } from './config';
 import { ServerConnection } from '@jupyterlab/services';
 import { URLExt } from '@jupyterlab/coreutils';
-import StorageService from './StorageService';
 import { formatDate } from './utils';
-import { SearchParameters } from './types';
+import { IFormInput, SearchParameters } from './types';
 
 class SearchService {
   /**
-   * This methods internaly uses the StorageService to retrieve form data
    * @param page The page to fetch
    * @returns the URL to fetch from the EODAG server to get products
    */
@@ -29,20 +27,18 @@ class SearchService {
 
   /**
    * Contact the EODAG server to retrieve products
-   * This methods internaly uses the StorageService to retrieve form data
    * @param page The page to fetch
-   * @param parameters parameters to pass to EODAG search
+   * @param formValues parameters to pass to EODAG search
    * @return a promise that will receive features
    */
-  search(page = 1) {
-    const formValues = StorageService.getFormValues();
+  search(page = 1, formValues: IFormInput) {
     const url = this.getSearchURL(formValues.productType);
     const parameters: SearchParameters = {
       dtstart: formatDate(formValues.startDate),
       dtend: formatDate(formValues.endDate),
       cloudCover: formValues.cloud,
       page: page,
-      geom: StorageService.getGeometry()
+      geom: formValues.geometry
     };
 
     const headers = new Headers({

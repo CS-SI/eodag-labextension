@@ -8,11 +8,13 @@ import { Map, TileLayer, FeatureGroup } from 'react-leaflet';
 import { EditControl } from 'react-leaflet-draw';
 import { throttle } from 'lodash';
 import { EODAG_TILE_URL, EODAG_TILE_COPYRIGHT } from './config';
-import StorageService from './StorageService';
 import { Geometry } from './types';
 import { LeafletMouseEvent } from 'leaflet';
 
-export interface IProps {}
+export interface IProps {
+  onChange: (value: Geometry) => void;
+  geometry: Geometry;
+}
 
 export interface IState {
   lat: number;
@@ -43,7 +45,7 @@ export default class MapExtentComponent extends React.Component<
       lat: 46.8,
       lon: 1.8,
       zoom: 4,
-      geometry: undefined
+      geometry: props.geometry
     };
   }
 
@@ -51,8 +53,6 @@ export default class MapExtentComponent extends React.Component<
    * Waiting the app to load before attaching an observer to watch for plugin width change
    */
   componentDidMount() {
-    // Reinit the geometry stored in storage
-    StorageService.setGeometry(undefined);
     const that = this;
     const timer = setInterval(function () {
       var observer = new MutationObserver(function (mutations) {
@@ -97,7 +97,7 @@ export default class MapExtentComponent extends React.Component<
           geometry
         },
         () => {
-          StorageService.setGeometry(geometry);
+          this.props.onChange(geometry);
         }
       );
     }
@@ -116,7 +116,7 @@ export default class MapExtentComponent extends React.Component<
         geometry
       },
       () => {
-        StorageService.setGeometry(geometry);
+        this.props.onChange(geometry);
       }
     );
   };

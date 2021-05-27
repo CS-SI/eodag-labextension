@@ -1,8 +1,9 @@
-export interface FormDTO {
-  productType?: string;
-  startDate?: Date;
-  endDate?: Date;
-  cloud?: number;
+export interface IFormInput {
+  geometry: Geometry;
+  startDate: Date;
+  endDate: Date;
+  productType: string;
+  cloud: number;
 }
 
 export interface SearchParameters {
@@ -17,11 +18,10 @@ export interface Geometry {
   type: string;
   coordinates: number[];
 }
-export interface Extent {
-  latMin: number;
-  latMax: number;
-  lonMin: number;
-  lonMax: number;
+// export type FeaturePropertie = [string, any];
+export interface FeaturePropertie {
+  key: string;
+  value: any;
 }
 
 // export type FeaturePropertie = [string, any];
