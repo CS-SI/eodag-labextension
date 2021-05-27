@@ -20,6 +20,7 @@ import { OptionTypeBase } from 'react-select';
 import MapExtentComponent from './MapExtentComponent';
 import _ from 'lodash';
 import { IFormInput } from './types';
+import { DateTime } from 'luxon';
 
 export interface IProps {
   handleShowFeature: any;
@@ -30,6 +31,11 @@ export const FormComponent: FC<IProps> = ({
   saveFormValues
 }) => {
   const [productTypes, setProductTypes] = useState<OptionTypeBase[]>();
+  const now = DateTime.utc();
+  const defaultStartDate = now.minus({ days: 1 }).toJSDate();
+  const defaultEndDate = now.toJSDate();
+  const [startDate, setStartDate] = useState(defaultStartDate);
+  const [endDate, setEndDate] = useState(defaultEndDate);
   const [cloud, setCloud] = useState(100);
   const [isLoadingSearch, setIsLoadingSearch] = useState(false);
 
@@ -39,7 +45,11 @@ export const FormComponent: FC<IProps> = ({
     clearErrors,
     formState: { errors }
   } = useForm<IFormInput>({
-    defaultValues: { cloud: 100 }
+    defaultValues: {
+      startDate: defaultStartDate,
+      endDate: defaultEndDate,
+      cloud: 100
+    }
   });
 
   useEffect(() => {
@@ -158,7 +168,12 @@ export const FormComponent: FC<IProps> = ({
             render={({ field: { onChange, onBlur, value } }) => (
               <DatePicker
                 className="jp-EodagWidget-input"
+                selectsStart
+                startDate={startDate}
+                endDate={endDate}
+                maxDate={endDate}
                 onChange={(d: Date) => {
+                  setStartDate(d);
                   onChange(d);
                 }}
                 onBlur={onBlur}
@@ -167,6 +182,7 @@ export const FormComponent: FC<IProps> = ({
                 showMonthDropdown
                 showYearDropdown
                 dropdownMode="select"
+                isClearable
               />
             )}
           />
@@ -183,7 +199,12 @@ export const FormComponent: FC<IProps> = ({
           render={({ field: { onChange, onBlur, value } }) => (
             <DatePicker
               className="jp-EodagWidget-input"
+              selectsEnd
+              startDate={startDate}
+              endDate={endDate}
+              minDate={startDate}
               onChange={(d: Date) => {
+                setEndDate(d);
                 onChange(d);
               }}
               onBlur={onBlur}
@@ -192,6 +213,7 @@ export const FormComponent: FC<IProps> = ({
               showMonthDropdown
               showYearDropdown
               dropdownMode="select"
+              isClearable
             />
           )}
         />
