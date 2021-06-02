@@ -13,7 +13,8 @@ const formatCode = ({
   endDate,
   productType,
   geometry,
-  cloud
+  cloud,
+  additionnalParameters
 }: IFormInput) => {
   const start = startDate ? formatDate(startDate) : undefined;
   const end = endDate ? formatDate(endDate) : undefined;
@@ -62,6 +63,12 @@ product_type = '${productType}'
     code += `  cloudCover=cloud_cover,
 `;
   }
+  if (additionnalParameters) {
+    code += additionnalParameters
+      .map(({ name, value }) => `  ${name}="${value}",`)
+      .join('\n');
+  }
+
   code += ')';
   return code;
 };

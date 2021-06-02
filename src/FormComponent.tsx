@@ -4,7 +4,13 @@
  */
 
 import React, { FC, useEffect, useState } from 'react';
-import { useForm, SubmitHandler, Controller } from 'react-hook-form';
+import {
+  useForm,
+  SubmitHandler,
+  Controller,
+  useFieldArray,
+  UseFormReturn
+} from 'react-hook-form';
 import { showErrorMessage } from '@jupyterlab/apputils';
 import { URLExt } from '@jupyterlab/coreutils';
 import { ServerConnection } from '@jupyterlab/services';
@@ -43,6 +49,7 @@ export const FormComponent: FC<IProps> = ({
     control,
     handleSubmit,
     clearErrors,
+    register,
     formState: { errors }
   } = useForm<IFormInput>({
     defaultValues: {
@@ -244,11 +251,47 @@ export const FormComponent: FC<IProps> = ({
           />
         </div>
       </div>
+      <Fields {...{ control, register }} />
       <div className="jp-EodagWidget-buttons">
         <button type="submit" color="primary" disabled={isLoadingSearch}>
           {isLoadingSearch ? 'Searching...' : 'Search'}
         </button>
       </div>
     </form>
+  );
+};
+
+const Fields = ({ control, register }: Partial<UseFormReturn<IFormInput>>) => {
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: 'additionnalParameters'
+  });
+  return (
+    <fieldset>
+      <legend>Additionnal Parameters</legend>
+      {fields.map((field, index) => {
+        return (
+          <fieldset key={field.id}>
+            <section className={'section'} key={field.id}>
+              <input
+                placeholder="Parameter name"
+                {...register(`additionnalParameters.${index}.name` as const)}
+              />
+              <input
+                placeholder="Parameter value"
+                {...register(`additionnalParameters.${index}.value` as const)}
+              />
+              <button type="button" onClick={() => remove(index)}>
+                Delete
+              </button>
+            </section>
+          </fieldset>
+        );
+      })}
+
+      <button type="button" onClick={() => append({})}>
+        Add search parameter
+      </button>
+    </fieldset>
   );
 };

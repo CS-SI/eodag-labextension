@@ -4,6 +4,7 @@ export interface IFormInput {
   endDate: Date;
   productType: string;
   cloud: number;
+  additionnalParameters?: { name: string; value: string }[];
 }
 
 export interface SearchParameters {
@@ -12,6 +13,7 @@ export interface SearchParameters {
   cloudCover?: number;
   page?: number;
   geom?: Geometry;
+  [key: string]: any;
 }
 
 export interface Geometry {

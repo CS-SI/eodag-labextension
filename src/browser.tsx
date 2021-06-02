@@ -108,20 +108,7 @@ export class EodagBrowser extends React.Component<IProps, IState> {
       showErrorMessage('Unable to inject cell into read-only notebook', {});
       return;
     }
-    const {
-      startDate,
-      endDate,
-      productType,
-      cloud,
-      geometry
-    } = this.state.formValues;
-    const code = formatCode({
-      startDate,
-      endDate,
-      productType,
-      geometry,
-      cloud
-    });
+    const code = formatCode(this.state.formValues);
     const cell = this.getCodeCell(code);
     const activeCellIndex = notebook.activeCellIndex;
     model.cells.insert(activeCellIndex + 1, cell);

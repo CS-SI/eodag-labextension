@@ -10,6 +10,7 @@ import { ServerConnection } from '@jupyterlab/services';
 import { URLExt } from '@jupyterlab/coreutils';
 import { formatDate } from './utils';
 import { IFormInput, SearchParameters } from './types';
+import _ from 'lodash';
 
 class SearchService {
   /**
@@ -33,13 +34,25 @@ class SearchService {
    */
   search(page = 1, formValues: IFormInput) {
     const url = this.getSearchURL(formValues.productType);
-    const parameters: SearchParameters = {
+    let parameters: SearchParameters = {
       dtstart: formatDate(formValues.startDate),
       dtend: formatDate(formValues.endDate),
       cloudCover: formValues.cloud,
       page: page,
       geom: formValues.geometry
     };
+
+    if (formValues.additionnalParameters) {
+      parameters = _.extend(
+        parameters,
+        _.fromPairs(
+          formValues.additionnalParameters.map(({ name, value }) => [
+            name,
+            value
+          ])
+        )
+      );
+    }
 
     const headers = new Headers({
       'Content-Type': 'application/json'
