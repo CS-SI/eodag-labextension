@@ -5,6 +5,8 @@
  * All rights reserved
  */
 
+import { geojsonToWKT } from '@terraformer/wkt';
+
 import { IFormInput } from './types';
 import { formatDate } from './utils';
 
@@ -22,45 +24,29 @@ const formatCode = ({
   const geometryIsOk = geometry.type && geometry.coordinates;
 
   let code = `from eodag import EODataAccessGateway
-from shapely.geometry import shape
 dag = EODataAccessGateway()
-product_type = '${productType}'
 `;
   if (geometryIsOk) {
-    code += `footprint = shape(${JSON.stringify(geometry)})
+    code += `geometry = "${geojsonToWKT(geometry)}"
 `;
   }
-  if (cloud) {
-    code += `cloud_cover = ${cloud}
-`;
-  }
-  if (start && end) {
-    code += `start, end = '${start}', '${end}'
-`;
-  } else if (start) {
-    code += `start = '${start}'
-`;
-  } else if (end) {
-    code += `end = '${end}'
-`;
-  }
-  code += `search_results, estimated_total_nbr_of_results = dag.search(
-  productType=product_type,
+  code += `search_results, total_count = dag.search(
+  productType="${productType}",
 `;
   if (geometryIsOk) {
-    code += `  geom=footprint,
+    code += `  geom=geometry,
 `;
   }
   if (start) {
-    code += `  start=start,
+    code += `  start="${start}",
 `;
   }
   if (end) {
-    code += `  end=end,
+    code += `  end="${end}",
 `;
   }
-  if (cloud) {
-    code += `  cloudCover=cloud_cover,
+  if (cloud !== undefined) {
+    code += `  cloudCover=${cloud},
 `;
   }
   if (additionnalParameters) {
@@ -69,7 +55,8 @@ product_type = '${productType}'
       .join('\n');
   }
 
-  code += ')';
+  code += `
+  )`;
   return code;
 };
 
