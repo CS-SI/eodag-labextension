@@ -32,6 +32,7 @@
   margin: 0 15px;
   font-size: 16px;
   padding: 5px;
+  color: var(--jp-ui-font-color1);
   background: var(--jp-layout-color1);
   border: none;
   box-sizing: border-box;
@@ -49,6 +50,7 @@
   background: var(--jp-layout-color2);
 }
 .jp-EodagWidget .jp-EodagWidget-form .react-datepicker-popper {
+  position: relative;
   z-index: 1000;
 }
 .jp-EodagWidget .jp-EodagWidget-form .jp-EodagWidget-slider {
@@ -62,9 +64,12 @@
   margin-top: 10px;
   padding: 0 10px;
 }
+.jp-EodagWidget .jp-EodagWidget-form .jp-EodagWidget-field fieldset {
+  margin-top: 1.5em;
+}
 .jp-EodagWidget .jp-EodagWidget-form .jp-EodagWidget-input-name {
-  transform: translate(0, 1.5px) scale(0.75);
-  transform-origin: top left;
+  margin-top: 1em;
+  display: block;
 }
 .jp-EodagWidget .jp-EodagWidget-form .jp-EodagWidget-input-wrapper {
   padding: 0px 8px;
@@ -95,6 +100,36 @@
   line-height: var(--jp-private-commandpalette-search-height);
 }
 
+.jp-EodagWidget
+  .jp-EodagWidget-form
+  .jp-EodagWidget-additionnalParameters-fieldset
+  input {
+  margin: 0.5em 0;
+  line-height: var(--jp-private-commandpalette-search-height);
+  border: 1px solid var(--jp-border-color0);
+  background: var(--jp-layout-color0);
+  color: var(--jp-ui-font-color0);
+}
+
+.jp-EodagWidget
+  .jp-EodagWidget-form
+  .jp-EodagWidget-additionnalParameters-fieldset
+  input:focus-within {
+  border: 1px solid #2196f3;
+}
+
+.jp-EodagWidget
+  .jp-EodagWidget-form
+  .jp-EodagWidget-additionnalParameters-fieldset
+  button {
+  border-color: var(--jp-ui-font-color0);
+  margin: 0.5em 0;
+  padding: 8px 10px 8px 10px;
+  border-radius: 5px;
+  background-color: var(--jp-layout-color0);
+  color: var(--jp-ui-font-color0);
+}
+
 .jp-EodagWidget-select__control {
   background-color: var(--jp-layout-color0) !important;
 }
@@ -120,6 +155,7 @@
   width: 100%;
   -webkit-appearance: none;
   outline: none;
+  background: var(--jp-layout-color0);
 }
 .jp-EodagWidget input[type='range']::-webkit-slider-runnable-track {
   width: 100%;

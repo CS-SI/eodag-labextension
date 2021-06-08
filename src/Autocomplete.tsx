@@ -96,23 +96,25 @@ class IntegrationReactSelect extends React.Component<IProps, IState> {
       : undefined;
     return (
       <div className="jp-EodagWidget-field">
-        <label className="jp-EodagWidget-input-name">Product type (*)</label>
-        <div
-          style={{
-            marginTop: 10
-          }}
-        >
-          <Select
-            className="jp-EodagWidget-select"
-            classNamePrefix="jp-EodagWidget-select"
-            options={suggestions}
-            components={listcomponents}
-            value={currentValue}
-            onChange={handleChange}
-            placeholder="S3_..."
-            isClearable
-          />
-        </div>
+        <label className="jp-EodagWidget-input-name">
+          Product type (*)
+          <div
+            style={{
+              marginTop: 10
+            }}
+          >
+            <Select
+              className="jp-EodagWidget-select"
+              classNamePrefix="jp-EodagWidget-select"
+              options={suggestions}
+              components={listcomponents}
+              value={currentValue}
+              onChange={handleChange}
+              placeholder="S3_..."
+              isClearable
+            />
+          </div>
+        </label>
       </div>
     );
   }

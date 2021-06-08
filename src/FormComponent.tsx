@@ -142,7 +142,7 @@ export const FormComponent: FC<IProps> = ({
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit(onSubmit)} className="jp-EodagWidget-form">
       <Controller
         name="geometry"
         control={control}
@@ -164,92 +164,93 @@ export const FormComponent: FC<IProps> = ({
             />
           )}
         />
-        <label htmlFor="startDate" className="jp-EodagWidget-input-name">
-          Start date
-        </label>
-        <div className="jp-EodagWidget-input-wrapper">
-          <Controller
-            name="startDate"
-            control={control}
-            rules={{ required: true }}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <DatePicker
-                className="jp-EodagWidget-input"
-                selectsStart
-                startDate={startDate}
-                endDate={endDate}
-                maxDate={endDate}
-                onChange={(d: Date) => {
-                  setStartDate(d);
-                  onChange(d);
-                }}
-                onBlur={onBlur}
-                selected={value}
-                dateFormat={'dd/MM/yyyy'}
-                showMonthDropdown
-                showYearDropdown
-                dropdownMode="select"
-                isClearable
+        <fieldset>
+          <legend>Date range</legend>
+          <label className="jp-EodagWidget-input-name">
+            Start
+            <div className="jp-EodagWidget-input-wrapper">
+              <Controller
+                name="startDate"
+                control={control}
+                rules={{ required: true }}
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <DatePicker
+                    className="jp-EodagWidget-input"
+                    selectsStart
+                    startDate={startDate}
+                    endDate={endDate}
+                    maxDate={endDate}
+                    onChange={(d: Date) => {
+                      setStartDate(d);
+                      onChange(d);
+                    }}
+                    onBlur={onBlur}
+                    selected={value}
+                    dateFormat={'dd/MM/yyyy'}
+                    showMonthDropdown
+                    showYearDropdown
+                    dropdownMode="select"
+                    isClearable
+                  />
+                )}
               />
-            )}
-          />
-        </div>
-      </div>
-      <label htmlFor="endDate" className="jp-EodagWidget-input-name">
-        End date
-      </label>
-      <div className="jp-EodagWidget-input-wrapper">
-        <Controller
-          name="endDate"
-          control={control}
-          rules={{ required: true }}
-          render={({ field: { onChange, onBlur, value } }) => (
-            <DatePicker
-              className="jp-EodagWidget-input"
-              selectsEnd
-              startDate={startDate}
-              endDate={endDate}
-              minDate={startDate}
-              onChange={(d: Date) => {
-                setEndDate(d);
-                onChange(d);
-              }}
-              onBlur={onBlur}
-              selected={value}
-              dateFormat={'dd/MM/yyyy'}
-              showMonthDropdown
-              showYearDropdown
-              dropdownMode="select"
-              isClearable
-            />
-          )}
-        />
-      </div>
-      <div className="jp-EodagWidget-field">
-        <label htmlFor="cloud" className="jp-EodagWidget-input-name">
+            </div>
+          </label>
+          <label className="jp-EodagWidget-input-name">
+            End
+            <div className="jp-EodagWidget-input-wrapper">
+              <Controller
+                name="endDate"
+                control={control}
+                rules={{ required: true }}
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <DatePicker
+                    className="jp-EodagWidget-input"
+                    selectsEnd
+                    startDate={startDate}
+                    endDate={endDate}
+                    minDate={startDate}
+                    onChange={(d: Date) => {
+                      setEndDate(d);
+                      onChange(d);
+                    }}
+                    onBlur={onBlur}
+                    selected={value}
+                    dateFormat={'dd/MM/yyyy'}
+                    showMonthDropdown
+                    showYearDropdown
+                    dropdownMode="select"
+                    isClearable
+                  />
+                )}
+              />
+            </div>
+          </label>
+        </fieldset>
+        <label className="jp-EodagWidget-input-name">
           Max cloud cover {cloud}%
+          <div className="jp-EodagWidget-slider">
+            <Controller
+              name="cloud"
+              control={control}
+              rules={{ required: true }}
+              render={({ field: { onChange, value } }) => (
+                <input
+                  type="range"
+                  min="0"
+                  max="100"
+                  value={value}
+                  aria-labelledby="cloud"
+                  onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                    const value = parseInt(event.target.value, 10);
+                    onChange(value);
+                    setCloud(value);
+                  }}
+                />
+              )}
+            />
+          </div>
         </label>
-        <div className="jp-EodagWidget-slider">
-          <Controller
-            name="cloud"
-            control={control}
-            rules={{ required: true }}
-            render={({ field: { onChange, value } }) => (
-              <input
-                type="range"
-                min="0"
-                max="100"
-                value={value}
-                aria-labelledby="cloud"
-                onChange={(event: ChangeEvent<HTMLInputElement>) => {
-                  const value = parseInt(event.target.value, 10);
-                  onChange(value);
-                  setCloud(value);
-                }}
-              />
-            )}
-          />
-        </div>
       </div>
       <Fields {...{ control, register }} />
       <div className="jp-EodagWidget-buttons">
@@ -267,7 +268,7 @@ const Fields = ({ control, register }: Partial<UseFormReturn<IFormInput>>) => {
     name: 'additionnalParameters'
   });
   return (
-    <fieldset>
+    <fieldset className="jp-EodagWidget-additionnalParameters-fieldset">
       <legend>Additionnal Parameters</legend>
       {fields.map((field, index) => {
         return (
