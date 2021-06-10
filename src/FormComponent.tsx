@@ -166,66 +166,66 @@ export const FormComponent: FC<IProps> = ({
         />
         <fieldset>
           <legend>Date range</legend>
-          <label className="jp-EodagWidget-input-name">
+          <label htmlFor="startDate" className="jp-EodagWidget-input-name">
             Start
-            <div className="jp-EodagWidget-input-wrapper">
-              <Controller
-                name="startDate"
-                control={control}
-                rules={{ required: true }}
-                render={({ field: { onChange, onBlur, value } }) => (
-                  <DatePicker
-                    className="jp-EodagWidget-input"
-                    selectsStart
-                    startDate={startDate}
-                    endDate={endDate}
-                    maxDate={endDate}
-                    onChange={(d: Date) => {
-                      setStartDate(d);
-                      onChange(d);
-                    }}
-                    onBlur={onBlur}
-                    selected={value}
-                    dateFormat={'dd/MM/yyyy'}
-                    showMonthDropdown
-                    showYearDropdown
-                    dropdownMode="select"
-                    isClearable
-                  />
-                )}
-              />
-            </div>
           </label>
-          <label className="jp-EodagWidget-input-name">
+          <div className="jp-EodagWidget-input-wrapper">
+            <Controller
+              name="startDate"
+              control={control}
+              rules={{ required: true }}
+              render={({ field: { onChange, onBlur, value } }) => (
+                <DatePicker
+                  className="jp-EodagWidget-input"
+                  selectsStart
+                  startDate={startDate}
+                  endDate={endDate}
+                  maxDate={endDate}
+                  onChange={(d: Date) => {
+                    setStartDate(d);
+                    onChange(d);
+                  }}
+                  onBlur={onBlur}
+                  selected={value}
+                  dateFormat={'dd/MM/yyyy'}
+                  showMonthDropdown
+                  showYearDropdown
+                  dropdownMode="select"
+                  isClearable
+                />
+              )}
+            />
+          </div>
+          <label htmlFor="endDate" className="jp-EodagWidget-input-name">
             End
-            <div className="jp-EodagWidget-input-wrapper">
-              <Controller
-                name="endDate"
-                control={control}
-                rules={{ required: true }}
-                render={({ field: { onChange, onBlur, value } }) => (
-                  <DatePicker
-                    className="jp-EodagWidget-input"
-                    selectsEnd
-                    startDate={startDate}
-                    endDate={endDate}
-                    minDate={startDate}
-                    onChange={(d: Date) => {
-                      setEndDate(d);
-                      onChange(d);
-                    }}
-                    onBlur={onBlur}
-                    selected={value}
-                    dateFormat={'dd/MM/yyyy'}
-                    showMonthDropdown
-                    showYearDropdown
-                    dropdownMode="select"
-                    isClearable
-                  />
-                )}
-              />
-            </div>
           </label>
+          <div className="jp-EodagWidget-input-wrapper">
+            <Controller
+              name="endDate"
+              control={control}
+              rules={{ required: true }}
+              render={({ field: { onChange, onBlur, value } }) => (
+                <DatePicker
+                  className="jp-EodagWidget-input"
+                  selectsEnd
+                  startDate={startDate}
+                  endDate={endDate}
+                  minDate={startDate}
+                  onChange={(d: Date) => {
+                    setEndDate(d);
+                    onChange(d);
+                  }}
+                  onBlur={onBlur}
+                  selected={value}
+                  dateFormat={'dd/MM/yyyy'}
+                  showMonthDropdown
+                  showYearDropdown
+                  dropdownMode="select"
+                  isClearable
+                />
+              )}
+            />
+          </div>
         </fieldset>
         <label className="jp-EodagWidget-input-name">
           Max cloud cover {cloud}%
