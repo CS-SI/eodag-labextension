@@ -46,10 +46,9 @@ class SearchService {
       parameters = _.extend(
         parameters,
         _.fromPairs(
-          formValues.additionnalParameters.map(({ name, value }) => [
-            name,
-            value
-          ])
+          formValues.additionnalParameters
+            .filter(({ name, value }) => name !== '' && value !== '')
+            .map(({ name, value }) => [name, value])
         )
       );
     }
