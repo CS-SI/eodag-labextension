@@ -272,25 +272,33 @@ const Fields = ({ control, register }: Partial<UseFormReturn<IFormInput>>) => {
       <legend>Additionnal Parameters</legend>
       {fields.map((field, index) => {
         return (
-          <fieldset key={field.id}>
+          <div key={field.id}>
             <section className={'section'} key={field.id}>
               <input
-                placeholder="Parameter name"
+                placeholder="Name"
                 {...register(`additionnalParameters.${index}.name` as const)}
               />
               <input
-                placeholder="Parameter value"
+                placeholder="Value"
                 {...register(`additionnalParameters.${index}.value` as const)}
               />
-              <button type="button" onClick={() => remove(index)}>
-                Delete
+              <button
+                type="button"
+                className="jp-EodagWidget-additionnalParameters-deletebutton"
+                onClick={() => remove(index)}
+              >
+                x
               </button>
             </section>
-          </fieldset>
+          </div>
         );
       })}
 
-      <button type="button" onClick={() => append({})}>
+      <button
+        type="button"
+        className="jp-EodagWidget-additionnalParameters-addbutton"
+        onClick={() => append({})}
+      >
         Add search parameter
       </button>
     </fieldset>

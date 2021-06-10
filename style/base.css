@@ -29,6 +29,7 @@
   margin-top: 10px;
 }
 .jp-EodagWidget .jp-EodagWidget-form .jp-EodagWidget-buttons button {
+  cursor: pointer;
   margin: 0 15px;
   font-size: 16px;
   padding: 5px;
@@ -103,12 +104,20 @@
 .jp-EodagWidget
   .jp-EodagWidget-form
   .jp-EodagWidget-additionnalParameters-fieldset
+  .section {
+  display: flex;
+}
+
+.jp-EodagWidget
+  .jp-EodagWidget-form
+  .jp-EodagWidget-additionnalParameters-fieldset
   input {
-  margin: 0.5em 0;
+  margin: 0 0.1em;
   line-height: var(--jp-private-commandpalette-search-height);
   border: 1px solid var(--jp-border-color0);
   background: var(--jp-layout-color0);
   color: var(--jp-ui-font-color0);
+  width: 40%;
 }
 
 .jp-EodagWidget
@@ -121,13 +130,36 @@
 .jp-EodagWidget
   .jp-EodagWidget-form
   .jp-EodagWidget-additionnalParameters-fieldset
-  button {
+  .jp-EodagWidget-additionnalParameters-addbutton {
+  cursor: pointer;
   border-color: var(--jp-ui-font-color0);
   margin: 0.5em 0;
-  padding: 8px 10px 8px 10px;
+  height: 1.5rem;
   border-radius: 5px;
   background-color: var(--jp-layout-color0);
   color: var(--jp-ui-font-color0);
+}
+
+.jp-EodagWidget
+  .jp-EodagWidget-form
+  .jp-EodagWidget-additionnalParameters-fieldset
+  .jp-EodagWidget-additionnalParameters-deletebutton {
+  cursor: pointer;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border-width: 0px;
+  color: #ffffff;
+  border-color: #124d77;
+  padding: 2px;
+  font-size: 12px;
+  line-height: 1;
+  text-align: center;
+  background-color: #216ba5;
+  margin-right: 0.1em;
+  position: relative;
+  top: 0.5rem;
+  margin: 0 0.1em;
 }
 
 .jp-EodagWidget-select__control {
