@@ -26,7 +26,6 @@ import { OptionTypeBase } from 'react-select';
 import MapExtentComponent from './MapExtentComponent';
 import _ from 'lodash';
 import { IFormInput } from './types';
-import { DateTime } from 'luxon';
 
 export interface IProps {
   handleShowFeature: any;
@@ -37,11 +36,10 @@ export const FormComponent: FC<IProps> = ({
   saveFormValues
 }) => {
   const [productTypes, setProductTypes] = useState<OptionTypeBase[]>();
-  const now = DateTime.utc();
-  const defaultStartDate = now.minus({ days: 1 }).toJSDate();
-  const defaultEndDate = now.toJSDate();
-  const [startDate, setStartDate] = useState(defaultStartDate);
-  const [endDate, setEndDate] = useState(defaultEndDate);
+  const defaultStartDate: Date = undefined;
+  const defaultEndDate: Date = undefined;
+  const [startDate, setStartDate] = useState(undefined);
+  const [endDate, setEndDate] = useState(undefined);
   const [cloud, setCloud] = useState(100);
   const [isLoadingSearch, setIsLoadingSearch] = useState(false);
 

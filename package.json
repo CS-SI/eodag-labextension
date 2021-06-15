@@ -69,7 +69,6 @@
     "leaflet": "^1.6.0",
     "leaflet-draw": "^1.0.4",
     "lodash": "^4.17.15",
-    "luxon": "^1.27.0",
     "prop-types": "^15.7.2",
     "react": "^17.0.1",
     "react-datepicker": "^4.1.1",
