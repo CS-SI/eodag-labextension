@@ -95,12 +95,7 @@ export const FormComponent: FC<IProps> = ({
 
   useEffect(
     () => {
-      if (errors.geometry) {
-        showErrorMessage(
-          'You first need to set a geometry on the map',
-          {}
-        ).then(() => clearErrors());
-      } else if (!_.isEmpty(errors)) {
+      if (!_.isEmpty(errors)) {
         showErrorMessage(
           'The following fields are required',
           _.keys(errors).join(', ')
@@ -108,13 +103,7 @@ export const FormComponent: FC<IProps> = ({
       }
     },
     // useEffect is not triggered with only errors as dependency thus we need to list all its elements
-    [
-      errors.geometry,
-      errors.productType,
-      errors.startDate,
-      errors.endDate,
-      errors.cloud
-    ]
+    [errors.productType]
   );
 
   const onSubmit: SubmitHandler<IFormInput> = data => {
@@ -144,7 +133,7 @@ export const FormComponent: FC<IProps> = ({
       <Controller
         name="geometry"
         control={control}
-        rules={{ required: 'You first need to set a geometry on the map' }}
+        rules={{ required: false }}
         render={({ field: { onChange, value } }) => (
           <MapExtentComponent geometry={value} onChange={onChange} />
         )}
@@ -171,7 +160,7 @@ export const FormComponent: FC<IProps> = ({
             <Controller
               name="startDate"
               control={control}
-              rules={{ required: true }}
+              rules={{ required: false }}
               render={({ field: { onChange, onBlur, value } }) => (
                 <DatePicker
                   className="jp-EodagWidget-input"
@@ -201,7 +190,7 @@ export const FormComponent: FC<IProps> = ({
             <Controller
               name="endDate"
               control={control}
-              rules={{ required: true }}
+              rules={{ required: false }}
               render={({ field: { onChange, onBlur, value } }) => (
                 <DatePicker
                   className="jp-EodagWidget-input"
@@ -231,7 +220,7 @@ export const FormComponent: FC<IProps> = ({
             <Controller
               name="cloud"
               control={control}
-              rules={{ required: true }}
+              rules={{ required: false }}
               render={({ field: { onChange, value } }) => (
                 <input
                   type="range"

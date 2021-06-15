@@ -21,7 +21,7 @@ const formatCode = ({
   const start = startDate ? formatDate(startDate) : undefined;
   const end = endDate ? formatDate(endDate) : undefined;
 
-  const geometryIsOk = geometry.type && geometry.coordinates;
+  const geometryIsOk = geometry?.type && geometry?.coordinates;
 
   let code = `from eodag import EODataAccessGateway
 from eodag.utils.logging import setup_logging
@@ -52,14 +52,14 @@ dag = EODataAccessGateway()
 `;
   }
   if (additionnalParameters) {
-    code += additionnalParameters
-      .filter(({ name, value }) => name !== '' && value !== '')
-      .map(({ name, value }) => `  ${name}="${value}",`)
-      .join('\n');
+    code +=
+      additionnalParameters
+        .filter(({ name, value }) => name !== '' && value !== '')
+        .map(({ name, value }) => `  ${name}="${value}",`)
+        .join('\n') + `\n`;
   }
 
-  code += `
-  )`;
+  code += `)`;
   return code;
 };
 

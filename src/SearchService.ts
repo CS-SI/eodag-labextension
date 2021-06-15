@@ -35,8 +35,10 @@ class SearchService {
   search(page = 1, formValues: IFormInput) {
     const url = this.getSearchURL(formValues.productType);
     let parameters: SearchParameters = {
-      dtstart: formatDate(formValues.startDate),
-      dtend: formatDate(formValues.endDate),
+      dtstart: formValues.startDate
+        ? formatDate(formValues.startDate)
+        : undefined,
+      dtend: formValues.endDate ? formatDate(formValues.endDate) : undefined,
       cloudCover: formValues.cloud,
       page: page,
       geom: formValues.geometry
