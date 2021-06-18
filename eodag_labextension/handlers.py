@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2020 CS GROUP - France, http://www.c-s.fr
+# Copyright 2021 CS GROUP - France, http://www.c-s.fr
 # All rights reserved
 
 """Tornado web requests handlers"""

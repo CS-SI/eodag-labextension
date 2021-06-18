@@ -11,7 +11,7 @@
   "bugs": {
     "url": "https://gitlab.cloud-espace.si.c-s.fr/vre/ai4geo/lot4/eodag-labextension/-/issues"
   },
-  "license": "BSD-3-Clause",
+  "license": "Apache v2.0",
   "author": {
     "name": "CS Group",
     "email": "admin@geostorm.eu"

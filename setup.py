@@ -1,3 +1,6 @@
+# -*- coding: utf-8 -*-
+# Copyright 2021 CS GROUP - France, http://www.c-s.fr
+# All rights reserved
 """eodag_labextension setup."""
 
 import json

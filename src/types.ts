@@ -1,3 +1,8 @@
+/**
+ * Copyright 2021 CS GROUP - France, http://www.c-s.fr
+ * All rights reserved
+ */
+
 export interface IFormInput {
   geometry: Geometry;
   startDate: Date;

@@ -110,5 +110,10 @@ pre-commit install
 pip uninstall eodag-labextension
 ```
 
-_Copyright 2020 CS GROUP - France
+## License
+
+This software is licensed under Apache License v2.0.
+See LICENSE file for details.
+
+_Copyright 2021 CS GROUP - France
 All rights reserved_
