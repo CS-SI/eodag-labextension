@@ -1,0 +1,43 @@
+eodag-labextension
+Copyright 2021 CS GROUP - France
+
+This software is distributed under the Apache Software License (ASL) v2.0.
+See LICENSE file or http://www.apache.org/licenses/LICENSE-2.0 for details.
+
+This software includes software from other projects.
+
+Open source projects:
+
+* Python:
+    * eodag: Apache v2.0
+    * Jinja2: BSD
+    * Jupyter-server: BSD
+    * Notebook: BSD
+    * Python (interpreter and standard library): PSFL
+    * Setuptools: MIT
+    * Tornado: Apache v2.0
+
+* Javascript:
+	* fontawesome-svg-core: MIT
+	* free-solid-svg-icons: MIT
+	* isomorphic-fetch: MIT
+    * leaflet: BSD
+	* leaflet-draw: MIT
+	* lodash: MIT
+    * luxon: MIT
+	* prop-types: MIT
+	* react-datepicker: MIT
+	* react-dom: MIT
+	* react-fontawesome: MIT
+    * react-hook-form: MIT
+	* react-leaflet: MIT
+    * react-leaflet-draw: ISC
+	* react-modal: MIT
+	* react-select: MIT
+	* react-tooltip: MIT
+	* react-virtualized: MIT
+	* react: MIT
+    * jupyterlab/application: BSD
+    * jupyterlab/apputils: BSD
+    * jupyterlab/cells: BSD
+    * jupyterlab/notebook: BSD
