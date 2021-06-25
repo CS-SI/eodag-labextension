@@ -110,20 +110,19 @@ export const FormComponent: FC<IProps> = ({
     saveFormValues(data);
     setIsLoadingSearch(true);
     SearchService.search(1, data)
-      .then(features => {
-        setIsLoadingSearch(false);
-        handleShowFeature(features);
+      .then(featureCollection => {
+        if (featureCollection?.features?.length == 0) {
+          throw new Error('No result found');
+        } else {
+          return featureCollection;
+        }
       })
-      .catch(() => {
-        let _serverSettings = ServerConnection.makeSettings();
-        let _eodag_server = URLExt.join(
-          _serverSettings.baseUrl,
-          `${EODAG_SERVER_ADRESS}`
-        );
-        showErrorMessage(
-          `Unable to contact the EODAG server. Are you sure the adress is ${_eodag_server}/ ?`,
-          {}
-        );
+      .then(featureCollection => {
+        setIsLoadingSearch(false);
+        handleShowFeature(featureCollection);
+      })
+      .catch(error => {
+        showErrorMessage('Bad response from server:', error);
         setIsLoadingSearch(false);
       });
   };

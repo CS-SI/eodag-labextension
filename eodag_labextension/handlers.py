@@ -9,7 +9,7 @@ import json
 import tornado
 from eodag.api.core import DEFAULT_ITEMS_PER_PAGE
 from eodag.rest.utils import get_home_page_content, get_product_types, get_templates_path, search_products
-from eodag.utils.exceptions import UnsupportedProductType, ValidationError
+from eodag.utils.exceptions import AuthenticationError, UnsupportedProductType, ValidationError
 from jinja2.loaders import ChoiceLoader, FileSystemLoader
 from jupyter_server.base.handlers import APIHandler
 from jupyter_server.utils import url_path_join
@@ -80,6 +80,14 @@ class SearchHandler(APIHandler):
         except UnsupportedProductType as e:
             self.set_status(404)
             self.finish({"error": "Not Found: {}".format(e.product_type)})
+            return
+        except AuthenticationError as e:
+            self.set_status(403)
+            self.finish({"error": f"AuthenticationError: Please check your credentials ({e})"})
+            return
+        except Exception as e:
+            self.set_status(502)
+            self.finish({"error": str(e)})
             return
 
         self.finish(response)

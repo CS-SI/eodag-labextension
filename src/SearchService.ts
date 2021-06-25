@@ -74,9 +74,10 @@ class SearchService {
       headers: headers
     });
 
-    return fetch(request).then(response => {
-      if (response.status >= 400) {
-        throw new Error('Bad response from server');
+    return fetch(request).then(async response => {
+      if (!response.ok) {
+        const msg = await response.json();
+        throw new Error(`${msg.error}`);
       }
       return response.json();
     });
