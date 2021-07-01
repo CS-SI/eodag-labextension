@@ -1,6 +1,7 @@
 .leaflet-container {
   height: 300px;
   width: 100%;
+  z-index: 0;
 }
 .leaflet-bar a.leaflet-disabled {
   background-color: #e0e0e0 !important;
