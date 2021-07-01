@@ -1,1 +1,2 @@
+jupyter-packaging
 -e .[dev]

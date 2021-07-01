@@ -63,7 +63,7 @@ The `jlpm` command is JupyterLab's pinned version of
 virtualenv -p `which python3.6` venv
 source venv/bin/activate
 # Install package in development mode
-pip install -e .[dev]
+pip install -r requirements-dev.txt
 # Link your development version of the extension with JupyterLab
 jupyter labextension develop . --overwrite
 # Rebuild extension Typescript source after making changes
