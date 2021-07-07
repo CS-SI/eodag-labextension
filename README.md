@@ -27,7 +27,8 @@ pip install eodag-labextension
 
 ### Configuration
 
-eodag configuration file should be localized at `.config/eodag/eodag.yaml` (see [eodag documentation](https://eodag.readthedocs.io/en/latest/intro.html?highlight=eodag.yml#how-to-configure-authentication-for-available-providers)).
+eodag configuration file should be localized at `~/.config/eodag/eodag.yaml` (see
+[eodag documentation](https://eodag.readthedocs.io/en/latest/getting_started_guide/configure.html)).
 Make sure that that file is configured properly.
 
 ## Troubleshoot
