@@ -24,7 +24,9 @@ const formatCode = ({
   const geometryIsOk = geometry?.type && geometry?.coordinates;
 
   let code = `from eodag import EODataAccessGateway, setup_logging
+
 setup_logging(1) # 0: nothing, 1: only progress bars, 2: INFO, 3: DEBUG
+
 dag = EODataAccessGateway()
 `;
   if (geometryIsOk) {
