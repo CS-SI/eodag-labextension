@@ -61,6 +61,9 @@
   overflow: hidden;
 }
 
+.jp-EodagWidget-map {
+  height: 300px;
+}
 .jp-EodagWidget .jp-EodagWidget-form .jp-EodagWidget-field {
   margin-top: 10px;
   padding: 0 10px;
