@@ -7,9 +7,9 @@
     "jupyterlab",
     "jupyterlab-extension"
   ],
-  "homepage": "https://gitlab.cloud-espace.si.c-s.fr/vre/ai4geo/lot4/eodag-labextension",
+  "homepage": "https://github.com/CS-SI/eodag-labextension",
   "bugs": {
-    "url": "https://gitlab.cloud-espace.si.c-s.fr/vre/ai4geo/lot4/eodag-labextension/-/issues"
+    "url": "https://github.com/CS-SI/eodag-labextension/issues"
   },
   "license": "Apache v2.0",
   "author": {
@@ -27,7 +27,7 @@
   "types": "lib/index.d.ts",
   "repository": {
     "type": "git",
-    "url": "https://gitlab.cloud-espace.si.c-s.fr/vre/ai4geo/lot4/eodag-labextension.git"
+    "url": "https://github.com/CS-SI/eodag-labextension.git"
   },
   "scripts": {
     "build": "jlpm run build:lib && jlpm run build:labextension:dev",
