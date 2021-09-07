@@ -1,5 +1,7 @@
 # eodag-labextension
 
+[![JupyterLab v3](https://badge.fury.io/py/eodag-labextension.svg)](https://badge.fury.io/py/eodag-labextension)
+[![JupyterLab v3](https://img.shields.io/badge/jupyterlab-3.x-orange?logo=jupyter)](https://jupyter.org/)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 Searching remote sensed imagery from various image providers
@@ -17,7 +19,7 @@ The products search is based on the [eodag](https://eodag.readthedocs.io) librar
 
 ## Requirements
 
-- JupyterLab >= 3.0
+- pip >= 21.0
 
 ## Install
 
