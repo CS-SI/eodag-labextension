@@ -86,11 +86,17 @@ Here is an example of generated code:
 
 ```python
 from eodag import EODataAccessGateway
+
 dag = EODataAccessGateway()
-product_type = 'S2_MSI_L1C'
-footprint = {'lonmin': 0.660957, 'latmin': 43.149093, 'lonmax': 2.388008, 'latmax': 44.190082}
+product_type = "S2_MSI_L1C"
+footprint = {
+    "lonmin": 0.660957,
+    "latmin": 43.149093,
+    "lonmax": 2.388008,
+    "latmax": 44.190082,
+}
 cloud_cover = 15
-start, end = '2019-02-01', '2019-02-15'
+start, end = "2019-02-01", "2019-02-15"
 search_results, estimated_total_nbr_of_results = dag.search(
     productType=product_type,
     geometry=footprint,
@@ -127,28 +133,29 @@ pprint([p.location for p in search_results])
 
 ```python
 from eodag.api.search_result import SearchResult
+
 results_geojson = SearchResult(search_results).as_geojson_object()
 
 from shapely.geometry import shape, GeometryCollection
-features = results_geojson['features']
-features = GeometryCollection([shape(feature["geometry"]).buffer(0) for feature in features])
+
+features = results_geojson["features"]
+features = GeometryCollection(
+    [shape(feature["geometry"]).buffer(0) for feature in features]
+)
 features
 ```
 
 #### Display products extent on a slippy map
 
 ```python
-import folium
-from folium import plugins
+from folium import Map, GeoJson, Figure
+
 ext = features.bounds
 bounds = [[ext[1], ext[0]], [ext[3], ext[2]]]
-m = folium.Map(
-    tiles='Stamen Terrain',
-    control_scale=True,
-)
-folium.GeoJson(results_geojson).add_to(m)
+m = Map(tiles="Stamen Terrain", control_scale=True,)
+GeoJson(results_geojson).add_to(m)
 m.fit_bounds(bounds)
-folium.Figure(width=500, height=300).add_child(m)
+Figure(width=500, height=300).add_child(m)
 ```
 
 ### Downloading products

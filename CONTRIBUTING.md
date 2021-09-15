@@ -27,8 +27,8 @@ different terminals to watch for changes in the extension's source and
 automatically rebuild the extension.
 
 ```bash
-# Watch the source directory in one terminal, automatically rebuilding when
-# needed
+# Watch the source directory in one terminal
+# automatically rebuilding when needed
 jlpm run watch
 # Run JupyterLab in another terminal
 jupyter lab
