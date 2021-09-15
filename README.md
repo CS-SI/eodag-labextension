@@ -3,6 +3,7 @@
 [![JupyterLab v3](https://badge.fury.io/py/eodag-labextension.svg)](https://badge.fury.io/py/eodag-labextension)
 [![JupyterLab v3](https://img.shields.io/badge/jupyterlab-3.x-orange?logo=jupyter)](https://jupyter.org/)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/git/https%3A%2F%2Fgithub.com%2FCS-SI%2Feodag-labextension.git/master?urlpath=lab%2Ftree%2Fnotebooks%2Fbasic_usage.ipynb)
 
 Searching and browsing remote sensed imagery directly from
 JupyterLab.
