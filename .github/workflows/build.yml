@@ -2,11 +2,26 @@ name: Build
 
 on:
   push:
-    branches: main
+    branches: [master, develop]
   pull_request:
-    branches: '*'
+    branches: [master, develop]
+  schedule:
+    - cron: '0 7 * * 1'
+  workflow_dispatch:
 
 jobs:
+  lint:
+    name: Linting (pre-commit)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repo
+        uses: actions/checkout@v2
+      - name: Set up Python 3.7
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.7'
+      - name: Run pre-commit action
+        uses: pre-commit/action@v2.0.0
   build:
     runs-on: ubuntu-latest
     steps:
