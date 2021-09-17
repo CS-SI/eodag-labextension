@@ -5,14 +5,25 @@
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/git/https%3A%2F%2Fgithub.com%2FCS-SI%2Feodag-labextension.git/master?urlpath=lab%2Ftree%2Fnotebooks%2Fbasic_usage.ipynb)
 
-Searching and browsing remote sensed imagery directly from
-JupyterLab.
+Searching and browsing remote sensed imagery directly from JupyterLab.
 
-This extension is using EODAG to efficiently search from various image providers. It can transform search result to code cells into the active Python notebook to further process/visualize the dataset.
+![screencast](notebooks/images/eodag_labext_screencast.gif)
+
+This extension is using the [eodag](https://github.com/CS-SI/eodag) library to efficiently search from various image providers. It can transform search results to code cells into the active Python notebook to further process/visualize the dataset.
 
 The extension is composed of a Python package named `eodag-labextension`, and add a tab into the left panel of Jupyter Lab. The package consist of a Python Jupyter notebook REST service consumed by the client and served at `/eodag/` or `/user/<username>/eodag/` for JupyterHub (a home page is available at that URL).
 
-The products search is based on the [eodag](https://eodag.readthedocs.io) library.
+- [Requirements](#Requirements)
+- [Compatibility](#Compatibility)
+- [Install](#Install)
+  - [Configuration](#Configuration)
+- [QuickStart](#QuickStart)
+  - [Search](#Search)
+  - [Results display](#Results-display)
+  - [Apply to the Jupyter notebook](#Apply-to-the-Jupyter-notebook)
+  - [User manual](#User-manual)
+- [Troubleshooting](#Troubleshooting)
+- [License](#License)
 
 ## Requirements
 
@@ -20,9 +31,9 @@ The products search is based on the [eodag](https://eodag.readthedocs.io) librar
 
 ## Compatibility
 
-- v2.1.3 is the latest version compatible with JupyterLab v1
+- newest `eodag-labextension` versions are compatibles with JupyterLab v3
 - v3.1.3 is the latest version compatible with JupyterLab v2
-- next versions are compatibles with JupyterLab v3
+- v2.1.3 is the latest version compatible with JupyterLab v1
 
 ## Install
 
@@ -44,11 +55,14 @@ Make sure that that file is configured properly.
 
 ## QuickStart
 
-You can use eodag-labextension inside a Jupyter notebook. Start Jupyter lab with `jupyter lab`, and in Jupyter lab open a notebook.
+You can use `eodag-labextension` inside a Jupyter notebook. Start Jupyter lab with `jupyter lab`, and in Jupyter lab open a notebook.
+
+<img style="float: left; margin-right: 50px;" alt="labextension form" src="./notebooks/images/eodag_labext_form.png" width="250px">
 
 ### Search
 
-Open the EODAG tab on the left side of the JupuytuerLab interface.
+![extension logo](./notebooks/images/eodag_labext_icon.png)
+Open the EODAG tab on the left side of the JupuytuerLab interface by clicking on that icon.
 
 With displayed search form, you can enter select your data geographically and apply some search criteria:
 
@@ -59,17 +73,15 @@ With displayed search form, you can enter select your data geographically and ap
 - **Additional parameters**: used to enter key-value pairs criteria for the request.
 
 You can draw multiple extents, or use none. Each extent can be a rectangle or a free polygon.
-Product type is mandatory. Other criterias are optional.
-
-Extent and product type are mandatory. Other criteria are optional.
+Product type is mandatory. Other criteria are optional.
 
 Once search criteria are filled out, click on the "Search" button to proceed to next step. At the end of the search, a popup opens and displays results.
 
-> Note: The AI4GEO STAC Catalog is now searchable with the plugin. Its product types are now displayed in the dropdown list.
+<span style="clear: both; display: block; "></span>
 
-### Results display
+### Results overview
 
-The results display popup is compopsed of 3 parts:
+The results overview popup is compopsed of 3 parts:
 
 - a map showing products extent
 - a table listing products
@@ -81,103 +93,29 @@ In the metadata view, clicking on the thumbnail displays it in native resolution
 
 ### Apply to the Jupyter notebook
 
-If the search result is correct, clicking on the "Apply" button will insert the Python eodag code in a new cell after the selected cell of the currently open notebook. The popup is automatically closed. From there, it is possible to work in the notebook on the search results by executing the eodag search.
+If the search result is correct, clicking on the "`Apply`" button will insert the Python eodag code in a new cell after the selected cell of the currently open notebook. The popup is automatically closed. From there, it is possible to work in the notebook on the search results by executing the eodag search.
 
 Here is an example of generated code:
 
 ```python
-from eodag import EODataAccessGateway
+from eodag import EODataAccessGateway, setup_logging
+
+setup_logging(1) # 0: nothing, 1: only progress bars, 2: INFO, 3: DEBUG
 
 dag = EODataAccessGateway()
-product_type = "S2_MSI_L1C"
-footprint = {
-    "lonmin": 0.660957,
-    "latmin": 43.149093,
-    "lonmax": 2.388008,
-    "latmax": 44.190082,
-}
-cloud_cover = 15
-start, end = "2019-02-01", "2019-02-15"
-search_results, estimated_total_nbr_of_results = dag.search(
-    productType=product_type,
-    geometry=footprint,
-    startTimeFromAscendingNode=start,
-    completionTimeFromAscendingNode=end,
-    cloudCover=cloud_cover,
+geometry = "POLYGON ((0.550136 43.005451, 0.550136 44.151469, 2.572104 44.151469, 2.572104 43.005451, 0.550136 43.005451))"
+search_results, total_count = dag.search(
+  productType="S2_MSI_L1C",
+  geom=geometry,
+  start="2021-08-01",
+  end="2021-08-11",
+  cloudCover=17,
 )
 ```
 
-The eodag configuration file should be located at `$HOME/.config/eodag/eodag.yml`. See [eodag documentation](https://eodag.readthedocs.io/en/latest/intro.html#how-to-configure-authentication-for-available-providers) for further informations.
+### User manual
 
-You may want to enforce usage of a particular provider. To do so, use set_preferred_provider and then execute a query like previously:
-
-```python
-dag = EODataAccessGateway()
-dag.set_preferred_provider("theia")
-```
-
-### Using results
-
-Here are some examples about how to use search results into a notebook:
-
-```python
- from pprint import pprint
-
-# Display results list
-pprint(search_results)
-
-# Display products access paths
-pprint([p.location for p in search_results])
-```
-
-#### Extract producsts extent
-
-```python
-from eodag.api.search_result import SearchResult
-
-results_geojson = SearchResult(search_results).as_geojson_object()
-
-from shapely.geometry import shape, GeometryCollection
-
-features = results_geojson["features"]
-features = GeometryCollection(
-    [shape(feature["geometry"]).buffer(0) for feature in features]
-)
-features
-```
-
-#### Display products extent on a slippy map
-
-```python
-from folium import Map, GeoJson, Figure
-
-ext = features.bounds
-bounds = [[ext[1], ext[0]], [ext[3], ext[2]]]
-m = Map(tiles="Stamen Terrain", control_scale=True,)
-GeoJson(results_geojson).add_to(m)
-m.fit_bounds(bounds)
-Figure(width=500, height=300).add_child(m)
-```
-
-### Downloading products
-
-To download products from the search request into a sub-directory called `download`, run:
-
-```python
-dag.download_all(search_results)
-```
-
-### Verbosity
-
-Eodag verbosity can be increased with following call with levels:
-
-- **INFO**: `verbose=1`
-- **DEBUG**: `verbose=3`
-
-```python
-from eodag.utils.logging import setup_logging
-setup_logging(verbose=3)
-```
+Please refer to the [user manual notebook](notebooks/user_manual.ipynb) for results usage examples.
 
 ## Troubleshooting
 
@@ -194,6 +132,8 @@ the frontend extension, check the frontend extension is installed:
 ```bash
 jupyter labextension list
 ```
+
+To submit an issue, please go to [github issues](https://github.com/CS-SI/eodag-labextension/issues).
 
 ## License
 
