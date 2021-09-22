@@ -9,7 +9,7 @@ import { EODAG_SERVER_ADRESS } from './config';
 import { ServerConnection } from '@jupyterlab/services';
 import { URLExt } from '@jupyterlab/coreutils';
 import { formatDate } from './utils';
-import { IFormInput, SearchParameters } from './types';
+import { IFormInput, ISearchParameters } from './types';
 import _ from 'lodash';
 
 class SearchService {
@@ -18,8 +18,8 @@ class SearchService {
    * @returns the URL to fetch from the EODAG server to get products
    */
   getSearchURL(productType: string) {
-    let _serverSettings = ServerConnection.makeSettings();
-    let _eodag_server = URLExt.join(
+    const _serverSettings = ServerConnection.makeSettings();
+    const _eodag_server = URLExt.join(
       _serverSettings.baseUrl,
       `${EODAG_SERVER_ADRESS}`
     );
@@ -34,7 +34,7 @@ class SearchService {
    */
   search(page = 1, formValues: IFormInput) {
     const url = this.getSearchURL(formValues.productType);
-    let parameters: SearchParameters = {
+    let parameters: ISearchParameters = {
       dtstart: formValues.startDate
         ? formatDate(formValues.startDate)
         : undefined,

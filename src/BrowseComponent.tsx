@@ -29,7 +29,7 @@ const TableSortLabelWithoutMUI = ({
   children: any;
 }) => <div>TableSortLabel</div>;
 
-interface MuiColumnProps extends ColumnProps {
+interface IMuiColumnProps extends ColumnProps {
   cellContentRenderer?: any;
   buttons?: any;
   selector?: any;
@@ -39,7 +39,7 @@ interface MuiColumnProps extends ColumnProps {
 
 export interface IMuiVirtualizedTableProps {
   classes: any;
-  columns: MuiColumnProps[];
+  columns: IMuiColumnProps[];
   headerHeight: any;
   onRowClick: any;
   onRowMouseOver: any;
@@ -56,8 +56,9 @@ export interface IMuiVirtualizedTableProps {
   displayedRowCount: any;
 }
 
-export interface IMuiVirtualizedTableState {}
-
+export interface IMuiVirtualizedTableState {
+  foo: string;
+}
 class MuiVirtualizedTable extends React.PureComponent<
   IMuiVirtualizedTableProps,
   IMuiVirtualizedTableState
@@ -89,7 +90,7 @@ class MuiVirtualizedTable extends React.PureComponent<
   cellRenderer = ({ cellData, columnIndex = null }: TableCellProps) => {
     const { columns } = this.props;
     let isPercent = false;
-    if (columnIndex != null && columns[columnIndex].percent) {
+    if (columnIndex !== null && columns[columnIndex].percent) {
       isPercent = columns[columnIndex].percent === true;
     }
     if (cellData !== undefined || cellData !== null) {
@@ -102,8 +103,10 @@ class MuiVirtualizedTable extends React.PureComponent<
   buttonRenderer = ({ columnIndex = null, rowData }: TableCellProps) => {
     const { columns } = this.props;
     // Retrieve event handler from column def
-    let handleClick = (dataId: number | string) => {};
-    if (columnIndex != null && columns[columnIndex].handleClick) {
+    let handleClick = (dataId: number | string) => {
+      // do nothing.
+    };
+    if (columnIndex !== null && columns[columnIndex].handleClick) {
       handleClick = columns[columnIndex].handleClick;
     }
     return (
@@ -136,7 +139,7 @@ class MuiVirtualizedTable extends React.PureComponent<
     };
 
     const inner =
-      !disableSort && sort != null ? (
+      !disableSort && sort !== null ? (
         <TableSortLabelWithoutMUI
           active={dataKey === sortBy}
           direction={direction[sortDirection]}
@@ -194,11 +197,11 @@ class MuiVirtualizedTable extends React.PureComponent<
                       buttons,
                       selector,
                       ...other
-                    }: MuiColumnProps,
+                    }: IMuiColumnProps,
                     index: number
                   ) => {
                     let renderer;
-                    if (cellContentRenderer != null) {
+                    if (cellContentRenderer !== null) {
                       renderer = (cellRendererProps: TableCellProps) =>
                         this.cellRenderer({
                           cellData: cellContentRenderer(cellRendererProps),
@@ -238,7 +241,7 @@ class MuiVirtualizedTable extends React.PureComponent<
   }
 }
 
-export interface BrowseComponentProps {
+export interface IBrowseComponentProps {
   features: any;
   handleClickFeature: any;
   handleZoomFeature: any;
@@ -256,7 +259,7 @@ function BrowseComponent({
   highlightFeature,
   isRetrievingMoreFeature,
   handleRetrieveMoreFeature
-}: BrowseComponentProps) {
+}: IBrowseComponentProps) {
   /**
    * Return an object with its id and all its properties
    */

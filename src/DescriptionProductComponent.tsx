@@ -5,7 +5,7 @@
 
 import _ from 'lodash';
 import * as React from 'react';
-import { FeaturePropertie } from './types';
+import { IFeaturePropertie } from './types';
 
 const MEANPROPERTIES = [
   'platformSerialIdentifier',
@@ -33,7 +33,7 @@ export interface IProps {
 
 export interface IState {
   smallQuicklook: any;
-  featureProperties: FeaturePropertie[];
+  featureProperties: IFeaturePropertie[];
 }
 
 export default class DescriptionProductComponent extends React.Component<
@@ -64,11 +64,11 @@ export default class DescriptionProductComponent extends React.Component<
     }
   }
 
-  organizeProperties(): FeaturePropertie[] {
+  organizeProperties(): IFeaturePropertie[] {
     const { properties } = this.props.feature;
     const meanProperties: [string, any][] = [];
     MEANPROPERTIES.forEach(p => {
-      let fp = properties[p];
+      const fp = properties[p];
       if (fp !== undefined && fp !== null && fp !== '' && fp.length !== 0) {
         meanProperties.push([p, formatProperty(p, fp)]);
       }
@@ -89,7 +89,7 @@ export default class DescriptionProductComponent extends React.Component<
     ).sort();
 
     // Split keys on Upper letters and make a new capitalized string
-    const featureProperties: FeaturePropertie[] = meanProperties
+    const featureProperties: IFeaturePropertie[] = meanProperties
       .concat(otherProperties)
       .map(([k, v]: [string, any]) => ({
         key: _.capitalize(k.split(/(?=[A-Z])/).join(' ')),
@@ -117,7 +117,7 @@ export default class DescriptionProductComponent extends React.Component<
         </div>
         <h4>Metadata</h4>
         <table className="result-table">
-          {featureProperties.map(({ key, value }: FeaturePropertie) => (
+          {featureProperties.map(({ key, value }: IFeaturePropertie) => (
             <tr>
               <td>{key}</td>
               <td>

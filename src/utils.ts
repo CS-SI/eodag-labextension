@@ -8,7 +8,7 @@
  * @returns a string like YYYY-MM-DD
  */
 export function formatDate(date: Date): string {
-  var local = new Date(date);
+  const local = new Date(date);
   local.setMinutes(date.getMinutes() - date.getTimezoneOffset());
   return formatStringDate(local.toJSON());
 }

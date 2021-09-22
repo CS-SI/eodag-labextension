@@ -59,8 +59,8 @@ export const FormComponent: FC<IProps> = ({
 
   useEffect(() => {
     // Fetch product types
-    let _serverSettings = ServerConnection.makeSettings();
-    let _eodag_server = URLExt.join(
+    const _serverSettings = ServerConnection.makeSettings();
+    const _eodag_server = URLExt.join(
       _serverSettings.baseUrl,
       `${EODAG_SERVER_ADRESS}`
     );
@@ -111,7 +111,7 @@ export const FormComponent: FC<IProps> = ({
     setIsLoadingSearch(true);
     SearchService.search(1, data)
       .then(featureCollection => {
-        if (featureCollection?.features?.length == 0) {
+        if (featureCollection?.features?.length === 0) {
           throw new Error('No result found');
         } else {
           return featureCollection;

@@ -8,19 +8,19 @@ import { Map, TileLayer, FeatureGroup } from 'react-leaflet';
 import { EditControl } from 'react-leaflet-draw';
 import { throttle } from 'lodash';
 import { EODAG_TILE_URL, EODAG_TILE_COPYRIGHT } from './config';
-import { Geometry } from './types';
+import { IGeometry } from './types';
 import { LeafletMouseEvent } from 'leaflet';
 
 export interface IProps {
-  onChange: (value: Geometry) => void;
-  geometry: Geometry;
+  onChange: (value: IGeometry) => void;
+  geometry: IGeometry;
 }
 
 export interface IState {
   lat: number;
   lon: number;
   zoom: number;
-  geometry: Geometry;
+  geometry: IGeometry;
 }
 
 export default class MapExtentComponent extends React.Component<
@@ -53,19 +53,18 @@ export default class MapExtentComponent extends React.Component<
    * Waiting the app to load before attaching an observer to watch for plugin width change
    */
   componentDidMount() {
-    const that = this;
-    const timer = setInterval(function () {
-      var observer = new MutationObserver(function (mutations) {
-        that.invalidateMapSize();
+    const timer = setInterval(() => {
+      const observer = new MutationObserver(mutations => {
+        this.invalidateMapSize();
       });
-      var target = document.querySelector('.jp-EodagWidget');
+      const target = document.querySelector('.jp-EodagWidget');
       if (target) {
         observer.observe(target, {
           attributes: true
         });
         clearInterval(timer);
       }
-      that.invalidateMapSize();
+      this.invalidateMapSize();
     }, 100);
   }
 
@@ -91,7 +90,7 @@ export default class MapExtentComponent extends React.Component<
       this.saveGeometry(e.target);
     } catch (TypeError) {
       // When clearAll `updateMapProperties` crash
-      const geometry: Geometry = undefined;
+      const geometry: IGeometry = undefined;
       this.setState(
         {
           geometry
@@ -127,7 +126,7 @@ export default class MapExtentComponent extends React.Component<
   getGeometry = (target: any) => {
     // I didn’t found a method from leaflet that returns a Multipolygon so we build it if there are more than one polygon
     const layers: any[] = [];
-    let geometry: Geometry;
+    let geometry: IGeometry;
     target.eachLayer((l: any) => layers.push(l.toGeoJSON?.()));
     const geo = layers
       .filter(e => e?.type === 'Feature')
