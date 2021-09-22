@@ -16,10 +16,10 @@ jobs:
     steps:
       - name: Checkout the repo
         uses: actions/checkout@v2
-      - name: Set up Python 3.7
+      - name: Set up Python 3.6
         uses: actions/setup-python@v2
         with:
-          python-version: '3.7'
+          python-version: '3.6'
       - name: Run pre-commit action
         uses: pre-commit/action@v2.0.0
   build:
@@ -34,16 +34,16 @@ jobs:
       - name: Install Python
         uses: actions/setup-python@v2
         with:
-          python-version: '3.7'
+          python-version: '3.6'
           architecture: 'x64'
 
       - name: Setup pip cache
         uses: actions/cache@v2
         with:
           path: ~/.cache/pip
-          key: pip-3.7-${{ hashFiles('package.json') }}
+          key: pip-3.6-${{ hashFiles('package.json') }}
           restore-keys: |
-            pip-3.7-
+            pip-3.6-
             pip-
 
       - name: Get yarn cache directory path
