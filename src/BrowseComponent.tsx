@@ -56,13 +56,7 @@ export interface IMuiVirtualizedTableProps {
   displayedRowCount: any;
 }
 
-export interface IMuiVirtualizedTableState {
-  foo: string;
-}
-class MuiVirtualizedTable extends React.PureComponent<
-  IMuiVirtualizedTableProps,
-  IMuiVirtualizedTableState
-> {
+class MuiVirtualizedTable extends React.PureComponent<IMuiVirtualizedTableProps> {
   static defaultProps: Partial<IMuiVirtualizedTableProps> = {
     headerHeight: 56,
     rowHeight: 56
@@ -90,7 +84,11 @@ class MuiVirtualizedTable extends React.PureComponent<
   cellRenderer = ({ cellData, columnIndex = null }: TableCellProps) => {
     const { columns } = this.props;
     let isPercent = false;
-    if (columnIndex !== null && columnIndex !== undefined && columns[columnIndex].percent) {
+    if (
+      columnIndex !== null &&
+      columnIndex !== undefined &&
+      columns[columnIndex].percent
+    ) {
       isPercent = columns[columnIndex].percent === true;
     }
     if (cellData !== undefined || cellData !== null) {
@@ -106,7 +104,11 @@ class MuiVirtualizedTable extends React.PureComponent<
     let handleClick = (dataId: number | string) => {
       // do nothing.
     };
-    if (columnIndex !== null && columnIndex !== undefined && columns[columnIndex].handleClick) {
+    if (
+      columnIndex !== null &&
+      columnIndex !== undefined &&
+      columns[columnIndex].handleClick
+    ) {
       handleClick = columns[columnIndex].handleClick;
     }
     return (
@@ -201,7 +203,10 @@ class MuiVirtualizedTable extends React.PureComponent<
                     index: number
                   ) => {
                     let renderer;
-                    if (cellContentRenderer !== null && cellContentRenderer !== undefined) {
+                    if (
+                      cellContentRenderer !== null &&
+                      cellContentRenderer !== undefined
+                    ) {
                       renderer = (cellRendererProps: TableCellProps) =>
                         this.cellRenderer({
                           cellData: cellContentRenderer(cellRendererProps),
