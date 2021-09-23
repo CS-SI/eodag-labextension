@@ -86,11 +86,7 @@ interface IProps {
   handleChange: any;
 }
 
-interface IState {
-  foo: string;
-}
-
-class IntegrationReactSelect extends React.Component<IProps, IState> {
+class IntegrationReactSelect extends React.Component<IProps> {
   render() {
     const { suggestions, value, handleChange } = this.props;
     const currentValue: OptionTypeBase = value

@@ -90,7 +90,7 @@ class MuiVirtualizedTable extends React.PureComponent<
   cellRenderer = ({ cellData, columnIndex = null }: TableCellProps) => {
     const { columns } = this.props;
     let isPercent = false;
-    if (columnIndex !== null && columns[columnIndex].percent) {
+    if (columnIndex !== null && columnIndex !== undefined && columns[columnIndex].percent) {
       isPercent = columns[columnIndex].percent === true;
     }
     if (cellData !== undefined || cellData !== null) {
@@ -106,7 +106,7 @@ class MuiVirtualizedTable extends React.PureComponent<
     let handleClick = (dataId: number | string) => {
       // do nothing.
     };
-    if (columnIndex !== null && columns[columnIndex].handleClick) {
+    if (columnIndex !== null && columnIndex !== undefined && columns[columnIndex].handleClick) {
       handleClick = columns[columnIndex].handleClick;
     }
     return (
@@ -139,7 +139,7 @@ class MuiVirtualizedTable extends React.PureComponent<
     };
 
     const inner =
-      !disableSort && sort !== null ? (
+      !disableSort && sort !== null && sort !== undefined ? (
         <TableSortLabelWithoutMUI
           active={dataKey === sortBy}
           direction={direction[sortDirection]}
