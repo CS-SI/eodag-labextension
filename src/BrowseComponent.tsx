@@ -201,7 +201,7 @@ class MuiVirtualizedTable extends React.PureComponent<
                     index: number
                   ) => {
                     let renderer;
-                    if (cellContentRenderer !== null) {
+                    if (cellContentRenderer !== null && cellContentRenderer !== undefined) {
                       renderer = (cellRendererProps: TableCellProps) =>
                         this.cellRenderer({
                           cellData: cellContentRenderer(cellRendererProps),
