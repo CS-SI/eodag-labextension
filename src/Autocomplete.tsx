@@ -18,7 +18,7 @@ function NoOptionsMessage(props: any) {
     <div
       color="textSecondary"
       style={{
-        padding: `8px 16px`
+        padding: '8px 16px'
       }}
       {...props.innerProps}
     >
@@ -86,12 +86,10 @@ interface IProps {
   handleChange: any;
 }
 
-interface IState {}
-
-class IntegrationReactSelect extends React.Component<IProps, IState> {
+class IntegrationReactSelect extends React.Component<IProps> {
   render() {
     const { suggestions, value, handleChange } = this.props;
-    let currentValue: OptionTypeBase = value
+    const currentValue: OptionTypeBase = value
       ? suggestions.find(e => e.value === value)
       : undefined;
     return (

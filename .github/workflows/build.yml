@@ -2,11 +2,26 @@ name: Build
 
 on:
   push:
-    branches: main
+    branches: [master, develop]
   pull_request:
-    branches: '*'
+    branches: [master, develop]
+  schedule:
+    - cron: '0 7 * * 1'
+  workflow_dispatch:
 
 jobs:
+  lint:
+    name: Linting (pre-commit)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repo
+        uses: actions/checkout@v2
+      - name: Set up Python 3.6
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.6'
+      - name: Run pre-commit action
+        uses: pre-commit/action@v2.0.0
   build:
     runs-on: ubuntu-latest
     steps:
@@ -19,16 +34,16 @@ jobs:
       - name: Install Python
         uses: actions/setup-python@v2
         with:
-          python-version: '3.7'
+          python-version: '3.6'
           architecture: 'x64'
 
       - name: Setup pip cache
         uses: actions/cache@v2
         with:
           path: ~/.cache/pip
-          key: pip-3.7-${{ hashFiles('package.json') }}
+          key: pip-3.6-${{ hashFiles('package.json') }}
           restore-keys: |
-            pip-3.7-
+            pip-3.6-
             pip-
 
       - name: Get yarn cache directory path
@@ -51,7 +66,7 @@ jobs:
           jlpm run eslint:check
           python -m pip install .
 
-          jupyter server extension list 2>&1 | grep -ie "eodag-labextension.*OK"
+          jupyter server extension list 2>&1 | grep -ie "eodag[_-]labextension.*OK"
 
-          jupyter labextension list 2>&1 | grep -ie "eodag-labextension.*OK"
+          jupyter labextension list 2>&1 | grep -ie "eodag[_-]labextension.*OK"
           python -m jupyterlab.browser_check

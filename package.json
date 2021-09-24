@@ -11,7 +11,7 @@
   "bugs": {
     "url": "https://github.com/CS-SI/eodag-labextension/issues"
   },
-  "license": "Apache v2.0",
+  "license": "Apache-2.0",
   "author": {
     "name": "CS Group",
     "email": "admin@geostorm.eu"

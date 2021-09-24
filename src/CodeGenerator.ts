@@ -57,10 +57,10 @@ dag = EODataAccessGateway()
       additionnalParameters
         .filter(({ name, value }) => name !== '' && value !== '')
         .map(({ name, value }) => `  ${name}="${value}",`)
-        .join('\n') + `\n`;
+        .join('\n') + '\n';
   }
 
-  code += `)`;
+  code += ')';
   return code;
 };
 

@@ -4,7 +4,7 @@
  */
 
 export interface IFormInput {
-  geometry: Geometry;
+  geometry: IGeometry;
   startDate: Date;
   endDate: Date;
   productType: string;
@@ -12,27 +12,27 @@ export interface IFormInput {
   additionnalParameters?: { name: string; value: string }[];
 }
 
-export interface SearchParameters {
+export interface ISearchParameters {
   dtstart?: string; // format: YYYY-MM-DD
   dtend?: string; // format: YYYY-MM-DD
   cloudCover?: number;
   page?: number;
-  geom?: Geometry;
+  geom?: IGeometry;
   [key: string]: any;
 }
 
-export interface Geometry {
+export interface IGeometry {
   type: string;
   coordinates: number[];
 }
-// export type FeaturePropertie = [string, any];
-export interface FeaturePropertie {
+// export type IFeaturePropertie = [string, any];
+export interface IFeaturePropertie {
   key: string;
   value: any;
 }
 
-// export type FeaturePropertie = [string, any];
-export interface FeaturePropertie {
+// export type IFeaturePropertie = [string, any];
+export interface IFeaturePropertie {
   key: string;
   value: any;
 }
