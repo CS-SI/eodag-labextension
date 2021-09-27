@@ -7,7 +7,7 @@
 
 Searching and browsing remote sensed imagery directly from JupyterLab.
 
-![screencast](notebooks/images/eodag_labext_screencast.gif)
+![screencast](https://raw.githubusercontent.com/CS-SI/eodag-labextension/develop/notebooks/images/eodag_labext_screencast.gif)
 
 This extension is using the [eodag](https://github.com/CS-SI/eodag) library to efficiently search from various image providers. It can transform search results to code cells into the active Python notebook to further process/visualize the dataset.
 
