@@ -268,19 +268,17 @@ function BrowseComponent({
   /**
    * Return an object with its id and all its properties
    */
-  const getRowData = (features: { features: string | any[] }) => ({
-    index
-  }: {
-    index: number;
-  }) => {
-    if (index >= features.features.length) {
-      return {};
-    }
-    return {
-      ...features.features[index].properties,
-      id: features.features[index].id
+  const getRowData =
+    (features: { features: string | any[] }) =>
+    ({ index }: { index: number }) => {
+      if (index >= features.features.length) {
+        return {};
+      }
+      return {
+        ...features.features[index].properties,
+        id: features.features[index].id
+      };
     };
-  };
   const handleRowClick = ({ rowData }: { rowData: any }) => {
     handleClickFeature(rowData.id);
   };
