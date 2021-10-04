@@ -91,7 +91,7 @@ class MuiVirtualizedTable extends React.PureComponent<IMuiVirtualizedTableProps>
     ) {
       isPercent = columns[columnIndex].percent === true;
     }
-    if (cellData !== undefined || cellData !== null) {
+    if (cellData !== undefined && cellData !== null) {
       return <div>{isPercent ? `${parseInt(cellData, 10)} %` : cellData}</div>;
     } else {
       return <div></div>;
