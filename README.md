@@ -22,6 +22,7 @@ The extension is composed of a Python package named `eodag-labextension`, and ad
   - [Results display](#Results-display)
   - [Apply to the Jupyter notebook](#Apply-to-the-Jupyter-notebook)
   - [User manual](#User-manual)
+- [Contribute](#Contribute)
 - [Troubleshooting](#Troubleshooting)
 - [License](#License)
 
@@ -116,6 +117,17 @@ search_results, total_count = dag.search(
 ### User manual
 
 Please refer to the [user manual notebook](notebooks/user_manual.ipynb) for results usage examples.
+
+## Contribute
+
+Have you observed a bug while running `eodag-labextension`?
+Do you have a suggestion for a new feature?
+
+Don't hesitate and open an issue or submit a pull request, contributions are most welcome!
+
+For guidance on setting up a development environment and how to make a
+contribution to `eodag-labextension`, see the
+[contributing guidelines](https://github.com/CS-SI/eodag-labextension/blob/develop/CONTRIBUTING.md).
 
 ## Troubleshooting
 
