@@ -9,9 +9,13 @@ Searching and browsing remote sensed imagery directly from JupyterLab.
 
 ![screencast](https://raw.githubusercontent.com/CS-SI/eodag-labextension/develop/notebooks/images/eodag_labext_screencast.gif)
 
-This extension is using the [eodag](https://github.com/CS-SI/eodag) library to efficiently search from various image providers. It can transform search results to code cells into the active Python notebook to further process/visualize the dataset.
+This extension is using the [eodag](https://github.com/CS-SI/eodag) library to efficiently search from various image
+providers. It can transform search results to code cells into the active Python notebook to further process/visualize
+the dataset.
 
-The extension is composed of a Python package named `eodag-labextension`, and add a tab into the left panel of Jupyter Lab. The package consist of a Python Jupyter notebook REST service consumed by the client and served at `/eodag/` or `/user/<username>/eodag/` for JupyterHub (a home page is available at that URL).
+The extension is composed of a Python package named `eodag-labextension`, and add a tab into the left panel of Jupyter
+Lab. The package consist of a Python Jupyter notebook REST service consumed by the client and served at `/eodag/` or
+`/user/<username>/eodag/` for JupyterHub (a home page is available at that URL).
 
 - [Requirements](#Requirements)
 - [Compatibility](#Compatibility)
@@ -56,18 +60,20 @@ Make sure that that file is configured properly.
 
 ## QuickStart
 
-You can use `eodag-labextension` inside a Jupyter notebook. Start Jupyter lab with `jupyter lab`, and in Jupyter lab open a notebook.
+You can use `eodag-labextension` inside a Jupyter notebook. Start Jupyter lab with `jupyter lab`, and in Jupyter lab
+open a notebook.
 
-<img style="float: left; margin-right: 50px;" alt="labextension form" src="./notebooks/images/eodag_labext_form.png" width="250px">
+![extension logo](https://raw.githubusercontent.com/CS-SI/eodag-labextension/develop/notebooks/images/eodag_labext_form.png)
 
 ### Search
 
-![extension logo](./notebooks/images/eodag_labext_icon.png)
+![extension logo](https://raw.githubusercontent.com/CS-SI/eodag-labextension/develop/notebooks/images/eodag_labext_icon.png)
 Open the EODAG tab on the left side of the JupuytuerLab interface by clicking on that icon.
 
 With displayed search form, you can enter select your data geographically and apply some search criteria:
 
-- **Product type**: the searched product type. For each entry of the drop-down list, a tooltip is displayed at hovering time with corresponding description.
+- **Product type**: the searched product type. For each entry of the drop-down list, a tooltip is displayed at
+  hovering time with corresponding description.
 - **Start date**: minimal date of the search temporal window.
 - **End date**: maximal date of the search temporal window.
 - **Max cloud cover**: maximum cloud cover allowed in search results in percent.
@@ -76,9 +82,8 @@ With displayed search form, you can enter select your data geographically and ap
 You can draw multiple extents, or use none. Each extent can be a rectangle or a free polygon.
 Product type is mandatory. Other criteria are optional.
 
-Once search criteria are filled out, click on the "Search" button to proceed to next step. At the end of the search, a popup opens and displays results.
-
-<span style="clear: both; display: block; "></span>
+Once search criteria are filled out, click on the "Search" button to proceed to next step. At the end of the search,
+a popup opens and displays results.
 
 ### Results overview
 
@@ -88,13 +93,18 @@ The results overview popup is compopsed of 3 parts:
 - a table listing products
 - a pane containing metadata for currently selected product.
 
-The results table allows you to access product metadata by clicking on the desired product line. The magnifying glass button allows you to zoom in on the product's in the map view. By scrolling down in the list of results, the search is automatically restarted to retrieve the following results.
+The results table allows you to access product metadata by clicking on the desired product line. The magnifying glass
+button allows you to zoom in on the product's in the map view. By scrolling down in the list of results, the search is
+automatically restarted to retrieve the following results.
 
-In the metadata view, clicking on the thumbnail displays it in native resolution. Clicking it again reduces its size again.
+In the metadata view, clicking on the thumbnail displays it in native resolution. Clicking it again reduces its size
+again.
 
 ### Apply to the Jupyter notebook
 
-If the search result is correct, clicking on the "`Apply`" button will insert the Python eodag code in a new cell after the selected cell of the currently open notebook. The popup is automatically closed. From there, it is possible to work in the notebook on the search results by executing the eodag search.
+If the search result is correct, clicking on the "`Apply`" button will insert the Python eodag code in a new cell
+after the selected cell of the currently open notebook. The popup is automatically closed. From there, it is possible
+to work in the notebook on the search results by executing the eodag search.
 
 Here is an example of generated code:
 
@@ -116,7 +126,9 @@ search_results, total_count = dag.search(
 
 ### User manual
 
-Please refer to the [user manual notebook](notebooks/user_manual.ipynb) for results usage examples.
+Please refer to the
+[user manual notebook](https://github.com/CS-SI/eodag-labextension/blob/develop/notebooks/user_manual.ipynb)
+for results usage examples.
 
 ## Contribute
 
