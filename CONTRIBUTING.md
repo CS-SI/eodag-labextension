@@ -60,7 +60,8 @@ pre-commit install
 
 ### Conventional Commit
 
-This project uses the convention named "Conventional Commit". You can find more about it [here](https://www.conventionalcommits.org/en/v1.0.0/), and you must follow it.
+This project uses the convention named "Conventional Commit". You can find more about it
+[here](https://www.conventionalcommits.org/en/v1.0.0/), and you must follow it.
 
 Commit format :
 
