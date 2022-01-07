@@ -1,6 +1,6 @@
 {
   "name": "eodag-labextension",
-  "version": "3.2.4",
+  "version": "3.2.5",
   "description": "Searching remote sensed imagery from various image providers",
   "keywords": [
     "jupyter",

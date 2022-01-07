@@ -164,5 +164,5 @@ To submit an issue, please go to [github issues](https://github.com/CS-SI/eodag-
 This software is licensed under Apache License v2.0.
 See LICENSE file for details.
 
-_Copyright 2021 CS GROUP - France
+_Copyright 2022 CS GROUP - France
 All rights reserved_
