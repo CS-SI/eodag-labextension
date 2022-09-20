@@ -285,7 +285,7 @@ const Fields = ({ control, register }: Partial<UseFormReturn<IFormInput>>) => {
       <button
         type="button"
         className="jp-EodagWidget-additionnalParameters-addbutton"
-        onClick={() => append({})}
+        onClick={() => append({ name: '', value: '' })}
       >
         Add search parameter
       </button>
