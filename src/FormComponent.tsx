@@ -22,7 +22,7 @@ import Autocomplete from './Autocomplete';
 import { EODAG_SERVER_ADRESS } from './config';
 import SearchService from './SearchService';
 import { ChangeEvent } from 'react';
-import { OptionTypeBase } from 'react-select';
+//import { OptionTypeBase } from 'react-select';
 import MapExtentComponent from './MapExtentComponent';
 import _ from 'lodash';
 import { IFormInput } from './types';
@@ -30,6 +30,9 @@ import { IFormInput } from './types';
 export interface IProps {
   handleShowFeature: any;
   saveFormValues: (formValue: IFormInput) => void;
+}
+export interface OptionTypeBase {
+  [key: string]: any;
 }
 export const FormComponent: FC<IProps> = ({
   handleShowFeature,
