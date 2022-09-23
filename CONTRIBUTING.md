@@ -12,7 +12,7 @@ The `jlpm` command is JupyterLab's pinned version of
 # Clone the repo to your local environment
 # Change directory to the eodag-labextension directory
 # If you want to work in a virtual environment
-virtualenv -p `which python3.6` venv
+virtualenv -p `which python3` venv
 source venv/bin/activate
 # Install package in development mode
 pip install -r requirements-dev.txt
