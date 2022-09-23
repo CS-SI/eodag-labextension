@@ -22,7 +22,7 @@ import Autocomplete from './Autocomplete';
 import { EODAG_SERVER_ADRESS } from './config';
 import SearchService from './SearchService';
 import { ChangeEvent } from 'react';
-//import { OptionTypeBase } from 'react-select';
+// import { OptionTypeBase } from 'react-select';
 import MapExtentComponent from './MapExtentComponent';
 import _ from 'lodash';
 import { IFormInput } from './types';
@@ -218,6 +218,30 @@ export const FormComponent: FC<IProps> = ({
             />
           </div>
         </fieldset>
+        <label className="jp-EodagWidget-input-name">
+          Disable cloud cover
+          <Controller
+            name="disableCloud"
+            control={control}
+            rules={{ required: false }}
+            render={({ field: { onChange, value } }) => (
+              <input
+                type="checkbox"
+                className="jp-EodagWidget-input"
+                checked={value}
+                onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                  const value = event.target.checked;
+                  onChange(value);
+                  if (value) {
+                    console.log({ value });
+                    setCloud(0);
+                  }
+                  setCloud(100);
+                }}
+              />
+            )}
+          />
+        </label>
         <label className="jp-EodagWidget-input-name">
           Max cloud cover {cloud}%
           <div className="jp-EodagWidget-slider">
