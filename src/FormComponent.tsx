@@ -31,14 +31,14 @@ export interface IProps {
   handleShowFeature: any;
   saveFormValues: (formValue: IFormInput) => void;
 }
-export interface OptionTypeBase {
+export interface IOptionTypeBase {
   [key: string]: any;
 }
 export const FormComponent: FC<IProps> = ({
   handleShowFeature,
   saveFormValues
 }) => {
-  const [productTypes, setProductTypes] = useState<OptionTypeBase[]>();
+  const [productTypes, setProductTypes] = useState<IOptionTypeBase[]>();
   const defaultStartDate: Date = undefined;
   const defaultEndDate: Date = undefined;
   const [startDate, setStartDate] = useState(undefined);
@@ -151,7 +151,7 @@ export const FormComponent: FC<IProps> = ({
             <Autocomplete
               suggestions={productTypes}
               value={value}
-              handleChange={(e: OptionTypeBase | null) => onChange(e?.value)}
+              handleChange={(e: IOptionTypeBase | null) => onChange(e?.value)}
             />
           )}
         />
