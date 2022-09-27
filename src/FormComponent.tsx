@@ -232,11 +232,7 @@ export const FormComponent: FC<IProps> = ({
                 onChange={(event: ChangeEvent<HTMLInputElement>) => {
                   const value = event.target.checked;
                   onChange(value);
-                  if (value) {
-                    console.log({ value });
-                    setCloud(0);
-                  }
-                  setCloud(100);
+                  value && setCloud(undefined);
                 }}
               />
             )}
