@@ -42,7 +42,7 @@ export class EodagBrowser extends React.Component<IProps, IState> {
       openDialog: true
     });
   };
-  handleRetrieveMoreFeature = () => {
+  handleRetrieveMoreFeature = async () => {
     const { features } = this.state;
     this.setState({
       searching: true

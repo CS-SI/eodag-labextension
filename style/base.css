@@ -391,3 +391,7 @@
 .jp-EodagWidget-product h4 {
   padding-left: 20px;
 }
+.jp-EodagWidget-input-name-line-through {
+  text-decoration: line-through;
+  color: #818181;
+}

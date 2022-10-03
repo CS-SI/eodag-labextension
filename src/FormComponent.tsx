@@ -218,27 +218,11 @@ export const FormComponent: FC<IProps> = ({
             />
           </div>
         </fieldset>
-        <label className="jp-EodagWidget-input-name">
-          Disable cloud cover
-          <Controller
-            name="disableCloud"
-            control={control}
-            rules={{ required: false }}
-            render={({ field: { onChange, value } }) => (
-              <input
-                type="checkbox"
-                className="jp-EodagWidget-input"
-                checked={value}
-                onChange={(event: ChangeEvent<HTMLInputElement>) => {
-                  const value = event.target.checked;
-                  onChange(value);
-                  value && setCloud(undefined);
-                }}
-              />
-            )}
-          />
-        </label>
-        <label className="jp-EodagWidget-input-name">
+        <label
+          className={`jp-EodagWidget-input-name ${
+            cloud === 100 ? 'jp-EodagWidget-input-name-line-through' : ''
+          } `}
+        >
           Max cloud cover {cloud}%
           <div className="jp-EodagWidget-slider">
             <Controller

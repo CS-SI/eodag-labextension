@@ -48,7 +48,7 @@ dag = EODataAccessGateway()
     code += `  end="${end}",
 `;
   }
-  if (cloud !== undefined) {
+  if (cloud !== 100) {
     code += `  cloudCover=${cloud},
 `;
   }
