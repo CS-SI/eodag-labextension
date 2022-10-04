@@ -20,6 +20,8 @@ pip install -r requirements-dev.txt
 jupyter labextension develop . --overwrite
 # Rebuild extension Typescript source after making changes
 jlpm run build
+# You need to enable the extension
+jupyter server extension enable eodag_labextension
 ```
 
 You can watch the source directory and run JupyterLab at the same time in
