@@ -157,7 +157,6 @@ class MuiVirtualizedTable extends React.PureComponent<IMuiVirtualizedTableProps>
 
   render() {
     const {
-      classes,
       columns,
       rowCount,
       displayedRowCount,
