@@ -17,18 +17,18 @@ The extension is composed of a Python package named `eodag-labextension`, and ad
 Lab. The package consist of a Python Jupyter notebook REST service consumed by the client and served at `/eodag/` or
 `/user/<username>/eodag/` for JupyterHub (a home page is available at that URL).
 
-- [Requirements](#Requirements)
-- [Compatibility](#Compatibility)
-- [Install](#Install)
-  - [Configuration](#Configuration)
-- [QuickStart](#QuickStart)
-  - [Search](#Search)
-  - [Results display](#Results-display)
-  - [Apply to the Jupyter notebook](#Apply-to-the-Jupyter-notebook)
-  - [User manual](#User-manual)
-- [Contribute](#Contribute)
-- [Troubleshooting](#Troubleshooting)
-- [License](#License)
+- [Requirements](#requirements)
+- [Compatibility](#compatibility)
+- [Install](#install)
+  - [Configuration](#configuration)
+- [QuickStart](#quickstart)
+  - [Search](#search)
+  - [Results overview](#results-overview)
+  - [Apply to the Jupyter notebook](#apply-to-the-jupyter-notebook)
+  - [User manual](#user-manual)
+- [Contribute](#contribute)
+- [Troubleshooting](#troubleshooting)
+- [License](#license)
 
 ## Requirements
 
