@@ -30,10 +30,12 @@ repos:
     rev: 6.1.1
     hooks:
       - id: pydocstyle
+
   - repo: https://github.com/psf/black
     rev: 22.8.0
     hooks:
       - id: black
+
   - repo: https://gitlab.com/pycqa/flake8
     rev: 5.0.4
     hooks:
