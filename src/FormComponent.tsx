@@ -22,7 +22,7 @@ import Autocomplete from './Autocomplete';
 import { EODAG_SERVER_ADRESS } from './config';
 import SearchService from './SearchService';
 import { ChangeEvent } from 'react';
-//import { OptionTypeBase } from 'react-select';
+// import { OptionTypeBase } from 'react-select';
 import MapExtentComponent from './MapExtentComponent';
 import _ from 'lodash';
 import { IFormInput } from './types';
@@ -218,7 +218,11 @@ export const FormComponent: FC<IProps> = ({
             />
           </div>
         </fieldset>
-        <label className="jp-EodagWidget-input-name">
+        <label
+          className={`jp-EodagWidget-input-name ${
+            cloud === 100 ? 'jp-EodagWidget-input-name-line-through' : ''
+          } `}
+        >
           Max cloud cover {cloud}%
           <div className="jp-EodagWidget-slider">
             <Controller
