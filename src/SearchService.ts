@@ -39,7 +39,7 @@ class SearchService {
         ? formatDate(formValues.startDate)
         : undefined,
       dtend: formValues.endDate ? formatDate(formValues.endDate) : undefined,
-      cloudCover: formValues.cloud,
+      cloudCover: formValues.cloud < 100 ? formValues.cloud : undefined,
       page: page,
       geom: formValues.geometry
     };
