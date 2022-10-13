@@ -68,7 +68,7 @@ class SearchHandler(APIHandler):
         arguments = json.loads(self.request.body)
 
         try:
-            response = search_products(product_type, arguments)
+            response = search_products(product_type, arguments, stac_formatted=False)
         except ValidationError as e:
             self.set_status(400)
             self.finish({"error": e.message})
