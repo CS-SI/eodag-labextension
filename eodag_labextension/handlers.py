@@ -7,41 +7,13 @@
 import json
 
 import tornado
-from eodag.api.core import DEFAULT_ITEMS_PER_PAGE
-from eodag.rest.utils import get_home_page_content, get_product_types, get_templates_path, search_products
+from eodag.rest.server import app, run_swagger, stac_api_config
+from eodag.rest.utils import get_product_types, search_products
 from eodag.utils.exceptions import AuthenticationError, UnsupportedProductType, ValidationError
-from jinja2.loaders import ChoiceLoader, FileSystemLoader
 from jupyter_server.base.handlers import APIHandler
 from jupyter_server.utils import url_path_join
-from notebook.base.handlers import IPythonHandler
-
-
-class RootHandler(IPythonHandler):
-    """Home page request handler return HTML page"""
-
-    # The following decorator should be present on all verb methods (head, get, post,
-    # patch, put, delete, options) to ensure only authorized user can request the
-    # Jupyter server
-    @tornado.web.authenticated
-    def get(self):
-        """Get endpoint"""
-        # Update templates_path for Jinja FileSystemLoader
-        jinja_env = self.settings["jinja2_env"]
-        if hasattr(jinja_env.loader, "searchpath"):
-            jinja_env.loader.searchpath.append(get_templates_path())
-        else:
-            if isinstance(jinja_env.loader, ChoiceLoader):
-                fs_loader = FileSystemLoader(get_templates_path())
-                jinja_env.loader.loaders.append(fs_loader)
-
-        r = self.request
-        base_url = f"{r.protocol}://{r.host}{r.path}"
-        self.write(
-            self.render_template(
-                "index.html",
-                content=get_home_page_content(base_url, DEFAULT_ITEMS_PER_PAGE),
-            )
-        )
+from tornado.web import FallbackHandler
+from tornado.wsgi import WSGIContainer
 
 
 class ProductTypeHandler(APIHandler):
@@ -93,18 +65,76 @@ class SearchHandler(APIHandler):
         self.finish(response)
 
 
+class PrefixMiddleware(object):
+    """Appends a prefix to the WSGI container around Flask app"""
+
+    def __init__(self, app, prefix=""):
+        """Class init method"""
+        self.app = app
+        self.prefix = prefix
+
+    def __call__(self, environ, start_response):
+        """Call method"""
+        if environ["PATH_INFO"].startswith(self.prefix):
+            environ["PATH_INFO"] = environ["PATH_INFO"][len(self.prefix) :]
+            environ["SCRIPT_NAME"] = self.prefix
+            return self.app(environ, start_response)
+        else:
+            start_response("404", [("Content-Type", "text/plain")])
+            return ["This url does not belong to the app.".encode()]
+
+
+class MethodAndPathMatch(tornado.routing.PathMatches):
+    """Wrapper around `tornado.routing.PathMatches` adding http method matching"""
+
+    def __init__(self, method, path_pattern):
+        """Class init method"""
+        super().__init__(path_pattern)
+        self.method = method
+
+    def match(self, request):
+        """Wrapper around `PathMatches.match` method"""
+        if request.method != self.method:
+            return None
+
+        return super().match(request)
+
+
 def setup_handlers(web_app, url_path):
     """Configure the routes of web_app"""
-    host_pattern = ".*$"
 
-    base_url = web_app.settings["base_url"]
     # Prepend the base_url so that it works in a JupyterHub setting
-    home_pattern = url_path_join(base_url, url_path)
+    base_url = web_app.settings["base_url"]
+
+    # matching patterns
+    host_pattern = ".*$"
+    home_pattern = url_path_join(base_url, url_path, r"?/")
+    eodag_serve_services_pattern = url_path_join(
+        base_url, url_path, r"(api|service-doc.*|service-static.*|conformance|collections.*|search.*)"
+    )
     product_types_pattern = url_path_join(base_url, url_path, "product-types")
     search_pattern = url_path_join(base_url, url_path, r"(?P<product_type>[\w-]+)")
+
+    # WSGI container around eodag-serve app
+    app.wsgi_app = PrefixMiddleware(app.wsgi_app, prefix=url_path_join(base_url, url_path))
+    eodag_serve_container = WSGIContainer(app)
+
+    # flasgger conf update with url prefix
+    stac_api_config["info"]["description"] = stac_api_config["info"]["description"].replace(
+        "(/collections", "(/%s" % url_path_join(url_path, "collections")
+    )
+    stac_api_new_paths = {f"/{url_path}{path}": path_conf for path, path_conf in stac_api_config["paths"].items()}
+    stac_api_config["paths"] = stac_api_new_paths
+
+    # run flasgger doc
+    run_swagger(app=app, config=stac_api_config, merge=True)
+
+    # handlers added for each pattern
     handlers = [
-        (home_pattern, RootHandler),
+        (home_pattern, FallbackHandler, dict(fallback=eodag_serve_container)),
+        (eodag_serve_services_pattern, FallbackHandler, dict(fallback=eodag_serve_container)),
         (product_types_pattern, ProductTypeHandler),
-        (search_pattern, SearchHandler),
+        (MethodAndPathMatch("POST", search_pattern), SearchHandler),
+        (MethodAndPathMatch("GET", search_pattern), FallbackHandler, dict(fallback=eodag_serve_container)),
     ]
     web_app.add_handlers(host_pattern, handlers)
