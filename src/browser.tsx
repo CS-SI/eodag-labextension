@@ -37,6 +37,10 @@ export class EodagBrowser extends React.Component<IProps, IState> {
   }
 
   handleShowFeature = (features: any) => {
+    if (!this.props.tracker.currentWidget) {
+      showErrorMessage('No active notebook', 'Please open a notebook first');
+      return;
+    }
     this.setState({
       features,
       openDialog: true
