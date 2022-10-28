@@ -4,7 +4,7 @@
  */
 
 import * as React from 'react';
-import { NotebookActions, INotebookTracker } from '@jupyterlab/notebook';
+import { INotebookTracker, NotebookActions } from '@jupyterlab/notebook';
 import { CodeCellModel } from '@jupyterlab/cells';
 import { showErrorMessage } from '@jupyterlab/apputils';
 import { concat, get } from 'lodash';
@@ -92,7 +92,7 @@ export class EodagBrowser extends React.Component<IProps, IState> {
     });
   };
 
-  handleGenerateQuery = () => {
+  handleGenerateQuery = (onTop: boolean) => {
     this.setState({
       openDialog: false
     });
@@ -115,9 +115,16 @@ export class EodagBrowser extends React.Component<IProps, IState> {
     const code = formatCode(this.state.formValues);
     const cell = this.getCodeCell(code);
     const activeCellIndex = notebook.activeCellIndex;
-    model.cells.insert(activeCellIndex + 1, cell);
-    NotebookActions.selectBelow(notebook);
+    model.cells.insert(onTop ? 0 : activeCellIndex + 1, cell);
+
+    if (onTop) {
+      notebook.activeCellIndex = 0;
+      NotebookActions.selectAbove(notebook);
+    } else {
+      NotebookActions.selectBelow(notebook);
+    }
   };
+
   handleCloseModal = () => {
     this.setState({
       openDialog: false

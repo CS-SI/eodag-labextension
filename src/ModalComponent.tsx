@@ -152,25 +152,44 @@ export default class ModalComponent extends React.Component<IProps, IState> {
       >
         <div className="jp-EodagWidget-modal">
           <div className="jp-EodagWidget-appbar">
-            <button onClick={handleClose}>
-              <FontAwesomeIcon icon={faTimes} />
-            </button>
-            Search results
-            <button
-              data-for="apply-tooltip"
-              data-tip="Generate the python code"
-              className="jp-EodagWidget-apply"
-              onClick={handleGenerateQuery}
-            >
-              Apply
-            </button>
-            <ReactTooltip
-              id="apply-tooltip"
-              className="jp-Eodag-tooltip"
-              place="bottom"
-              type="dark"
-              effect="solid"
-            />
+            <div>
+              <button onClick={handleClose}>
+                <FontAwesomeIcon icon={faTimes} />
+              </button>
+              Search results
+            </div>
+            <div>
+              <button
+                data-for="apply-tooltip"
+                data-tip="Generate python code above focus"
+                className="jp-EodagWidget-apply"
+                onClick={() => handleGenerateQuery(true)}
+              >
+                Apply on top
+              </button>
+              <ReactTooltip
+                id="apply-tooltip"
+                className="jp-Eodag-tooltip"
+                place="bottom"
+                type="dark"
+                effect="solid"
+              />
+              <button
+                data-for="apply-tooltip"
+                data-tip="Generate python code below focus"
+                className="jp-EodagWidget-apply"
+                onClick={() => handleGenerateQuery(false)}
+              >
+                Apply
+              </button>
+              <ReactTooltip
+                id="apply-tooltip"
+                className="jp-Eodag-tooltip"
+                place="bottom"
+                type="dark"
+                effect="solid"
+              />
+            </div>
           </div>
           <div className="jp-EodagWidget-modal-container">
             <div className="jp-EodagWidget-product-wrapper">

@@ -326,6 +326,9 @@
   padding: 12px 10px;
   font-size: 20px;
   color: white;
+
+  display: flex;
+  justify-content: space-between;
 }
 
 .jp-Eodag-tooltip {
@@ -381,8 +384,9 @@
 .jp-EodagWidget-appbar button {
   color: white;
 }
+
 .jp-EodagWidget-apply {
-  float: right;
+  /* float: right; */
   padding: 3px 6px;
 }
 .jp-EodagWidget-apply:hover {
