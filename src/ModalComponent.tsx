@@ -152,11 +152,22 @@ export default class ModalComponent extends React.Component<IProps, IState> {
       >
         <div className="jp-EodagWidget-modal">
           <div className="jp-EodagWidget-appbar">
-            <div>
-              <button onClick={handleClose}>
+            <div className="jp-Eodag-results-button-wrapper">
+              <button
+                data-for="close-results"
+                data-tip="close results"
+                onClick={handleClose}
+              >
                 <FontAwesomeIcon icon={faTimes} />
               </button>
-              Search results
+              <ReactTooltip
+                id="close-results"
+                className="jp-Eodag-tooltip"
+                place="bottom"
+                type="dark"
+                effect="solid"
+              />
+              <span>Search results</span>
             </div>
             <div>
               <button

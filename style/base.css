@@ -33,22 +33,26 @@
   margin: 0 15px;
   font-size: 16px;
   padding: 5px;
-  color: var(--jp-ui-font-color1);
-  background: var(--jp-layout-color1);
+  /* color: var(--jp-ui-font-color1); */
+  /* background: var(--jp-layout-color1); */
+  color: white;
+  background: #222;
   border: none;
   box-sizing: border-box;
   outline: none;
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
-  padding: 7px;
+  padding: 7px 15px;
   margin: 0px;
-  border-radius: var(--jp-border-radius);
+  /* border-radius: var(--jp-border-radius); */
+  border-radius: 15px;
   display: flex;
   align-items: center;
 }
 .jp-EodagWidget .jp-EodagWidget-form .jp-EodagWidget-buttons button:hover {
-  background: var(--jp-layout-color2);
+  /* background: var(--jp-layout-color2); */
+  background: #757575;
 }
 .jp-EodagWidget .jp-EodagWidget-form .react-datepicker-popper {
   position: relative;
@@ -141,6 +145,13 @@
   border-radius: 5px;
   background-color: var(--jp-layout-color0);
   color: var(--jp-ui-font-color0);
+}
+
+.jp-EodagWidget
+  .jp-EodagWidget-form
+  .jp-EodagWidget-additionnalParameters-fieldset
+  .jp-EodagWidget-additionnalParameters-addbutton:hover {
+  background-color: #e1e1e1;
 }
 
 .jp-EodagWidget
@@ -329,6 +340,7 @@
 
   display: flex;
   justify-content: space-between;
+  align-items: center;
 }
 
 .jp-Eodag-tooltip {
@@ -381,17 +393,40 @@
   font-size: 18px;
   cursor: pointer;
 }
+
 .jp-EodagWidget-appbar button {
   color: white;
+  background-color: #005bb3;
+  padding: 5px 10px;
+  border-radius: 15px;
+}
+
+.jp-Eodag-results-button-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.jp-EodagWidget-appbar button:has(+ div + button),
+.jp-EodagWidget-appbar button:has(+ div + span) {
+  margin-right: 10px;
+}
+
+.jp-EodagWidget-appbar button:has(+ div + span) svg {
+  display: grid;
+  place-items: center;
+}
+
+.jp-EodagWidget-appbar button:hover {
+  background-color: #90caff;
 }
 
 .jp-EodagWidget-apply {
-  /* float: right; */
   padding: 3px 6px;
 }
-.jp-EodagWidget-apply:hover {
-  background-color: rgba(255, 255, 255, 0.5);
-}
+/* .jp-EodagWidget-apply:hover { */
+/* background-color: rgba(255, 255, 255, 0.5); */
+/* } */
+
 .jp-EodagWidget-product h4 {
   padding-left: 20px;
 }
