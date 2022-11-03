@@ -258,6 +258,7 @@ export const FormComponent: FC<IProps> = ({
 };
 
 const Fields = ({ control, register }: Partial<UseFormReturn<IFormInput>>) => {
+  // @ts-ignore
   const { fields, append, remove } = useFieldArray({
     control,
     name: 'additionnalParameters'
