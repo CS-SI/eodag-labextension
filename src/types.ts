@@ -9,7 +9,7 @@ export interface IFormInput {
   endDate: Date;
   productType: string;
   cloud: number;
-  disableCloud: boolean;
+  replaceActiveCell?: boolean;
   additionnalParameters?: { name: string; value: string }[];
 }
 
