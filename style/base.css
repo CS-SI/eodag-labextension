@@ -23,6 +23,12 @@
   display: flex;
   flex-direction: column;
 }
+
+.jp-EodagWidget-from-buttons-wrapper {
+  display: flex;
+  justify-content: space-evenly;
+}
+
 .jp-EodagWidget .jp-EodagWidget-form .jp-EodagWidget-buttons {
   display: flex;
   justify-content: center;
@@ -289,6 +295,17 @@
   width: 50%;
 }
 
+.jp-EodagWidget-modal
+  .jp-EodagWidget-modal-container
+  .jp-EodagWidget-modal-footer {
+  display: flex;
+  justify-content: center;
+  background-color: var(--jp-brand-color1);
+  padding: 12px 10px;
+  font-size: 20px;
+  color: white;
+}
+
 .jp-EodagWidget-modal .jp-EodagWidget-browse-wrapper {
   height: calc(100% - 130px);
 }
@@ -322,6 +339,8 @@
 
 .jp-EodagWidget-appbar {
   flex: 1 100%;
+  display: flex;
+  justify-content: space-between;
   background-color: var(--jp-brand-color1);
   padding: 12px 10px;
   font-size: 20px;
@@ -371,23 +390,28 @@
   justify-content: center;
 }
 .jp-EodagWidget-appbar button,
-.jp-EodagWidget-browse-wrapper button {
+.jp-EodagWidget-browse-wrapper button,
+.jp-EodagWidget-modal-footer button {
   background: none;
   border: none;
   outline: none;
   font-size: 18px;
   cursor: pointer;
 }
-.jp-EodagWidget-appbar button {
+.jp-EodagWidget-appbar button,
+.jp-EodagWidget-modal-footer button {
   color: white;
+}
+
+.jp-EodagWidget-appbar button:hover,
+.jp-EodagWidget-modal-footer button:hover {
+  background-color: rgba(255, 255, 255, 0.5);
 }
 .jp-EodagWidget-apply {
   float: right;
   padding: 3px 6px;
 }
-.jp-EodagWidget-apply:hover {
-  background-color: rgba(255, 255, 255, 0.5);
-}
+
 .jp-EodagWidget-product h4 {
   padding-left: 20px;
 }

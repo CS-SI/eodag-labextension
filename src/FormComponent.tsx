@@ -9,6 +9,8 @@ import {
   SubmitHandler,
   Controller,
   useFieldArray,
+  // Control,
+  // UseFormRegister,
   UseFormReturn
 } from 'react-hook-form';
 import { showErrorMessage } from '@jupyterlab/apputils';
@@ -30,13 +32,15 @@ import { IFormInput } from './types';
 export interface IProps {
   handleShowFeature: any;
   saveFormValues: (formValue: IFormInput) => void;
+  handleGenerateQuery: any;
 }
 export interface IOptionTypeBase {
   [key: string]: any;
 }
 export const FormComponent: FC<IProps> = ({
   handleShowFeature,
-  saveFormValues
+  saveFormValues,
+  handleGenerateQuery
 }) => {
   const [productTypes, setProductTypes] = useState<IOptionTypeBase[]>();
   const defaultStartDate: Date = undefined;
@@ -45,6 +49,7 @@ export const FormComponent: FC<IProps> = ({
   const [endDate, setEndDate] = useState(undefined);
   const [cloud, setCloud] = useState(100);
   const [isLoadingSearch, setIsLoadingSearch] = useState(false);
+  const [openModal, setOpenModal] = useState(true);
 
   const {
     control,
@@ -122,7 +127,10 @@ export const FormComponent: FC<IProps> = ({
       })
       .then(featureCollection => {
         setIsLoadingSearch(false);
-        handleShowFeature(featureCollection);
+        handleShowFeature(featureCollection, openModal);
+        if (!openModal) {
+          handleGenerateQuery();
+        }
       })
       .catch(error => {
         showErrorMessage('Bad response from server:', error);
@@ -248,16 +256,56 @@ export const FormComponent: FC<IProps> = ({
         </label>
       </div>
       <Fields {...{ control, register }} />
-      <div className="jp-EodagWidget-buttons">
-        <button type="submit" color="primary" disabled={isLoadingSearch}>
-          {isLoadingSearch ? 'Searching...' : 'Search'}
-        </button>
+      <div className="jp-EodagWidget-from-buttons-wrapper">
+        {isLoadingSearch ? (
+          <div className="jp-EodagWidget-buttons">
+            <button type="submit" color="primary" disabled={isLoadingSearch}>
+              Searching...
+            </button>
+          </div>
+        ) : (
+          <>
+            <div className="jp-EodagWidget-buttons">
+              <button
+                type="submit"
+                color="primary"
+                disabled={isLoadingSearch}
+                onClick={() => setOpenModal(true)}
+              >
+                Preview
+                <br />
+                Results
+              </button>
+            </div>
+            <div className="jp-EodagWidget-buttons">
+              <button
+                type="submit"
+                color="primary"
+                disabled={isLoadingSearch}
+                onClick={() => setOpenModal(false)}
+              >
+                Generate
+                <br />
+                Search Code
+              </button>
+            </div>
+          </>
+        )}
       </div>
     </form>
   );
 };
 
+// type ControlAddParams ={
+//   additionnalParameters: { name: string; value: string }[];
+// }
+// type IFormInputControl = Control<ControlAddParams>
+// type IFormInputRegister = UseFormRegister<ControlAddParams>
+
+// type FormInputMethod = Pick<My,"control"|"register">
+// Partial<UseFormReturn<IFormInput>>
 const Fields = ({ control, register }: Partial<UseFormReturn<IFormInput>>) => {
+  // @ts-ignore
   const { fields, append, remove } = useFieldArray({
     control,
     name: 'additionnalParameters'

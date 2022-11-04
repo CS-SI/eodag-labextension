@@ -152,25 +152,11 @@ export default class ModalComponent extends React.Component<IProps, IState> {
       >
         <div className="jp-EodagWidget-modal">
           <div className="jp-EodagWidget-appbar">
+            <div></div>
+            <p>Search results</p>
             <button onClick={handleClose}>
               <FontAwesomeIcon icon={faTimes} />
             </button>
-            Search results
-            <button
-              data-for="apply-tooltip"
-              data-tip="Generate the python code"
-              className="jp-EodagWidget-apply"
-              onClick={handleGenerateQuery}
-            >
-              Apply
-            </button>
-            <ReactTooltip
-              id="apply-tooltip"
-              className="jp-Eodag-tooltip"
-              place="bottom"
-              type="dark"
-              effect="solid"
-            />
           </div>
           <div className="jp-EodagWidget-modal-container">
             <div className="jp-EodagWidget-product-wrapper">
@@ -211,6 +197,14 @@ export default class ModalComponent extends React.Component<IProps, IState> {
                   isRetrievingMoreFeature={isRetrievingMoreFeature}
                   handleRetrieveMoreFeature={handleRetrieveMoreFeature}
                 />
+              </div>
+              <div className="jp-EodagWidget-modal-footer">
+                <button
+                  className="jp-EodagWidget-apply"
+                  onClick={handleGenerateQuery}
+                >
+                  Generate search code
+                </button>
               </div>
             </div>
             <div className="jp-EodagWidget-desc-wrapper">
