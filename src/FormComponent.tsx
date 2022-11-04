@@ -55,7 +55,6 @@ export const FormComponent: FC<IProps> = ({
   const [productTypes, setProductTypes] = useState<IOptionTypeBase[]>();
   const defaultStartDate: Date = undefined;
   const defaultEndDate: Date = undefined;
-  const defaultReplaceCell = true;
   const [startDate, setStartDate] = useState(undefined);
   const [endDate, setEndDate] = useState(undefined);
   const [cloud, setCloud] = useState(100);
@@ -75,7 +74,6 @@ export const FormComponent: FC<IProps> = ({
       startDate: defaultStartDate,
       endDate: defaultEndDate,
       cloud: 100,
-      replaceActiveCell: defaultReplaceCell
     }
   });
 
@@ -395,14 +393,8 @@ export const FormComponent: FC<IProps> = ({
   );
 };
 
-const Fields = ({
-  control,
-  register,
-  resetField
-}: Partial<UseFormReturn<IFormInput>>) => {
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  const { fields, append, remove, update } = useFieldArray({
+const Fields = ({ control, register }: Partial<UseFormReturn<IFormInput>>) => {
+  const { fields, append, remove } = useFieldArray({
     control,
     name: 'additionnalParameters'
   });
