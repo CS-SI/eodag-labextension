@@ -119,8 +119,16 @@ export class EodagBrowser extends React.Component<IProps, IState> {
     const code = formatCode(this.state.formValues);
     const cell = this.getCodeCell(code);
     const activeCellIndex = notebook.activeCellIndex;
-    model.cells.insert(activeCellIndex + 1, cell);
-    NotebookActions.selectBelow(notebook);
+    const { replaceActiveCell } = this.state.formValues;
+
+    if (replaceActiveCell && activeCellIndex > 0) {
+      NotebookActions.deleteCells(notebook);
+      model.cells.insert(activeCellIndex, cell);
+      notebook.activeCellIndex = activeCellIndex;
+    } else {
+      model.cells.insert(activeCellIndex + 1, cell);
+      NotebookActions.selectBelow(notebook);
+    }
   };
   handleCloseModal = () => {
     this.setState({

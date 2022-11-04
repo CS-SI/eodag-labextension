@@ -55,6 +55,7 @@ export const FormComponent: FC<IProps> = ({
   const [productTypes, setProductTypes] = useState<IOptionTypeBase[]>();
   const defaultStartDate: Date = undefined;
   const defaultEndDate: Date = undefined;
+  const defaultReplaceCell: boolean = true;
   const [startDate, setStartDate] = useState(undefined);
   const [endDate, setEndDate] = useState(undefined);
   const [cloud, setCloud] = useState(100);
@@ -73,7 +74,8 @@ export const FormComponent: FC<IProps> = ({
     defaultValues: {
       startDate: defaultStartDate,
       endDate: defaultEndDate,
-      cloud: 100
+      cloud: 100,
+      replaceActiveCell: defaultReplaceCell
     }
   });
 
@@ -331,7 +333,30 @@ export const FormComponent: FC<IProps> = ({
                   )}
                 </button>
               </div>
-              <div className="jp-EodagWidget-buttons">
+              <label className="jp-EodagWidget-input-name-checkbox-wrapper">
+        Replace existing search code
+        <div className="jp-EodagWidget-checkbox">
+          <Controller
+            name="replaceActiveCell"
+            control={control}
+            rules={{ required: false }}
+            render={({ field: { onChange } }) => (
+              <input
+                type="checkbox"
+                value={isReplaceActiveCell ? 'on' : ''}
+                checked={isReplaceActiveCell}
+                aria-labelledby="replaceActiveCell"
+                onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                  const value = event.target.checked;
+                  onChange(value);
+                  setIsReplaceActiveCell(prev => !prev);
+                }}
+              />
+            )}
+          />
+        </div>
+      </label>
+      <div className="jp-EodagWidget-buttons">
                 <button
                   type="submit"
                   color="primary"

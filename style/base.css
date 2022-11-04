@@ -138,6 +138,13 @@
   margin-top: 1em;
   display: block;
 }
+.jp-EodagWidget-input-name-checkbox-wrapper {
+  margin-top: 1em;
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: start;
+  align-items: center;
+}
 .jp-EodagWidget .jp-EodagWidget-form .jp-EodagWidget-input-wrapper {
   padding: 0px 8px;
   border: 1px solid var(--jp-border-color0);
