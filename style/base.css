@@ -68,8 +68,6 @@
 .jp-EodagWidget .jp-EodagWidget-form .jp-EodagWidget-buttons button {
   cursor: pointer;
   min-width: 110px;
-  /* margin: 0 15px; */
-  /* padding: 5px; */
   color: #ffffff;
   background: var(--base-button);
   border: none;
@@ -266,7 +264,6 @@ section button .jp-EodagWidget-additionnalParameters-addbutton svg {
   color: var(--jp-ui-font-color0);
   line-height: var(--jp-private-commandpalette-search-height);
   border-radius: 5px !important;
-  /* border-color: var(--light-gray) !important; */
   border-color: red;
 }
 
@@ -286,6 +283,7 @@ section button .jp-EodagWidget-additionnalParameters-addbutton svg {
 
 .jp-EodagWidget input[type='range'] {
   width: 100%;
+  appearance: none;
   -webkit-appearance: none;
   outline: none;
   background: var(--jp-layout-color0);

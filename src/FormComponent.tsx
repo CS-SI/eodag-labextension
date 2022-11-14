@@ -169,8 +169,6 @@ export const FormComponent: FC<IProps> = ({
             />
           )}
         />
-        {/* <fieldset> */}
-        {/* <legend>Date range</legend> */}
         <div className="jp-EodagWidget-form-date-picker">
           <label htmlFor="startDate" className="jp-EodagWidget-input-name">
             Date range
@@ -205,9 +203,7 @@ export const FormComponent: FC<IProps> = ({
                 )}
               />
             </div>
-            {/* <label htmlFor="endDate" className="jp-EodagWidget-input-name"> */}
-            {/*   End */}
-            {/* </label> */}
+
             <div className="jp-EodagWidget-input-wrapper">
               <CarbonCalendarAddAlt height="22" width="22" />
               <Controller
@@ -241,7 +237,6 @@ export const FormComponent: FC<IProps> = ({
             </div>
           </div>
         </div>
-        {/* </fieldset> */}
         <label
           className={`jp-EodagWidget-input-name ${
             cloud === 100 ? 'jp-EodagWidget-input-name-line-through' : ''
@@ -320,15 +315,8 @@ export const FormComponent: FC<IProps> = ({
   );
 };
 
-// type ControlAddParams ={
-//   additionnalParameters: { name: string; value: string }[];
-// }
-// type IFormInputControl = Control<ControlAddParams>
-// type IFormInputRegister = UseFormRegister<ControlAddParams>
-
-// type FormInputMethod = Pick<My,"control"|"register">
-// Partial<UseFormReturn<IFormInput>>
 const Fields = ({ control, register }: Partial<UseFormReturn<IFormInput>>) => {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   const { fields, append, remove } = useFieldArray({
     control,

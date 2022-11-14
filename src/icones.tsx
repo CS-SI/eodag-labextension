@@ -1,6 +1,6 @@
 import React from 'react';
 
-export interface SVGProps {
+export interface ISVGProps {
   strokeColor?: string;
   strokeWidth?: string;
   strokeWidth2?: string;
@@ -25,7 +25,7 @@ export interface SVGProps {
   className5?: string;
 }
 
-export const CodiconOpenPreview = (props: SVGProps) => {
+export const CodiconOpenPreview = (props: ISVGProps) => {
   return (
     <svg width="1em" height="1em" viewBox="0 0 16 16" {...props}>
       <path
@@ -38,7 +38,7 @@ export const CodiconOpenPreview = (props: SVGProps) => {
   );
 };
 
-export const PhFileCode = (props: SVGProps) => {
+export const PhFileCode = (props: ISVGProps) => {
   return (
     <svg width="1em" height="1em" viewBox="0 0 256 256" {...props}>
       <path
@@ -49,7 +49,7 @@ export const PhFileCode = (props: SVGProps) => {
   );
 };
 
-export const CarbonTrashCan = (props: SVGProps) => {
+export const CarbonTrashCan = (props: ISVGProps) => {
   return (
     <svg width="1em" height="1em" viewBox="0 0 32 32" {...props}>
       <path fill="currentColor" d="M12 12h2v12h-2zm6 0h2v12h-2z"></path>
@@ -61,7 +61,7 @@ export const CarbonTrashCan = (props: SVGProps) => {
   );
 };
 
-export const CarbonCalendarAddAlt = (props: SVGProps) => {
+export const CarbonCalendarAddAlt = (props: ISVGProps) => {
   return (
     <svg width="1em" height="1em" viewBox="0 0 32 32" {...props}>
       <path fill="currentColor" d="M26 21h-3v-3h-2v3h-3v2h3v3h2v-3h3z"></path>
@@ -77,7 +77,7 @@ export const CarbonCalendarAddAlt = (props: SVGProps) => {
   );
 };
 
-export const CarbonAddFilled = (props: SVGProps) => {
+export const CarbonAddFilled = (props: ISVGProps) => {
   return (
     <svg width="1em" height="1em" viewBox="0 0 32 32" {...props}>
       <path
