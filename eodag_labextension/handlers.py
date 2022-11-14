@@ -47,7 +47,14 @@ class GuessProductTypeHandler(APIHandler):
             guess_kwargs[k] = re.sub(r"(\S+)", r"*\1*", " ".join(v))
 
         try:
-            self.write(json.dumps(eodag_api.guess_product_type(**guess_kwargs)))
+            # guessed product types ids
+            guessed_ids_list = eodag_api.guess_product_type(**guess_kwargs)
+            # product types with full associated metadata
+            guessed_list = [
+                dict({"ID": k}, **v) for k, v in eodag_api.product_types_config.source.items() if k in guessed_ids_list
+            ]
+
+            self.write(json.dumps(guessed_list))
         except NoMatchingProductType:
             self.write(json.dumps([]))
 
