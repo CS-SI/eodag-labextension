@@ -394,6 +394,8 @@ export const FormComponent: FC<IProps> = ({
 };
 
 const Fields = ({ control, register }: Partial<UseFormReturn<IFormInput>>) => {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   const { fields, append, remove } = useFieldArray({
     control,
     name: 'additionnalParameters'
