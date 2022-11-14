@@ -68,9 +68,8 @@
 .jp-EodagWidget .jp-EodagWidget-form .jp-EodagWidget-buttons button {
   cursor: pointer;
   min-width: 110px;
-  max-width: 150px;
-  margin: 0 15px;
-  padding: 5px;
+  /* margin: 0 15px; */
+  /* padding: 5px; */
   color: #ffffff;
   background: var(--base-button);
   border: none;
@@ -84,7 +83,7 @@
   border-radius: var(--border-radius);
   display: flex;
   align-items: center;
-  justify-content: start;
+  justify-content: center;
 }
 
 .jp-EodagWidget-buttons svg {
@@ -508,8 +507,7 @@ section button .jp-EodagWidget-additionnalParameters-addbutton svg {
 .jp-EodagWidget-product h4 {
   padding-left: 20px;
 }
-.jp-EodagWidget-input-name-line-through {
-  text-decoration: line-through;
-  color: #818181;
+
+label.jp-EodagWidget-input-name:nth-child(3) {
   padding: 0 10px;
 }
