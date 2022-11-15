@@ -15,7 +15,6 @@
   font-size: var(--jp-ui-font-size1);
   overflow: auto;
   padding: 5px;
-  min-width: 300px;
 }
 
 .jp-EodagWidget-header {
@@ -40,7 +39,16 @@
 }
 .jp-EodagWidget-form-buttons-wrapper {
   display: flex;
-  justify-content: space-around;
+  justify-content: space-evenly;
+}
+.jp-EodagWidget-loader {
+  margin-top: 30px;
+  display: flex;
+  align-items: center;
+}
+.jp-EodagWidget-loader p {
+  margin-right: 10px;
+  font-weight: bold;
 }
 .jp-EodagWidget-input-wrapper {
   display: flex;
@@ -111,11 +119,10 @@
   height: 300px;
 }
 .jp-EodagWidget .jp-EodagWidget-form .jp-EodagWidget-field {
-  margin-top: 10px;
   padding: 0 10px;
 
   max-width: 450px;
-  margin: auto;
+  margin: 10px auto;
 }
 .jp-EodagWidget .jp-EodagWidget-form .jp-EodagWidget-field fieldset {
   margin-top: 1.5em;
@@ -152,25 +159,19 @@
 .jp-EodagWidget .jp-EodagWidget-form .jp-EodagWidget-input {
   background: transparent;
   width: calc(100% - 18px);
-  /* float: left; */
   border: none;
   outline: none;
   font-size: var(--jp-ui-font-size1);
   color: var(--jp-ui-font-color0);
   line-height: var(--jp-private-commandpalette-search-height);
-  margin-left: -20px;
   width: 100%;
 }
 
 .jp-EodagWidget .jp-EodagWidget-form .jp-EodagWidget-input::placeholder {
   color: var(--gray);
-  padding-left: 20px;
 }
 
-.jp-EodagWidget
-  .jp-EodagWidget-form
-  .jp-EodagWidget-field
-  .jp-EodagWidget-additionnalParameters {
+.jp-EodagWidget .jp-EodagWidget-form .jp-EodagWidget-additionnalParameters {
   padding: 0 10px;
 }
 
@@ -224,12 +225,8 @@
 .jp-EodagWidget-additionnalParameters-deletebutton,
 .jp-EodagWidget-additionnalParameters-addbutton {
   cursor: pointer;
-  /* width: 16px; */
-  /* height: 20px; */
   border-radius: 50%;
   border-width: 0px;
-  /* color: #000000; */
-  /* border-color: #124d77; */
   background-color: #ffffff;
   display: flex;
   align-items: center;
@@ -317,6 +314,7 @@ section button .jp-EodagWidget-additionnalParameters-addbutton svg {
   border-radius: 0px;
   border: 1px solid var(--jp-border-color0);
 }
+
 .jp-EodagWidget input[type='range']::-moz-range-thumb {
   appearance: none;
   padding: 0;
@@ -447,6 +445,10 @@ section button .jp-EodagWidget-additionnalParameters-addbutton svg {
 #jp-left-stack {
   z-index: 2;
 }
+#jp-left-stack > .lm-Widget {
+  min-width: 300px !important;
+}
+
 .jp-EodagWidget::-webkit-scrollbar {
   z-index: 0;
 }
@@ -491,11 +493,17 @@ section button .jp-EodagWidget-additionnalParameters-addbutton svg {
 .jp-EodagWidget-appbar button,
 .jp-EodagWidget-modal-footer button {
   color: white;
+  border: 1px solid var(--button-hover);
+  border-radius: 5px;
+}
+
+.jp-EodagWidget-modal-footer button {
+  padding: 5px 10px;
 }
 
 .jp-EodagWidget-appbar button:hover,
 .jp-EodagWidget-modal-footer button:hover {
-  background-color: rgba(255, 255, 255, 0.5);
+  background-color: var(--button-hover);
 }
 .jp-EodagWidget-apply {
   float: right;

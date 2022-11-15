@@ -203,7 +203,7 @@ export default class ModalComponent extends React.Component<IProps, IState> {
                   className="jp-EodagWidget-apply"
                   onClick={handleGenerateQuery}
                 >
-                  Generate search code
+                  Generate code
                 </button>
               </div>
             </div>

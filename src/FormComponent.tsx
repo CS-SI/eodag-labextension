@@ -33,6 +33,7 @@ import {
   CarbonCalendarAddAlt
 } from './icones.js';
 import ReactTooltip from 'react-tooltip';
+import { ThreeDots } from 'react-loader-spinner';
 
 export interface IProps {
   handleShowFeature: any;
@@ -175,14 +176,18 @@ export const FormComponent: FC<IProps> = ({
           </label>
           <div className="jp-EodagWidget-form-date-picker-wrapper">
             <div className="jp-EodagWidget-input-wrapper">
-              <CarbonCalendarAddAlt height="22" width="22" />
+              {!startDate && <CarbonCalendarAddAlt height="22" width="22" />}
               <Controller
                 name="startDate"
                 control={control}
                 rules={{ required: false }}
                 render={({ field: { onChange, onBlur, value } }) => (
                   <DatePicker
-                    className="jp-EodagWidget-input"
+                    className={
+                      !startDate
+                        ? 'jp-EodagWidget-input jp-EodagWidget-input-with-svg'
+                        : 'jp-EodagWidget-input'
+                    }
                     selectsStart
                     startDate={startDate}
                     endDate={endDate}
@@ -205,7 +210,7 @@ export const FormComponent: FC<IProps> = ({
             </div>
 
             <div className="jp-EodagWidget-input-wrapper">
-              <CarbonCalendarAddAlt height="22" width="22" />
+              {!startDate && <CarbonCalendarAddAlt height="22" width="22" />}
               <Controller
                 name="endDate"
                 control={control}
@@ -213,7 +218,11 @@ export const FormComponent: FC<IProps> = ({
                 render={({ field: { onChange, onBlur, value } }) => (
                   <>
                     <DatePicker
-                      className="jp-EodagWidget-input"
+                      className={
+                        !endDate
+                          ? 'jp-EodagWidget-input jp-EodagWidget-input-with-svg'
+                          : 'jp-EodagWidget-input'
+                      }
                       selectsEnd
                       startDate={startDate}
                       endDate={endDate}
@@ -237,11 +246,7 @@ export const FormComponent: FC<IProps> = ({
             </div>
           </div>
         </div>
-        <label
-          className={`jp-EodagWidget-input-name ${
-            cloud === 100 ? 'jp-EodagWidget-input-name-line-through' : ''
-          } `}
-        >
+        <label className="jp-EodagWidget-input-name">
           Max cloud cover {cloud}%
           <div className="jp-EodagWidget-slider">
             <Controller
@@ -270,10 +275,17 @@ export const FormComponent: FC<IProps> = ({
       <div className="jp-EodagWidget-form-buttons">
         <div className="jp-EodagWidget-form-buttons-wrapper">
           {isLoadingSearch ? (
-            <div className="jp-EodagWidget-buttons">
-              <button type="submit" color="primary" disabled={isLoadingSearch}>
-                Searching...
-              </button>
+            <div className="jp-EodagWidget-loader">
+              <p>Generating</p>
+              <ThreeDots
+                height="35"
+                width="35"
+                radius="9"
+                color="#1976d2"
+                ariaLabel="three-dots-loading"
+                wrapperStyle={{}}
+                visible={true}
+              />
             </div>
           ) : (
             <>
@@ -379,15 +391,6 @@ const Fields = ({ control, register }: Partial<UseFormReturn<IFormInput>>) => {
           </div>
         );
       })}
-
-      {/* <button */}
-      {/*   type="button" */}
-      {/*   className="jp-EodagWidget-additionnalParameters-addbutton" */}
-      {/*   onClick={() => append({ name: '', value: '' })} */}
-      {/* > */}
-      {/*   <CarbonAdd height="18" width="18" /> */}
-      {/*   <p>Add</p> */}
-      {/* </button> */}
     </div>
   );
 };

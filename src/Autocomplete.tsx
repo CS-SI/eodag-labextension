@@ -95,7 +95,7 @@ class IntegrationReactSelect extends React.Component<IProps> {
     return (
       <div className="jp-EodagWidget-field">
         <label className="jp-EodagWidget-input-name">
-          Product type (*)
+          Product type
           <div
             style={{
               marginTop: 10
@@ -108,7 +108,7 @@ class IntegrationReactSelect extends React.Component<IProps> {
               components={listcomponents}
               value={currentValue}
               onChange={handleChange}
-              placeholder="S3_..."
+              placeholder="S2_..."
               isClearable
             />
           </div>
