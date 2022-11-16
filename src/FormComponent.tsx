@@ -39,6 +39,7 @@ export interface IProps {
   handleShowFeature: any;
   saveFormValues: (formValue: IFormInput) => void;
   handleGenerateQuery: any;
+  isNotebookCreated: any;
 }
 export interface IOptionTypeBase {
   [key: string]: any;
@@ -47,7 +48,8 @@ export interface IOptionTypeBase {
 export const FormComponent: FC<IProps> = ({
   handleShowFeature,
   saveFormValues,
-  handleGenerateQuery
+  handleGenerateQuery,
+  isNotebookCreated
 }) => {
   const [productTypes, setProductTypes] = useState<IOptionTypeBase[]>();
   const defaultStartDate: Date = undefined;
@@ -63,6 +65,7 @@ export const FormComponent: FC<IProps> = ({
     handleSubmit,
     clearErrors,
     register,
+    resetField,
     formState: { errors }
   } = useForm<IFormInput>({
     defaultValues: {
@@ -122,27 +125,38 @@ export const FormComponent: FC<IProps> = ({
   );
 
   const onSubmit: SubmitHandler<IFormInput> = data => {
+    if (!isNotebookCreated()) {
+      return;
+    }
+
     saveFormValues(data);
-    setIsLoadingSearch(true);
-    SearchService.search(1, data)
-      .then(featureCollection => {
-        if (featureCollection?.features?.length === 0) {
-          throw new Error('No result found');
-        } else {
-          return featureCollection;
-        }
-      })
-      .then(featureCollection => {
-        setIsLoadingSearch(false);
-        handleShowFeature(featureCollection, openModal);
-        if (!openModal) {
-          handleGenerateQuery();
-        }
-      })
-      .catch(error => {
-        showErrorMessage('Bad response from server:', error);
-        setIsLoadingSearch(false);
-      });
+
+    if (!openModal) {
+      handleGenerateQuery();
+    }
+
+    if (openModal) {
+      setIsLoadingSearch(true);
+      SearchService.search(1, data)
+        .then(featureCollection => {
+          if (featureCollection?.features?.length === 0) {
+            throw new Error('No result found');
+          } else {
+            return featureCollection;
+          }
+        })
+        .then(featureCollection => {
+          setIsLoadingSearch(false);
+          handleShowFeature(featureCollection, openModal);
+          if (!openModal) {
+            handleGenerateQuery();
+          }
+        })
+        .catch(error => {
+          showErrorMessage('Bad response from server:', error);
+          setIsLoadingSearch(false);
+        });
+    }
   };
 
   return (
@@ -176,18 +190,14 @@ export const FormComponent: FC<IProps> = ({
           </label>
           <div className="jp-EodagWidget-form-date-picker-wrapper">
             <div className="jp-EodagWidget-input-wrapper">
-              {!startDate && <CarbonCalendarAddAlt height="22" width="22" />}
+              <CarbonCalendarAddAlt height="22" width="22" />
               <Controller
                 name="startDate"
                 control={control}
                 rules={{ required: false }}
                 render={({ field: { onChange, onBlur, value } }) => (
                   <DatePicker
-                    className={
-                      !startDate
-                        ? 'jp-EodagWidget-input jp-EodagWidget-input-with-svg'
-                        : 'jp-EodagWidget-input'
-                    }
+                    className="jp-EodagWidget-input jp-EodagWidget-input-with-svg"
                     selectsStart
                     startDate={startDate}
                     endDate={endDate}
@@ -210,7 +220,7 @@ export const FormComponent: FC<IProps> = ({
             </div>
 
             <div className="jp-EodagWidget-input-wrapper">
-              {!startDate && <CarbonCalendarAddAlt height="22" width="22" />}
+              <CarbonCalendarAddAlt height="22" width="22" />
               <Controller
                 name="endDate"
                 control={control}
@@ -218,11 +228,7 @@ export const FormComponent: FC<IProps> = ({
                 render={({ field: { onChange, onBlur, value } }) => (
                   <>
                     <DatePicker
-                      className={
-                        !endDate
-                          ? 'jp-EodagWidget-input jp-EodagWidget-input-with-svg'
-                          : 'jp-EodagWidget-input'
-                      }
+                      className="jp-EodagWidget-input jp-EodagWidget-input-with-svg"
                       selectsEnd
                       startDate={startDate}
                       endDate={endDate}
@@ -270,7 +276,7 @@ export const FormComponent: FC<IProps> = ({
             />
           </div>
         </label>
-        <Fields {...{ control, register }} />
+        <Fields {...{ control, register, resetField }} />
       </div>
       <div className="jp-EodagWidget-form-buttons">
         <div className="jp-EodagWidget-form-buttons-wrapper">
@@ -327,15 +333,23 @@ export const FormComponent: FC<IProps> = ({
   );
 };
 
-const Fields = ({ control, register }: Partial<UseFormReturn<IFormInput>>) => {
+const Fields = ({
+  control,
+  register,
+  resetField
+}: Partial<UseFormReturn<IFormInput>>) => {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
-  const { fields, append, remove } = useFieldArray({
+  const { fields, append, remove, update } = useFieldArray({
     control,
     name: 'additionnalParameters'
   });
   fields[0] = { name: '', value: '', id: '999' };
 
+  const clearInput = (index: number): void => {
+    resetField(`additionnalParameters.${index}.name`);
+    resetField(`additionnalParameters.${index}.value`);
+  };
   return (
     <div className="jp-EodagWidget-additionnalParameters">
       <label className="jp-EodagWidget-input-name">
@@ -357,10 +371,11 @@ const Fields = ({ control, register }: Partial<UseFormReturn<IFormInput>>) => {
               <button
                 type="button"
                 className="jp-EodagWidget-additionnalParameters-deletebutton"
-                onClick={() => remove(index)}
+                onClick={() =>
+                  fields.length === 1 ? clearInput(index) : remove(index)
+                }
                 data-for="parameters-delete"
                 data-tip="remove additionnal parameter"
-                disabled={fields.length === 1 ? true : false}
               >
                 <CarbonTrashCan height="20" width="20" />
                 <ReactTooltip

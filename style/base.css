@@ -446,7 +446,7 @@ section button .jp-EodagWidget-additionnalParameters-addbutton svg {
   z-index: 2;
 }
 #jp-left-stack > .lm-Widget {
-  min-width: 300px !important;
+  min-width: 315px !important;
 }
 
 .jp-EodagWidget::-webkit-scrollbar {
