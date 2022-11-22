@@ -179,6 +179,8 @@ export class EodagBrowser extends React.Component<IProps, IState> {
 
     const code = formatCode(this.state.formValues);
     const cell = this.getCodeCell(code);
+    const activeCellIndex = notebook.activeCellIndex;
+    const { replaceActiveCell } = this.state.formValues;
 
     this.handleCellInsertionPosition(notebook, model, cell);
   };

@@ -64,7 +64,7 @@ ${standardMessage}`
           ({ name, value }) => name && value && name !== '' && value !== ''
         )
         .filter(({ name, value }) => name !== '' && value !== '')
-        .map(({ name, value }) => `  ${name}="${value}",`)
+        .map(({ name, value }) => `  ${name} = "${value}", `)
         .join('\n') + '\n';
   }
 
