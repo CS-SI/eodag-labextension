@@ -46,7 +46,8 @@ export class EodagBrowser extends React.Component<IProps, IState> {
   handleCurrentWidgetError = () => {
     if (!this.props.tracker.currentWidget) {
       showErrorMessage('No active notebook', 'Please open a notebook first');
-      return false;
+
+      return;
     }
     return true;
   };
@@ -88,9 +89,11 @@ export class EodagBrowser extends React.Component<IProps, IState> {
       });
   };
 
+
   isRetrievingMoreFeature = () => {
     return this.state.searching;
   };
+
 
   getCodeCell = (code: string) => {
     return new CodeCellModel({
@@ -147,8 +150,8 @@ export class EodagBrowser extends React.Component<IProps, IState> {
     }
 
     if (!replaceActiveCell) {
-      model.cells.insert(activeCellIndex + 1, cell);
-      NotebookActions.selectBelow(notebook);
+      model.cells.insert(cells.length, cell);
+      notebook.activeCellIndex = cells.length;
     }
   };
 
