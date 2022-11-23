@@ -4,7 +4,12 @@
  */
 
 import * as React from 'react';
-import { NotebookActions, INotebookTracker } from '@jupyterlab/notebook';
+import {
+  NotebookActions,
+  INotebookTracker,
+  Notebook,
+  INotebookModel
+} from '@jupyterlab/notebook';
 import { CodeCellModel } from '@jupyterlab/cells';
 import { showErrorMessage } from '@jupyterlab/apputils';
 import { concat, get } from 'lodash';
@@ -52,6 +57,7 @@ export class EodagBrowser extends React.Component<IProps, IState> {
       openDialog: openModal
     });
   };
+
   handleRetrieveMoreFeature = async () => {
     const { features } = this.state;
     this.setState({
@@ -81,9 +87,11 @@ export class EodagBrowser extends React.Component<IProps, IState> {
         });
       });
   };
+
   isRetrievingMoreFeature = () => {
     return this.state.searching;
   };
+
   getCodeCell = (code: string) => {
     return new CodeCellModel({
       cell: {
@@ -98,28 +106,11 @@ export class EodagBrowser extends React.Component<IProps, IState> {
     });
   };
 
-  handleGenerateQuery = () => {
-    this.setState({
-      openDialog: false
-    });
-    if (!this.props.tracker.currentWidget) {
-      return;
-    }
-    const notebook = this.props.tracker.currentWidget.content;
-    const model = notebook.model;
-    if (model.defaultKernelLanguage !== 'python') {
-      showErrorMessage(
-        'Active notebook uses wrong kernel language. Only python is supported',
-        {}
-      );
-      return;
-    }
-    if (model.readOnly) {
-      showErrorMessage('Unable to inject cell into read-only notebook', {});
-      return;
-    }
-    const code = formatCode(this.state.formValues);
-    const cell = this.getCodeCell(code);
+  handleCellInsertionPosition = (
+    notebook: Notebook,
+    model: INotebookModel,
+    cell: CodeCellModel
+  ) => {
     const activeCellIndex = notebook.activeCellIndex;
     const { replaceActiveCell } = this.state.formValues;
     const cells = notebook.widgets;
@@ -156,10 +147,42 @@ export class EodagBrowser extends React.Component<IProps, IState> {
     }
 
     if (!replaceActiveCell) {
-      model.cells.insert(cells.length, cell);
-      notebook.activeCellIndex = cells.length;
+      model.cells.insert(activeCellIndex + 1, cell);
+      NotebookActions.selectBelow(notebook);
     }
   };
+
+  handleGenerateQuery = () => {
+    this.setState({
+      openDialog: false
+    });
+
+    if (!this.props.tracker.currentWidget) {
+      return;
+    }
+
+    const notebook = this.props.tracker.currentWidget.content;
+    const model = notebook.model;
+
+    if (model.defaultKernelLanguage !== 'python') {
+      showErrorMessage(
+        'Active notebook uses wrong kernel language. Only python is supported',
+        {}
+      );
+      return;
+    }
+
+    if (model.readOnly) {
+      showErrorMessage('Unable to inject cell into read-only notebook', {});
+      return;
+    }
+
+    const code = formatCode(this.state.formValues);
+    const cell = this.getCodeCell(code);
+
+    this.handleCellInsertionPosition(notebook, model, cell);
+  };
+
   handleCloseModal = () => {
     this.setState({
       openDialog: false
