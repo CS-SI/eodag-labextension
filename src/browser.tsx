@@ -46,7 +46,8 @@ export class EodagBrowser extends React.Component<IProps, IState> {
   handleCurrentWidgetError = () => {
     if (!this.props.tracker.currentWidget) {
       showErrorMessage('No active notebook', 'Please open a notebook first');
-      return false;
+
+      return;
     }
     return true;
   };
@@ -179,8 +180,6 @@ export class EodagBrowser extends React.Component<IProps, IState> {
 
     const code = formatCode(this.state.formValues);
     const cell = this.getCodeCell(code);
-    const activeCellIndex = notebook.activeCellIndex;
-    const { replaceActiveCell } = this.state.formValues;
 
     this.handleCellInsertionPosition(notebook, model, cell);
   };
