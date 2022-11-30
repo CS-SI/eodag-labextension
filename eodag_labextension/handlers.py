@@ -42,9 +42,9 @@ class GuessProductTypeHandler(APIHandler):
         query_dict = parse_qs(self.request.query)
         guess_kwargs = {}
 
-        # ["aa bb", "cc"] to "*aa* *bb* *cc*"
+        # ["aa bb", "cc-dd_ee"] to "*aa* *bb* *cc* **dd* *ee*"
         for k, v in query_dict.items():
-            guess_kwargs[k] = re.sub(r"(\S+)", r"*\1*", " ".join(v))
+            guess_kwargs[k] = re.sub(r"(\S+)", r"*\1*", " ".join(v).replace("-", " ").replace("_", " "))
 
         try:
             # guessed product types ids
