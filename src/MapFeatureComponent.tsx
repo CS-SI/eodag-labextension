@@ -20,6 +20,7 @@ export interface IProps {
 export interface IState {
   bounds: L.LatLngBounds;
   featureHover: any;
+  featureSelected: string;
 }
 
 export default class MapFeatureComponent extends React.Component<
@@ -54,7 +55,8 @@ export default class MapFeatureComponent extends React.Component<
     const bounds = featureGeoJSONs.getBounds();
     this.state = {
       bounds,
-      featureHover: null
+      featureHover: null,
+      featureSelected: null
     };
   }
 
@@ -122,7 +124,13 @@ export default class MapFeatureComponent extends React.Component<
 
   onClick = (e: LeafletMouseEvent) => {
     const productId = e.propagatedFrom.feature.id;
+    e.layer.setStyle(MapFeatureComponent.HIGHLIGHT_EXTENT_STYLE);
+    e.layer.bringToFront();
     this.props.handleClickFeature(productId);
+
+    this.setState({
+      featureSelected: productId
+    });
   };
 
   /**
@@ -131,10 +139,11 @@ export default class MapFeatureComponent extends React.Component<
    */
   getStyle = (feature: any) => {
     const { highlightFeature } = this.props;
-    const { featureHover } = this.state;
+    const { featureHover, featureSelected } = this.state;
     if (
       get(highlightFeature, 'id') === feature.id ||
-      featureHover === feature.id
+      featureHover === feature.id ||
+      featureSelected === feature.id
     ) {
       return MapFeatureComponent.HIGHLIGHT_EXTENT_STYLE;
     }
