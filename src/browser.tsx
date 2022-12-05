@@ -36,14 +36,18 @@ export class EodagBrowser extends React.Component<IProps, IState> {
     };
   }
 
-  handleShowFeature = (features: any) => {
+  handleCurrentWidgetError = () => {
     if (!this.props.tracker.currentWidget) {
       showErrorMessage('No active notebook', 'Please open a notebook first');
-      return;
+      return false;
     }
+    return true;
+  };
+
+  handleShowFeature = (features: any, openModal: boolean) => {
     this.setState({
       features,
-      openDialog: true
+      openDialog: openModal
     });
   };
   handleRetrieveMoreFeature = async () => {
@@ -130,10 +134,12 @@ export class EodagBrowser extends React.Component<IProps, IState> {
       <div>
         <header className="jp-EodagWidget-header">Products search</header>
         <FormComponent
+          isNotebookCreated={this.handleCurrentWidgetError}
           handleShowFeature={this.handleShowFeature}
           saveFormValues={(formValues: IFormInput) =>
             this.setState({ formValues })
           }
+          handleGenerateQuery={this.handleGenerateQuery}
         />
         <ModalComponent
           open={openDialog}

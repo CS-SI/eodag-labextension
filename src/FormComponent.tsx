@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2022 CS GROUP - France, http://www.c-s.fr
  * All rights reserved
  */
@@ -22,21 +22,34 @@ import Autocomplete from './Autocomplete';
 import { EODAG_SERVER_ADRESS } from './config';
 import SearchService from './SearchService';
 import { ChangeEvent } from 'react';
-// import { OptionTypeBase } from 'react-select';
 import MapExtentComponent from './MapExtentComponent';
 import _ from 'lodash';
 import { IFormInput } from './types';
+import {
+  CodiconOpenPreview,
+  PhFileCode,
+  CarbonTrashCan,
+  CarbonAddFilled,
+  CarbonCalendarAddAlt
+} from './icones.js';
+import ReactTooltip from 'react-tooltip';
+import { ThreeDots } from 'react-loader-spinner';
 
 export interface IProps {
   handleShowFeature: any;
   saveFormValues: (formValue: IFormInput) => void;
+  handleGenerateQuery: any;
+  isNotebookCreated: any;
 }
 export interface IOptionTypeBase {
   [key: string]: any;
 }
+
 export const FormComponent: FC<IProps> = ({
   handleShowFeature,
-  saveFormValues
+  saveFormValues,
+  handleGenerateQuery,
+  isNotebookCreated
 }) => {
   const [productTypes, setProductTypes] = useState<IOptionTypeBase[]>();
   const defaultStartDate: Date = undefined;
@@ -45,12 +58,14 @@ export const FormComponent: FC<IProps> = ({
   const [endDate, setEndDate] = useState(undefined);
   const [cloud, setCloud] = useState(100);
   const [isLoadingSearch, setIsLoadingSearch] = useState(false);
+  const [openModal, setOpenModal] = useState(true);
 
   const {
     control,
     handleSubmit,
     clearErrors,
     register,
+    resetField,
     formState: { errors }
   } = useForm<IFormInput>({
     defaultValues: {
@@ -110,24 +125,38 @@ export const FormComponent: FC<IProps> = ({
   );
 
   const onSubmit: SubmitHandler<IFormInput> = data => {
+    if (!isNotebookCreated()) {
+      return;
+    }
+
     saveFormValues(data);
-    setIsLoadingSearch(true);
-    SearchService.search(1, data)
-      .then(featureCollection => {
-        if (featureCollection?.features?.length === 0) {
-          throw new Error('No result found');
-        } else {
-          return featureCollection;
-        }
-      })
-      .then(featureCollection => {
-        setIsLoadingSearch(false);
-        handleShowFeature(featureCollection);
-      })
-      .catch(error => {
-        showErrorMessage('Bad response from server:', error);
-        setIsLoadingSearch(false);
-      });
+
+    if (!openModal) {
+      handleGenerateQuery();
+    }
+
+    if (openModal) {
+      setIsLoadingSearch(true);
+      SearchService.search(1, data)
+        .then(featureCollection => {
+          if (featureCollection?.features?.length === 0) {
+            throw new Error('No result found');
+          } else {
+            return featureCollection;
+          }
+        })
+        .then(featureCollection => {
+          setIsLoadingSearch(false);
+          handleShowFeature(featureCollection, openModal);
+          if (!openModal) {
+            handleGenerateQuery();
+          }
+        })
+        .catch(error => {
+          showErrorMessage('Bad response from server:', error);
+          setIsLoadingSearch(false);
+        });
+    }
   };
 
   return (
@@ -155,74 +184,75 @@ export const FormComponent: FC<IProps> = ({
             />
           )}
         />
-        <fieldset>
-          <legend>Date range</legend>
+        <div className="jp-EodagWidget-form-date-picker">
           <label htmlFor="startDate" className="jp-EodagWidget-input-name">
-            Start
+            Date range
           </label>
-          <div className="jp-EodagWidget-input-wrapper">
-            <Controller
-              name="startDate"
-              control={control}
-              rules={{ required: false }}
-              render={({ field: { onChange, onBlur, value } }) => (
-                <DatePicker
-                  className="jp-EodagWidget-input"
-                  selectsStart
-                  startDate={startDate}
-                  endDate={endDate}
-                  maxDate={endDate}
-                  onChange={(d: Date) => {
-                    setStartDate(d);
-                    onChange(d);
-                  }}
-                  onBlur={onBlur}
-                  selected={value}
-                  dateFormat={'dd/MM/yyyy'}
-                  showMonthDropdown
-                  showYearDropdown
-                  dropdownMode="select"
-                  isClearable
-                />
-              )}
-            />
+          <div className="jp-EodagWidget-form-date-picker-wrapper">
+            <div className="jp-EodagWidget-input-wrapper">
+              <CarbonCalendarAddAlt height="22" width="22" />
+              <Controller
+                name="startDate"
+                control={control}
+                rules={{ required: false }}
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <DatePicker
+                    className="jp-EodagWidget-input jp-EodagWidget-input-with-svg"
+                    selectsStart
+                    startDate={startDate}
+                    endDate={endDate}
+                    maxDate={endDate}
+                    onChange={(d: Date) => {
+                      setStartDate(d);
+                      onChange(d);
+                    }}
+                    onBlur={onBlur}
+                    selected={value}
+                    dateFormat={'dd/MM/yyyy'}
+                    showMonthDropdown
+                    showYearDropdown
+                    dropdownMode="select"
+                    isClearable
+                    placeholderText="Start"
+                  />
+                )}
+              />
+            </div>
+
+            <div className="jp-EodagWidget-input-wrapper">
+              <CarbonCalendarAddAlt height="22" width="22" />
+              <Controller
+                name="endDate"
+                control={control}
+                rules={{ required: false }}
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <>
+                    <DatePicker
+                      className="jp-EodagWidget-input jp-EodagWidget-input-with-svg"
+                      selectsEnd
+                      startDate={startDate}
+                      endDate={endDate}
+                      minDate={startDate}
+                      onChange={(d: Date) => {
+                        setEndDate(d);
+                        onChange(d);
+                      }}
+                      onBlur={onBlur}
+                      selected={value}
+                      dateFormat={'dd/MM/yyyy'}
+                      showMonthDropdown
+                      showYearDropdown
+                      dropdownMode="select"
+                      isClearable
+                      placeholderText="End"
+                    />
+                  </>
+                )}
+              />
+            </div>
           </div>
-          <label htmlFor="endDate" className="jp-EodagWidget-input-name">
-            End
-          </label>
-          <div className="jp-EodagWidget-input-wrapper">
-            <Controller
-              name="endDate"
-              control={control}
-              rules={{ required: false }}
-              render={({ field: { onChange, onBlur, value } }) => (
-                <DatePicker
-                  className="jp-EodagWidget-input"
-                  selectsEnd
-                  startDate={startDate}
-                  endDate={endDate}
-                  minDate={startDate}
-                  onChange={(d: Date) => {
-                    setEndDate(d);
-                    onChange(d);
-                  }}
-                  onBlur={onBlur}
-                  selected={value}
-                  dateFormat={'dd/MM/yyyy'}
-                  showMonthDropdown
-                  showYearDropdown
-                  dropdownMode="select"
-                  isClearable
-                />
-              )}
-            />
-          </div>
-        </fieldset>
-        <label
-          className={`jp-EodagWidget-input-name ${
-            cloud === 100 ? 'jp-EodagWidget-input-name-line-through' : ''
-          } `}
-        >
+        </div>
+        <label className="jp-EodagWidget-input-name">
           Max cloud cover {cloud}%
           <div className="jp-EodagWidget-slider">
             <Controller
@@ -246,27 +276,86 @@ export const FormComponent: FC<IProps> = ({
             />
           </div>
         </label>
+        <Fields {...{ control, register, resetField }} />
       </div>
-      <Fields {...{ control, register }} />
-      <div className="jp-EodagWidget-buttons">
-        <button type="submit" color="primary" disabled={isLoadingSearch}>
-          {isLoadingSearch ? 'Searching...' : 'Search'}
-        </button>
+      <div className="jp-EodagWidget-form-buttons">
+        <div className="jp-EodagWidget-form-buttons-wrapper">
+          {isLoadingSearch ? (
+            <div className="jp-EodagWidget-loader">
+              <p>Generating</p>
+              <ThreeDots
+                height="35"
+                width="35"
+                radius="9"
+                color="#1976d2"
+                ariaLabel="three-dots-loading"
+                wrapperStyle={{}}
+                visible={true}
+              />
+            </div>
+          ) : (
+            <>
+              <div className="jp-EodagWidget-buttons">
+                <button
+                  type="submit"
+                  color="primary"
+                  disabled={isLoadingSearch}
+                  onClick={() => setOpenModal(true)}
+                >
+                  <CodiconOpenPreview width="21" height="21" />
+                  <p>
+                    Preview
+                    <br />
+                    Results
+                  </p>
+                </button>
+              </div>
+              <div className="jp-EodagWidget-buttons">
+                <button
+                  type="submit"
+                  color="primary"
+                  disabled={isLoadingSearch}
+                  onClick={() => setOpenModal(false)}
+                >
+                  <PhFileCode height="21" width="21" />
+                  <p>
+                    Generate
+                    <br />
+                    Code
+                  </p>
+                </button>
+              </div>
+            </>
+          )}
+        </div>
       </div>
     </form>
   );
 };
 
-const Fields = ({ control, register }: Partial<UseFormReturn<IFormInput>>) => {
+const Fields = ({
+  control,
+  register,
+  resetField
+}: Partial<UseFormReturn<IFormInput>>) => {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
-  const { fields, append, remove } = useFieldArray({
+  const { fields, append, remove, update } = useFieldArray({
     control,
     name: 'additionnalParameters'
   });
+  fields[0] = { name: '', value: '', id: '999' };
+
+  const clearInput = (index: number): void => {
+    resetField(`additionnalParameters.${index}.name`);
+    resetField(`additionnalParameters.${index}.value`);
+  };
   return (
-    <fieldset className="jp-EodagWidget-additionnalParameters-fieldset">
-      <legend>Additionnal Parameters</legend>
+    <div className="jp-EodagWidget-additionnalParameters">
+      <label className="jp-EodagWidget-input-name">
+        Additionnal Parameters
+      </label>
+
       {fields.map((field, index) => {
         return (
           <div key={field.id}>
@@ -282,22 +371,41 @@ const Fields = ({ control, register }: Partial<UseFormReturn<IFormInput>>) => {
               <button
                 type="button"
                 className="jp-EodagWidget-additionnalParameters-deletebutton"
-                onClick={() => remove(index)}
+                onClick={() =>
+                  fields.length === 1 ? clearInput(index) : remove(index)
+                }
+                data-for="parameters-delete"
+                data-tip="remove additionnal parameter"
               >
-                x
+                <CarbonTrashCan height="20" width="20" />
+                <ReactTooltip
+                  id="parameters-delete"
+                  className="jp-Eodag-tooltip"
+                  place="bottom"
+                  type="warning"
+                  effect="solid"
+                />
+              </button>
+              <button
+                type="button"
+                className="jp-EodagWidget-additionnalParameters-addbutton"
+                onClick={() => append({ name: '', value: '' })}
+                data-for="parameters-add"
+                data-tip="add a new additionnal parameter"
+              >
+                <CarbonAddFilled height="20" width="20" />
+                <ReactTooltip
+                  id="parameters-add"
+                  className="jp-Eodag-tooltip"
+                  place="bottom"
+                  type="dark"
+                  effect="solid"
+                />
               </button>
             </section>
           </div>
         );
       })}
-
-      <button
-        type="button"
-        className="jp-EodagWidget-additionnalParameters-addbutton"
-        onClick={() => append({ name: '', value: '' })}
-      >
-        Add search parameter
-      </button>
-    </fieldset>
+    </div>
   );
 };
