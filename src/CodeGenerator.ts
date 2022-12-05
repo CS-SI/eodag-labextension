@@ -52,7 +52,7 @@ dag = EODataAccessGateway()
     code += `  cloudCover=${cloud},
 `;
   }
-  if (additionnalParameters?.length > 0) {
+  if (additionnalParameters[0].name && additionnalParameters[0].value) {
     code +=
       additionnalParameters
         .filter(
