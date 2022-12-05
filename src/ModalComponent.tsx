@@ -45,6 +45,7 @@ export interface IState {
   highlightOnTableFeature: any;
   zoomFeature: any;
   features: any;
+  selectedFeature: any;
 }
 
 function Transition(props: any) {
@@ -62,7 +63,8 @@ export default class ModalComponent extends React.Component<IProps, IState> {
       displayFeature: null,
       highlightOnMapFeature: null,
       highlightOnTableFeature: null,
-      zoomFeature: null
+      zoomFeature: null,
+      selectedFeature: null
     };
   }
 
@@ -81,11 +83,18 @@ export default class ModalComponent extends React.Component<IProps, IState> {
   };
 
   handleClickFeature = (productId: string) => {
-    const feature = this.getFeature(productId);
-    if (feature) {
+    if (!productId) {
       this.setState({
-        displayFeature: feature
+        selectedFeature: null
       });
+    } else {
+      const feature = this.getFeature(productId);
+      if (feature) {
+        this.setState({
+          displayFeature: feature,
+          selectedFeature: feature
+        });
+      }
     }
   };
 
@@ -141,7 +150,8 @@ export default class ModalComponent extends React.Component<IProps, IState> {
       zoomFeature,
       highlightOnMapFeature,
       highlightOnTableFeature,
-      displayFeature
+      displayFeature,
+      selectedFeature
     } = this.state;
     return (
       <Modal
@@ -196,6 +206,7 @@ export default class ModalComponent extends React.Component<IProps, IState> {
                   handleHoverFeature={this.handleHoverTableFeature}
                   isRetrievingMoreFeature={isRetrievingMoreFeature}
                   handleRetrieveMoreFeature={handleRetrieveMoreFeature}
+                  selectedFeature={selectedFeature}
                 />
               </div>
               <div className="jp-EodagWidget-modal-footer">

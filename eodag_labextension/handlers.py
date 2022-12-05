@@ -5,11 +5,13 @@
 """Tornado web requests handlers"""
 
 import json
+import re
 
 import tornado
 from eodag.rest.server import app, run_swagger, stac_api_config
-from eodag.rest.utils import get_product_types, search_products
-from eodag.utils.exceptions import AuthenticationError, UnsupportedProductType, ValidationError
+from eodag.rest.utils import eodag_api, get_product_types, search_products
+from eodag.utils import parse_qs
+from eodag.utils.exceptions import AuthenticationError, NoMatchingProductType, UnsupportedProductType, ValidationError
 from jupyter_server.base.handlers import APIHandler
 from jupyter_server.utils import url_path_join
 from tornado.web import FallbackHandler
@@ -28,6 +30,33 @@ class ProductTypeHandler(APIHandler):
         """Get endpoint"""
 
         self.write(json.dumps(get_product_types()))
+
+
+class GuessProductTypeHandler(APIHandler):
+    """Guess product type method handler"""
+
+    @tornado.web.authenticated
+    def get(self):
+        """Get endpoint"""
+
+        query_dict = parse_qs(self.request.query)
+        guess_kwargs = {}
+
+        # ["aa bb", "cc-dd_ee"] to "*aa* *bb* *cc* **dd* *ee*"
+        for k, v in query_dict.items():
+            guess_kwargs[k] = re.sub(r"(\S+)", r"*\1*", " ".join(v).replace("-", " ").replace("_", " "))
+
+        try:
+            # guessed product types ids
+            guessed_ids_list = eodag_api.guess_product_type(**guess_kwargs)
+            # product types with full associated metadata
+            guessed_list = [
+                dict({"ID": k}, **v) for k, v in eodag_api.product_types_config.source.items() if k in guessed_ids_list
+            ]
+
+            self.write(json.dumps(guessed_list))
+        except NoMatchingProductType:
+            self.write(json.dumps([]))
 
 
 class SearchHandler(APIHandler):
@@ -113,6 +142,7 @@ def setup_handlers(web_app, url_path):
         base_url, url_path, r"(api|service-doc.*|service-static.*|conformance|collections.*|search.*)"
     )
     product_types_pattern = url_path_join(base_url, url_path, "product-types")
+    guess_product_types_pattern = url_path_join(base_url, url_path, "guess-product-type")
     search_pattern = url_path_join(base_url, url_path, r"(?P<product_type>[\w-]+)")
 
     # WSGI container around eodag-serve app
@@ -134,6 +164,7 @@ def setup_handlers(web_app, url_path):
         (home_pattern, FallbackHandler, dict(fallback=eodag_serve_container)),
         (eodag_serve_services_pattern, FallbackHandler, dict(fallback=eodag_serve_container)),
         (product_types_pattern, ProductTypeHandler),
+        (guess_product_types_pattern, GuessProductTypeHandler),
         (MethodAndPathMatch("POST", search_pattern), SearchHandler),
         (MethodAndPathMatch("GET", search_pattern), FallbackHandler, dict(fallback=eodag_serve_container)),
     ]
