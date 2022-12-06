@@ -355,14 +355,14 @@ const Fields = ({
     <div className="jp-EodagWidget-additionnalParameters">
       <div className="jp-EodagWidget-additionnalParameters-label-icon-wrapper">
         <label className="jp-EodagWidget-input-name">
-          Additionnal Parameters
+          Additional Parameters
         </label>
         <a
           href="https://eodag.readthedocs.io/en/stable/add_provider.html#opensearch-parameters-csv"
           target="_blank"
           rel="noopener noreferrer"
           data-for="parameters-information"
-          data-tip="See queryable metadata in parameters documentation"
+          data-tip="Click to check queryable metadata in parameters documentation"
         >
           <CarbonInformation height="20" width="20" />
           <ReactTooltip
