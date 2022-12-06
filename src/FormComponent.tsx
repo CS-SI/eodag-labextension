@@ -30,7 +30,8 @@ import {
   PhFileCode,
   CarbonTrashCan,
   CarbonAddFilled,
-  CarbonCalendarAddAlt
+  CarbonCalendarAddAlt,
+  CarbonInformation
 } from './icones.js';
 import ReactTooltip from 'react-tooltip';
 import { ThreeDots } from 'react-loader-spinner';
@@ -352,9 +353,27 @@ const Fields = ({
   };
   return (
     <div className="jp-EodagWidget-additionnalParameters">
-      <label className="jp-EodagWidget-input-name">
-        Additionnal Parameters
-      </label>
+      <div className="jp-EodagWidget-additionnalParameters-label-icon-wrapper">
+        <label className="jp-EodagWidget-input-name">
+          Additionnal Parameters
+        </label>
+        <a
+          href="https://eodag.readthedocs.io/en/stable/add_provider.html#opensearch-parameters-csv"
+          target="_blank"
+          rel="noopener noreferrer"
+          data-for="parameters-information"
+          data-tip="See queryable metadata in parameters documentation"
+        >
+          <CarbonInformation height="20" width="20" />
+          <ReactTooltip
+            id="parameters-information"
+            className="jp-Eodag-tooltip"
+            place="top"
+            type="dark"
+            effect="solid"
+          />
+        </a>
+      </div>
 
       {fields.map((field, index) => {
         return (
@@ -381,7 +400,7 @@ const Fields = ({
                 <ReactTooltip
                   id="parameters-delete"
                   className="jp-Eodag-tooltip"
-                  place="bottom"
+                  place="top"
                   type="warning"
                   effect="solid"
                 />
@@ -397,7 +416,7 @@ const Fields = ({
                 <ReactTooltip
                   id="parameters-add"
                   className="jp-Eodag-tooltip"
-                  place="bottom"
+                  place="top"
                   type="dark"
                   effect="solid"
                 />
