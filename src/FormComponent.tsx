@@ -30,7 +30,8 @@ import {
   PhFileCode,
   CarbonTrashCan,
   CarbonAddFilled,
-  CarbonCalendarAddAlt
+  CarbonCalendarAddAlt,
+  CarbonInformation
 } from './icones.js';
 import ReactTooltip from 'react-tooltip';
 import { ThreeDots } from 'react-loader-spinner';
@@ -59,14 +60,15 @@ export const FormComponent: FC<IProps> = ({
   const [cloud, setCloud] = useState(100);
   const [isLoadingSearch, setIsLoadingSearch] = useState(false);
   const [openModal, setOpenModal] = useState(true);
+  const [selectValue, setSelectValue] = useState(null);
 
   const {
     control,
     handleSubmit,
-    clearErrors,
+    // clearErrors,
     register,
-    resetField,
-    formState: { errors }
+    resetField
+    // formState: { errors }
   } = useForm<IFormInput>({
     defaultValues: {
       startDate: defaultStartDate,
@@ -111,18 +113,18 @@ export const FormComponent: FC<IProps> = ({
       });
   }, []);
 
-  useEffect(
-    () => {
-      if (!_.isEmpty(errors)) {
-        showErrorMessage(
-          'The following fields are required',
-          _.keys(errors).join(', ')
-        ).then(() => clearErrors());
-      }
-    },
-    // useEffect is not triggered with only errors as dependency thus we need to list all its elements
-    [errors.productType]
-  );
+  // useEffect(
+  //   () => {
+  //     if (!_.isEmpty(errors)) {
+  //       showErrorMessage(
+  //         'The following fields are required',
+  //         _.keys(errors).join(', ')
+  //       ).then(() => clearErrors());
+  //     }
+  //   },
+  //   // useEffect is not triggered with only errors as dependency thus we need to list all its elements
+  //   [errors]
+  // );
 
   const onSubmit: SubmitHandler<IFormInput> = data => {
     if (!isNotebookCreated()) {
@@ -180,7 +182,10 @@ export const FormComponent: FC<IProps> = ({
             <Autocomplete
               suggestions={productTypes}
               value={value}
-              handleChange={(e: IOptionTypeBase | null) => onChange(e?.value)}
+              handleChange={(e: IOptionTypeBase | null) => {
+                onChange(e?.value);
+                setSelectValue(e?.value);
+              }}
             />
           )}
         />
@@ -299,8 +304,15 @@ export const FormComponent: FC<IProps> = ({
                 <button
                   type="submit"
                   color="primary"
+                  className={
+                    !selectValue
+                      ? 'jp-EodagWidget-buttons-button jp-EodagWidget-buttons-button__disabled'
+                      : 'jp-EodagWidget-buttons-button'
+                  }
                   disabled={isLoadingSearch}
                   onClick={() => setOpenModal(true)}
+                  data-for="btn-preview-results"
+                  data-tip="You need to select a product type to preview the results"
                 >
                   <CodiconOpenPreview width="21" height="21" />
                   <p>
@@ -308,14 +320,30 @@ export const FormComponent: FC<IProps> = ({
                     <br />
                     Results
                   </p>
+                  {!selectValue && (
+                    <ReactTooltip
+                      id="btn-preview-results"
+                      className="jp-Eodag-tooltip"
+                      place="top"
+                      type="dark"
+                      effect="solid"
+                    />
+                  )}
                 </button>
               </div>
               <div className="jp-EodagWidget-buttons">
                 <button
                   type="submit"
                   color="primary"
+                  className={
+                    !selectValue
+                      ? 'jp-EodagWidget-buttons-button jp-EodagWidget-buttons-button__disabled'
+                      : 'jp-EodagWidget-buttons-button'
+                  }
                   disabled={isLoadingSearch}
                   onClick={() => setOpenModal(false)}
+                  data-for="btn-generate-value"
+                  data-tip="You need to select a product type to generate the code"
                 >
                   <PhFileCode height="21" width="21" />
                   <p>
@@ -323,6 +351,15 @@ export const FormComponent: FC<IProps> = ({
                     <br />
                     Code
                   </p>
+                  {!selectValue && (
+                    <ReactTooltip
+                      id="btn-generate-value"
+                      className="jp-Eodag-tooltip"
+                      place="top"
+                      type="dark"
+                      effect="solid"
+                    />
+                  )}
                 </button>
               </div>
             </>
@@ -352,9 +389,27 @@ const Fields = ({
   };
   return (
     <div className="jp-EodagWidget-additionnalParameters">
-      <label className="jp-EodagWidget-input-name">
-        Additionnal Parameters
-      </label>
+      <div className="jp-EodagWidget-additionnalParameters-label-icon-wrapper">
+        <label className="jp-EodagWidget-input-name">
+          Additional Parameters
+        </label>
+        <a
+          href="https://eodag.readthedocs.io/en/stable/add_provider.html#opensearch-parameters-csv"
+          target="_blank"
+          rel="noopener noreferrer"
+          data-for="parameters-information"
+          data-tip="Click to check queryable metadata in parameters documentation"
+        >
+          <CarbonInformation height="20" width="20" />
+          <ReactTooltip
+            id="parameters-information"
+            className="jp-Eodag-tooltip"
+            place="top"
+            type="dark"
+            effect="solid"
+          />
+        </a>
+      </div>
 
       {fields.map((field, index) => {
         return (
@@ -381,7 +436,7 @@ const Fields = ({
                 <ReactTooltip
                   id="parameters-delete"
                   className="jp-Eodag-tooltip"
-                  place="bottom"
+                  place="top"
                   type="warning"
                   effect="solid"
                 />
@@ -397,7 +452,7 @@ const Fields = ({
                 <ReactTooltip
                   id="parameters-add"
                   className="jp-Eodag-tooltip"
-                  place="bottom"
+                  place="top"
                   type="dark"
                   effect="solid"
                 />

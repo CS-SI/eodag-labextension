@@ -25,6 +25,21 @@ export interface ISVGProps {
   className5?: string;
 }
 
+export const CarbonInformation = (props: ISVGProps) => {
+  return (
+    <svg width="1em" height="1em" viewBox="0 0 32 32" {...props}>
+      <path
+        fill="currentColor"
+        d="M17 22v-8h-4v2h2v6h-3v2h8v-2h-3zM16 8a1.5 1.5 0 1 0 1.5 1.5A1.5 1.5 0 0 0 16 8z"
+      ></path>
+      <path
+        fill="currentColor"
+        d="M16 30a14 14 0 1 1 14-14a14 14 0 0 1-14 14Zm0-26a12 12 0 1 0 12 12A12 12 0 0 0 16 4Z"
+      ></path>
+    </svg>
+  );
+};
+
 export const CodiconOpenPreview = (props: ISVGProps) => {
   return (
     <svg width="1em" height="1em" viewBox="0 0 16 16" {...props}>

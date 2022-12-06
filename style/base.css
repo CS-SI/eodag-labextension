@@ -73,7 +73,13 @@
   justify-content: center;
   margin-top: 50px;
 }
-.jp-EodagWidget .jp-EodagWidget-form .jp-EodagWidget-buttons button {
+
+.jp-EodagWidget-buttons-button__disabled {
+  background-color: grey !important;
+  cursor: not-allowed !important;
+}
+
+.jp-EodagWidget .jp-EodagWidget-form .jp-EodagWidget-buttons-button {
   cursor: pointer;
   min-width: 110px;
   color: #ffffff;
@@ -104,6 +110,7 @@
 .jp-EodagWidget .jp-EodagWidget-form .jp-EodagWidget-buttons button:hover {
   background: var(--button-hover);
 }
+
 .jp-EodagWidget .jp-EodagWidget-form .react-datepicker-popper {
   position: relative;
   z-index: 1000;
@@ -206,7 +213,31 @@
   color: var(--jp-ui-font-color0);
   width: 40%;
 }
-
+.jp-EodagWidget
+  .jp-EodagWidget-form
+  .jp-EodagWidget-field
+  .jp-EodagWidget-additionnalParameters
+  .jp-EodagWidget-additionnalParameters-label-icon-wrapper {
+  display: flex;
+  align-items: center;
+}
+.jp-EodagWidget
+  .jp-EodagWidget-form
+  .jp-EodagWidget-field
+  .jp-EodagWidget-additionnalParameters
+  .jp-EodagWidget-additionnalParameters-label-icon-wrapper
+  a {
+  display: inline-flex;
+  margin-left: 5px;
+}
+.jp-EodagWidget
+  .jp-EodagWidget-form
+  .jp-EodagWidget-field
+  .jp-EodagWidget-additionnalParameters
+  .jp-EodagWidget-additionnalParameters-label-icon-wrapper
+  a:hover {
+  color: #677381;
+}
 .jp-EodagWidget
   .jp-EodagWidget-form
   .jp-EodagWidget-field
@@ -243,12 +274,6 @@ section button .jp-EodagWidget-additionnalParameters-addbutton svg {
   color: #677381;
 }
 
-.jp-EodagWidget-select__control {
-  background-color: var(--jp-layout-color0) !important;
-  border-radius: 5px !important;
-  border-color: var(--light-gray) !important;
-}
-
 .jp-EodagWidget-select__input,
 .jp-EodagWidget-select__control,
 .jp-EodagWidget-select__value-container,
@@ -261,7 +286,6 @@ section button .jp-EodagWidget-additionnalParameters-addbutton svg {
   color: var(--jp-ui-font-color0);
   line-height: var(--jp-private-commandpalette-search-height);
   border-radius: 5px !important;
-  border-color: red;
 }
 
 .jp-EodagWidget .jp-EodagWidget-form .react-datepicker-wrapper,
@@ -436,8 +460,9 @@ section button .jp-EodagWidget-additionnalParameters-addbutton svg {
 }
 
 .jp-Eodag-tooltip {
-  max-width: 250px;
-  padding-right: 15px;
+  max-width: 200px;
+  padding: 8px 16px !important;
+  text-align: center;
   word-wrap: break-word;
   z-index: 4;
 }
