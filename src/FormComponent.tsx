@@ -31,8 +31,8 @@ import {
   CarbonTrashCan,
   CarbonAddFilled,
   CarbonCalendarAddAlt,
-  CarbonInformation,
-  CarbonSettings
+  CarbonSettings,
+  CarbonInformation
 } from './icones.js';
 import ReactTooltip from 'react-tooltip';
 import { ThreeDots } from 'react-loader-spinner';
@@ -63,7 +63,6 @@ export const FormComponent: FC<IProps> = ({
   const [cloud, setCloud] = useState(100);
   const [isLoadingSearch, setIsLoadingSearch] = useState(false);
   const [openModal, setOpenModal] = useState(true);
-  const [selectValue, setSelectValue] = useState(null);
 
   const {
     control,
