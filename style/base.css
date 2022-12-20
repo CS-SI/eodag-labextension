@@ -10,6 +10,7 @@
 .jp-EodagWidget {
   display: flex;
   flex-direction: column;
+  height: 100%;
   color: var(--jp-ui-font-color1);
   background: var(--jp-layout-color1);
   font-size: var(--jp-ui-font-size1);
@@ -26,6 +27,13 @@
   margin: 0px;
   padding: 8px 12px;
   text-transform: uppercase;
+}
+
+.jp-EodagWidget-wrapper {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .jp-EodagWidget .jp-EodagWidget-form {

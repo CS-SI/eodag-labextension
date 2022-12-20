@@ -31,7 +31,8 @@ import {
   CarbonTrashCan,
   CarbonAddFilled,
   CarbonCalendarAddAlt,
-  CarbonInformation
+  CarbonInformation,
+  CarbonSettings
 } from './icones.js';
 import ReactTooltip from 'react-tooltip';
 import { ThreeDots } from 'react-loader-spinner';
@@ -41,6 +42,7 @@ export interface IProps {
   saveFormValues: (formValue: IFormInput) => void;
   handleGenerateQuery: any;
   isNotebookCreated: any;
+  commands: any;
 }
 export interface IOptionTypeBase {
   [key: string]: any;
@@ -50,7 +52,8 @@ export const FormComponent: FC<IProps> = ({
   handleShowFeature,
   saveFormValues,
   handleGenerateQuery,
-  isNotebookCreated
+  isNotebookCreated,
+  commands
 }) => {
   const [productTypes, setProductTypes] = useState<IOptionTypeBase[]>();
   const defaultStartDate: Date = undefined;
@@ -161,6 +164,10 @@ export const FormComponent: FC<IProps> = ({
     }
   };
 
+  const handleOpenSettings = (): void => {
+    commands.execute('settingeditor:open', { query: 'EODAG' });
+  };
+
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="jp-EodagWidget-form">
       <div className="jp-EodagWidget-map">
@@ -182,10 +189,7 @@ export const FormComponent: FC<IProps> = ({
             <Autocomplete
               suggestions={productTypes}
               value={value}
-              handleChange={(e: IOptionTypeBase | null) => {
-                onChange(e?.value);
-                setSelectValue(e?.value);
-              }}
+              handleChange={(e: IOptionTypeBase | null) => onChange(e?.value)}
             />
           )}
         />
@@ -234,12 +238,12 @@ export const FormComponent: FC<IProps> = ({
                   <>
                     <DatePicker
                       className="jp-EodagWidget-input jp-EodagWidget-input-with-svg"
-                      selectsEnd
+                      selectsStart
                       startDate={startDate}
                       endDate={endDate}
-                      minDate={startDate}
+                      maxDate={endDate}
                       onChange={(d: Date) => {
-                        setEndDate(d);
+                        setStartDate(d);
                         onChange(d);
                       }}
                       onBlur={onBlur}
@@ -389,7 +393,7 @@ export const FormComponent: FC<IProps> = ({
           )}
         </div>
       </div>
-    </form>
+    </div>
   );
 };
 

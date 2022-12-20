@@ -9,15 +9,17 @@ import { geojsonToWKT } from '@terraformer/wkt';
 import { IFormInput } from './types';
 import { formatDate } from './utils';
 
-const formatCode = ({
-  startDate,
-  endDate,
-  productType,
-  geometry,
-  cloud,
-  additionnalParameters,
-  replaceActiveCell
-}: IFormInput) => {
+const formatCode = (
+  {
+    startDate,
+    endDate,
+    productType,
+    geometry,
+    cloud,
+    additionnalParameters
+  }: IFormInput,
+  replaceCode: boolean
+) => {
   const start = startDate ? formatDate(startDate) : undefined;
   const end = endDate ? formatDate(endDate) : undefined;
 
@@ -30,7 +32,7 @@ const formatCode = ({
 setup_logging(1) # 0: nothing, 1: only progress bars, 2: INFO, 3: DEBUG
 
 dag = EODataAccessGateway()`;
-  let code = replaceActiveCell
+  let code = replaceCode
     ? `${replacedCellIntro}
 ${standardMessage}`
     : `${standardMessage}`;

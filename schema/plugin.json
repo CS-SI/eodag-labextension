@@ -8,7 +8,7 @@
       "title": "Replace existing search code",
       "description": "Replace the existing search code containing matching comment with the new code.",
       "type": "boolean",
-      "default": true
+      "default": false
     }
   },
   "additionalProperties": false,
