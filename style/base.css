@@ -269,7 +269,8 @@
 }
 
 .jp-EodagWidget-additionnalParameters-deletebutton,
-.jp-EodagWidget-additionnalParameters-addbutton {
+.jp-EodagWidget-additionnalParameters-addbutton,
+.jp-EodagWidget-settingsbutton {
   cursor: pointer;
   border-radius: 50%;
   border-width: 0px;
@@ -279,13 +280,15 @@
 }
 
 section button .jp-EodagWidget-additionnalParameters-deletebutton svg,
-section button .jp-EodagWidget-additionnalParameters-addbutton svg {
+section button .jp-EodagWidget-additionnalParameters-addbutton svg,
+.jp-EodagWidget-settingsbutton svg {
   color: #000000;
   background-color: #ffffff;
 }
 
 .jp-EodagWidget-additionnalParameters-deletebutton svg:hover,
-.jp-EodagWidget-additionnalParameters-addbutton svg:hover {
+.jp-EodagWidget-additionnalParameters-addbutton svg:hover,
+.jp-EodagWidget-settingsbutton svg:hover {
   color: #677381;
 }
 

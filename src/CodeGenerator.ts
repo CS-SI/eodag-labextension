@@ -1,3 +1,4 @@
+/**
  * Generate the Python code for the notebook
  *
  * Copyright 2022 CS GROUP - France, http://www.c-s.fr
@@ -62,6 +63,7 @@ ${standardMessage}`
   }
   if (additionnalParameters[0].name && additionnalParameters[0].value) {
     code +=
+      additionnalParameters
         .filter(
           ({ name, value }) => name && value && name !== '' && value !== ''
         )
