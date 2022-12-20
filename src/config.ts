@@ -21,3 +21,8 @@ export const EODAG_TILE_URL =
  */
 export const EODAG_TILE_COPYRIGHT =
   '&copy; <a href=&quot;http://osm.org/copyright&quot;>OpenStreetMap</a> contributors';
+
+/**
+ * Adress used to contact the EODAG settings
+ */
+export const EODAG_SETTINGS_ADDRESS = 'api/settings/eodag-labextension:plugin';

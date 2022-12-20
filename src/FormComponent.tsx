@@ -31,6 +31,7 @@ import {
   CarbonTrashCan,
   CarbonAddFilled,
   CarbonCalendarAddAlt,
+  CarbonSettings,
   CarbonInformation
 } from './icones.js';
 import ReactTooltip from 'react-tooltip';
@@ -41,6 +42,7 @@ export interface IProps {
   saveFormValues: (formValue: IFormInput) => void;
   handleGenerateQuery: any;
   isNotebookCreated: any;
+  commands: any;
 }
 export interface IOptionTypeBase {
   [key: string]: any;
@@ -50,12 +52,12 @@ export const FormComponent: FC<IProps> = ({
   handleShowFeature,
   saveFormValues,
   handleGenerateQuery,
-  isNotebookCreated
+  isNotebookCreated,
+  commands
 }) => {
   const [productTypes, setProductTypes] = useState<IOptionTypeBase[]>();
   const defaultStartDate: Date = undefined;
   const defaultEndDate: Date = undefined;
-  const defaultReplaceCell = true;
   const [startDate, setStartDate] = useState(undefined);
   const [endDate, setEndDate] = useState(undefined);
   const [cloud, setCloud] = useState(100);
@@ -74,8 +76,7 @@ export const FormComponent: FC<IProps> = ({
     defaultValues: {
       startDate: defaultStartDate,
       endDate: defaultEndDate,
-      cloud: 100,
-      replaceActiveCell: defaultReplaceCell
+      cloud: 100
     }
   });
 
@@ -163,6 +164,10 @@ export const FormComponent: FC<IProps> = ({
     }
   };
 
+  const handleOpenSettings = (): void => {
+    commands.execute('settingeditor:open', { query: 'EODAG' });
+  };
+
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="jp-EodagWidget-form">
       <div className="jp-EodagWidget-map">
@@ -236,12 +241,12 @@ export const FormComponent: FC<IProps> = ({
                   <>
                     <DatePicker
                       className="jp-EodagWidget-input jp-EodagWidget-input-with-svg"
-                      selectsEnd
+                      selectsStart
                       startDate={startDate}
                       endDate={endDate}
-                      minDate={startDate}
+                      maxDate={endDate}
                       onChange={(d: Date) => {
-                        setEndDate(d);
+                        setStartDate(d);
                         onChange(d);
                       }}
                       onBlur={onBlur}
@@ -284,6 +289,29 @@ export const FormComponent: FC<IProps> = ({
           </div>
         </label>
         <Fields {...{ control, register, resetField }} />
+        <label className="jp-EodagWidget-input-name-checkbox-wrapper">
+          Replace existing search code
+          <div className="jp-EodagWidget-checkbox">
+            <Controller
+              name="replaceActiveCell"
+              control={control}
+              rules={{ required: false }}
+              render={({ field: { onChange } }) => (
+                <input
+                  type="checkbox"
+                  value={isReplaceActiveCell ? 'on' : ''}
+                  checked={isReplaceActiveCell}
+                  aria-labelledby="replaceActiveCell"
+                  onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                    const value = event.target.checked;
+                    onChange(value);
+                    setIsReplaceActiveCell(prev => !prev);
+                  }}
+                />
+              )}
+            />
+          </div>
+        </label>
       </div>
       <div className="jp-EodagWidget-form-buttons">
         <div className="jp-EodagWidget-form-buttons-wrapper">
@@ -306,15 +334,8 @@ export const FormComponent: FC<IProps> = ({
                 <button
                   type="submit"
                   color="primary"
-                  className={
-                    !selectValue
-                      ? 'jp-EodagWidget-buttons-button jp-EodagWidget-buttons-button__disabled'
-                      : 'jp-EodagWidget-buttons-button'
-                  }
                   disabled={isLoadingSearch}
                   onClick={() => setOpenModal(true)}
-                  data-for="btn-preview-results"
-                  data-tip="You need to select a product type to preview the results"
                 >
                   <CodiconOpenPreview width="21" height="21" />
                   <p>
@@ -322,53 +343,14 @@ export const FormComponent: FC<IProps> = ({
                     <br />
                     Results
                   </p>
-                  {!selectValue && (
-                    <ReactTooltip
-                      id="btn-preview-results"
-                      className="jp-Eodag-tooltip"
-                      place="top"
-                      type="dark"
-                      effect="solid"
-                    />
-                  )}
                 </button>
               </div>
-              <label className="jp-EodagWidget-input-name-checkbox-wrapper">
-        Replace existing search code
-        <div className="jp-EodagWidget-checkbox">
-          <Controller
-            name="replaceActiveCell"
-            control={control}
-            rules={{ required: false }}
-            render={({ field: { onChange } }) => (
-              <input
-                type="checkbox"
-                value={isReplaceActiveCell ? 'on' : ''}
-                checked={isReplaceActiveCell}
-                aria-labelledby="replaceActiveCell"
-                onChange={(event: ChangeEvent<HTMLInputElement>) => {
-                  const value = event.target.checked;
-                  onChange(value);
-                  setIsReplaceActiveCell(prev => !prev);
-                }}
-              />
-            )}
-          />
-        </div>
-      </label>
-      <div className="jp-EodagWidget-buttons">
+              <div className="jp-EodagWidget-buttons">
                 <button
                   type="submit"
                   color="primary"
-                  className={
-                    !selectValue
-                      ? 'jp-EodagWidget-buttons-button jp-EodagWidget-buttons-button__disabled'
-                      : 'jp-EodagWidget-buttons-button'
-                  }
                   disabled={isLoadingSearch}
                   onClick={() => setOpenModal(false)}
-                  data-for="btn-generate-value"
-                  data-tip="You need to select a product type to generate the code"
                 >
                   <PhFileCode height="21" width="21" />
                   <p>
@@ -376,22 +358,13 @@ export const FormComponent: FC<IProps> = ({
                     <br />
                     Code
                   </p>
-                  {!selectValue && (
-                    <ReactTooltip
-                      id="btn-generate-value"
-                      className="jp-Eodag-tooltip"
-                      place="top"
-                      type="dark"
-                      effect="solid"
-                    />
-                  )}
                 </button>
               </div>
             </>
           )}
         </div>
       </div>
-    </form>
+    </div>
   );
 };
 
