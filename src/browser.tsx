@@ -93,11 +93,9 @@ export class EodagBrowser extends React.Component<IProps, IState> {
       });
   };
 
-
   isRetrievingMoreFeature = () => {
     return this.state.searching;
   };
-
 
   getCodeCell = (code: string) => {
     return new CodeCellModel({
