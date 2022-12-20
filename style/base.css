@@ -87,7 +87,12 @@
   cursor: not-allowed !important;
 }
 
-.jp-EodagWidget .jp-EodagWidget-form .jp-EodagWidget-buttons-button {
+.jp-EodagWidget
+  .jp-EodagWidget-form
+  .jp-EodagWidget-form-buttons
+  .jp-EodagWidget-form-buttons-wrapper
+  .jp-EodagWidget-buttons
+  button {
   cursor: pointer;
   min-width: 110px;
   color: #ffffff;
