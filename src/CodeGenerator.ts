@@ -74,7 +74,7 @@ search_results, total_count = dag.search(
         .join('\n') + '\n';
   }
 
-  code += `)`;
+  code += ')';
 
   return code;
 };
