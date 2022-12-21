@@ -59,7 +59,14 @@ search_results, total_count = dag.search(
     code += `end = "${end}",
     `;
   }
-  if (cloud !== 100) {
+  if (
+    cloud !== 100 &&
+    !additionnalParameters[0].name &&
+    !additionnalParameters[0].value
+  ) {
+    code += `cloudCover = ${cloud},
+`;
+  } else {
     code += `cloudCover = ${cloud},
     `;
   }
@@ -73,7 +80,6 @@ search_results, total_count = dag.search(
         .map(({ name, value }) => `${name} = "${value}", `)
         .join('\n') + '\n';
   }
-
   code += ')';
 
   return code;
