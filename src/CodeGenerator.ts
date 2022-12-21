@@ -45,42 +45,36 @@ geometry = "${geojsonToWKT(geometry)}"`;
   }
   code += `
 search_results, total_count = dag.search(
-    productType = "${productType}",
-    `;
+    productType = "${productType}",`;
   if (geometryIsOk) {
-    code += `geom = geometry,
-    `;
+    code += `
+    geom = geometry,`;
   }
   if (start) {
-    code += `start = "${start}",
-    `;
+    code += `
+    start = "${start}",`;
   }
   if (end) {
-    code += `end = "${end}",
-    `;
+    code += `
+    end = "${end}",`;
   }
-  if (
-    cloud !== 100 &&
-    !additionnalParameters[0].name &&
-    !additionnalParameters[0].value
-  ) {
-    code += `cloudCover = ${cloud},
-`;
-  } else {
-    code += `cloudCover = ${cloud},
-    `;
+  if (cloud !== 100) {
+    code += `
+    cloudCover = ${cloud},`;
   }
   if (additionnalParameters[0].name && additionnalParameters[0].value) {
     code +=
+      '\n' +
       additionnalParameters
         .filter(
           ({ name, value }) => name && value && name !== '' && value !== ''
         )
         .filter(({ name, value }) => name !== '' && value !== '')
-        .map(({ name, value }) => `${name} = "${value}", `)
-        .join('\n') + '\n';
+        .map(({ name, value }) => `    ${name} = "${value}", `)
+        .join('\n');
   }
-  code += ')';
+  code += `
+)`;
 
   return code;
 };
