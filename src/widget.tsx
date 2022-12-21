@@ -19,21 +19,26 @@ export const logoIcon = new LabIcon({
 
 export class EodagWidget extends Widget {
   tracker: INotebookTracker;
+  commands: any;
   /**
    * Construct a new EodagBrowser widget.
    */
-  constructor(tracker: INotebookTracker) {
+  constructor(tracker: INotebookTracker, commands: any) {
     super();
     this.title.caption = 'EODAG';
     this.title.icon = logoIcon;
     this.id = 'eodag-widget';
     this.tracker = tracker;
+    this.commands = commands;
     this.addClass('jp-EodagWidget');
     this.update();
   }
 
   onUpdateRequest() {
     ReactDOM.unmountComponentAtNode(this.node);
-    ReactDOM.render(<EodagBrowser tracker={this.tracker} />, this.node);
+    ReactDOM.render(
+      <EodagBrowser tracker={this.tracker} commands={this.commands} />,
+      this.node
+    );
   }
 }

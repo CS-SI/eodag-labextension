@@ -31,6 +31,7 @@ import {
   CarbonTrashCan,
   CarbonAddFilled,
   CarbonCalendarAddAlt,
+  CarbonSettings,
   CarbonInformation
 } from './icones.js';
 import ReactTooltip from 'react-tooltip';
@@ -41,6 +42,7 @@ export interface IProps {
   saveFormValues: (formValue: IFormInput) => void;
   handleGenerateQuery: any;
   isNotebookCreated: any;
+  commands: any;
 }
 export interface IOptionTypeBase {
   [key: string]: any;
@@ -50,7 +52,8 @@ export const FormComponent: FC<IProps> = ({
   handleShowFeature,
   saveFormValues,
   handleGenerateQuery,
-  isNotebookCreated
+  isNotebookCreated,
+  commands
 }) => {
   const [productTypes, setProductTypes] = useState<IOptionTypeBase[]>();
   const defaultStartDate: Date = undefined;
@@ -161,85 +164,59 @@ export const FormComponent: FC<IProps> = ({
     }
   };
 
-  return (
-    <form onSubmit={handleSubmit(onSubmit)} className="jp-EodagWidget-form">
-      <div className="jp-EodagWidget-map">
-        <Controller
-          name="geometry"
-          control={control}
-          rules={{ required: false }}
-          render={({ field: { onChange, value } }) => (
-            <MapExtentComponent geometry={value} onChange={onChange} />
-          )}
-        />
-      </div>
-      <div className="jp-EodagWidget-field">
-        <Controller
-          name="productType"
-          control={control}
-          rules={{ required: true }}
-          render={({ field: { onChange, value } }) => (
-            <Autocomplete
-              suggestions={productTypes}
-              value={value}
-              handleChange={(e: IOptionTypeBase | null) => {
-                onChange(e?.value);
-                setSelectValue(e?.value);
-              }}
-            />
-          )}
-        />
-        <div className="jp-EodagWidget-form-date-picker">
-          <label htmlFor="startDate" className="jp-EodagWidget-input-name">
-            Date range
-          </label>
-          <div className="jp-EodagWidget-form-date-picker-wrapper">
-            <div className="jp-EodagWidget-input-wrapper">
-              <CarbonCalendarAddAlt height="22" width="22" />
-              <Controller
-                name="startDate"
-                control={control}
-                rules={{ required: false }}
-                render={({ field: { onChange, onBlur, value } }) => (
-                  <DatePicker
-                    className="jp-EodagWidget-input jp-EodagWidget-input-with-svg"
-                    selectsStart
-                    startDate={startDate}
-                    endDate={endDate}
-                    maxDate={endDate}
-                    onChange={(d: Date) => {
-                      setStartDate(d);
-                      onChange(d);
-                    }}
-                    onBlur={onBlur}
-                    selected={value}
-                    dateFormat={'dd/MM/yyyy'}
-                    showMonthDropdown
-                    showYearDropdown
-                    dropdownMode="select"
-                    isClearable
-                    placeholderText="Start"
-                  />
-                )}
-              />
-            </div>
+  const handleOpenSettings = (): void => {
+    commands.execute('settingeditor:open', { query: 'EODAG' });
+  };
 
-            <div className="jp-EodagWidget-input-wrapper">
-              <CarbonCalendarAddAlt height="22" width="22" />
-              <Controller
-                name="endDate"
-                control={control}
-                rules={{ required: false }}
-                render={({ field: { onChange, onBlur, value } }) => (
-                  <>
+  return (
+    <div className="jp-EodagWidget-wrapper">
+      <form onSubmit={handleSubmit(onSubmit)} className="jp-EodagWidget-form">
+        <div className="jp-EodagWidget-map">
+          <Controller
+            name="geometry"
+            control={control}
+            rules={{ required: false }}
+            render={({ field: { onChange, value } }) => (
+              <MapExtentComponent geometry={value} onChange={onChange} />
+            )}
+          />
+        </div>
+        <div className="jp-EodagWidget-field">
+          <Controller
+            name="productType"
+            control={control}
+            rules={{ required: true }}
+            render={({ field: { onChange, value } }) => (
+              <Autocomplete
+                suggestions={productTypes}
+                value={value}
+                handleChange={(e: IOptionTypeBase | null) => {
+                  onChange(e?.value);
+                  setSelectValue(e?.value);
+                }}
+              />
+            )}
+          />
+          <div className="jp-EodagWidget-form-date-picker">
+            <label htmlFor="startDate" className="jp-EodagWidget-input-name">
+              Date range
+            </label>
+            <div className="jp-EodagWidget-form-date-picker-wrapper">
+              <div className="jp-EodagWidget-input-wrapper">
+                <CarbonCalendarAddAlt height="22" width="22" />
+                <Controller
+                  name="startDate"
+                  control={control}
+                  rules={{ required: false }}
+                  render={({ field: { onChange, onBlur, value } }) => (
                     <DatePicker
                       className="jp-EodagWidget-input jp-EodagWidget-input-with-svg"
-                      selectsEnd
+                      selectsStart
                       startDate={startDate}
                       endDate={endDate}
-                      minDate={startDate}
+                      maxDate={endDate}
                       onChange={(d: Date) => {
-                        setEndDate(d);
+                        setStartDate(d);
                         onChange(d);
                       }}
                       onBlur={onBlur}
@@ -249,124 +226,174 @@ export const FormComponent: FC<IProps> = ({
                       showYearDropdown
                       dropdownMode="select"
                       isClearable
-                      placeholderText="End"
+                      placeholderText="Start"
                     />
-                  </>
+                  )}
+                />
+              </div>
+
+              <div className="jp-EodagWidget-input-wrapper">
+                <CarbonCalendarAddAlt height="22" width="22" />
+                <Controller
+                  name="endDate"
+                  control={control}
+                  rules={{ required: false }}
+                  render={({ field: { onChange, onBlur, value } }) => (
+                    <>
+                      <DatePicker
+                        className="jp-EodagWidget-input jp-EodagWidget-input-with-svg"
+                        selectsStart
+                        startDate={startDate}
+                        endDate={endDate}
+                        maxDate={endDate}
+                        onChange={(d: Date) => {
+                          setEndDate(d);
+                          onChange(d);
+                        }}
+                        onBlur={onBlur}
+                        selected={value}
+                        dateFormat={'dd/MM/yyyy'}
+                        showMonthDropdown
+                        showYearDropdown
+                        dropdownMode="select"
+                        isClearable
+                        placeholderText="End"
+                      />
+                    </>
+                  )}
+                />
+              </div>
+            </div>
+          </div>
+          <label className="jp-EodagWidget-input-name">
+            Max cloud cover {cloud}%
+            <div className="jp-EodagWidget-slider">
+              <Controller
+                name="cloud"
+                control={control}
+                rules={{ required: false }}
+                render={({ field: { onChange, value } }) => (
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    value={value}
+                    aria-labelledby="cloud"
+                    onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                      const value = parseInt(event.target.value, 10);
+                      onChange(value);
+                      setCloud(value);
+                    }}
+                  />
                 )}
               />
             </div>
-          </div>
+          </label>
+          <Fields {...{ control, register, resetField }} />
         </div>
-        <label className="jp-EodagWidget-input-name">
-          Max cloud cover {cloud}%
-          <div className="jp-EodagWidget-slider">
-            <Controller
-              name="cloud"
-              control={control}
-              rules={{ required: false }}
-              render={({ field: { onChange, value } }) => (
-                <input
-                  type="range"
-                  min="0"
-                  max="100"
-                  value={value}
-                  aria-labelledby="cloud"
-                  onChange={(event: ChangeEvent<HTMLInputElement>) => {
-                    const value = parseInt(event.target.value, 10);
-                    onChange(value);
-                    setCloud(value);
-                  }}
+        <div className="jp-EodagWidget-form-buttons">
+          <div className="jp-EodagWidget-form-buttons-wrapper">
+            {isLoadingSearch ? (
+              <div className="jp-EodagWidget-loader">
+                <p>Generating</p>
+                <ThreeDots
+                  height="35"
+                  width="35"
+                  radius="9"
+                  color="#1976d2"
+                  ariaLabel="three-dots-loading"
+                  wrapperStyle={{}}
+                  visible={true}
                 />
-              )}
-            />
+              </div>
+            ) : (
+              <>
+                <div className="jp-EodagWidget-buttons">
+                  <button
+                    type="submit"
+                    color="primary"
+                    className={
+                      !selectValue
+                        ? 'jp-EodagWidget-buttons-button jp-EodagWidget-buttons-button__disabled'
+                        : 'jp-EodagWidget-buttons-button'
+                    }
+                    disabled={isLoadingSearch}
+                    onClick={() => setOpenModal(true)}
+                    data-for="btn-preview-results"
+                    data-tip="You need to select a product type to preview the results"
+                  >
+                    <CodiconOpenPreview width="21" height="21" />
+                    <p>
+                      Preview
+                      <br />
+                      Results
+                    </p>
+                    {!selectValue && (
+                      <ReactTooltip
+                        id="btn-preview-results"
+                        className="jp-Eodag-tooltip"
+                        place="top"
+                        type="dark"
+                        effect="solid"
+                      />
+                    )}
+                  </button>
+                </div>
+                <div className="jp-EodagWidget-buttons">
+                  <button
+                    type="submit"
+                    color="primary"
+                    className={
+                      !selectValue
+                        ? 'jp-EodagWidget-buttons-button jp-EodagWidget-buttons-button__disabled'
+                        : 'jp-EodagWidget-buttons-button'
+                    }
+                    disabled={isLoadingSearch}
+                    onClick={() => setOpenModal(false)}
+                    data-for="btn-generate-value"
+                    data-tip="You need to select a product type to generate the code"
+                  >
+                    <PhFileCode height="21" width="21" />
+                    <p>
+                      Generate
+                      <br />
+                      Code
+                    </p>
+                    {!selectValue && (
+                      <ReactTooltip
+                        id="btn-generate-value"
+                        className="jp-Eodag-tooltip"
+                        place="top"
+                        type="dark"
+                        effect="solid"
+                      />
+                    )}
+                  </button>
+                </div>
+              </>
+            )}
           </div>
-        </label>
-        <Fields {...{ control, register, resetField }} />
-      </div>
-      <div className="jp-EodagWidget-form-buttons">
-        <div className="jp-EodagWidget-form-buttons-wrapper">
-          {isLoadingSearch ? (
-            <div className="jp-EodagWidget-loader">
-              <p>Generating</p>
-              <ThreeDots
-                height="35"
-                width="35"
-                radius="9"
-                color="#1976d2"
-                ariaLabel="three-dots-loading"
-                wrapperStyle={{}}
-                visible={true}
-              />
-            </div>
-          ) : (
-            <>
-              <div className="jp-EodagWidget-buttons">
-                <button
-                  type="submit"
-                  color="primary"
-                  className={
-                    !selectValue
-                      ? 'jp-EodagWidget-buttons-button jp-EodagWidget-buttons-button__disabled'
-                      : 'jp-EodagWidget-buttons-button'
-                  }
-                  disabled={isLoadingSearch}
-                  onClick={() => setOpenModal(true)}
-                  data-for="btn-preview-results"
-                  data-tip="You need to select a product type to preview the results"
-                >
-                  <CodiconOpenPreview width="21" height="21" />
-                  <p>
-                    Preview
-                    <br />
-                    Results
-                  </p>
-                  {!selectValue && (
-                    <ReactTooltip
-                      id="btn-preview-results"
-                      className="jp-Eodag-tooltip"
-                      place="top"
-                      type="dark"
-                      effect="solid"
-                    />
-                  )}
-                </button>
-              </div>
-              <div className="jp-EodagWidget-buttons">
-                <button
-                  type="submit"
-                  color="primary"
-                  className={
-                    !selectValue
-                      ? 'jp-EodagWidget-buttons-button jp-EodagWidget-buttons-button__disabled'
-                      : 'jp-EodagWidget-buttons-button'
-                  }
-                  disabled={isLoadingSearch}
-                  onClick={() => setOpenModal(false)}
-                  data-for="btn-generate-value"
-                  data-tip="You need to select a product type to generate the code"
-                >
-                  <PhFileCode height="21" width="21" />
-                  <p>
-                    Generate
-                    <br />
-                    Code
-                  </p>
-                  {!selectValue && (
-                    <ReactTooltip
-                      id="btn-generate-value"
-                      className="jp-Eodag-tooltip"
-                      place="top"
-                      type="dark"
-                      effect="solid"
-                    />
-                  )}
-                </button>
-              </div>
-            </>
-          )}
         </div>
+      </form>
+      <div>
+        <button
+          type="button"
+          className="jp-EodagWidget-settingsbutton"
+          data-for="eodag-setting"
+          data-tip="Eodag labextension settings"
+          onClick={handleOpenSettings}
+        >
+          <CarbonSettings height="20" width="20" />
+          <ReactTooltip
+            id="eodag-setting"
+            className="jp-Eodag-tooltip"
+            place="bottom"
+            type="dark"
+            effect="solid"
+          />
+        </button>
       </div>
-    </form>
+    </div>
   );
 };
 

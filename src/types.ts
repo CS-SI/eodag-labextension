@@ -9,7 +9,6 @@ export interface IFormInput {
   endDate: Date;
   productType: string;
   cloud: number;
-  disableCloud: boolean;
   additionnalParameters?: { name: string; value: string }[];
 }
 

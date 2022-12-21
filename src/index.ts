@@ -36,7 +36,8 @@ function activate(
   tracker: INotebookTracker,
   restorer: ILayoutRestorer
 ) {
-  const eodagBrowser = new EodagWidget(tracker);
+  const { commands } = app;
+  const eodagBrowser = new EodagWidget(tracker, commands);
   restorer.add(eodagBrowser, NAMESPACE);
   app.shell.add(eodagBrowser, 'left', { rank: 700 });
 }
