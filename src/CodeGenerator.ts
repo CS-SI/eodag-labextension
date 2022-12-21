@@ -33,33 +33,35 @@ const formatCode = (
 setup_logging(1) # 0: nothing, 1: only progress bars, 2: INFO, 3: DEBUG
 
 dag = EODataAccessGateway()`;
+
   let code = replaceCode
     ? `${replacedCellIntro}
 ${standardMessage}`
     : `${standardMessage}`;
 
   if (geometryIsOk) {
-    code += `geometry = "${geojsonToWKT(geometry)}"
+    code += `
+geometry = "${geojsonToWKT(geometry)}"`;
+  }
+  code += `
+search_results, total_count = dag.search(
+    productType = "${productType}",
+    `;
+  if (geometryIsOk) {
+    code += `geom = geometry,
     `;
   }
-  code += `search_results, total_count = dag.search(
-      productType = "${productType}",
-      `;
-  if (geometryIsOk) {
-    code += `  geom = geometry,
-      `;
-  }
   if (start) {
-    code += `  start = "${start}",
-      `;
+    code += `start = "${start}",
+    `;
   }
   if (end) {
-    code += `  end = "${end}",
-      `;
+    code += `end = "${end}",
+    `;
   }
   if (cloud !== 100) {
-    code += `  cloudCover = ${cloud},
-      `;
+    code += `cloudCover = ${cloud},
+    `;
   }
   if (additionnalParameters[0].name && additionnalParameters[0].value) {
     code +=
@@ -68,11 +70,12 @@ ${standardMessage}`
           ({ name, value }) => name && value && name !== '' && value !== ''
         )
         .filter(({ name, value }) => name !== '' && value !== '')
-        .map(({ name, value }) => `  ${name} = "${value}", `)
+        .map(({ name, value }) => `${name} = "${value}", `)
         .join('\n') + '\n';
   }
 
-  code += ')';
+  code += `)`;
+
   return code;
 };
 
