@@ -63,46 +63,58 @@ Make sure that that file is configured properly.
 You can use `eodag-labextension` inside a Jupyter notebook. Start Jupyter lab with `jupyter lab`, and in Jupyter lab
 open a notebook.
 
-![extension logo](https://raw.githubusercontent.com/CS-SI/eodag-labextension/develop/notebooks/images/eodag_labext_form.png)
-
-### Search
+## Search
 
 ![extension logo](https://raw.githubusercontent.com/CS-SI/eodag-labextension/develop/notebooks/images/eodag_labext_icon.png)
-Open the EODAG tab on the left side of the JupuytuerLab interface by clicking on that icon.
+Click on this icon in the left of JupyterLab interface to open EODAG-Labextension tab.
 
-With displayed search form, you can enter select your data geographically and apply some search criteria:
+![form](https://raw.githubusercontent.com/CS-SI/eodag-labextension/develop/notebooks/images/eodag_labext_form.png)
 
-- **Product type**: the searched product type. For each entry of the drop-down list, a tooltip is displayed at
-  hovering time with corresponding description.
-- **Start date**: minimal date of the search temporal window.
-- **End date**: maximal date of the search temporal window.
-- **Max cloud cover**: maximum cloud cover allowed in search results in percent.
-- **Additional parameters**: used to enter key-value pairs criteria for the request.
+With displayed search form, you can enter search extent and following search criteria:
 
-You can draw multiple extents, or use none. Each extent can be a rectangle or a free polygon.
-Product type is mandatory. Other criteria are optional.
+- **Product type**: the searched product type. List filtering is performed using product types description keywords.
+  For each entry of the drop-down list, a tooltip is displayed at hovering time with corresponding description.
+  ![product types](https://raw.githubusercontent.com/CS-SI/eodag-labextension/develop/notebooks/images/eodag_labext_product_types.png)
 
-Once search criteria are filled out, click on the "Search" button to proceed to next step. At the end of the search,
-a popup opens and displays results.
+- **Date range**: minimal and maximal dates of the search temporal window.
+- **Max cloud cover**: maximum cloud cover allowed in search results in percent. 100% will disable cloud cover
+  filtering.
+- **Additional parameters**: used to enter key-value pairs criteria for the request. See
+  [available parameters in EODAG documentation](https://eodag.readthedocs.io/en/stable/add_provider.html#opensearch-parameters-csv).
+
+As **search geometry** you can draw multiple extents, or use none. Each extent can be a rectangle or a free polygon.
+
+_Product type is mandatory. Other criteria are optional._
+
+Once search criteria are filled out, click on:
+
+- `Generate Code` to automatically generate and insert the corresponding eodag search code bellow the active cell.
+- `Preview Results` to perform a search in background, display results, and generate search code in a second step.
+
+![settings logo](https://raw.githubusercontent.com/CS-SI/eodag-labextension/develop/notebooks/images/eodag_labext_settings_icon.png)
+Click on this icon to open EODAG-Labextension settings. You will be enable to choose whether newly inserted code should
+replace existing search code or not.
 
 ### Results overview
 
+![extension popup](https://raw.githubusercontent.com/CS-SI/eodag-labextension/develop/notebooks/images/eodag_labext_popup.png)
+
 The results overview popup is compopsed of 3 parts:
 
-- a map showing products extent
-- a table listing products
+- a map showing products extent,
+- a table listing products,
 - a pane containing metadata for currently selected product.
 
 The results table allows you to access product metadata by clicking on the desired product line. The magnifying glass
 button allows you to zoom in on the product's in the map view. By scrolling down in the list of results, the search is
 automatically restarted to retrieve the following results.
 
-In the metadata view, clicking on the thumbnail displays it in native resolution. Clicking it again reduces its size
+In the metadata view, clicking on the _Quicklook_ displays it in native resolution. Clicking it again reduces its size
 again.
 
 ### Apply to the Jupyter notebook
 
-If the search result is correct, clicking on the "`Apply`" button will insert the Python eodag code in a new cell
+If the search result is correct, clicking on the "`Generate code`" button will insert the Python eodag code in a new cell
 after the selected cell of the currently open notebook. The popup is automatically closed. From there, it is possible
 to work in the notebook on the search results by executing the eodag search.
 
