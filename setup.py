@@ -61,7 +61,7 @@ setup_args = dict(
         "jupyterlab~=3.0",
         "tornado>=6.0.3,<7.0.0",
         "notebook>=6.0.3,<7.0.0",
-        "eodag[notebook]>=2.6.1",
+        "eodag[notebook]>=2.8.0",
     ],
     extras_require={"dev": ["black", "pre-commit"]},
     zip_safe=False,
