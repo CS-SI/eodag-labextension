@@ -54,6 +54,7 @@ export interface IMuiVirtualizedTableProps {
   isRetrievingMoreFeature: any;
   handleRetrieveMoreFeature: any;
   displayedRowCount: any;
+  selectedFeature: any;
 }
 
 class MuiVirtualizedTable extends React.PureComponent<IMuiVirtualizedTableProps> {
@@ -70,11 +71,19 @@ class MuiVirtualizedTable extends React.PureComponent<IMuiVirtualizedTableProps>
 
   getRowStyle = ({ index }: { index: number }) => {
     if (index >= 0) {
-      const { rowGetter, highlightFeature } = this.props;
+      const { rowGetter, highlightFeature, selectedFeature } = this.props;
       const rowData = rowGetter({ index });
-      if (get(highlightFeature, 'id') === get(rowData, 'id')) {
+      if (
+        get(selectedFeature, 'id') !== get(highlightFeature, 'id') &&
+        get(highlightFeature, 'id') === get(rowData, 'id')
+      ) {
         return {
           backgroundColor: '#eeeeee'
+        };
+      }
+      if (get(selectedFeature, 'id') === get(rowData, 'id')) {
+        return {
+          backgroundColor: '#757575'
         };
       }
     }
@@ -157,7 +166,6 @@ class MuiVirtualizedTable extends React.PureComponent<IMuiVirtualizedTableProps>
 
   render() {
     const {
-      classes,
       columns,
       rowCount,
       displayedRowCount,
@@ -254,6 +262,7 @@ export interface IBrowseComponentProps {
   highlightFeature: any;
   isRetrievingMoreFeature: () => boolean;
   handleRetrieveMoreFeature: () => Promise<void>;
+  selectedFeature: any;
 }
 
 function BrowseComponent({
@@ -263,7 +272,8 @@ function BrowseComponent({
   handleHoverFeature,
   highlightFeature,
   isRetrievingMoreFeature,
-  handleRetrieveMoreFeature
+  handleRetrieveMoreFeature,
+  selectedFeature
 }: IBrowseComponentProps) {
   /**
    * Return an object with its id and all its properties
@@ -303,6 +313,7 @@ function BrowseComponent({
       highlightFeature={highlightFeature}
       isRetrievingMoreFeature={isRetrievingMoreFeature}
       handleRetrieveMoreFeature={handleRetrieveMoreFeature}
+      selectedFeature={selectedFeature}
       columns={[
         // {
         //   width: 100,
