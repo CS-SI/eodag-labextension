@@ -191,6 +191,10 @@ export class EodagBrowser extends React.Component<IProps, IState> {
     const notebook = this.props.tracker.currentWidget.content;
     const model = notebook.model;
 
+    while (!model.defaultKernelLanguage) {
+      await new Promise(resolve => setTimeout(resolve, 100));
+    }
+
     if (model.defaultKernelLanguage !== 'python') {
       showErrorMessage(
         'Active notebook uses wrong kernel language. Only python is supported',
