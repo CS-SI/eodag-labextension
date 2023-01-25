@@ -23,7 +23,7 @@ const formatCode = (
 ) => {
   const start = startDate ? formatDate(startDate) : undefined;
   const end = endDate ? formatDate(endDate) : undefined;
-
+  const tab = ' '.repeat(4);
   const geometryIsOk = geometry?.type && geometry?.coordinates;
 
   const replacedCellIntro =
@@ -41,39 +41,45 @@ ${standardMessage}`
 
   if (geometryIsOk) {
     code += `
-geometry = "${geojsonToWKT(geometry)}"`;
+geometry="${geojsonToWKT(geometry)}"`;
   }
   code += `
 search_results, total_count = dag.search(
-    productType = "${productType}",`;
+    productType="${productType}",`;
   if (geometryIsOk) {
     code += `
-    geom = geometry,`;
+    geom=geometry,`;
   }
   if (start) {
     code += `
-    start = "${start}",`;
+    start="${start}",`;
   }
   if (end) {
     code += `
-    end = "${end}",`;
+    end="${end}",`;
   }
   if (cloud !== 100) {
     code += `
-    cloudCover = ${cloud},`;
+    cloudCover=${cloud},`;
   }
   if (additionnalParameters[0].name && additionnalParameters[0].value) {
     code +=
       '\n' +
+      tab +
+      '**{\n' +
       additionnalParameters
         .filter(
           ({ name, value }) => name && value && name !== '' && value !== ''
         )
         .filter(({ name, value }) => name !== '' && value !== '')
-        .map(({ name, value }) => `    ${name} = "${value}", `)
+        .map(
+          ({ name, value }) =>
+            `${tab + tab}"${name.trim()}": "${value.trim()}", `
+        )
         .join('\n');
   }
   code += `
+${tab}}
 )`;
 
   return code;
