@@ -1,5 +1,11 @@
 # Release history
 
+## 3.3.1 (2023-02-16)
+
+- Fixes generated code formatting [(#109)](https://github.com/CS-SI/eodag-labextension/pull/109)
+- Prevents not-ready kernel error [(#109)](https://github.com/CS-SI/eodag-labextension/pull/109)
+- Updates dependencies and developement tools versions [(#111)](https://github.com/CS-SI/eodag-labextension/pull/111)
+
 ## 3.3.0 (2023-01-18)
 
 - Layout update and new button to directly generate search code [(#95)](https://github.com/CS-SI/eodag-labextension/pull/95)
