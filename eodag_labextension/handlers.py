@@ -68,6 +68,11 @@ class SearchHandler(APIHandler):
 
         arguments = json.loads(self.request.body)
 
+        # move geom to intersects parameter
+        geom = arguments.pop("geom", None)
+        if geom:
+            arguments["intersects"] = geom
+
         try:
             response = search_products(product_type, arguments, stac_formatted=False)
         except ValidationError as e:
