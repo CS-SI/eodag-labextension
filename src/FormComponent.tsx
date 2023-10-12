@@ -245,7 +245,6 @@ export const FormComponent: FC<IProps> = ({
                         selectsStart
                         startDate={startDate}
                         endDate={endDate}
-                        maxDate={endDate}
                         onChange={(d: Date) => {
                           setEndDate(d);
                           onChange(d);
