@@ -1,5 +1,14 @@
 # Release history
 
+## 3.4.0 (2023-10-12)
+
+- Updates internal geometry format and removes exposed REST API [(#120)](https://github.com/CS-SI/eodag-labextension/pull/120)
+- Fixes issue with DatePicker maximum date [(#122)](https://github.com/CS-SI/eodag-labextension/pull/122)
+- Updates pre-commit hooks versions [(#114)](https://github.com/CS-SI/eodag-labextension/pull/114)
+- Updates dependencies and developement tools versions [(#115)](https://github.com/CS-SI/eodag-labextension/pull/115)
+  [(#117)](https://github.com/CS-SI/eodag-labextension/pull/117)[(#118)](https://github.com/CS-SI/eodag-labextension/pull/118)
+  [(#121)](https://github.com/CS-SI/eodag-labextension/pull/121)
+
 ## 3.3.1 (2023-02-16)
 
 - Fixes generated code formatting [(#109)](https://github.com/CS-SI/eodag-labextension/pull/109)
