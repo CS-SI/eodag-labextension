@@ -16,17 +16,51 @@ from jupyter_server.utils import url_path_join
 
 
 class ProductTypeHandler(APIHandler):
-    """Product type listing handler
-
-    .. note::
-
-        Product types endpoint filtered by provider not implemented"""
+    """Product type listing handlerd"""
 
     @tornado.web.authenticated
     def get(self):
         """Get endpoint"""
 
-        self.write(json.dumps(get_product_types()))
+        get_product_types_kwargs = {}
+        query_dict = parse_qs(self.request.query)
+        if "provider" in query_dict and isinstance(query_dict["provider"], list) and len(query_dict["provider"]) > 0:
+            get_product_types_kwargs["provider"] = query_dict["provider"][0]
+        product_types = get_product_types(**get_product_types_kwargs)
+
+        self.write(json.dumps(product_types))
+
+
+class ProvidersHandler(APIHandler):
+    """Providers listing handler"""
+
+    @tornado.web.authenticated
+    def get(self):
+        """Get endpoint"""
+
+        available_providers_kwargs = {}
+        query_dict = parse_qs(self.request.query)
+        if (
+            "product_type" in query_dict
+            and isinstance(query_dict["product_type"], list)
+            and len(query_dict["product_type"]) > 0
+        ):
+            available_providers_kwargs["product_type"] = query_dict["product_type"][0]
+        available_providers = eodag_api.available_providers(**available_providers_kwargs)
+
+        providers_list = [
+            dict(
+                provider=provider,
+                priority=conf.priority,
+                description=getattr(conf, "description", None),
+                url=getattr(conf, "url", None),
+            )
+            for provider, conf in eodag_api.providers_config.items()
+            if provider in available_providers
+        ]
+        providers_list.sort(key=lambda x: (x["priority"] * -1, x["provider"]))
+
+        self.write(json.dumps(providers_list))
 
 
 class GuessProductTypeHandler(APIHandler):
@@ -121,12 +155,14 @@ def setup_handlers(web_app, url_path):
     # matching patterns
     host_pattern = ".*$"
     product_types_pattern = url_path_join(base_url, url_path, "product-types")
+    providers_pattern = url_path_join(base_url, url_path, "providers")
     guess_product_types_pattern = url_path_join(base_url, url_path, "guess-product-type")
     search_pattern = url_path_join(base_url, url_path, r"(?P<product_type>[\w-]+)")
 
     # handlers added for each pattern
     handlers = [
         (product_types_pattern, ProductTypeHandler),
+        (providers_pattern, ProvidersHandler),
         (guess_product_types_pattern, GuessProductTypeHandler),
         (MethodAndPathMatch("POST", search_pattern), SearchHandler),
     ]
