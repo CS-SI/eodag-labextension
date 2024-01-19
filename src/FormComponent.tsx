@@ -56,6 +56,7 @@ export const FormComponent: FC<IProps> = ({
   commands
 }) => {
   const [productTypes, setProductTypes] = useState<IOptionTypeBase[]>();
+  const [providers, setProviders] = useState<IOptionTypeBase[]>();
   const defaultStartDate: Date = undefined;
   const defaultEndDate: Date = undefined;
   const [startDate, setStartDate] = useState(undefined);
@@ -64,6 +65,8 @@ export const FormComponent: FC<IProps> = ({
   const [isLoadingSearch, setIsLoadingSearch] = useState(false);
   const [openModal, setOpenModal] = useState(true);
   const [selectValue, setSelectValue] = useState(null);
+  const [providersValue, setProvidersValue] = useState(null);
+  const [productTypesValue, setProductTypesValue] = useState(null);
 
   const {
     control,
@@ -87,7 +90,11 @@ export const FormComponent: FC<IProps> = ({
       _serverSettings.baseUrl,
       `${EODAG_SERVER_ADRESS}`
     );
-    fetch(URLExt.join(_eodag_server, 'product-types/'), {
+    const slug = providersValue
+      ? `product-types?provider=${providersValue}`
+      : 'product-types/';
+
+    fetch(URLExt.join(_eodag_server, slug), {
       credentials: 'same-origin'
     })
       .then(response => {
@@ -106,6 +113,7 @@ export const FormComponent: FC<IProps> = ({
           label: product.ID,
           description: product.abstract
         }));
+        console.log('productTypes changed');
         setProductTypes(productTypes);
       })
       .catch(() => {
@@ -114,7 +122,47 @@ export const FormComponent: FC<IProps> = ({
           {}
         );
       });
-  }, []);
+  }, [providersValue]);
+
+  useEffect(() => {
+    // Fetch providers
+    const _serverSettings = ServerConnection.makeSettings();
+    const _eodag_server = URLExt.join(
+      _serverSettings.baseUrl,
+      `${EODAG_SERVER_ADRESS}`
+    );
+    const slug = productTypesValue
+      ? `providers?product_type=${productTypesValue}`
+      : 'providers/';
+
+    fetch(URLExt.join(_eodag_server, slug), {
+      credentials: 'same-origin'
+    })
+      .then(response => {
+        if (response.status >= 400) {
+          showErrorMessage(
+            `Unable to contact the EODAG server. Are you sure the adress is ${_eodag_server}/ ?`,
+            {}
+          );
+          throw new Error('Bad response from server');
+        }
+        return response.json();
+      })
+      .then(providers => {
+        const providersList = map(providers, provider => ({
+          value: provider.provider,
+          label: provider.provider,
+          description: provider.description
+        }));
+        setProviders(providersList);
+      })
+      .catch(() => {
+        showErrorMessage(
+          `Unable to contact the EODAG server. Are you sure the adress is ${_eodag_server}/ ?`,
+          {}
+        );
+      });
+  }, [productTypesValue]);
 
   // useEffect(
   //   () => {
@@ -183,16 +231,37 @@ export const FormComponent: FC<IProps> = ({
         </div>
         <div className="jp-EodagWidget-field">
           <Controller
+            name="providers"
+            control={control}
+            rules={{ required: true }}
+            render={({ field: { onChange, value } }) => (
+              <Autocomplete
+                label="Provider"
+                url="providers?product_type"
+                suggestions={providers}
+                value={value}
+                handleChange={(e: IOptionTypeBase | null) => {
+                  onChange(e?.value);
+                  setSelectValue(e?.value);
+                  setProvidersValue(e?.value);
+                }}
+              />
+            )}
+          />
+          <Controller
             name="productType"
             control={control}
             rules={{ required: true }}
             render={({ field: { onChange, value } }) => (
               <Autocomplete
+                label="Product Types"
+                url="product-types?provider"
                 suggestions={productTypes}
                 value={value}
                 handleChange={(e: IOptionTypeBase | null) => {
                   onChange(e?.value);
                   setSelectValue(e?.value);
+                  setProductTypesValue(e?.value);
                 }}
               />
             )}

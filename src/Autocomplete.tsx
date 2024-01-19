@@ -92,11 +92,13 @@ interface IProps {
   suggestions: OptionTypeBase[];
   value: string;
   handleChange: any;
+  url: string;
+  label: string;
 }
 
 class IntegrationReactSelect extends React.Component<IProps> {
   render() {
-    const { suggestions, value, handleChange } = this.props;
+    const { label, url, suggestions, value, handleChange } = this.props;
     const currentValue: OptionTypeBase = value
       ? suggestions.find(e => e.value === value)
       : undefined;
@@ -108,12 +110,9 @@ class IntegrationReactSelect extends React.Component<IProps> {
         `${EODAG_SERVER_ADRESS}`
       );
 
-      return fetch(
-        URLExt.join(_eodag_server, `guess-product-type?keywords=${inputValue}`),
-        {
-          credentials: 'same-origin'
-        }
-      )
+      return fetch(URLExt.join(_eodag_server, `${url}=${inputValue}`), {
+        credentials: 'same-origin'
+      })
         .then(response => {
           if (response.status >= 400) {
             showErrorMessage(
@@ -125,11 +124,21 @@ class IntegrationReactSelect extends React.Component<IProps> {
           return response.json();
         })
         .then(products => {
-          const guessProductTypes = map(products, product => ({
-            value: product.ID,
-            label: product.ID,
-            description: product.abstract
-          }));
+          const guessProductTypes = map(products, product => {
+            if ('provider' in product) {
+              return {
+                value: product.provider,
+                label: product.provider,
+                description: product.description
+              };
+            } else {
+              return {
+                value: product.ID,
+                label: product.ID,
+                description: product.abstract
+              };
+            }
+          });
           return guessProductTypes;
         });
     };
@@ -142,7 +151,7 @@ class IntegrationReactSelect extends React.Component<IProps> {
     return (
       <div className="jp-EodagWidget-field">
         <label className="jp-EodagWidget-input-name">
-          Product type
+          {label}
           <div
             style={{
               marginTop: 10
