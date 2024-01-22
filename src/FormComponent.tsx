@@ -47,12 +47,12 @@ export interface IOptionTypeBase {
   [key: string]: any;
 }
 
-interface Product {
+interface IProduct {
   ID: string;
   abstract: string;
 }
 
-interface Provider {
+interface IProvider {
   provider: string;
   description: string;
 }
@@ -93,12 +93,12 @@ export const FormComponent: FC<IProps> = ({
   });
 
   useEffect(() => {
-    useFetchData<Product>({
+    useFetchData<IProduct>({
       queryParams: providersValue
         ? `product-types?provider=${providersValue}`
         : 'product-types',
 
-      onSuccess: (products: Product[]) => {
+      onSuccess: (products: IProduct[]) => {
         const productTypeList: IOptionTypeBase[] = map(products, product => ({
           value: product.ID,
           label: product.ID,
@@ -110,11 +110,11 @@ export const FormComponent: FC<IProps> = ({
   }, [providersValue]);
 
   useEffect(() => {
-    useFetchData<Provider>({
+    useFetchData<IProvider>({
       queryParams: productTypesValue
         ? `providers?product_type=${productTypesValue}`
         : 'providers/',
-      onSuccess: (providers: Provider[]) => {
+      onSuccess: (providers: IProvider[]) => {
         const providersList: IOptionTypeBase[] = map(providers, provider => ({
           value: provider.provider,
           label: provider.provider,
@@ -124,19 +124,6 @@ export const FormComponent: FC<IProps> = ({
       }
     });
   }, [productTypesValue]);
-
-  // useEffect(
-  //   () => {
-  //     if (!_.isEmpty(errors)) {
-  //       showErrorMessage(
-  //         'The following fields are required',
-  //         _.keys(errors).join(', ')
-  //       ).then(() => clearErrors());
-  //     }
-  //   },
-  //   // useEffect is not triggered with only errors as dependency thus we need to list all its elements
-  //   [errors]
-  // );
 
   const onSubmit: SubmitHandler<IFormInput> = data => {
     if (!isNotebookCreated()) {

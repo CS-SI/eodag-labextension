@@ -4,7 +4,7 @@ import { ServerConnection } from '@jupyterlab/services';
 
 import { EODAG_SERVER_ADRESS } from './../config';
 
-interface UseFetchDataProps<T> {
+interface IUseFetchDataProps<T> {
   queryParams: string;
   onSuccess: (data: T[]) => void;
 }
@@ -12,7 +12,7 @@ interface UseFetchDataProps<T> {
 const useFetchData = <T>({
   queryParams,
   onSuccess
-}: UseFetchDataProps<T>): void => {
+}: IUseFetchDataProps<T>): void => {
   const fetchData = async () => {
     const serverSettings = ServerConnection.makeSettings();
     const eodagServer = URLExt.join(
