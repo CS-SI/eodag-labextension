@@ -14,13 +14,6 @@ import ReactTooltip from 'react-tooltip';
 import { OptionTypeBase } from 'react-select/src/types';
 import AsyncSelect from 'react-select/async';
 
-import { showErrorMessage } from '@jupyterlab/apputils';
-import { URLExt } from '@jupyterlab/coreutils';
-import { ServerConnection } from '@jupyterlab/services';
-import { EODAG_SERVER_ADRESS } from './config';
-import { map } from 'lodash';
-import { IOptionTypeBase } from './FormComponent';
-
 function NoOptionsMessage(props: any) {
   return (
     <div
@@ -98,55 +91,11 @@ interface IProps {
 
 class IntegrationReactSelect extends React.Component<IProps> {
   render() {
-    const { label, url, suggestions, value, handleChange } = this.props;
+    const { label, suggestions, value, handleChange } = this.props;
+
     const currentValue: OptionTypeBase = value
       ? suggestions.find(e => e.value === value)
       : undefined;
-
-    const guessProductTypes = async (inputValue: string) => {
-      const _serverSettings = ServerConnection.makeSettings();
-      const _eodag_server = URLExt.join(
-        _serverSettings.baseUrl,
-        `${EODAG_SERVER_ADRESS}`
-      );
-
-      return fetch(URLExt.join(_eodag_server, `${url}=${inputValue}`), {
-        credentials: 'same-origin'
-      })
-        .then(response => {
-          if (response.status >= 400) {
-            showErrorMessage(
-              `Unable to contact the EODAG server. Are you sure the adress is ${_eodag_server}/ ?`,
-              {}
-            );
-            throw new Error('Bad response from server');
-          }
-          return response.json();
-        })
-        .then(products => {
-          const guessProductTypes = map(products, product => {
-            if ('provider' in product) {
-              return {
-                value: product.provider,
-                label: product.provider,
-                description: product.description
-              };
-            } else {
-              return {
-                value: product.ID,
-                label: product.ID,
-                description: product.abstract
-              };
-            }
-          });
-          return guessProductTypes;
-        });
-    };
-
-    const loadSuggestions = (inputValue: string) =>
-      new Promise<IOptionTypeBase[]>(resolve => {
-        resolve(guessProductTypes(inputValue));
-      });
 
     return (
       <div className="jp-EodagWidget-field">
@@ -162,7 +111,6 @@ class IntegrationReactSelect extends React.Component<IProps> {
               classNamePrefix="jp-EodagWidget-select"
               cacheOptions
               defaultOptions={suggestions}
-              loadOptions={loadSuggestions}
               components={listcomponents}
               value={currentValue}
               onChange={handleChange}

@@ -12,14 +12,11 @@ import {
   UseFormReturn
 } from 'react-hook-form';
 import { showErrorMessage } from '@jupyterlab/apputils';
-import { URLExt } from '@jupyterlab/coreutils';
-import { ServerConnection } from '@jupyterlab/services';
 import { map } from 'lodash';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import 'isomorphic-fetch';
 import Autocomplete from './Autocomplete';
-import { EODAG_SERVER_ADRESS } from './config';
 import SearchService from './SearchService';
 import { ChangeEvent } from 'react';
 import MapExtentComponent from './MapExtentComponent';
@@ -36,6 +33,7 @@ import {
 } from './icones.js';
 import ReactTooltip from 'react-tooltip';
 import { ThreeDots } from 'react-loader-spinner';
+import { useFetchData } from './hooks/useFetchData';
 
 export interface IProps {
   handleShowFeature: any;
@@ -44,8 +42,19 @@ export interface IProps {
   isNotebookCreated: any;
   commands: any;
 }
+
 export interface IOptionTypeBase {
   [key: string]: any;
+}
+
+interface Product {
+  ID: string;
+  abstract: string;
+}
+
+interface Provider {
+  provider: string;
+  description: string;
 }
 
 export const FormComponent: FC<IProps> = ({
@@ -84,84 +93,36 @@ export const FormComponent: FC<IProps> = ({
   });
 
   useEffect(() => {
-    // Fetch product types
-    const _serverSettings = ServerConnection.makeSettings();
-    const _eodag_server = URLExt.join(
-      _serverSettings.baseUrl,
-      `${EODAG_SERVER_ADRESS}`
-    );
-    const slug = providersValue
-      ? `product-types?provider=${providersValue}`
-      : 'product-types/';
+    useFetchData<Product>({
+      queryParams: providersValue
+        ? `product-types?provider=${providersValue}`
+        : 'product-types',
 
-    fetch(URLExt.join(_eodag_server, slug), {
-      credentials: 'same-origin'
-    })
-      .then(response => {
-        if (response.status >= 400) {
-          showErrorMessage(
-            `Unable to contact the EODAG server. Are you sure the adress is ${_eodag_server}/ ?`,
-            {}
-          );
-          throw new Error('Bad response from server');
-        }
-        return response.json();
-      })
-      .then(products => {
-        const productTypes = map(products, product => ({
+      onSuccess: (products: Product[]) => {
+        const productTypeList: IOptionTypeBase[] = map(products, product => ({
           value: product.ID,
           label: product.ID,
           description: product.abstract
         }));
-        console.log('productTypes changed');
-        setProductTypes(productTypes);
-      })
-      .catch(() => {
-        showErrorMessage(
-          `Unable to contact the EODAG server. Are you sure the adress is ${_eodag_server}/ ?`,
-          {}
-        );
-      });
+        setProductTypes(productTypeList);
+      }
+    });
   }, [providersValue]);
 
   useEffect(() => {
-    // Fetch providers
-    const _serverSettings = ServerConnection.makeSettings();
-    const _eodag_server = URLExt.join(
-      _serverSettings.baseUrl,
-      `${EODAG_SERVER_ADRESS}`
-    );
-    const slug = productTypesValue
-      ? `providers?product_type=${productTypesValue}`
-      : 'providers/';
-
-    fetch(URLExt.join(_eodag_server, slug), {
-      credentials: 'same-origin'
-    })
-      .then(response => {
-        if (response.status >= 400) {
-          showErrorMessage(
-            `Unable to contact the EODAG server. Are you sure the adress is ${_eodag_server}/ ?`,
-            {}
-          );
-          throw new Error('Bad response from server');
-        }
-        return response.json();
-      })
-      .then(providers => {
-        const providersList = map(providers, provider => ({
+    useFetchData<Provider>({
+      queryParams: productTypesValue
+        ? `providers?product_type=${productTypesValue}`
+        : 'providers/',
+      onSuccess: (providers: Provider[]) => {
+        const providersList: IOptionTypeBase[] = map(providers, provider => ({
           value: provider.provider,
           label: provider.provider,
           description: provider.description
         }));
         setProviders(providersList);
-      })
-      .catch(() => {
-        showErrorMessage(
-          `Unable to contact the EODAG server. Are you sure the adress is ${_eodag_server}/ ?`,
-          {}
-        );
-      });
+      }
+    });
   }, [productTypesValue]);
 
   // useEffect(
