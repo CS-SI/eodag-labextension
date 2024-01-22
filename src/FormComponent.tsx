@@ -73,7 +73,6 @@ export const FormComponent: FC<IProps> = ({
   const [cloud, setCloud] = useState(100);
   const [isLoadingSearch, setIsLoadingSearch] = useState(false);
   const [openModal, setOpenModal] = useState(true);
-  const [selectValue, setSelectValue] = useState(null);
   const [providersValue, setProvidersValue] = useState(null);
   const [productTypesValue, setProductTypesValue] = useState(null);
 
@@ -190,7 +189,6 @@ export const FormComponent: FC<IProps> = ({
                 value={value}
                 handleChange={(e: IOptionTypeBase | null) => {
                   onChange(e?.value);
-                  setSelectValue(e?.value);
                   setProvidersValue(e?.value);
                 }}
               />
@@ -208,7 +206,6 @@ export const FormComponent: FC<IProps> = ({
                 value={value}
                 handleChange={(e: IOptionTypeBase | null) => {
                   onChange(e?.value);
-                  setSelectValue(e?.value);
                   setProductTypesValue(e?.value);
                 }}
               />
@@ -329,7 +326,7 @@ export const FormComponent: FC<IProps> = ({
                     type="submit"
                     color="primary"
                     className={
-                      !selectValue
+                      !productTypesValue
                         ? 'jp-EodagWidget-buttons-button jp-EodagWidget-buttons-button__disabled'
                         : 'jp-EodagWidget-buttons-button'
                     }
@@ -344,7 +341,7 @@ export const FormComponent: FC<IProps> = ({
                       <br />
                       Results
                     </p>
-                    {!selectValue && (
+                    {!productTypesValue && (
                       <ReactTooltip
                         id="btn-preview-results"
                         className="jp-Eodag-tooltip"
@@ -360,7 +357,7 @@ export const FormComponent: FC<IProps> = ({
                     type="submit"
                     color="primary"
                     className={
-                      !selectValue
+                      !productTypesValue
                         ? 'jp-EodagWidget-buttons-button jp-EodagWidget-buttons-button__disabled'
                         : 'jp-EodagWidget-buttons-button'
                     }
@@ -375,7 +372,7 @@ export const FormComponent: FC<IProps> = ({
                       <br />
                       Code
                     </p>
-                    {!selectValue && (
+                    {!productTypesValue && (
                       <ReactTooltip
                         id="btn-generate-value"
                         className="jp-Eodag-tooltip"
