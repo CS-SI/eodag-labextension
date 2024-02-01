@@ -34,6 +34,7 @@ import {
 import ReactTooltip from 'react-tooltip';
 import { ThreeDots } from 'react-loader-spinner';
 import { useFetchData } from './hooks/useFetchData';
+import { useFetchSuggestions } from './hooks/useFetchSuggestions';
 
 export interface IProps {
   handleShowFeature: any;
@@ -162,6 +163,11 @@ export const FormComponent: FC<IProps> = ({
   const handleOpenSettings = (): void => {
     commands.execute('settingeditor:open', { query: 'EODAG' });
   };
+  useEffect(() => {
+    console.log(productTypesValue);
+  }, [productTypesValue]);
+
+  const loadProductTypesSuggestions = useFetchSuggestions();
 
   return (
     <div className="jp-EodagWidget-wrapper">
@@ -185,6 +191,7 @@ export const FormComponent: FC<IProps> = ({
               <Autocomplete
                 label="Provider"
                 url="providers?product_type"
+                placeholder="Any"
                 suggestions={providers}
                 value={value}
                 handleChange={(e: IOptionTypeBase | null) => {
@@ -200,10 +207,14 @@ export const FormComponent: FC<IProps> = ({
             rules={{ required: true }}
             render={({ field: { onChange, value } }) => (
               <Autocomplete
-                label="Product Types"
+                label="Product Type"
                 url="product-types?provider"
                 suggestions={productTypes}
+                placeholder="S2_..."
                 value={value}
+                loadSuggestions={(inputValue: string) =>
+                  loadProductTypesSuggestions(inputValue)
+                }
                 handleChange={(e: IOptionTypeBase | null) => {
                   onChange(e?.value);
                   setProductTypesValue(e?.value);

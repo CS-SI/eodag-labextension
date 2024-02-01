@@ -14,6 +14,13 @@ import ReactTooltip from 'react-tooltip';
 import { OptionTypeBase } from 'react-select/src/types';
 import AsyncSelect from 'react-select/async';
 
+// import { showErrorMessage } from '@jupyterlab/apputils';
+// import { URLExt } from '@jupyterlab/coreutils';
+// import { ServerConnection } from '@jupyterlab/services';
+// import { EODAG_SERVER_ADRESS } from './config';
+// import { map } from 'lodash';
+import { IOptionTypeBase } from './FormComponent';
+
 function NoOptionsMessage(props: any) {
   return (
     <div
@@ -87,11 +94,20 @@ interface IProps {
   handleChange: any;
   url: string;
   label: string;
+  placeholder?: string;
+  loadSuggestions?: (inputValue: string) => Promise<IOptionTypeBase[]>;
 }
 
 class IntegrationReactSelect extends React.Component<IProps> {
   render() {
-    const { label, suggestions, value, handleChange } = this.props;
+    const {
+      label,
+      suggestions,
+      value,
+      handleChange,
+      placeholder,
+      loadSuggestions
+    } = this.props;
 
     const currentValue: OptionTypeBase = value
       ? suggestions.find(e => e.value === value)
@@ -111,10 +127,11 @@ class IntegrationReactSelect extends React.Component<IProps> {
               classNamePrefix="jp-EodagWidget-select"
               cacheOptions
               defaultOptions={suggestions}
+              loadOptions={loadSuggestions}
               components={listcomponents}
               value={currentValue}
               onChange={handleChange}
-              placeholder="S2_..."
+              placeholder={placeholder}
               isClearable
             />
           </div>
