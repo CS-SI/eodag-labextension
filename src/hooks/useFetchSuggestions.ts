@@ -7,7 +7,6 @@ import { EODAG_SERVER_ADRESS } from './../config';
 
 const useFetchSuggestions = () => {
   const guessProductTypes = async (inputValue: string) => {
-    console.log('01 inputValue', inputValue);
     const _serverSettings = ServerConnection.makeSettings();
     const _eodag_server = URLExt.join(
       _serverSettings.baseUrl,

@@ -163,9 +163,6 @@ export const FormComponent: FC<IProps> = ({
   const handleOpenSettings = (): void => {
     commands.execute('settingeditor:open', { query: 'EODAG' });
   };
-  useEffect(() => {
-    console.log(productTypesValue);
-  }, [productTypesValue]);
 
   const loadProductTypesSuggestions = useFetchSuggestions();
 
@@ -184,7 +181,7 @@ export const FormComponent: FC<IProps> = ({
         </div>
         <div className="jp-EodagWidget-field">
           <Controller
-            name="providers"
+            name="provider"
             control={control}
             rules={{ required: true }}
             render={({ field: { onChange, value } }) => (
