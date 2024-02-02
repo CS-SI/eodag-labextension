@@ -62,6 +62,7 @@ setup_args = dict(
         "tornado>=6.0.3,<7.0.0",
         "notebook>=6.0.3,<7.0.0",
         "eodag[notebook]>=2.8.0",
+        "orjson",
     ],
     extras_require={"dev": ["black", "pre-commit"]},
     zip_safe=False,

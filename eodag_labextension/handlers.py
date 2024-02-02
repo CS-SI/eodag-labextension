@@ -4,9 +4,9 @@
 
 """Tornado web requests handlers"""
 
-import json
 import re
 
+import orjson
 import tornado
 from eodag.rest.utils import eodag_api, search_products
 from eodag.utils import parse_qs
@@ -29,7 +29,7 @@ class ProductTypeHandler(APIHandler):
             provider = None
 
         product_types = eodag_api.list_product_types(provider=provider)
-        self.write(json.dumps(product_types))
+        self.write(orjson.dumps(product_types))
 
 
 class ProvidersHandler(APIHandler):
@@ -61,7 +61,7 @@ class ProvidersHandler(APIHandler):
         ]
         providers_list.sort(key=lambda x: (x["priority"] * -1, x["provider"]))
 
-        self.write(json.dumps(providers_list))
+        self.write(orjson.dumps(providers_list))
 
 
 class GuessProductTypeHandler(APIHandler):
@@ -114,9 +114,9 @@ class GuessProductTypeHandler(APIHandler):
             else:
                 returned_product_types = all_product_types
 
-            self.write(json.dumps(returned_product_types))
+            self.write(orjson.dumps(returned_product_types))
         except NoMatchingProductType:
-            self.write(json.dumps([]))
+            self.write(orjson.dumps([]))
 
 
 class SearchHandler(APIHandler):
@@ -126,7 +126,7 @@ class SearchHandler(APIHandler):
     def post(self, product_type):
         """Post endpoint"""
 
-        arguments = json.loads(self.request.body)
+        arguments = orjson.loads(self.request.body)
 
         # move geom to intersects parameter
         geom = arguments.pop("geom", None)
