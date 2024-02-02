@@ -183,7 +183,6 @@ export const FormComponent: FC<IProps> = ({
           <Controller
             name="provider"
             control={control}
-            rules={{ required: true }}
             render={({ field: { onChange, value } }) => (
               <Autocomplete
                 label="Provider"
