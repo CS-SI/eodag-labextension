@@ -8,7 +8,7 @@ import json
 import re
 
 import tornado
-from eodag.rest.utils import eodag_api, get_product_types, search_products
+from eodag.rest.utils import eodag_api, search_products
 from eodag.utils import parse_qs
 from eodag.utils.exceptions import AuthenticationError, NoMatchingProductType, UnsupportedProductType, ValidationError
 from jupyter_server.base.handlers import APIHandler
@@ -21,13 +21,14 @@ class ProductTypeHandler(APIHandler):
     @tornado.web.authenticated
     def get(self):
         """Get endpoint"""
-
-        get_product_types_kwargs = {}
         query_dict = parse_qs(self.request.query)
-        if "provider" in query_dict and isinstance(query_dict["provider"], list) and len(query_dict["provider"]) > 0:
-            get_product_types_kwargs["provider"] = query_dict["provider"][0]
-        product_types = get_product_types(**get_product_types_kwargs)
 
+        if "provider" in query_dict and isinstance(query_dict["provider"], list) and len(query_dict["provider"]) > 0:
+            provider = query_dict.pop("provider")[0]
+        else:
+            provider = None
+
+        product_types = eodag_api.list_product_types(provider=provider)
         self.write(json.dumps(product_types))
 
 
@@ -71,21 +72,49 @@ class GuessProductTypeHandler(APIHandler):
         """Get endpoint"""
 
         query_dict = parse_qs(self.request.query)
-        guess_kwargs = {}
 
-        # ["aa bb", "cc-dd_ee"] to "*aa* *bb* *cc* **dd* *ee*"
-        for k, v in query_dict.items():
-            guess_kwargs[k] = re.sub(r"(\S+)", r"*\1*", " ".join(v).replace("-", " ").replace("_", " "))
+        if "provider" in query_dict and isinstance(query_dict["provider"], list) and len(query_dict["provider"]) > 0:
+            provider = query_dict.pop("provider")[0]
+        else:
+            provider = None
 
         try:
-            # guessed product types ids
-            guessed_ids_list = eodag_api.guess_product_type(**guess_kwargs)
-            # product types with full associated metadata
-            guessed_list = [
-                dict({"ID": k}, **v) for k, v in eodag_api.product_types_config.source.items() if k in guessed_ids_list
-            ]
+            returned_product_types = []
+            # fetch all product types
+            all_product_types = eodag_api.list_product_types(provider=provider)
 
-            self.write(json.dumps(guessed_list))
+            if (
+                "keywords" in query_dict
+                and isinstance(query_dict["keywords"], list)
+                and len(query_dict["keywords"]) > 0
+            ):
+                # 1. List product types starting with given keywords
+                first_keyword = query_dict["keywords"][0]
+                returned_product_types = [
+                    pt for pt in all_product_types if pt["ID"].lower().startswith(first_keyword.lower())
+                ]
+                returned_product_types_ids = [pt["ID"] for pt in returned_product_types]
+
+                # 2. Append guessed product types
+                guess_kwargs = {}
+                # ["aa bb", "cc-dd_ee"] to "*aa* *bb* *cc* **dd* *ee*"
+                for k, v in query_dict.items():
+                    guess_kwargs[k] = re.sub(r"(\S+)", r"*\1*", " ".join(v).replace("-", " ").replace("_", " "))
+
+                # guessed product types ids
+                guessed_ids_list = eodag_api.guess_product_type(**guess_kwargs)
+                # product types with full associated metadata
+                guessed_list = [
+                    pt
+                    for pt in all_product_types
+                    if pt["ID"] in guessed_ids_list and pt["ID"] not in returned_product_types_ids
+                ]
+
+                returned_product_types += guessed_list
+            else:
+                returned_product_types = all_product_types
+
+            self.write(json.dumps(returned_product_types))
         except NoMatchingProductType:
             self.write(json.dumps([]))
 
