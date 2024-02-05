@@ -30,8 +30,17 @@ class TestEodagLabExtensionHandler(AsyncHTTPTestCase):
     @mock.patch.object(APIHandler, "get_current_user", return_value=MockUser())
     @mock.patch.object(authenticated, "__call__", return_value=lambda x: x)
     def fetch_results(self, url, mock_auth, mock_user):
+        """Check that request status is 200 and return the json result as dict"""
         response = self.fetch(url)
         self.assertEqual(response.code, 200)
+        return json.loads(response.body.decode("utf-8"))
+
+    @mock.patch.object(APIHandler, "get_current_user", return_value=MockUser())
+    @mock.patch.object(authenticated, "__call__", return_value=lambda x: x)
+    def fetch_results_err400(self, url, mock_auth, mock_user):
+        """Check that request returns a 400 error"""
+        response = self.fetch(url)
+        self.assertEqual(response.code, 400)
         return json.loads(response.body.decode("utf-8"))
 
     def test_product_types(self):
@@ -43,6 +52,9 @@ class TestEodagLabExtensionHandler(AsyncHTTPTestCase):
         less_results = self.fetch_results("/eodag/product-types?provider=peps")
         self.assertGreater(len(less_results), 0)
         self.assertLess(len(less_results), len(results))
+
+        # unknown provider
+        self.fetch_results_err400("/eodag/product-types?provider=foo")
 
     def test_providers(self):
         # all providers
@@ -61,9 +73,16 @@ class TestEodagLabExtensionHandler(AsyncHTTPTestCase):
         self.assertGreater(len(result_with_description), 2)
         self.assertEqual(result_with_description[0]["provider"], "cop_ads")
 
+        no_result = self.fetch_results("/eodag/providers?product_type=foo")
+        self.assertEqual(len(no_result), 0)
+
     def test_guess_product_types(self):
         all_results = self.fetch_results("/eodag/guess-product-type")
         self.assertIn("S2_MSI_L1C", [pt["ID"] for pt in all_results])
+
+        one_provider_results = self.fetch_results("/eodag/guess-product-type?provider=creodias")
+        self.assertLess(len(one_provider_results), len(all_results))
+        self.assertIn("COP_DEM_GLO90_DGED", [pt["ID"] for pt in all_results])
 
         one_result = self.fetch_results("/eodag/guess-product-type?keywords=S2_MSI_L1C")
         self.assertEqual(len(one_result), 1)
@@ -78,3 +97,10 @@ class TestEodagLabExtensionHandler(AsyncHTTPTestCase):
         self.assertLess(len(more_results), len(all_results))
         self.assertTrue(more_results[0]["ID"].lower().startswith("sentinel"))
         self.assertIn("S2_MSI_L1C", [pt["ID"] for pt in more_results])
+
+        less_results = self.fetch_results("/eodag/guess-product-type?keywords=Sentinel&provider=peps")
+        self.assertGreater(len(more_results), 1)
+        self.assertLess(len(less_results), len(more_results))
+        self.assertEqual(less_results[0]["ID"], "S1_SAR_GRD")
+
+        self.fetch_results_err400("/eodag/guess-product-type?provider=foo")

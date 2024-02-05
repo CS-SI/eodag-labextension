@@ -10,7 +10,13 @@ import orjson
 import tornado
 from eodag.rest.utils import eodag_api, search_products
 from eodag.utils import parse_qs
-from eodag.utils.exceptions import AuthenticationError, NoMatchingProductType, UnsupportedProductType, ValidationError
+from eodag.utils.exceptions import (
+    AuthenticationError,
+    NoMatchingProductType,
+    UnsupportedProductType,
+    UnsupportedProvider,
+    ValidationError,
+)
 from jupyter_server.base.handlers import APIHandler
 from jupyter_server.utils import url_path_join
 
@@ -23,12 +29,18 @@ class ProductTypeHandler(APIHandler):
         """Get endpoint"""
         query_dict = parse_qs(self.request.query)
 
+        provider = None
         if "provider" in query_dict and isinstance(query_dict["provider"], list) and len(query_dict["provider"]) > 0:
             provider = query_dict.pop("provider")[0]
-        else:
-            provider = None
+        provider = None if not provider or provider == "null" else provider
 
-        product_types = eodag_api.list_product_types(provider=provider)
+        try:
+            product_types = eodag_api.list_product_types(provider=provider)
+        except UnsupportedProvider as e:
+            self.set_status(400)
+            self.finish({"error": str(e)})
+            return
+
         self.write(orjson.dumps(product_types))
 
 
@@ -97,10 +109,10 @@ class GuessProductTypeHandler(APIHandler):
 
         query_dict = parse_qs(self.request.query)
 
+        provider = None
         if "provider" in query_dict and isinstance(query_dict["provider"], list) and len(query_dict["provider"]) > 0:
             provider = query_dict.pop("provider")[0]
-        else:
-            provider = None
+        provider = None if not provider or provider == "null" else provider
 
         try:
             returned_product_types = []
@@ -145,6 +157,10 @@ class GuessProductTypeHandler(APIHandler):
             self.write(orjson.dumps(returned_product_types))
         except NoMatchingProductType:
             self.write(orjson.dumps([]))
+        except UnsupportedProvider as e:
+            self.set_status(400)
+            self.finish({"error": str(e)})
+            return
 
 
 class SearchHandler(APIHandler):
@@ -160,6 +176,10 @@ class SearchHandler(APIHandler):
         geom = arguments.pop("geom", None)
         if geom:
             arguments["intersects"] = geom
+
+        provider = arguments.pop("provider", None)
+        if provider and provider != "null":
+            arguments["provider"] = provider
 
         try:
             response = search_products(product_type, arguments, stac_formatted=False)
