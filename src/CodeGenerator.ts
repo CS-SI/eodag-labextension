@@ -48,10 +48,10 @@ geometry = "${geojsonToWKT(geometry)}"`;
 search_results, total_count = dag.search(`;
   if (provider) {
     code += `
-  provider="${provider}",`;
+    provider="${provider}",`;
   }
   code += `
-  productType="${productType}",`;
+    productType="${productType}",`;
   if (geometryIsOk) {
     code += `
     geom=geometry,`;
