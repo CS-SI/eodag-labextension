@@ -89,13 +89,19 @@ class GuessProductTypeHandler(APIHandler):
                 and len(query_dict["keywords"]) > 0
             ):
                 # 1. List product types starting with given keywords
-                first_keyword = query_dict["keywords"][0]
-                returned_product_types = [
-                    pt for pt in all_product_types if pt["ID"].lower().startswith(first_keyword.lower())
-                ]
+                first_keyword = query_dict["keywords"][0].lower()
+                returned_product_types = [pt for pt in all_product_types if pt["ID"].lower().startswith(first_keyword)]
                 returned_product_types_ids = [pt["ID"] for pt in returned_product_types]
 
-                # 2. Append guessed product types
+                # 2. List product types containing keyword
+                returned_product_types += [
+                    pt
+                    for pt in all_product_types
+                    if first_keyword in pt["ID"].lower() and pt["ID"] not in returned_product_types_ids
+                ]
+                returned_product_types_ids += [pt["ID"] for pt in returned_product_types]
+
+                # 3. Append guessed product types
                 guess_kwargs = {}
                 # ["aa bb", "cc-dd_ee"] to "*aa* *bb* *cc* **dd* *ee*"
                 for k, v in query_dict.items():
@@ -104,13 +110,11 @@ class GuessProductTypeHandler(APIHandler):
                 # guessed product types ids
                 guessed_ids_list = eodag_api.guess_product_type(**guess_kwargs)
                 # product types with full associated metadata
-                guessed_list = [
+                returned_product_types += [
                     pt
                     for pt in all_product_types
                     if pt["ID"] in guessed_ids_list and pt["ID"] not in returned_product_types_ids
                 ]
-
-                returned_product_types += guessed_list
             else:
                 returned_product_types = all_product_types
 
