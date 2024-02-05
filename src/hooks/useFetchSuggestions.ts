@@ -6,7 +6,10 @@ import { IOptionTypeBase } from './../FormComponent';
 import { EODAG_SERVER_ADRESS } from './../config';
 
 const useFetchSuggestions = () => {
-  const guessProductTypes = async (inputValue: string) => {
+  const guessProductTypes = async (
+    providerValue: string,
+    inputValue: string
+  ) => {
     const _serverSettings = ServerConnection.makeSettings();
     const _eodag_server = URLExt.join(
       _serverSettings.baseUrl,
@@ -14,7 +17,10 @@ const useFetchSuggestions = () => {
     );
 
     return fetch(
-      URLExt.join(_eodag_server, `guess-product-type?keywords=${inputValue}`),
+      URLExt.join(
+        _eodag_server,
+        `guess-product-type?provider=${providerValue}&keywords=${inputValue}`
+      ),
       {
         credentials: 'same-origin'
       }
@@ -39,10 +45,17 @@ const useFetchSuggestions = () => {
       });
   };
 
-  const loadSuggestions = (inputValue: string) =>
-    new Promise<IOptionTypeBase[]>(resolve => {
-      resolve(guessProductTypes(inputValue));
-    });
+  // const loadSuggestions = (providerValue: string, inputValue: string) =>
+  //   new Promise<IOptionTypeBase[]>(resolve => {
+  //     resolve(guessProductTypes(providerValue, inputValue));
+  //   });
+
+  const loadSuggestions = async (
+    providerValue: string,
+    inputValue: string
+  ): Promise<IOptionTypeBase[]> => {
+    return await guessProductTypes(providerValue, inputValue);
+  };
   return loadSuggestions;
 };
 

@@ -97,7 +97,6 @@ export const FormComponent: FC<IProps> = ({
       queryParams: providersValue
         ? `product-types?provider=${providersValue}`
         : 'product-types',
-
       onSuccess: (products: IProduct[]) => {
         const productTypeList: IOptionTypeBase[] = map(products, product => ({
           value: product.ID,
@@ -209,7 +208,7 @@ export const FormComponent: FC<IProps> = ({
                 placeholder="S2_..."
                 value={value}
                 loadSuggestions={(inputValue: string) =>
-                  loadProductTypesSuggestions(inputValue)
+                  loadProductTypesSuggestions(providersValue, inputValue)
                 }
                 handleChange={(e: IOptionTypeBase | null) => {
                   onChange(e?.value);
