@@ -53,6 +53,14 @@ class TestEodagLabExtensionHandler(AsyncHTTPTestCase):
         self.assertGreater(len(less_results), 0)
         self.assertLess(len(less_results), len(results))
 
+        result_with_name = self.fetch_results("/eodag/providers?keywords=peps")
+        self.assertEqual(len(result_with_name), 1)
+        self.assertEqual(result_with_name[0]["provider"], "peps")
+
+        result_with_description = self.fetch_results("/eodag/providers?keywords=cop")
+        self.assertGreater(len(result_with_description), 2)
+        self.assertEqual(result_with_description[0]["provider"], "cop_ads")
+
     def test_guess_product_types(self):
         all_results = self.fetch_results("/eodag/guess-product-type")
         self.assertIn("S2_MSI_L1C", [pt["ID"] for pt in all_results])

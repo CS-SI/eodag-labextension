@@ -49,7 +49,7 @@ class ProvidersHandler(APIHandler):
             available_providers_kwargs["product_type"] = query_dict["product_type"][0]
         available_providers = eodag_api.available_providers(**available_providers_kwargs)
 
-        providers_list = [
+        all_providers_list = [
             dict(
                 provider=provider,
                 priority=conf.priority,
@@ -59,9 +59,33 @@ class ProvidersHandler(APIHandler):
             for provider, conf in eodag_api.providers_config.items()
             if provider in available_providers
         ]
-        providers_list.sort(key=lambda x: (x["priority"] * -1, x["provider"]))
+        all_providers_list.sort(key=lambda x: (x["priority"] * -1, x["provider"]))
 
-        self.write(orjson.dumps(providers_list))
+        returned_providers = []
+        if "keywords" in query_dict and isinstance(query_dict["keywords"], list) and len(query_dict["keywords"]) > 0:
+            # 1. List providers starting with given keyword
+            first_keyword = query_dict["keywords"][0].lower()
+            returned_providers = [p for p in all_providers_list if p["provider"].lower().startswith(first_keyword)]
+            providers_ids = [p["provider"] for p in returned_providers]
+
+            # 2. List providers containing given keyword
+            returned_providers += [
+                p
+                for p in all_providers_list
+                if first_keyword in p["provider"].lower() and p["provider"] not in providers_ids
+            ]
+            providers_ids = [p["provider"] for p in returned_providers]
+
+            # 3. List providers containing given keyword in decription
+            returned_providers += [
+                p
+                for p in all_providers_list
+                if first_keyword in p["description"].lower() and p["provider"] not in providers_ids
+            ]
+        else:
+            returned_providers = all_providers_list
+
+        self.write(orjson.dumps(returned_providers))
 
 
 class GuessProductTypeHandler(APIHandler):
