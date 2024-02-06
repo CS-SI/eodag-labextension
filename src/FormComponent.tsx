@@ -12,7 +12,6 @@ import {
   UseFormReturn
 } from 'react-hook-form';
 import { showErrorMessage } from '@jupyterlab/apputils';
-import { map } from 'lodash';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import 'isomorphic-fetch';
@@ -33,8 +32,7 @@ import {
 } from './icones.js';
 import ReactTooltip from 'react-tooltip';
 import { ThreeDots } from 'react-loader-spinner';
-import { useFetchData } from './hooks/useFetchData';
-import { useFetchSuggestions } from './hooks/useFetchSuggestions';
+import { useFetchProduct, useFetchProvider } from './hooks/useFetchData';
 
 export interface IProps {
   handleShowFeature: any;
@@ -48,12 +46,12 @@ export interface IOptionTypeBase {
   [key: string]: any;
 }
 
-interface IProduct {
+export interface IProduct {
   ID: string;
   abstract: string;
 }
 
-interface IProvider {
+export interface IProvider {
   provider: string;
   description: string;
 }
@@ -74,8 +72,8 @@ export const FormComponent: FC<IProps> = ({
   const [cloud, setCloud] = useState(100);
   const [isLoadingSearch, setIsLoadingSearch] = useState(false);
   const [openModal, setOpenModal] = useState(true);
-  const [providersValue, setProvidersValue] = useState(null);
-  const [productTypesValue, setProductTypesValue] = useState(null);
+  const [providerValue, setProviderValue] = useState(null);
+  const [productTypeValue, setProductTypeValue] = useState(null);
 
   const {
     control,
@@ -93,36 +91,24 @@ export const FormComponent: FC<IProps> = ({
   });
 
   useEffect(() => {
-    useFetchData<IProduct>({
-      queryParams: providersValue
-        ? `product-types?provider=${providersValue}`
-        : 'product-types',
-      onSuccess: (products: IProduct[]) => {
-        const productTypeList: IOptionTypeBase[] = map(products, product => ({
-          value: product.ID,
-          label: product.ID,
-          description: product.abstract
-        }));
-        setProductTypes(productTypeList);
-      }
-    });
-  }, [providersValue]);
+    const fetchData = async () => {
+      const fetchProduct = useFetchProduct();
+      const productList = await fetchProduct(providerValue);
+      setProductTypes(productList);
+    };
+
+    fetchData();
+  }, [providerValue]);
 
   useEffect(() => {
-    useFetchData<IProvider>({
-      queryParams: productTypesValue
-        ? `providers?product_type=${productTypesValue}`
-        : 'providers/',
-      onSuccess: (providers: IProvider[]) => {
-        const providersList: IOptionTypeBase[] = map(providers, provider => ({
-          value: provider.provider,
-          label: provider.provider,
-          description: provider.description
-        }));
-        setProviders(providersList);
-      }
-    });
-  }, [productTypesValue]);
+    const fetchData = async () => {
+      const fetchProvider = useFetchProvider();
+      const providerList = await fetchProvider(productTypeValue);
+      setProviders(providerList);
+    };
+
+    fetchData();
+  }, [productTypeValue]);
 
   const onSubmit: SubmitHandler<IFormInput> = data => {
     if (!isNotebookCreated()) {
@@ -163,7 +149,8 @@ export const FormComponent: FC<IProps> = ({
     commands.execute('settingeditor:open', { query: 'EODAG' });
   };
 
-  const loadProductTypesSuggestions = useFetchSuggestions();
+  const loadProductTypesSuggestions = useFetchProduct();
+  const loadProviderSuggestions = useFetchProvider();
 
   return (
     <div className="jp-EodagWidget-wrapper">
@@ -189,9 +176,12 @@ export const FormComponent: FC<IProps> = ({
                 placeholder="Any"
                 suggestions={providers}
                 value={value}
+                loadSuggestions={(inputValue: string) =>
+                  loadProviderSuggestions(null, inputValue)
+                }
                 handleChange={(e: IOptionTypeBase | null) => {
                   onChange(e?.value);
-                  setProvidersValue(e?.value);
+                  setProviderValue(e?.value);
                 }}
               />
             )}
@@ -208,11 +198,11 @@ export const FormComponent: FC<IProps> = ({
                 placeholder="S2_..."
                 value={value}
                 loadSuggestions={(inputValue: string) =>
-                  loadProductTypesSuggestions(providersValue, inputValue)
+                  loadProductTypesSuggestions(providerValue, inputValue)
                 }
                 handleChange={(e: IOptionTypeBase | null) => {
                   onChange(e?.value);
-                  setProductTypesValue(e?.value);
+                  setProductTypeValue(e?.value);
                 }}
               />
             )}
@@ -332,7 +322,7 @@ export const FormComponent: FC<IProps> = ({
                     type="submit"
                     color="primary"
                     className={
-                      !productTypesValue
+                      !productTypeValue
                         ? 'jp-EodagWidget-buttons-button jp-EodagWidget-buttons-button__disabled'
                         : 'jp-EodagWidget-buttons-button'
                     }
@@ -347,7 +337,7 @@ export const FormComponent: FC<IProps> = ({
                       <br />
                       Results
                     </p>
-                    {!productTypesValue && (
+                    {!productTypeValue && (
                       <ReactTooltip
                         id="btn-preview-results"
                         className="jp-Eodag-tooltip"
@@ -363,7 +353,7 @@ export const FormComponent: FC<IProps> = ({
                     type="submit"
                     color="primary"
                     className={
-                      !productTypesValue
+                      !productTypeValue
                         ? 'jp-EodagWidget-buttons-button jp-EodagWidget-buttons-button__disabled'
                         : 'jp-EodagWidget-buttons-button'
                     }
@@ -378,7 +368,7 @@ export const FormComponent: FC<IProps> = ({
                       <br />
                       Code
                     </p>
-                    {!productTypesValue && (
+                    {!productTypeValue && (
                       <ReactTooltip
                         id="btn-generate-value"
                         className="jp-Eodag-tooltip"

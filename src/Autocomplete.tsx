@@ -14,11 +14,6 @@ import ReactTooltip from 'react-tooltip';
 import { OptionTypeBase } from 'react-select/src/types';
 import AsyncSelect from 'react-select/async';
 
-// import { showErrorMessage } from '@jupyterlab/apputils';
-// import { URLExt } from '@jupyterlab/coreutils';
-// import { ServerConnection } from '@jupyterlab/services';
-// import { EODAG_SERVER_ADRESS } from './config';
-// import { map } from 'lodash';
 import { IOptionTypeBase } from './FormComponent';
 
 function NoOptionsMessage(props: any) {
