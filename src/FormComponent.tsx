@@ -172,7 +172,6 @@ export const FormComponent: FC<IProps> = ({
             render={({ field: { onChange, value } }) => (
               <Autocomplete
                 label="Provider"
-                url="providers?product_type"
                 placeholder="Any"
                 suggestions={providers}
                 value={value}
@@ -193,7 +192,6 @@ export const FormComponent: FC<IProps> = ({
             render={({ field: { onChange, value } }) => (
               <Autocomplete
                 label="Product Type"
-                url="product-types?provider"
                 suggestions={productTypes}
                 placeholder="S2_..."
                 value={value}

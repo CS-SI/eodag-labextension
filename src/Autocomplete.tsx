@@ -87,7 +87,6 @@ interface IProps {
   suggestions: OptionTypeBase[];
   value: string;
   handleChange: any;
-  url: string;
   label: string;
   placeholder?: string;
   loadSuggestions?: (inputValue: string) => Promise<IOptionTypeBase[]>;
@@ -120,7 +119,6 @@ class IntegrationReactSelect extends React.Component<IProps> {
             <AsyncSelect
               className="jp-EodagWidget-select"
               classNamePrefix="jp-EodagWidget-select"
-              cacheOptions
               defaultOptions={suggestions}
               loadOptions={loadSuggestions}
               components={listcomponents}
