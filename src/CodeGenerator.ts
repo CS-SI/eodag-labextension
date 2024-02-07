@@ -17,7 +17,8 @@ const formatCode = (
     productType,
     geometry,
     cloud,
-    additionnalParameters
+    additionnalParameters,
+    provider
   }: IFormInput,
   replaceCode: boolean
 ) => {
@@ -44,7 +45,12 @@ ${standardMessage}`
 geometry = "${geojsonToWKT(geometry)}"`;
   }
   code += `
-search_results, total_count = dag.search(
+search_results, total_count = dag.search(`;
+  if (provider) {
+    code += `
+    provider="${provider}",`;
+  }
+  code += `
     productType="${productType}",`;
   if (geometryIsOk) {
     code += `
