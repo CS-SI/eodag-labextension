@@ -59,7 +59,7 @@ const useFetchProduct = () => {
           data.map((d: IProduct) => ({
             value: d.ID,
             label: d.ID,
-            description: d.abstract
+            description: d.title
           }))
         )
     });

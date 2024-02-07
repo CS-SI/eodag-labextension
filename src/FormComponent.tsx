@@ -48,7 +48,7 @@ export interface IOptionTypeBase {
 
 export interface IProduct {
   ID: string;
-  abstract: string;
+  title: string;
 }
 
 export interface IProvider {
