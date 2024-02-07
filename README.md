@@ -72,8 +72,11 @@ Click on this icon in the left of JupyterLab interface to open EODAG-Labextensio
 
 With displayed search form, you can enter search extent and following search criteria:
 
+- **Provider**: the provider on which to perform the search. If no provider is selected, search will loop on providers
+  by [priority](https://eodag.readthedocs.io/en/stable/getting_started_guide/configure.html#priority-setting), and
+  return the first non empty results.
 - **Product type**: the searched product type. List filtering is performed using product types description keywords.
-  For each entry of the drop-down list, a tooltip is displayed at hovering time with corresponding description.
+  For each entry of the drop-down list, a tooltip is displayed at hovering time with corresponding title.
   ![product types](https://raw.githubusercontent.com/CS-SI/eodag-labextension/develop/notebooks/images/eodag_labext_product_types.png)
 
 - **Date range**: minimal and maximal dates of the search temporal window.
