@@ -1,5 +1,12 @@
 # Release history
 
+## 3.5.0 (2024-02-08)
+
+- New `provider` filtering [(#127)](https://github.com/CS-SI/eodag-labextension/pull/127)
+- New python tests [(#127)](https://github.com/CS-SI/eodag-labextension/pull/127)[(#130)](https://github.com/CS-SI/eodag-labextension/pull/130)
+- Product type `title` instead of longer `abstract` displayed in dropdown list tooltip [(#131)](https://github.com/CS-SI/eodag-labextension/pull/131)
+- Supported python versions starting from `3.8` to `3.11` [(#132)](https://github.com/CS-SI/eodag-labextension/pull/132)
+
 ## 3.4.0 (2023-10-12)
 
 - Updates internal geometry format and removes exposed REST API [(#120)](https://github.com/CS-SI/eodag-labextension/pull/120)
