@@ -2,6 +2,8 @@
 # Copyright 2024 CS GROUP - France, http://www.c-s.fr
 # All rights reserved
 import json
+import os
+import re
 from unittest import mock
 
 from notebook.notebookapp import NotebookApp
@@ -17,6 +19,23 @@ class MockUser:
 
 
 class TestEodagLabExtensionHandler(AsyncHTTPTestCase):
+    @classmethod
+    def setUpClass(cls):
+        # backup os.environ as it will be modified by tests
+        cls.eodag_env_pattern = re.compile(r"EODAG_\w+")
+        cls.eodag_env_backup = {k: v for k, v in os.environ.items() if cls.eodag_env_pattern.match(k)}
+        # disable product types fetch
+        os.environ["EODAG_EXT_PRODUCT_TYPES_CFG_FILE"] = ""
+
+    @classmethod
+    def tearDownClass(cls):
+        super(TestEodagLabExtensionHandler, cls).tearDownClass()
+        # restore os.environ
+        for k, v in os.environ.items():
+            if cls.eodag_env_pattern.match(k):
+                os.environ.pop(k)
+        os.environ.update(cls.eodag_env_backup)
+
     def get_app(self):
         # Create a new NotebookApp instance
         app = NotebookApp()
@@ -95,12 +114,16 @@ class TestEodagLabExtensionHandler(AsyncHTTPTestCase):
         more_results = self.fetch_results("/eodag/guess-product-type?keywords=Sentinel")
         self.assertGreater(len(more_results), 1)
         self.assertLess(len(more_results), len(all_results))
-        self.assertTrue(more_results[0]["ID"].lower().startswith("sentinel"))
         self.assertIn("S2_MSI_L1C", [pt["ID"] for pt in more_results])
 
         less_results = self.fetch_results("/eodag/guess-product-type?keywords=Sentinel&provider=peps")
         self.assertGreater(len(more_results), 1)
         self.assertLess(len(less_results), len(more_results))
         self.assertEqual(less_results[0]["ID"], "S1_SAR_GRD")
+
+        other_results = self.fetch_results("/eodag/guess-product-type?keywords=cop")
+        self.assertGreater(len(other_results), 1)
+        self.assertLess(len(other_results), len(all_results))
+        self.assertTrue(other_results[0]["ID"].lower().startswith("cop"))
 
         self.fetch_results_err400("/eodag/guess-product-type?provider=foo")
