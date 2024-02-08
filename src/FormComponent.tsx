@@ -12,14 +12,10 @@ import {
   UseFormReturn
 } from 'react-hook-form';
 import { showErrorMessage } from '@jupyterlab/apputils';
-import { URLExt } from '@jupyterlab/coreutils';
-import { ServerConnection } from '@jupyterlab/services';
-import { map } from 'lodash';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import 'isomorphic-fetch';
 import Autocomplete from './Autocomplete';
-import { EODAG_SERVER_ADRESS } from './config';
 import SearchService from './SearchService';
 import { ChangeEvent } from 'react';
 import MapExtentComponent from './MapExtentComponent';
@@ -36,6 +32,7 @@ import {
 } from './icones.js';
 import ReactTooltip from 'react-tooltip';
 import { ThreeDots } from 'react-loader-spinner';
+import { useFetchProduct, useFetchProvider } from './hooks/useFetchData';
 
 export interface IProps {
   handleShowFeature: any;
@@ -44,8 +41,19 @@ export interface IProps {
   isNotebookCreated: any;
   commands: any;
 }
+
 export interface IOptionTypeBase {
   [key: string]: any;
+}
+
+export interface IProduct {
+  ID: string;
+  title: string;
+}
+
+export interface IProvider {
+  provider: string;
+  description: string;
 }
 
 export const FormComponent: FC<IProps> = ({
@@ -56,6 +64,7 @@ export const FormComponent: FC<IProps> = ({
   commands
 }) => {
   const [productTypes, setProductTypes] = useState<IOptionTypeBase[]>();
+  const [providers, setProviders] = useState<IOptionTypeBase[]>();
   const defaultStartDate: Date = undefined;
   const defaultEndDate: Date = undefined;
   const [startDate, setStartDate] = useState(undefined);
@@ -63,7 +72,8 @@ export const FormComponent: FC<IProps> = ({
   const [cloud, setCloud] = useState(100);
   const [isLoadingSearch, setIsLoadingSearch] = useState(false);
   const [openModal, setOpenModal] = useState(true);
-  const [selectValue, setSelectValue] = useState(null);
+  const [providerValue, setProviderValue] = useState(null);
+  const [productTypeValue, setProductTypeValue] = useState(null);
 
   const {
     control,
@@ -81,53 +91,24 @@ export const FormComponent: FC<IProps> = ({
   });
 
   useEffect(() => {
-    // Fetch product types
-    const _serverSettings = ServerConnection.makeSettings();
-    const _eodag_server = URLExt.join(
-      _serverSettings.baseUrl,
-      `${EODAG_SERVER_ADRESS}`
-    );
-    fetch(URLExt.join(_eodag_server, 'product-types/'), {
-      credentials: 'same-origin'
-    })
-      .then(response => {
-        if (response.status >= 400) {
-          showErrorMessage(
-            `Unable to contact the EODAG server. Are you sure the adress is ${_eodag_server}/ ?`,
-            {}
-          );
-          throw new Error('Bad response from server');
-        }
-        return response.json();
-      })
-      .then(products => {
-        const productTypes = map(products, product => ({
-          value: product.ID,
-          label: product.ID,
-          description: product.abstract
-        }));
-        setProductTypes(productTypes);
-      })
-      .catch(() => {
-        showErrorMessage(
-          `Unable to contact the EODAG server. Are you sure the adress is ${_eodag_server}/ ?`,
-          {}
-        );
-      });
-  }, []);
+    const fetchData = async () => {
+      const fetchProduct = useFetchProduct();
+      const productList = await fetchProduct(providerValue);
+      setProductTypes(productList);
+    };
 
-  // useEffect(
-  //   () => {
-  //     if (!_.isEmpty(errors)) {
-  //       showErrorMessage(
-  //         'The following fields are required',
-  //         _.keys(errors).join(', ')
-  //       ).then(() => clearErrors());
-  //     }
-  //   },
-  //   // useEffect is not triggered with only errors as dependency thus we need to list all its elements
-  //   [errors]
-  // );
+    fetchData();
+  }, [providerValue]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const fetchProvider = useFetchProvider();
+      const providerList = await fetchProvider(productTypeValue);
+      setProviders(providerList);
+    };
+
+    fetchData();
+  }, [productTypeValue]);
 
   const onSubmit: SubmitHandler<IFormInput> = data => {
     if (!isNotebookCreated()) {
@@ -168,6 +149,9 @@ export const FormComponent: FC<IProps> = ({
     commands.execute('settingeditor:open', { query: 'EODAG' });
   };
 
+  const loadProductTypesSuggestions = useFetchProduct();
+  const loadProviderSuggestions = useFetchProvider();
+
   return (
     <div className="jp-EodagWidget-wrapper">
       <form onSubmit={handleSubmit(onSubmit)} className="jp-EodagWidget-form">
@@ -183,16 +167,40 @@ export const FormComponent: FC<IProps> = ({
         </div>
         <div className="jp-EodagWidget-field">
           <Controller
+            name="provider"
+            control={control}
+            render={({ field: { onChange, value } }) => (
+              <Autocomplete
+                label="Provider"
+                placeholder="Any"
+                suggestions={providers}
+                value={value}
+                loadSuggestions={(inputValue: string) =>
+                  loadProviderSuggestions(null, inputValue)
+                }
+                handleChange={(e: IOptionTypeBase | null) => {
+                  onChange(e?.value);
+                  setProviderValue(e?.value);
+                }}
+              />
+            )}
+          />
+          <Controller
             name="productType"
             control={control}
             rules={{ required: true }}
             render={({ field: { onChange, value } }) => (
               <Autocomplete
+                label="Product Type"
                 suggestions={productTypes}
+                placeholder="S2_..."
                 value={value}
+                loadSuggestions={(inputValue: string) =>
+                  loadProductTypesSuggestions(providerValue, inputValue)
+                }
                 handleChange={(e: IOptionTypeBase | null) => {
                   onChange(e?.value);
-                  setSelectValue(e?.value);
+                  setProductTypeValue(e?.value);
                 }}
               />
             )}
@@ -312,7 +320,7 @@ export const FormComponent: FC<IProps> = ({
                     type="submit"
                     color="primary"
                     className={
-                      !selectValue
+                      !productTypeValue
                         ? 'jp-EodagWidget-buttons-button jp-EodagWidget-buttons-button__disabled'
                         : 'jp-EodagWidget-buttons-button'
                     }
@@ -327,7 +335,7 @@ export const FormComponent: FC<IProps> = ({
                       <br />
                       Results
                     </p>
-                    {!selectValue && (
+                    {!productTypeValue && (
                       <ReactTooltip
                         id="btn-preview-results"
                         className="jp-Eodag-tooltip"
@@ -343,7 +351,7 @@ export const FormComponent: FC<IProps> = ({
                     type="submit"
                     color="primary"
                     className={
-                      !selectValue
+                      !productTypeValue
                         ? 'jp-EodagWidget-buttons-button jp-EodagWidget-buttons-button__disabled'
                         : 'jp-EodagWidget-buttons-button'
                     }
@@ -358,7 +366,7 @@ export const FormComponent: FC<IProps> = ({
                       <br />
                       Code
                     </p>
-                    {!selectValue && (
+                    {!productTypeValue && (
                       <ReactTooltip
                         id="btn-generate-value"
                         className="jp-Eodag-tooltip"
