@@ -235,7 +235,7 @@ export class EodagBrowser extends React.Component<IProps, IState> {
   render() {
     const { openDialog, features } = this.state;
     return (
-      <div>
+      <div className="jp-EodagWidget-products-search">
         <div className="jp-EodagWidget-header-wrapper">
           <header className="jp-EodagWidget-header">Products search</header>
           <div className="jp-EodagWidget-settings-wrapper">
