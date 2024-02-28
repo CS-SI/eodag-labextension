@@ -47,6 +47,10 @@
   padding: 1px 4px;
 }
 
+.jp-EodagWidget-settings-wrapper button:focus-visible {
+  outline: none;
+}
+
 .jp-EodagWidget-wrapper {
   display: flex;
   flex-direction: column;
@@ -574,4 +578,17 @@ section button .jp-EodagWidget-additionnalParameters-addbutton svg,
 
 label.jp-EodagWidget-input-name:nth-child(3) {
   padding: 0 10px;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.spin-icon {
+  animation: spin 1s linear;
 }

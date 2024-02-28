@@ -36,6 +36,7 @@ export interface IState {
   searching: any;
   formValues: IFormInput;
   replaceCellIndex: number;
+  isSpinning: boolean;
 }
 
 const tooltipDark: VariantType = 'dark';
@@ -49,8 +50,10 @@ export class EodagBrowser extends React.Component<IProps, IState> {
       openDialog: false,
       searching: false,
       formValues: undefined,
-      replaceCellIndex: undefined
+      replaceCellIndex: undefined,
+      isSpinning: false
     };
+    this.reloadUserSettings = this.reloadUserSettings.bind(this);
   }
 
   handleCurrentWidgetError = () => {
@@ -233,6 +236,7 @@ export class EodagBrowser extends React.Component<IProps, IState> {
 
   reloadUserSettings = () => {
     useFetchUserSettings();
+    this.setState({ isSpinning: !this.state.isSpinning });
   };
 
   render() {
@@ -245,14 +249,18 @@ export class EodagBrowser extends React.Component<IProps, IState> {
             <div>
               <button
                 type="button"
-                className="jp-EodagWidget-settingsbutton"
+                className={'jp-EodagWidget-settingsbutton'}
                 data-tooltip-id="eodag-setting"
                 data-tooltip-content="Reload eodag environment"
                 data-tooltip-variant={tooltipDark}
                 data-tooltip-place={tooltipBottom}
                 onClick={this.reloadUserSettings}
               >
-                <IcBaselineRefresh height="20" width="20" />
+                <IcBaselineRefresh
+                  height="20"
+                  width="20"
+                  className={this.state.isSpinning ? 'spin-icon' : ''}
+                />
                 <Tooltip id="eodag-setting" className="jp-Eodag-tooltip" />
               </button>
             </div>
