@@ -36,7 +36,7 @@ export interface IState {
   searching: any;
   formValues: IFormInput;
   replaceCellIndex: number;
-  isSpinning: boolean;
+  isLoading: boolean;
   reloadIndicator: boolean;
 }
 
@@ -52,7 +52,7 @@ export class EodagBrowser extends React.Component<IProps, IState> {
       searching: false,
       formValues: undefined,
       replaceCellIndex: undefined,
-      isSpinning: false,
+      isLoading: false,
       reloadIndicator: false
     };
     this.reloadUserSettings = this.reloadUserSettings.bind(this);
@@ -236,10 +236,20 @@ export class EodagBrowser extends React.Component<IProps, IState> {
     this.props.commands.execute('settingeditor:open', { query: 'EODAG' });
   };
 
+  updateLoadingState = () => {
+    this.setState(prevState => ({
+      isLoading: !prevState.isLoading,
+      reloadIndicator: !prevState.reloadIndicator
+    }));
+  };
+
   reloadUserSettings = () => {
     useFetchUserSettings();
-    this.setState({ isSpinning: !this.state.isSpinning });
-    this.setState({ reloadIndicator: !this.state.reloadIndicator });
+    this.updateLoadingState();
+  };
+
+  resetIsLoading = () => {
+    this.updateLoadingState();
   };
 
   render() {
@@ -262,7 +272,7 @@ export class EodagBrowser extends React.Component<IProps, IState> {
                 <IcBaselineRefresh
                   height="20"
                   width="20"
-                  className={this.state.isSpinning ? 'spin-icon' : ''}
+                  className={this.state.isLoading ? 'spin-icon' : ''}
                 />
                 <Tooltip id="eodag-setting" className="jp-Eodag-tooltip" />
               </button>
@@ -291,6 +301,7 @@ export class EodagBrowser extends React.Component<IProps, IState> {
           }
           handleGenerateQuery={this.handleGenerateQuery}
           reloadIndicator={this.state.reloadIndicator}
+          onFetchComplete={this.resetIsLoading}
         />
         <ModalComponent
           open={openDialog}

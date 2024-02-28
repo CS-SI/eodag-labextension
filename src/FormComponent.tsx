@@ -39,6 +39,7 @@ export interface IProps {
   handleGenerateQuery: any;
   isNotebookCreated: any;
   reloadIndicator: boolean;
+  onFetchComplete: () => void;
 }
 
 export interface IOptionTypeBase {
@@ -64,7 +65,8 @@ export const FormComponent: FC<IProps> = ({
   saveFormValues,
   handleGenerateQuery,
   isNotebookCreated,
-  reloadIndicator
+  reloadIndicator,
+  onFetchComplete
 }) => {
   const [productTypes, setProductTypes] = useState<IOptionTypeBase[]>();
   const [providers, setProviders] = useState<IOptionTypeBase[]>();
@@ -77,6 +79,7 @@ export const FormComponent: FC<IProps> = ({
   const [openModal, setOpenModal] = useState(true);
   const [providerValue, setProviderValue] = useState(null);
   const [productTypeValue, setProductTypeValue] = useState(null);
+  const [fetchCount, setFetchCount] = useState(0);
 
   const {
     control,
@@ -94,12 +97,20 @@ export const FormComponent: FC<IProps> = ({
   });
 
   useEffect(() => {
+    if (!reloadIndicator) {
+      setFetchCount(0);
+    }
+  }, [reloadIndicator]);
+
+  useEffect(() => {
     const fetchData = async () => {
       const fetchProduct = useFetchProduct();
       const productList = await fetchProduct(providerValue);
       setProductTypes(productList);
+      if (reloadIndicator) {
+        setFetchCount(fetchCount => fetchCount + 1);
+      }
     };
-
     fetchData();
   }, [providerValue, reloadIndicator]);
 
@@ -108,10 +119,19 @@ export const FormComponent: FC<IProps> = ({
       const fetchProvider = useFetchProvider();
       const providerList = await fetchProvider(productTypeValue);
       setProviders(providerList);
+      if (reloadIndicator) {
+        setFetchCount(fetchCount => fetchCount + 1);
+      }
     };
 
     fetchData();
   }, [productTypeValue, reloadIndicator]);
+
+  useEffect(() => {
+    if (fetchCount === 2) {
+      onFetchComplete();
+    }
+  }, [fetchCount]);
 
   const onSubmit: SubmitHandler<IFormInput> = data => {
     if (!isNotebookCreated()) {

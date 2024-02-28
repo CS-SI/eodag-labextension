@@ -590,5 +590,5 @@ label.jp-EodagWidget-input-name:nth-child(3) {
 }
 
 .spin-icon {
-  animation: spin 1s linear;
+  animation: spin 1s linear infinite;
 }
