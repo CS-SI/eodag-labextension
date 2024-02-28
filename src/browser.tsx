@@ -21,6 +21,9 @@ import { IFormInput } from './types';
 import { ServerConnection } from '@jupyterlab/services';
 import { EODAG_SETTINGS_ADDRESS } from './config';
 import { URLExt } from '@jupyterlab/coreutils';
+import { useFetchUserSettings } from './hooks/useFetchData';
+import { CarbonSettings, IcBaselineRefresh } from './icones';
+import ReactTooltip from 'react-tooltip';
 
 export interface IProps {
   tracker: INotebookTracker;
@@ -221,11 +224,59 @@ export class EodagBrowser extends React.Component<IProps, IState> {
     });
   };
 
+  handleOpenSettings = (): void => {
+    this.props.commands.execute('settingeditor:open', { query: 'EODAG' });
+  };
+
+  reloadUserSettings = () => {
+    useFetchUserSettings();
+  };
+
   render() {
     const { openDialog, features } = this.state;
     return (
       <div>
-        <header className="jp-EodagWidget-header">Products search</header>
+        <div className="jp-EodagWidget-header-wrapper">
+          <header className="jp-EodagWidget-header">Products search</header>
+          <div className="jp-EodagWidget-settings-wrapper">
+            <div>
+              <button
+                type="button"
+                className="jp-EodagWidget-settingsbutton"
+                data-for="eodag-setting"
+                data-tip="Reload eodag environment"
+                onClick={this.reloadUserSettings}
+              >
+                <IcBaselineRefresh height="20" width="20" />
+                <ReactTooltip
+                  id="eodag-setting"
+                  className="jp-Eodag-tooltip"
+                  place="bottom"
+                  type="dark"
+                  effect="solid"
+                />
+              </button>
+            </div>
+            <div>
+              <button
+                type="button"
+                className="jp-EodagWidget-settingsbutton"
+                data-for="eodag-setting"
+                data-tip="Eodag labextension settings"
+                onClick={this.handleOpenSettings}
+              >
+                <CarbonSettings height="20" width="20" />
+                <ReactTooltip
+                  id="eodag-setting"
+                  className="jp-Eodag-tooltip"
+                  place="bottom"
+                  type="dark"
+                  effect="solid"
+                />
+              </button>
+            </div>
+          </div>
+        </div>
         <FormComponent
           isNotebookCreated={this.handleCurrentWidgetError}
           handleShowFeature={this.handleShowFeature}
@@ -233,7 +284,6 @@ export class EodagBrowser extends React.Component<IProps, IState> {
             this.setState({ formValues })
           }
           handleGenerateQuery={this.handleGenerateQuery}
-          commands={this.props.commands}
         />
         <ModalComponent
           open={openDialog}

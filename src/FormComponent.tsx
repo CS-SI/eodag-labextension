@@ -27,7 +27,6 @@ import {
   CarbonTrashCan,
   CarbonAddFilled,
   CarbonCalendarAddAlt,
-  CarbonSettings,
   CarbonInformation
 } from './icones.js';
 import ReactTooltip from 'react-tooltip';
@@ -39,7 +38,6 @@ export interface IProps {
   saveFormValues: (formValue: IFormInput) => void;
   handleGenerateQuery: any;
   isNotebookCreated: any;
-  commands: any;
 }
 
 export interface IOptionTypeBase {
@@ -60,8 +58,7 @@ export const FormComponent: FC<IProps> = ({
   handleShowFeature,
   saveFormValues,
   handleGenerateQuery,
-  isNotebookCreated,
-  commands
+  isNotebookCreated
 }) => {
   const [productTypes, setProductTypes] = useState<IOptionTypeBase[]>();
   const [providers, setProviders] = useState<IOptionTypeBase[]>();
@@ -143,10 +140,6 @@ export const FormComponent: FC<IProps> = ({
           setIsLoadingSearch(false);
         });
     }
-  };
-
-  const handleOpenSettings = (): void => {
-    commands.execute('settingeditor:open', { query: 'EODAG' });
   };
 
   const loadProductTypesSuggestions = useFetchProduct();
@@ -382,24 +375,6 @@ export const FormComponent: FC<IProps> = ({
           </div>
         </div>
       </form>
-      <div>
-        <button
-          type="button"
-          className="jp-EodagWidget-settingsbutton"
-          data-for="eodag-setting"
-          data-tip="Eodag labextension settings"
-          onClick={handleOpenSettings}
-        >
-          <CarbonSettings height="20" width="20" />
-          <ReactTooltip
-            id="eodag-setting"
-            className="jp-Eodag-tooltip"
-            place="bottom"
-            type="dark"
-            effect="solid"
-          />
-        </button>
-      </div>
     </div>
   );
 };
