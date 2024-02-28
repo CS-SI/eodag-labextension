@@ -38,6 +38,7 @@ export interface IProps {
   saveFormValues: (formValue: IFormInput) => void;
   handleGenerateQuery: any;
   isNotebookCreated: any;
+  reloadIndicator: boolean;
 }
 
 export interface IOptionTypeBase {
@@ -62,7 +63,8 @@ export const FormComponent: FC<IProps> = ({
   handleShowFeature,
   saveFormValues,
   handleGenerateQuery,
-  isNotebookCreated
+  isNotebookCreated,
+  reloadIndicator
 }) => {
   const [productTypes, setProductTypes] = useState<IOptionTypeBase[]>();
   const [providers, setProviders] = useState<IOptionTypeBase[]>();
@@ -99,7 +101,7 @@ export const FormComponent: FC<IProps> = ({
     };
 
     fetchData();
-  }, [providerValue]);
+  }, [providerValue, reloadIndicator]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -109,7 +111,7 @@ export const FormComponent: FC<IProps> = ({
     };
 
     fetchData();
-  }, [productTypeValue]);
+  }, [productTypeValue, reloadIndicator]);
 
   const onSubmit: SubmitHandler<IFormInput> = data => {
     if (!isNotebookCreated()) {

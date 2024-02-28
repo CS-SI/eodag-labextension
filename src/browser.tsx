@@ -37,6 +37,7 @@ export interface IState {
   formValues: IFormInput;
   replaceCellIndex: number;
   isSpinning: boolean;
+  reloadIndicator: boolean;
 }
 
 const tooltipDark: VariantType = 'dark';
@@ -51,7 +52,8 @@ export class EodagBrowser extends React.Component<IProps, IState> {
       searching: false,
       formValues: undefined,
       replaceCellIndex: undefined,
-      isSpinning: false
+      isSpinning: false,
+      reloadIndicator: false
     };
     this.reloadUserSettings = this.reloadUserSettings.bind(this);
   }
@@ -237,6 +239,7 @@ export class EodagBrowser extends React.Component<IProps, IState> {
   reloadUserSettings = () => {
     useFetchUserSettings();
     this.setState({ isSpinning: !this.state.isSpinning });
+    this.setState({ reloadIndicator: !this.state.reloadIndicator });
   };
 
   render() {
@@ -287,6 +290,7 @@ export class EodagBrowser extends React.Component<IProps, IState> {
             this.setState({ formValues })
           }
           handleGenerateQuery={this.handleGenerateQuery}
+          reloadIndicator={this.state.reloadIndicator}
         />
         <ModalComponent
           open={openDialog}
