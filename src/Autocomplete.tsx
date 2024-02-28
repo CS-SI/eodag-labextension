@@ -10,7 +10,7 @@ import {
   SingleValueProps,
   ValueContainerProps
 } from 'react-select';
-import ReactTooltip from 'react-tooltip';
+import { Tooltip, PlacesType, VariantType } from 'react-tooltip';
 import { OptionTypeBase } from 'react-select/src/types';
 import AsyncSelect from 'react-select/async';
 
@@ -29,19 +29,19 @@ function NoOptionsMessage(props: any) {
     </div>
   );
 }
-
+const tooltipDark: VariantType = 'dark';
+const tooltipRight: PlacesType = 'right';
 function Option(props: OptionProps<OptionTypeBase, false>) {
   // Tooltip on the right
   return (
-    <div data-for={props.label} data-tip={props.data.description}>
+    <div
+      data-tooltip-id={props.label}
+      data-tooltip-content={props.data.description}
+      data-tooltip-variant={tooltipDark}
+      data-tooltip-place={tooltipRight}
+    >
       <components.Option {...props}>{props.children}</components.Option>
-      <ReactTooltip
-        id={props.label}
-        className="jp-Eodag-tooltip"
-        place="right"
-        type="dark"
-        effect="solid"
-      />
+      <Tooltip id={props.label} className="jp-Eodag-tooltip" />
     </div>
   );
 }

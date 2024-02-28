@@ -23,7 +23,7 @@ import { EODAG_SETTINGS_ADDRESS } from './config';
 import { URLExt } from '@jupyterlab/coreutils';
 import { useFetchUserSettings } from './hooks/useFetchData';
 import { CarbonSettings, IcBaselineRefresh } from './icones';
-import ReactTooltip from 'react-tooltip';
+import { Tooltip, PlacesType, VariantType } from 'react-tooltip';
 
 export interface IProps {
   tracker: INotebookTracker;
@@ -37,6 +37,9 @@ export interface IState {
   formValues: IFormInput;
   replaceCellIndex: number;
 }
+
+const tooltipDark: VariantType = 'dark';
+const tooltipBottom: PlacesType = 'bottom';
 
 export class EodagBrowser extends React.Component<IProps, IState> {
   constructor(props: IProps) {
@@ -243,36 +246,28 @@ export class EodagBrowser extends React.Component<IProps, IState> {
               <button
                 type="button"
                 className="jp-EodagWidget-settingsbutton"
-                data-for="eodag-setting"
-                data-tip="Reload eodag environment"
+                data-tooltip-id="eodag-setting"
+                data-tooltip-content="Reload eodag environment"
+                data-tooltip-variant={tooltipDark}
+                data-tooltip-place={tooltipBottom}
                 onClick={this.reloadUserSettings}
               >
                 <IcBaselineRefresh height="20" width="20" />
-                <ReactTooltip
-                  id="eodag-setting"
-                  className="jp-Eodag-tooltip"
-                  place="bottom"
-                  type="dark"
-                  effect="solid"
-                />
+                <Tooltip id="eodag-setting" className="jp-Eodag-tooltip" />
               </button>
             </div>
             <div>
               <button
                 type="button"
                 className="jp-EodagWidget-settingsbutton"
-                data-for="eodag-setting"
-                data-tip="Eodag labextension settings"
+                data-tooltip-id="eodag-setting"
+                data-tooltip-content="Eodag labextension settings"
+                data-tooltip-variant={tooltipDark}
+                data-tooltip-place={tooltipBottom}
                 onClick={this.handleOpenSettings}
               >
                 <CarbonSettings height="20" width="20" />
-                <ReactTooltip
-                  id="eodag-setting"
-                  className="jp-Eodag-tooltip"
-                  place="bottom"
-                  type="dark"
-                  effect="solid"
-                />
+                <Tooltip id="eodag-setting" className="jp-Eodag-tooltip" />
               </button>
             </div>
           </div>
