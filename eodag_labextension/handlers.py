@@ -22,7 +22,7 @@ from jupyter_server.utils import url_path_join
 
 
 class ProductTypeHandler(APIHandler):
-    """Product type listing handlerd"""
+    """Product type listing handler"""
 
     @tornado.web.authenticated
     def get(self):
@@ -42,6 +42,15 @@ class ProductTypeHandler(APIHandler):
             return
 
         self.write(orjson.dumps(product_types))
+
+
+class ReloadHandler(APIHandler):
+    """EODAG API reload handler"""
+
+    @tornado.web.authenticated
+    def get(self):
+        """Get endpoint"""
+        eodag_api.__init__()
 
 
 class ProvidersHandler(APIHandler):
@@ -232,6 +241,7 @@ def setup_handlers(web_app, url_path):
     # matching patterns
     host_pattern = ".*$"
     product_types_pattern = url_path_join(base_url, url_path, "product-types")
+    reload_pattern = url_path_join(base_url, url_path, "reload")
     providers_pattern = url_path_join(base_url, url_path, "providers")
     guess_product_types_pattern = url_path_join(base_url, url_path, "guess-product-type")
     search_pattern = url_path_join(base_url, url_path, r"(?P<product_type>[\w-]+)")
@@ -239,6 +249,7 @@ def setup_handlers(web_app, url_path):
     # handlers added for each pattern
     handlers = [
         (product_types_pattern, ProductTypeHandler),
+        (reload_pattern, ReloadHandler),
         (providers_pattern, ProvidersHandler),
         (guess_product_types_pattern, GuessProductTypeHandler),
         (MethodAndPathMatch("POST", search_pattern), SearchHandler),

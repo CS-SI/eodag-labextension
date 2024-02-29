@@ -97,4 +97,29 @@ const useFetchProvider = () => {
   return fetchProvider;
 };
 
-export { fetchData, useFetchProduct, useFetchProvider };
+const useFetchUserSettings = async () => {
+  const serverSettings = ServerConnection.makeSettings();
+  const eodagServer = URLExt.join(
+    serverSettings.baseUrl,
+    `${EODAG_SERVER_ADRESS}`
+  );
+
+  try {
+    const response = await fetch(URLExt.join(eodagServer, 'reload'), {
+      credentials: 'same-origin'
+    });
+    if (response.status >= 400) {
+      throw new Error('Bad response from server');
+    }
+    if (response.status === 200) {
+      useFetchProduct();
+      useFetchProvider();
+    }
+  } catch (error) {
+    showErrorMessage(
+      `Unable to contact the EODAG server. Are you sure the address is ${eodagServer}/ ?`,
+      {}
+    );
+  }
+};
+export { fetchData, useFetchProduct, useFetchProvider, useFetchUserSettings };

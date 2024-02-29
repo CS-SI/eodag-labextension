@@ -17,7 +17,16 @@
   overflow: auto;
   padding: 5px;
 }
+.jp-EodagWidget-products-search {
+  overflow: auto;
+  height: 100%;
+}
 
+.jp-EodagWidget-header-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 .jp-EodagWidget-header {
   border-bottom: var(--jp-border-width) solid var(--jp-border-color2);
   flex: 0 0 auto;
@@ -29,9 +38,21 @@
   text-transform: uppercase;
 }
 
+.jp-EodagWidget-settings-wrapper {
+  display: flex;
+  flex-direction: row;
+}
+
+.jp-EodagWidget-settings-wrapper button {
+  padding: 1px 4px;
+}
+
+.jp-EodagWidget-settings-wrapper button:focus-visible {
+  outline: none;
+}
+
 .jp-EodagWidget-wrapper {
   display: flex;
-  height: 100%;
   flex-direction: column;
   justify-content: space-between;
 }
@@ -79,7 +100,7 @@
 .jp-EodagWidget .jp-EodagWidget-form .jp-EodagWidget-buttons {
   display: flex;
   justify-content: center;
-  margin-top: 50px;
+  margin-top: 1em;
 }
 
 .jp-EodagWidget-buttons-button__disabled {
@@ -135,9 +156,7 @@
 }
 .jp-EodagWidget .jp-EodagWidget-form .jp-EodagWidget-field {
   padding: 0 10px;
-
   max-width: 450px;
-  margin: 10px auto;
 }
 .jp-EodagWidget .jp-EodagWidget-form .jp-EodagWidget-field fieldset {
   margin-top: 1.5em;
@@ -559,4 +578,17 @@ section button .jp-EodagWidget-additionnalParameters-addbutton svg,
 
 label.jp-EodagWidget-input-name:nth-child(3) {
   padding: 0 10px;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.spin-icon {
+  animation: spin 1s linear infinite;
 }

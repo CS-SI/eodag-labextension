@@ -27,10 +27,9 @@ import {
   CarbonTrashCan,
   CarbonAddFilled,
   CarbonCalendarAddAlt,
-  CarbonSettings,
   CarbonInformation
 } from './icones.js';
-import ReactTooltip from 'react-tooltip';
+import { Tooltip, PlacesType, VariantType } from 'react-tooltip';
 import { ThreeDots } from 'react-loader-spinner';
 import { useFetchProduct, useFetchProvider } from './hooks/useFetchData';
 
@@ -39,7 +38,8 @@ export interface IProps {
   saveFormValues: (formValue: IFormInput) => void;
   handleGenerateQuery: any;
   isNotebookCreated: any;
-  commands: any;
+  reloadIndicator: boolean;
+  onFetchComplete: () => void;
 }
 
 export interface IOptionTypeBase {
@@ -56,12 +56,17 @@ export interface IProvider {
   description: string;
 }
 
+const tooltipDark: VariantType = 'dark';
+const tooltipWarning: VariantType = 'warning';
+const tooltipTop: PlacesType = 'top';
+
 export const FormComponent: FC<IProps> = ({
   handleShowFeature,
   saveFormValues,
   handleGenerateQuery,
   isNotebookCreated,
-  commands
+  reloadIndicator,
+  onFetchComplete
 }) => {
   const [productTypes, setProductTypes] = useState<IOptionTypeBase[]>();
   const [providers, setProviders] = useState<IOptionTypeBase[]>();
@@ -74,6 +79,7 @@ export const FormComponent: FC<IProps> = ({
   const [openModal, setOpenModal] = useState(true);
   const [providerValue, setProviderValue] = useState(null);
   const [productTypeValue, setProductTypeValue] = useState(null);
+  const [fetchCount, setFetchCount] = useState(0);
 
   const {
     control,
@@ -91,24 +97,41 @@ export const FormComponent: FC<IProps> = ({
   });
 
   useEffect(() => {
+    if (!reloadIndicator) {
+      setFetchCount(0);
+    }
+  }, [reloadIndicator]);
+
+  useEffect(() => {
     const fetchData = async () => {
       const fetchProduct = useFetchProduct();
       const productList = await fetchProduct(providerValue);
       setProductTypes(productList);
+      if (reloadIndicator) {
+        setFetchCount(fetchCount => fetchCount + 1);
+      }
     };
-
     fetchData();
-  }, [providerValue]);
+  }, [providerValue, reloadIndicator]);
 
   useEffect(() => {
     const fetchData = async () => {
       const fetchProvider = useFetchProvider();
       const providerList = await fetchProvider(productTypeValue);
       setProviders(providerList);
+      if (reloadIndicator) {
+        setFetchCount(fetchCount => fetchCount + 1);
+      }
     };
 
     fetchData();
-  }, [productTypeValue]);
+  }, [productTypeValue, reloadIndicator]);
+
+  useEffect(() => {
+    if (fetchCount === 2) {
+      onFetchComplete();
+    }
+  }, [fetchCount]);
 
   const onSubmit: SubmitHandler<IFormInput> = data => {
     if (!isNotebookCreated()) {
@@ -143,10 +166,6 @@ export const FormComponent: FC<IProps> = ({
           setIsLoadingSearch(false);
         });
     }
-  };
-
-  const handleOpenSettings = (): void => {
-    commands.execute('settingeditor:open', { query: 'EODAG' });
   };
 
   const loadProductTypesSuggestions = useFetchProduct();
@@ -326,8 +345,10 @@ export const FormComponent: FC<IProps> = ({
                     }
                     disabled={isLoadingSearch}
                     onClick={() => setOpenModal(true)}
-                    data-for="btn-preview-results"
-                    data-tip="You need to select a product type to preview the results"
+                    data-tooltip-id="btn-preview-results"
+                    data-tooltip-content="You need to select a product type to preview the results"
+                    data-tooltip-variant={tooltipDark}
+                    data-tooltip-place={tooltipTop}
                   >
                     <CodiconOpenPreview width="21" height="21" />
                     <p>
@@ -336,12 +357,9 @@ export const FormComponent: FC<IProps> = ({
                       Results
                     </p>
                     {!productTypeValue && (
-                      <ReactTooltip
+                      <Tooltip
                         id="btn-preview-results"
                         className="jp-Eodag-tooltip"
-                        place="top"
-                        type="dark"
-                        effect="solid"
                       />
                     )}
                   </button>
@@ -357,8 +375,10 @@ export const FormComponent: FC<IProps> = ({
                     }
                     disabled={isLoadingSearch}
                     onClick={() => setOpenModal(false)}
-                    data-for="btn-generate-value"
-                    data-tip="You need to select a product type to generate the code"
+                    data-tooltip-id="btn-generate-value"
+                    data-tooltip-content="You need to select a product type to generate the code"
+                    data-tooltip-variant={tooltipDark}
+                    data-tooltip-place={tooltipTop}
                   >
                     <PhFileCode height="21" width="21" />
                     <p>
@@ -367,12 +387,9 @@ export const FormComponent: FC<IProps> = ({
                       Code
                     </p>
                     {!productTypeValue && (
-                      <ReactTooltip
+                      <Tooltip
                         id="btn-generate-value"
                         className="jp-Eodag-tooltip"
-                        place="top"
-                        type="dark"
-                        effect="solid"
                       />
                     )}
                   </button>
@@ -382,24 +399,6 @@ export const FormComponent: FC<IProps> = ({
           </div>
         </div>
       </form>
-      <div>
-        <button
-          type="button"
-          className="jp-EodagWidget-settingsbutton"
-          data-for="eodag-setting"
-          data-tip="Eodag labextension settings"
-          onClick={handleOpenSettings}
-        >
-          <CarbonSettings height="20" width="20" />
-          <ReactTooltip
-            id="eodag-setting"
-            className="jp-Eodag-tooltip"
-            place="bottom"
-            type="dark"
-            effect="solid"
-          />
-        </button>
-      </div>
     </div>
   );
 };
@@ -431,17 +430,13 @@ const Fields = ({
           href="https://eodag.readthedocs.io/en/stable/add_provider.html#opensearch-parameters-csv"
           target="_blank"
           rel="noopener noreferrer"
-          data-for="parameters-information"
-          data-tip="Click to check queryable metadata in parameters documentation"
+          data-tooltip-id="parameters-information"
+          data-tooltip-content="Click to check queryable metadata in parameters documentation"
+          data-tooltip-variant={tooltipDark}
+          data-tooltip-place={tooltipTop}
         >
           <CarbonInformation height="20" width="20" />
-          <ReactTooltip
-            id="parameters-information"
-            className="jp-Eodag-tooltip"
-            place="top"
-            type="dark"
-            effect="solid"
-          />
+          <Tooltip id="parameters-information" className="jp-Eodag-tooltip" />
         </a>
       </div>
 
@@ -463,33 +458,25 @@ const Fields = ({
                 onClick={() =>
                   fields.length === 1 ? clearInput(index) : remove(index)
                 }
-                data-for="parameters-delete"
-                data-tip="remove additionnal parameter"
+                data-tooltip-id="parameters-delete"
+                data-tooltip-content="remove additionnal parameter"
+                data-tooltip-variant={tooltipWarning}
+                data-tooltip-place={tooltipTop}
               >
                 <CarbonTrashCan height="20" width="20" />
-                <ReactTooltip
-                  id="parameters-delete"
-                  className="jp-Eodag-tooltip"
-                  place="top"
-                  type="warning"
-                  effect="solid"
-                />
+                <Tooltip id="parameters-delete" className="jp-Eodag-tooltip" />
               </button>
               <button
                 type="button"
                 className="jp-EodagWidget-additionnalParameters-addbutton"
                 onClick={() => append({ name: '', value: '' })}
-                data-for="parameters-add"
-                data-tip="add a new additionnal parameter"
+                data-tooltip-id="parameters-add"
+                data-tooltip-content="add a new additionnal parameter"
+                data-tooltip-variant={tooltipDark}
+                data-tooltip-place={tooltipTop}
               >
                 <CarbonAddFilled height="20" width="20" />
-                <ReactTooltip
-                  id="parameters-add"
-                  className="jp-Eodag-tooltip"
-                  place="top"
-                  type="dark"
-                  effect="solid"
-                />
+                <Tooltip id="parameters-add" className="jp-Eodag-tooltip" />
               </button>
             </section>
           </div>

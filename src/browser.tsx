@@ -21,6 +21,9 @@ import { IFormInput } from './types';
 import { ServerConnection } from '@jupyterlab/services';
 import { EODAG_SETTINGS_ADDRESS } from './config';
 import { URLExt } from '@jupyterlab/coreutils';
+import { useFetchUserSettings } from './hooks/useFetchData';
+import { CarbonSettings, IcBaselineRefresh } from './icones';
+import { Tooltip, PlacesType, VariantType } from 'react-tooltip';
 
 export interface IProps {
   tracker: INotebookTracker;
@@ -33,7 +36,12 @@ export interface IState {
   searching: any;
   formValues: IFormInput;
   replaceCellIndex: number;
+  isLoading: boolean;
+  reloadIndicator: boolean;
 }
+
+const tooltipDark: VariantType = 'dark';
+const tooltipBottom: PlacesType = 'bottom';
 
 export class EodagBrowser extends React.Component<IProps, IState> {
   constructor(props: IProps) {
@@ -43,8 +51,11 @@ export class EodagBrowser extends React.Component<IProps, IState> {
       openDialog: false,
       searching: false,
       formValues: undefined,
-      replaceCellIndex: undefined
+      replaceCellIndex: undefined,
+      isLoading: false,
+      reloadIndicator: false
     };
+    this.reloadUserSettings = this.reloadUserSettings.bind(this);
   }
 
   handleCurrentWidgetError = () => {
@@ -221,11 +232,67 @@ export class EodagBrowser extends React.Component<IProps, IState> {
     });
   };
 
+  handleOpenSettings = (): void => {
+    this.props.commands.execute('settingeditor:open', { query: 'EODAG' });
+  };
+
+  updateLoadingState = () => {
+    this.setState(prevState => ({
+      isLoading: !prevState.isLoading,
+      reloadIndicator: !prevState.reloadIndicator
+    }));
+  };
+
+  reloadUserSettings = () => {
+    useFetchUserSettings();
+    this.updateLoadingState();
+  };
+
+  resetIsLoading = () => {
+    this.updateLoadingState();
+  };
+
   render() {
     const { openDialog, features } = this.state;
     return (
-      <div>
-        <header className="jp-EodagWidget-header">Products search</header>
+      <div className="jp-EodagWidget-products-search">
+        <div className="jp-EodagWidget-header-wrapper">
+          <header className="jp-EodagWidget-header">Products search</header>
+          <div className="jp-EodagWidget-settings-wrapper">
+            <div>
+              <button
+                type="button"
+                className={'jp-EodagWidget-settingsbutton'}
+                data-tooltip-id="eodag-setting"
+                data-tooltip-content="Reload eodag environment"
+                data-tooltip-variant={tooltipDark}
+                data-tooltip-place={tooltipBottom}
+                onClick={this.reloadUserSettings}
+              >
+                <IcBaselineRefresh
+                  height="20"
+                  width="20"
+                  className={this.state.isLoading ? 'spin-icon' : ''}
+                />
+                <Tooltip id="eodag-setting" className="jp-Eodag-tooltip" />
+              </button>
+            </div>
+            <div>
+              <button
+                type="button"
+                className="jp-EodagWidget-settingsbutton"
+                data-tooltip-id="eodag-setting"
+                data-tooltip-content="Eodag labextension settings"
+                data-tooltip-variant={tooltipDark}
+                data-tooltip-place={tooltipBottom}
+                onClick={this.handleOpenSettings}
+              >
+                <CarbonSettings height="20" width="20" />
+                <Tooltip id="eodag-setting" className="jp-Eodag-tooltip" />
+              </button>
+            </div>
+          </div>
+        </div>
         <FormComponent
           isNotebookCreated={this.handleCurrentWidgetError}
           handleShowFeature={this.handleShowFeature}
@@ -233,7 +300,8 @@ export class EodagBrowser extends React.Component<IProps, IState> {
             this.setState({ formValues })
           }
           handleGenerateQuery={this.handleGenerateQuery}
-          commands={this.props.commands}
+          reloadIndicator={this.state.reloadIndicator}
+          onFetchComplete={this.resetIsLoading}
         />
         <ModalComponent
           open={openDialog}
