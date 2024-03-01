@@ -64,7 +64,7 @@ setup_args = dict(
         "eodag[notebook]>=2.8.0",
         "orjson",
     ],
-    extras_require={"dev": ["black", "pre-commit", "pytest"]},
+    extras_require={"dev": ["black", "pre-commit", "pytest", "shapely"]},
     zip_safe=False,
     include_package_data=True,
     python_requires=">=3.8",
