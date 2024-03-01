@@ -101,7 +101,7 @@ class ProvidersHandler(APIHandler):
             returned_providers += [
                 p
                 for p in all_providers_list
-                if first_keyword in p["description"].lower() and p["provider"] not in providers_ids
+                if first_keyword in (p["description"] or "").lower() and p["provider"] not in providers_ids
             ]
         else:
             returned_providers = all_providers_list
@@ -216,6 +216,22 @@ class SearchHandler(APIHandler):
         self.finish(response)
 
 
+class NotFoundHandler(APIHandler):
+    """Not found handler"""
+
+    @tornado.web.authenticated
+    def post(self):
+        """Post endpoint"""
+        self.set_status(404)
+        self.finish({"error": f"No matching handler for {self.request.uri}"})
+
+    @tornado.web.authenticated
+    def get(self):
+        """Get endpoint"""
+        self.set_status(404)
+        self.finish({"error": f"No matching handler for {self.request.uri}"})
+
+
 class MethodAndPathMatch(tornado.routing.PathMatches):
     """Wrapper around `tornado.routing.PathMatches` adding http method matching"""
 
@@ -239,12 +255,13 @@ def setup_handlers(web_app, url_path):
     base_url = web_app.settings["base_url"]
 
     # matching patterns
-    host_pattern = ".*$"
+    host_pattern = r".*$"
     product_types_pattern = url_path_join(base_url, url_path, "product-types")
     reload_pattern = url_path_join(base_url, url_path, "reload")
     providers_pattern = url_path_join(base_url, url_path, "providers")
     guess_product_types_pattern = url_path_join(base_url, url_path, "guess-product-type")
-    search_pattern = url_path_join(base_url, url_path, r"(?P<product_type>[\w-]+)")
+    search_pattern = url_path_join(base_url, url_path, r"(?P<product_type>[\w\-\.]+)")
+    default_pattern = url_path_join(base_url, url_path, r".*")
 
     # handlers added for each pattern
     handlers = [
@@ -253,5 +270,6 @@ def setup_handlers(web_app, url_path):
         (providers_pattern, ProvidersHandler),
         (guess_product_types_pattern, GuessProductTypeHandler),
         (MethodAndPathMatch("POST", search_pattern), SearchHandler),
+        (default_pattern, NotFoundHandler),
     ]
     web_app.add_handlers(host_pattern, handlers)
