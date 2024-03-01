@@ -10,6 +10,7 @@ import { throttle } from 'lodash';
 import { EODAG_TILE_URL, EODAG_TILE_COPYRIGHT } from './config';
 import { IGeometry } from './types';
 import { LeafletMouseEvent } from 'leaflet';
+import { EodagWidget } from './widget';
 
 export interface IProps {
   onChange: (value: IGeometry) => void;
@@ -31,6 +32,7 @@ export default class MapExtentComponent extends React.Component<
    * Leaflet map object
    */
   map: any;
+  eodagWidget: EodagWidget;
 
   EditOptions = {
     polyline: false,
@@ -47,6 +49,7 @@ export default class MapExtentComponent extends React.Component<
       zoom: 4,
       geometry: props.geometry
     };
+    this.handleMapSettingsChange = this.handleMapSettingsChange.bind(this);
   }
 
   /**
@@ -66,6 +69,22 @@ export default class MapExtentComponent extends React.Component<
       }
       this.invalidateMapSize();
     }, 100);
+    this.eodagWidget = EodagWidget.getCurrentInstance();
+    this.eodagWidget.mapSettingsChanged.connect(this.handleMapSettingsChange);
+  }
+
+  componentWillUnmount() {
+    this.eodagWidget.mapSettingsChanged.disconnect(
+      this.handleMapSettingsChange
+    );
+  }
+
+  handleMapSettingsChange(
+    sender: EodagWidget,
+    settings: { lat: number; lon: number; zoom: number }
+  ) {
+    const { lat, lon, zoom } = settings;
+    this.setState({ lat, lon, zoom });
   }
 
   /**

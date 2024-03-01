@@ -55,6 +55,7 @@
     "@jupyterlab/apputils": "^3.4.8",
     "@jupyterlab/cells": "^3.4.8",
     "@jupyterlab/notebook": "^3.4.8",
+    "@jupyterlab/settingregistry": "^3.4.8",
     "@terraformer/wkt": "^2.1.2",
     "install": "^0.13.0",
     "isomorphic-fetch": "^3.0.0",
