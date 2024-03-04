@@ -4,11 +4,14 @@
 
 """Tornado web requests handlers"""
 
+import logging
 import re
 
 import orjson
 import tornado
-from eodag.rest.utils import eodag_api, search_products
+from eodag import EODataAccessGateway, SearchResult
+from eodag.api.core import DEFAULT_ITEMS_PER_PAGE, DEFAULT_PAGE
+from eodag.rest.utils import get_datetime
 from eodag.utils import parse_qs
 from eodag.utils.exceptions import (
     AuthenticationError,
@@ -19,10 +22,15 @@ from eodag.utils.exceptions import (
 )
 from jupyter_server.base.handlers import APIHandler
 from jupyter_server.utils import url_path_join
+from shapely.geometry import shape
+
+eodag_api = EODataAccessGateway()
+
+logger = logging.getLogger("eodag-labextension.handlers")
 
 
 class ProductTypeHandler(APIHandler):
-    """Product type listing handlerd"""
+    """Product type listing handler"""
 
     @tornado.web.authenticated
     def get(self):
@@ -42,6 +50,15 @@ class ProductTypeHandler(APIHandler):
             return
 
         self.write(orjson.dumps(product_types))
+
+
+class ReloadHandler(APIHandler):
+    """EODAG API reload handler"""
+
+    @tornado.web.authenticated
+    def get(self):
+        """Get endpoint"""
+        eodag_api.__init__()
 
 
 class ProvidersHandler(APIHandler):
@@ -92,7 +109,7 @@ class ProvidersHandler(APIHandler):
             returned_providers += [
                 p
                 for p in all_providers_list
-                if first_keyword in p["description"].lower() and p["provider"] not in providers_ids
+                if first_keyword in (p["description"] or "").lower() and p["provider"] not in providers_ids
             ]
         else:
             returned_providers = all_providers_list
@@ -172,17 +189,33 @@ class SearchHandler(APIHandler):
 
         arguments = orjson.loads(self.request.body)
 
-        # move geom to intersects parameter
+        # geom
         geom = arguments.pop("geom", None)
-        if geom:
-            arguments["intersects"] = geom
+        try:
+            arguments["geom"] = shape(geom) if geom else None
+        except Exception:
+            self.set_status(400)
+            self.finish({"error": f"Invalid geometry: {str(geom)}"})
+            return
 
+        # dates
+        try:
+            arguments["start"], arguments["end"] = get_datetime(arguments)
+        except ValidationError as e:
+            self.set_status(400)
+            self.finish({"error": str(e)})
+            return
+
+        # provider
         provider = arguments.pop("provider", None)
         if provider and provider != "null":
             arguments["provider"] = provider
 
+        # We remove potential None values to use the default values of the search method
+        arguments = dict((k, v) for k, v in arguments.items() if v is not None)
+
         try:
-            response = search_products(product_type, arguments, stac_formatted=False)
+            products, total = eodag_api.search(productType=product_type, **arguments)
         except ValidationError as e:
             self.set_status(400)
             self.finish({"error": e.message})
@@ -204,7 +237,34 @@ class SearchHandler(APIHandler):
             self.finish({"error": str(e)})
             return
 
+        response = SearchResult(products).as_geojson_object()
+        response.update(
+            {
+                "properties": {
+                    "page": int(arguments.get("page", DEFAULT_PAGE)),
+                    "itemsPerPage": DEFAULT_ITEMS_PER_PAGE,
+                    "totalResults": total,
+                }
+            }
+        )
+
         self.finish(response)
+
+
+class NotFoundHandler(APIHandler):
+    """Not found handler"""
+
+    @tornado.web.authenticated
+    def post(self):
+        """Post endpoint"""
+        self.set_status(404)
+        self.finish({"error": f"No matching handler for {self.request.uri}"})
+
+    @tornado.web.authenticated
+    def get(self):
+        """Get endpoint"""
+        self.set_status(404)
+        self.finish({"error": f"No matching handler for {self.request.uri}"})
 
 
 class MethodAndPathMatch(tornado.routing.PathMatches):
@@ -230,17 +290,21 @@ def setup_handlers(web_app, url_path):
     base_url = web_app.settings["base_url"]
 
     # matching patterns
-    host_pattern = ".*$"
+    host_pattern = r".*$"
     product_types_pattern = url_path_join(base_url, url_path, "product-types")
+    reload_pattern = url_path_join(base_url, url_path, "reload")
     providers_pattern = url_path_join(base_url, url_path, "providers")
     guess_product_types_pattern = url_path_join(base_url, url_path, "guess-product-type")
-    search_pattern = url_path_join(base_url, url_path, r"(?P<product_type>[\w-]+)")
+    search_pattern = url_path_join(base_url, url_path, r"(?P<product_type>[\w\-\.]+)")
+    default_pattern = url_path_join(base_url, url_path, r".*")
 
     # handlers added for each pattern
     handlers = [
         (product_types_pattern, ProductTypeHandler),
+        (reload_pattern, ReloadHandler),
         (providers_pattern, ProvidersHandler),
         (guess_product_types_pattern, GuessProductTypeHandler),
         (MethodAndPathMatch("POST", search_pattern), SearchHandler),
+        (default_pattern, NotFoundHandler),
     ]
     web_app.add_handlers(host_pattern, handlers)

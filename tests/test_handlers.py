@@ -6,7 +6,10 @@ import os
 import re
 from unittest import mock
 
+from eodag import SearchResult
+from eodag.api.core import DEFAULT_ITEMS_PER_PAGE
 from notebook.notebookapp import NotebookApp
+from shapely.geometry import shape
 from tornado.testing import AsyncHTTPTestCase
 from tornado.web import authenticated
 
@@ -46,20 +49,32 @@ class TestEodagLabExtensionHandler(AsyncHTTPTestCase):
 
         return app.web_app
 
+    @mock.patch.object(APIHandler, "check_xsrf_cookie", return_value=MockUser())
     @mock.patch.object(APIHandler, "get_current_user", return_value=MockUser())
     @mock.patch.object(authenticated, "__call__", return_value=lambda x: x)
-    def fetch_results(self, url, mock_auth, mock_user):
+    def fetch_results(self, url, mock_auth, mock_user, mock_xsrf, **kwargs):
         """Check that request status is 200 and return the json result as dict"""
-        response = self.fetch(url)
+        response = self.fetch(url, **kwargs)
         self.assertEqual(response.code, 200)
         return json.loads(response.body.decode("utf-8"))
 
+    @mock.patch.object(APIHandler, "check_xsrf_cookie", return_value=MockUser())
     @mock.patch.object(APIHandler, "get_current_user", return_value=MockUser())
     @mock.patch.object(authenticated, "__call__", return_value=lambda x: x)
-    def fetch_results_err400(self, url, mock_auth, mock_user):
+    def fetch_results_error(
+        self,
+        url,
+        error_code=None,
+        mock_auth=None,
+        mock_user=None,
+        mock_xsrf=None,
+        **kwargs,
+    ):
         """Check that request returns a 400 error"""
-        response = self.fetch(url)
-        self.assertEqual(response.code, 400)
+        response = self.fetch(url, **kwargs)
+        self.assertNotEqual(response.code, 200)
+        if error_code:
+            self.assertEqual(response.code, error_code)
         return json.loads(response.body.decode("utf-8"))
 
     def test_product_types(self):
@@ -73,7 +88,7 @@ class TestEodagLabExtensionHandler(AsyncHTTPTestCase):
         self.assertLess(len(less_results), len(results))
 
         # unknown provider
-        self.fetch_results_err400("/eodag/product-types?provider=foo")
+        self.fetch_results_error("/eodag/product-types?provider=foo", 400)
 
     def test_providers(self):
         # all providers
@@ -126,4 +141,76 @@ class TestEodagLabExtensionHandler(AsyncHTTPTestCase):
         self.assertLess(len(other_results), len(all_results))
         self.assertTrue(other_results[0]["ID"].lower().startswith("cop"))
 
-        self.fetch_results_err400("/eodag/guess-product-type?provider=foo")
+        self.fetch_results_error("/eodag/guess-product-type?provider=foo", 400)
+
+    def test_get_not_found(self):
+        self.fetch_results_error("/eodag/foo", 404)
+
+    def test_post_not_found(self):
+        self.fetch_results_error("/eodag/foo/bar", 404, method="POST", body=json.dumps({}))
+
+    @mock.patch("eodag.api.core.EODataAccessGateway.search", autospec=True, return_value=(SearchResult([]), 0))
+    def test_search(self, mock_search):
+        geom_dict = {
+            "type": "Polygon",
+            "coordinates": [[[0, 2], [0, 3], [1, 3], [1, 2], [0, 2]]],
+        }
+        # full example
+        result = self.fetch_results(
+            "/eodag/S2_MSI_L1C",
+            method="POST",
+            body=json.dumps(
+                {
+                    "dtstart": "2024-01-01",
+                    "dtend": "2024-01-02",
+                    "page": 1,
+                    "geom": geom_dict,
+                    "cloudCover": 50,
+                    "foo": "bar",
+                    "provider": "cop_dataspace",
+                }
+            ),
+        )
+        mock_search.assert_called_once_with(
+            mock.ANY,
+            productType="S2_MSI_L1C",
+            start="2024-01-01T00:00:00",
+            end="2024-01-02T00:00:00",
+            geom=shape(geom_dict),
+            page=1,
+            cloudCover=50,
+            foo="bar",
+            provider="cop_dataspace",
+        )
+        self.assertDictEqual(
+            result,
+            {
+                "type": "FeatureCollection",
+                "features": [],
+                "properties": {
+                    "page": 1,
+                    "itemsPerPage": DEFAULT_ITEMS_PER_PAGE,
+                    "totalResults": 0,
+                },
+            },
+        )
+
+        # minimal example
+        mock_search.reset_mock()
+        result = self.fetch_results(
+            "/eodag/S2_MSI_L1C",
+            method="POST",
+            body=json.dumps({}),
+        )
+        mock_search.assert_called_once_with(
+            mock.ANY,
+            productType="S2_MSI_L1C",
+        )
+
+        # date error
+        mock_search.reset_mock()
+        self.fetch_results_error("/eodag/S2_MSI_L1C", 400, method="POST", body=json.dumps({"dtstart": "2024-015-01"}))
+
+        # geom error
+        mock_search.reset_mock()
+        self.fetch_results_error("/eodag/S2_MSI_L1C", 400, method="POST", body=json.dumps({"geom": {"foo": "bar"}}))

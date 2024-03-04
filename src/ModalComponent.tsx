@@ -12,7 +12,7 @@ import BrowseComponent from './BrowseComponent';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes, faSpinner } from '@fortawesome/free-solid-svg-icons';
 import DescriptionProductComponent from './DescriptionProductComponent';
-import ReactTooltip from 'react-tooltip';
+import { Tooltip, PlacesType, VariantType } from 'react-tooltip';
 
 const customStyles: Styles = {
   content: {
@@ -51,6 +51,8 @@ export interface IState {
 function Transition(props: any) {
   return <div direction="up" {...props} />;
 }
+const tooltipDark: VariantType = 'dark';
+const tooltipBottom: PlacesType = 'bottom';
 
 // Override modal's default style
 Modal.defaultStyles.overlay.zIndex = 4;
@@ -180,18 +182,14 @@ export default class ModalComponent extends React.Component<IProps, IState> {
               <div className="jp-EodagWidget-browse-title">
                 {isRetrievingMoreFeature() ? (
                   <div
-                    data-for="load-tooltip"
-                    data-tip="Loading more products"
+                    data-tooltip-id="load-tooltip"
+                    data-tootip-content="Loading more products"
+                    data-tooltip-variant={tooltipDark}
+                    data-tooltip-place={tooltipBottom}
                     className="jp-EodagWidget-loading-wrapper"
                   >
                     <FontAwesomeIcon icon={faSpinner} spin />
-                    <ReactTooltip
-                      id="load-tooltip"
-                      className="jp-Eodag-tooltip"
-                      place="bottom"
-                      type="dark"
-                      effect="solid"
-                    />
+                    <Tooltip id="load-tooltip" className="jp-Eodag-tooltip" />
                   </div>
                 ) : null}
                 {get(features, 'features', []).length} results (total:{' '}
