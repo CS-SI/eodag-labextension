@@ -23,6 +23,7 @@ Lab. The package consist of a Python Jupyter notebook REST service consumed by t
   - [Configuration](#configuration)
 - [QuickStart](#quickstart)
   - [Search](#search)
+  - [Settings](#settings)
   - [Results overview](#results-overview)
   - [Apply to the Jupyter notebook](#apply-to-the-jupyter-notebook)
   - [User manual](#user-manual)
@@ -94,9 +95,19 @@ Once search criteria are filled out, click on:
 - `Generate Code` to automatically generate and insert the corresponding eodag search code bellow the active cell.
 - `Preview Results` to perform a search in background, display results, and generate search code in a second step.
 
+## Settings
+
+![reload logo](https://raw.githubusercontent.com/CS-SI/eodag-labextension/develop/notebooks/images/eodag_labext_reload_icon.png)
+Click on this icon to reload [EODAG configuration](https://eodag.readthedocs.io/en/stable/getting_started_guide/configure.html)
+and take into account your updated credentials or providers settings.
+
 ![settings logo](https://raw.githubusercontent.com/CS-SI/eodag-labextension/develop/notebooks/images/eodag_labext_settings_icon.png)
-Click on this icon to open EODAG-Labextension settings. You will be enable to choose whether newly inserted code should
-replace existing search code or not.
+Click on this icon to open EODAG-Labextension settings. You will be enable to:
+
+- choose whether newly inserted code should replace existing search code or not;
+- configure the default map settings.
+
+![settings tab](https://raw.githubusercontent.com/CS-SI/eodag-labextension/develop/notebooks/images/eodag_labext_settings_map.png)
 
 ### Results overview
 
