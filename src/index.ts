@@ -16,6 +16,7 @@ import 'leaflet/dist/leaflet.css';
 import 'leaflet-draw/dist/leaflet.draw.css';
 
 import { EodagWidget } from './widget';
+import { MapSettings } from './types';
 
 const NAMESPACE = 'eodag-widget';
 const PLUGIN_ID = 'eodag-labextension:plugin';
@@ -36,14 +37,11 @@ const extension: JupyterFrontEndPlugin<void> = {
  */
 function loadSetting(setting: ISettingRegistry.ISettings): void {
   const eodagWidget = EodagWidget.getCurrentInstance();
-  const map = setting.get('map').composite as {
-    lat: number;
-    lon: number;
-    zoom: number;
-  };
+  const mapSettings = setting.get('map').composite as MapSettings;
+  const defaultMapSettings = setting.default('map') as MapSettings;
 
-  if (eodagWidget && map) {
-    const { lat, lon, zoom } = map;
+  if (eodagWidget) {
+    const { lat, lon, zoom } = mapSettings || defaultMapSettings;
     eodagWidget.updateMapSettings(lat, lon, zoom);
   }
 }
