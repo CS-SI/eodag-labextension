@@ -1,5 +1,12 @@
 # Release history
 
+## 3.6.0 (2024-03-04)
+
+- New `reload eodag environment` button [(#139)](https://github.com/CS-SI/eodag-labextension/pull/139)
+- Customizable map default settings [(#143)](https://github.com/CS-SI/eodag-labextension/pull/143)
+- Handlers patterns fix and code refactoring [(#142)](https://github.com/CS-SI/eodag-labextension/pull/142)[(#144)](https://github.com/CS-SI/eodag-labextension/pull/144)
+- Updates dependencies and developement tools versions [(#138)](https://github.com/CS-SI/eodag-labextension/pull/138)
+
 ## 3.5.0 (2024-02-08)
 
 - New `provider` filtering [(#127)](https://github.com/CS-SI/eodag-labextension/pull/127)
