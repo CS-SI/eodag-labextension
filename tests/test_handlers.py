@@ -155,6 +155,7 @@ class TestEodagLabExtensionHandler(AsyncHTTPTestCase):
             "type": "Polygon",
             "coordinates": [[[0, 2], [0, 3], [1, 3], [1, 2], [0, 2]]],
         }
+        # full example
         result = self.fetch_results(
             "/eodag/S2_MSI_L1C",
             method="POST",
@@ -177,11 +178,9 @@ class TestEodagLabExtensionHandler(AsyncHTTPTestCase):
             end="2024-01-02T00:00:00",
             geom=shape(geom_dict),
             page=1,
-            items_per_page=DEFAULT_ITEMS_PER_PAGE,
             cloudCover=50,
             foo="bar",
             provider="cop_dataspace",
-            raise_errors=True,
         )
         self.assertDictEqual(
             result,
@@ -195,3 +194,23 @@ class TestEodagLabExtensionHandler(AsyncHTTPTestCase):
                 },
             },
         )
+
+        # minimal example
+        mock_search.reset_mock()
+        result = self.fetch_results(
+            "/eodag/S2_MSI_L1C",
+            method="POST",
+            body=json.dumps({}),
+        )
+        mock_search.assert_called_once_with(
+            mock.ANY,
+            productType="S2_MSI_L1C",
+        )
+
+        # date error
+        mock_search.reset_mock()
+        self.fetch_results_error("/eodag/S2_MSI_L1C", 400, method="POST", body=json.dumps({"dtstart": "2024-015-01"}))
+
+        # geom error
+        mock_search.reset_mock()
+        self.fetch_results_error("/eodag/S2_MSI_L1C", 400, method="POST", body=json.dumps({"geom": {"foo": "bar"}}))
