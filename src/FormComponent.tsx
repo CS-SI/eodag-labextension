@@ -19,7 +19,6 @@ import Autocomplete from './Autocomplete';
 import SearchService from './SearchService';
 import { ChangeEvent } from 'react';
 import MapExtentComponent from './MapExtentComponent';
-import _ from 'lodash';
 import { IFormInput } from './types';
 import {
   CodiconOpenPreview,
@@ -131,7 +130,7 @@ export const FormComponent: FC<IProps> = ({
     if (fetchCount === 2) {
       onFetchComplete();
     }
-  }, [fetchCount]);
+  }, [fetchCount, onFetchComplete]);
 
   const onSubmit: SubmitHandler<IFormInput> = data => {
     if (!isNotebookCreated()) {

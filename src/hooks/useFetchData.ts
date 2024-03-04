@@ -111,10 +111,6 @@ const useFetchUserSettings = async () => {
     if (response.status >= 400) {
       throw new Error('Bad response from server');
     }
-    if (response.status === 200) {
-      useFetchProduct();
-      useFetchProvider();
-    }
   } catch (error) {
     showErrorMessage(
       `Unable to contact the EODAG server. Are you sure the address is ${eodagServer}/ ?`,
@@ -122,4 +118,5 @@ const useFetchUserSettings = async () => {
     );
   }
 };
+
 export { fetchData, useFetchProduct, useFetchProvider, useFetchUserSettings };

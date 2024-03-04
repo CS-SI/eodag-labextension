@@ -37,3 +37,5 @@ export interface IFeaturePropertie {
   key: string;
   value: any;
 }
+
+export type MapSettings = { lat: number; lon: number; zoom: number };

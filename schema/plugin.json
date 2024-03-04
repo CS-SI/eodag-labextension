@@ -9,6 +9,31 @@
       "description": "Replace the existing search code containing matching comment with the new code.",
       "type": "boolean",
       "default": false
+    },
+    "map": {
+      "title": "Map settings",
+      "description": "Settings for editing the center and zoom of the map",
+      "type": "object",
+      "properties": {
+        "lat": {
+          "title": "Latitude",
+          "description": "Latitude of the center of the map",
+          "type": "number",
+          "default": 46.8
+        },
+        "lon": {
+          "title": "Longitude",
+          "description": "Longitude of the center of the map",
+          "type": "number",
+          "default": 1.8
+        },
+        "zoom": {
+          "title": "Zoom",
+          "description": "Zoom level of the map",
+          "type": "number",
+          "default": 4
+        }
+      }
     }
   },
   "additionalProperties": false,

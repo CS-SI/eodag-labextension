@@ -157,6 +157,7 @@
 .jp-EodagWidget .jp-EodagWidget-form .jp-EodagWidget-field {
   padding: 0 10px;
   max-width: 450px;
+  margin: auto;
 }
 .jp-EodagWidget .jp-EodagWidget-form .jp-EodagWidget-field fieldset {
   margin-top: 1.5em;
