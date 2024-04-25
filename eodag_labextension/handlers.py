@@ -11,7 +11,6 @@ import orjson
 import tornado
 from eodag import EODataAccessGateway, SearchResult
 from eodag.api.core import DEFAULT_ITEMS_PER_PAGE, DEFAULT_PAGE
-from eodag.rest.utils import get_datetime
 from eodag.utils import parse_qs
 from eodag.utils.exceptions import (
     AuthenticationError,
@@ -20,6 +19,7 @@ from eodag.utils.exceptions import (
     UnsupportedProvider,
     ValidationError,
 )
+from eodag.utils.rest import get_datetime
 from jupyter_server.base.handlers import APIHandler
 from jupyter_server.utils import url_path_join
 from shapely.geometry import shape
