@@ -131,8 +131,8 @@ class GuessProductTypeHandler(APIHandler):
             provider = query_dict.pop("provider")[0]
         provider = None if not provider or provider == "null" else provider
 
+        returned_product_types = []
         try:
-            returned_product_types = []
             # fetch all product types
             all_product_types = eodag_api.list_product_types(provider=provider)
 
@@ -156,9 +156,9 @@ class GuessProductTypeHandler(APIHandler):
 
                 # 3. Append guessed product types
                 guess_kwargs = {}
-                # ["aa bb", "cc-dd_ee"] to "*aa* *bb* *cc* **dd* *ee*"
+                # ["aa bb", "cc-dd_ee"] to "*aa* AND *bb* AND *cc-dd_ee*"
                 for k, v in query_dict.items():
-                    guess_kwargs[k] = re.sub(r"(\S+)", r"*\1*", " ".join(v).replace("-", " ").replace("_", " "))
+                    guess_kwargs[k] = " AND ".join(re.sub(r"(\S+)", r"*\1*", " ".join(v)).split(" "))
 
                 # guessed product types ids
                 guessed_ids_list = eodag_api.guess_product_type(**guess_kwargs)
@@ -173,7 +173,7 @@ class GuessProductTypeHandler(APIHandler):
 
             self.write(orjson.dumps(returned_product_types))
         except NoMatchingProductType:
-            self.write(orjson.dumps([]))
+            self.write(orjson.dumps(returned_product_types))
         except UnsupportedProvider as e:
             self.set_status(400)
             self.finish({"error": str(e)})
