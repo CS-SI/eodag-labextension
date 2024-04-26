@@ -61,7 +61,7 @@ setup_args = dict(
         "jupyterlab~=3.0",
         "tornado>=6.0.3,<7.0.0",
         "notebook>=6.0.3,<7.0.0",
-        "eodag[notebook] @ git+https://github.com/CS-SI/eodag.git@develop",
+        "eodag[notebook] @ git+https://github.com/CS-SI/eodag.git@add-dedl-provider",
         "orjson",
     ],
     extras_require={"dev": ["black", "pre-commit", "pytest", "shapely"]},
