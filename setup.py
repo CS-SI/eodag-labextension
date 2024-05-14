@@ -64,7 +64,15 @@ setup_args = dict(
         "eodag[notebook] @ git+https://github.com/CS-SI/eodag.git@develop",
         "orjson",
     ],
-    extras_require={"dev": ["black", "pre-commit", "pytest", "shapely"]},
+    extras_require={
+        "dev": [
+            "black",
+            "pre-commit",
+            # pytest pinned until https://github.com/pytest-dev/pytest/issues/12263 is fixes
+            "pytest < 8.2.0",
+            "shapely",
+        ]
+    },
     zip_safe=False,
     include_package_data=True,
     python_requires=">=3.8",
