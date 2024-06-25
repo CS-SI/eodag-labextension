@@ -215,7 +215,7 @@ class SearchHandler(APIHandler):
         arguments = dict((k, v) for k, v in arguments.items() if v is not None)
 
         try:
-            products, total = eodag_api.search(productType=product_type, **arguments)
+            products = eodag_api.search(productType=product_type, count=True, **arguments)
         except ValidationError as e:
             self.set_status(400)
             self.finish({"error": e.message})
@@ -243,7 +243,7 @@ class SearchHandler(APIHandler):
                 "properties": {
                     "page": int(arguments.get("page", DEFAULT_PAGE)),
                     "itemsPerPage": DEFAULT_ITEMS_PER_PAGE,
-                    "totalResults": total,
+                    "totalResults": products.number_matched,
                 }
             }
         )
