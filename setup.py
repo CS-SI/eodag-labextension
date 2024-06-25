@@ -61,10 +61,18 @@ setup_args = dict(
         "jupyterlab~=3.0",
         "tornado>=6.0.3,<7.0.0",
         "notebook>=6.0.3,<7.0.0",
-        "eodag[notebook]>=2.8.0",
+        "eodag[notebook]>=3.0.0b1",
         "orjson",
     ],
-    extras_require={"dev": ["black", "pre-commit", "pytest", "shapely"]},
+    extras_require={
+        "dev": [
+            "black",
+            "pre-commit",
+            # pytest pinned until https://github.com/pytest-dev/pytest/issues/12263 is fixes
+            "pytest < 8.2.0",
+            "shapely",
+        ]
+    },
     zip_safe=False,
     include_package_data=True,
     python_requires=">=3.8",

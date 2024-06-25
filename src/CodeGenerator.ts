@@ -45,7 +45,7 @@ ${standardMessage}`
 geometry = "${geojsonToWKT(geometry)}"`;
   }
   code += `
-search_results, total_count = dag.search(`;
+search_results = dag.search(`;
   if (provider) {
     code += `
     provider="${provider}",`;

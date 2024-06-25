@@ -11,7 +11,6 @@ import orjson
 import tornado
 from eodag import EODataAccessGateway, SearchResult
 from eodag.api.core import DEFAULT_ITEMS_PER_PAGE, DEFAULT_PAGE
-from eodag.rest.utils import get_datetime
 from eodag.utils import parse_qs
 from eodag.utils.exceptions import (
     AuthenticationError,
@@ -20,6 +19,7 @@ from eodag.utils.exceptions import (
     UnsupportedProvider,
     ValidationError,
 )
+from eodag.utils.rest import get_datetime
 from jupyter_server.base.handlers import APIHandler
 from jupyter_server.utils import url_path_join
 from shapely.geometry import shape
@@ -131,8 +131,8 @@ class GuessProductTypeHandler(APIHandler):
             provider = query_dict.pop("provider")[0]
         provider = None if not provider or provider == "null" else provider
 
+        returned_product_types = []
         try:
-            returned_product_types = []
             # fetch all product types
             all_product_types = eodag_api.list_product_types(provider=provider)
 
@@ -156,9 +156,9 @@ class GuessProductTypeHandler(APIHandler):
 
                 # 3. Append guessed product types
                 guess_kwargs = {}
-                # ["aa bb", "cc-dd_ee"] to "*aa* *bb* *cc* **dd* *ee*"
+                # ["aa bb", "cc-dd_ee"] to "*aa* AND *bb* AND *cc-dd_ee*"
                 for k, v in query_dict.items():
-                    guess_kwargs[k] = re.sub(r"(\S+)", r"*\1*", " ".join(v).replace("-", " ").replace("_", " "))
+                    guess_kwargs[k] = " AND ".join(re.sub(r"(\S+)", r"*\1*", " ".join(v)).split(" "))
 
                 # guessed product types ids
                 guessed_ids_list = eodag_api.guess_product_type(**guess_kwargs)
@@ -173,7 +173,7 @@ class GuessProductTypeHandler(APIHandler):
 
             self.write(orjson.dumps(returned_product_types))
         except NoMatchingProductType:
-            self.write(orjson.dumps([]))
+            self.write(orjson.dumps(returned_product_types))
         except UnsupportedProvider as e:
             self.set_status(400)
             self.finish({"error": str(e)})
@@ -215,7 +215,7 @@ class SearchHandler(APIHandler):
         arguments = dict((k, v) for k, v in arguments.items() if v is not None)
 
         try:
-            products, total = eodag_api.search(productType=product_type, **arguments)
+            products = eodag_api.search(productType=product_type, count=True, **arguments)
         except ValidationError as e:
             self.set_status(400)
             self.finish({"error": e.message})
@@ -243,7 +243,7 @@ class SearchHandler(APIHandler):
                 "properties": {
                     "page": int(arguments.get("page", DEFAULT_PAGE)),
                     "itemsPerPage": DEFAULT_ITEMS_PER_PAGE,
-                    "totalResults": total,
+                    "totalResults": products.number_matched,
                 }
             }
         )

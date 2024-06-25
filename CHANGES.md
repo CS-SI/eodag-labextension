@@ -1,5 +1,14 @@
 # Release history
 
+## 3.7.0b1 (2024-06-25)
+
+- Update to `eodag v3` search api [(#153)](https://github.com/CS-SI/eodag-labextension/pull/153)
+- Update to `eodag v3` imports [(#148)](https://github.com/CS-SI/eodag-labextension/pull/148)
+- `pytest` version pinned [(#150)](https://github.com/CS-SI/eodag-labextension/pull/150)
+- Updates dependencies and developement tools versions [(#147)](https://github.com/CS-SI/eodag-labextension/pull/147)
+  [(#148)](https://github.com/CS-SI/eodag-labextension/pull/148)[(#151)](https://github.com/CS-SI/eodag-labextension/pull/151)
+  [(#152)](https://github.com/CS-SI/eodag-labextension/pull/152)
+
 ## 3.6.0 (2024-03-04)
 
 - New `reload eodag environment` button [(#139)](https://github.com/CS-SI/eodag-labextension/pull/139)
