@@ -1,5 +1,9 @@
 # Release history
 
+## 3.7.0b2 (2024-06-26)
+
+- pinned `ipyleaflet` [(#155)](https://github.com/CS-SI/eodag-labextension/pull/155)
+
 ## 3.7.0b1 (2024-06-25)
 
 - Update to `eodag v3` search api [(#153)](https://github.com/CS-SI/eodag-labextension/pull/153)
