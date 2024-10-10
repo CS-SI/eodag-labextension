@@ -1,5 +1,16 @@
 # Release history
 
+## 3.7.0 (2024-10-10)
+
+- [3.7.0b1] Update to `eodag v3` search api [(#153)](https://github.com/CS-SI/eodag-labextension/pull/153)
+- [3.7.0b1] Update to `eodag v3` imports [(#148)](https://github.com/CS-SI/eodag-labextension/pull/148)
+- [3.7.0b1] `pytest` version pinned [(#150)](https://github.com/CS-SI/eodag-labextension/pull/150)
+- [3.7.0b2] pinned `ipyleaflet` [(#155)](https://github.com/CS-SI/eodag-labextension/pull/155)
+- **[3.7.0b1 to 3.7.0]** Updates dependencies and developement tools versions [(#147)](https://github.com/CS-SI/eodag-labextension/pull/147)
+  [(#148)](https://github.com/CS-SI/eodag-labextension/pull/148)[(#151)](https://github.com/CS-SI/eodag-labextension/pull/151)
+  [(#152)](https://github.com/CS-SI/eodag-labextension/pull/152)[(#158)](https://github.com/CS-SI/eodag-labextension/pull/158)
+  [(#159)](https://github.com/CS-SI/eodag-labextension/pull/159)
+
 ## 3.7.0b2 (2024-06-26)
 
 - pinned `ipyleaflet` [(#155)](https://github.com/CS-SI/eodag-labextension/pull/155)
