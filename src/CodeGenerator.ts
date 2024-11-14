@@ -9,6 +9,7 @@ import { geojsonToWKT } from '@terraformer/wkt';
 
 import { IFormInput } from './types';
 import { formatDate } from './utils';
+import { isUndefined } from 'lodash';
 
 const formatCode = (
   {
@@ -64,9 +65,12 @@ search_results = dag.search(`;
     code += `
     end="${end}",`;
   }
-  const filteredParameters = additionnalParameters.filter(
-    ({ name, value }) => name && value && name !== '' && value !== ''
-  );
+  var filteredParameters: {"name": string, "value": string}[] = []
+  if (!isUndefined(additionnalParameters)){
+    filteredParameters = additionnalParameters.filter(
+      ({ name, value }) => name && value && name !== '' && value !== ''
+    );
+  }
 
   const extraParamEntries = Object.entries(extraParams).filter(
     ([_, value]) => value !== undefined

@@ -4,7 +4,7 @@
  */
 
 import * as React from 'react';
-import { Map, TileLayer, GeoJSON } from 'react-leaflet';
+import { MapContainer, TileLayer, GeoJSON } from 'react-leaflet';
 import { isEmpty, get } from 'lodash';
 import { EODAG_TILE_URL, EODAG_TILE_COPYRIGHT } from './config';
 import L, { FeatureGroup, LeafletMouseEvent } from 'leaflet';
@@ -56,7 +56,7 @@ export default class MapFeatureComponent extends React.Component<
     this.state = {
       bounds,
       featureHover: null,
-      featureSelected: null
+      featureSelected: ""
     };
   }
 
@@ -105,10 +105,10 @@ export default class MapFeatureComponent extends React.Component<
   }
 
   onMouseOver = (e: LeafletMouseEvent) => {
-    const productId = e.layer.feature.id;
+    const productId = e.propagatedFrom.feature.id;
     this.props.handleHoverFeature(productId);
-    e.layer.setStyle(MapFeatureComponent.HIGHLIGHT_EXTENT_STYLE);
-    e.layer.bringToFront();
+    e.propagatedFrom.setStyle(MapFeatureComponent.HIGHLIGHT_EXTENT_STYLE);
+    e.propagatedFrom.bringToFront();
     this.setState({
       featureHover: productId
     });
@@ -116,7 +116,7 @@ export default class MapFeatureComponent extends React.Component<
 
   onMouseOut = (e: LeafletMouseEvent) => {
     this.props.handleHoverFeature(null);
-    e.layer.setStyle(MapFeatureComponent.DEFAULT_EXTENT_STYLE);
+    e.propagatedFrom.setStyle(MapFeatureComponent.DEFAULT_EXTENT_STYLE);
     this.setState({
       featureHover: null
     });
@@ -124,8 +124,8 @@ export default class MapFeatureComponent extends React.Component<
 
   onClick = (e: LeafletMouseEvent) => {
     const productId = e.propagatedFrom.feature.id;
-    e.layer.setStyle(MapFeatureComponent.HIGHLIGHT_EXTENT_STYLE);
-    e.layer.bringToFront();
+    e.propagatedFrom.setStyle(MapFeatureComponent.HIGHLIGHT_EXTENT_STYLE);
+    e.propagatedFrom.bringToFront();
     this.props.handleClickFeature(productId);
 
     this.setState({
@@ -153,7 +153,7 @@ export default class MapFeatureComponent extends React.Component<
   render() {
     const { bounds } = this.state;
     return (
-      <Map
+      <MapContainer
         bounds={bounds}
         ref={ref => {
           this.map = ref;
@@ -167,12 +167,16 @@ export default class MapFeatureComponent extends React.Component<
             }`}
             data={this.props.features}
             style={this.getStyle}
-            onMouseOut={this.onMouseOut}
-            onMouseOver={this.onMouseOver}
-            onclick={this.onClick}
+            onEachFeature={(feature, layer) => {
+              layer.on({
+                mouseover: this.onMouseOver,
+                mouseout: this.onMouseOut,
+                click: this.onClick,
+              });
+            }}
           />
         ) : null}
-      </Map>
+      </MapContainer>
     );
   }
 }

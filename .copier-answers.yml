@@ -1,0 +1,14 @@
+# Changes here will be overwritten by Copier; NEVER EDIT MANUALLY
+_commit: v4.3.5
+_src_path: https://github.com/jupyterlab/extension-template
+author_email: admin@geostorm.eu
+author_name: CS Group
+has_binder: false
+has_settings: true
+kind: server
+labextension_name: eodag-labextension
+project_short_description: Searching remote sensed imagery from various image providers
+python_name: eodag_labextension
+repository: https://github.com/CS-SI/eodag-labextension.git
+test: false
+

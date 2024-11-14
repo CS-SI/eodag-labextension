@@ -33,7 +33,7 @@ export interface IProps {
 
 export interface IState {
   smallQuicklook: any;
-  featureProperties: IFeaturePropertie[];
+  featureProperties: IFeaturePropertie[] | undefined;
 }
 
 export default class DescriptionProductComponent extends React.Component<

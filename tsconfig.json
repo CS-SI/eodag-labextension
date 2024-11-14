@@ -16,10 +16,8 @@
     "outDir": "lib",
     "rootDir": "src",
     "strict": true,
-    "strictNullChecks": false,
-    "target": "es2017",
-    "types": [],
-    "skipLibCheck": true
+    "strictNullChecks": true,
+    "target": "ES2018"
   },
-  "include": ["src/**/*", "style/*"]
+  "include": ["src/*", "src/hooks/*"]
 }

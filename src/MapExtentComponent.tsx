@@ -3,6 +3,12 @@
  * All rights reserved
  */
 
+import * as React from 'react';
+import { MapContainer, TileLayer, FeatureGroup } from 'react-leaflet';
+import { EditControl } from 'react-leaflet-draw';
+import { throttle } from 'lodash';
+import { EODAG_TILE_URL, EODAG_TILE_COPYRIGHT } from './config';
+import { IGeometry } from './types';
 import { LeafletMouseEvent } from 'leaflet';
 import { throttle } from 'lodash';
 import * as React from 'react';
@@ -13,15 +19,15 @@ import { IGeometry } from './types';
 import { EodagWidget } from './widget';
 
 export interface IProps {
-  onChange: (value: IGeometry) => void;
-  geometry: IGeometry;
+  onChange: (value: IGeometry | undefined) => void;
+  geometry: IGeometry | undefined;
 }
 
 export interface IState {
   lat: number;
   lon: number;
   zoom: number;
-  geometry: IGeometry;
+  geometry: IGeometry | undefined;
 }
 
 export default class MapExtentComponent extends React.Component<
@@ -32,7 +38,7 @@ export default class MapExtentComponent extends React.Component<
    * Leaflet map object
    */
   map: any;
-  eodagWidget: EodagWidget;
+  eodagWidget: EodagWidget | null = null;
 
   EditOptions = {
     polyline: false,
@@ -70,11 +76,11 @@ export default class MapExtentComponent extends React.Component<
       this.invalidateMapSize();
     }, 100);
     this.eodagWidget = EodagWidget.getCurrentInstance();
-    this.eodagWidget.mapSettingsChanged.connect(this.handleMapSettingsChange);
+    this.eodagWidget?.mapSettingsChanged.connect(this.handleMapSettingsChange);
   }
 
   componentWillUnmount() {
-    this.eodagWidget.mapSettingsChanged.disconnect(
+    this.eodagWidget?.mapSettingsChanged.disconnect(
       this.handleMapSettingsChange
     );
   }
@@ -109,7 +115,7 @@ export default class MapExtentComponent extends React.Component<
       this.saveGeometry(e.target);
     } catch (TypeError) {
       // When clearAll `updateMapProperties` crash
-      const geometry: IGeometry = undefined;
+      const geometry: IGeometry | undefined = undefined;
       this.setState(
         {
           geometry
@@ -166,7 +172,7 @@ export default class MapExtentComponent extends React.Component<
     const { zoom, lat, lon } = this.state;
     const position: [number, number] = [lat, lon];
     return (
-      <Map
+      <MapContainer
         center={position}
         zoom={zoom}
         ref={ref => {
@@ -183,7 +189,7 @@ export default class MapExtentComponent extends React.Component<
             onDeleted={this.onDeleted}
           />
         </FeatureGroup>
-      </Map>
+      </MapContainer>
     );
   }
 }

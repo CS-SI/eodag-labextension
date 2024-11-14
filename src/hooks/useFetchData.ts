@@ -31,8 +31,8 @@ const fetchData = async <T>({
     return onSuccess(data);
   } catch (error) {
     showErrorMessage(
+      'EODAG server error',
       `Unable to contact the EODAG server. Are you sure the address is ${eodagServer}/ ?`,
-      {}
     );
     return Promise.reject(error);
   }
@@ -40,7 +40,7 @@ const fetchData = async <T>({
 
 const useFetchProduct = () => {
   const fetchProduct = async (
-    providerValue: string,
+    providerValue: string | null,
     inputValue?: string
   ): Promise<IOptionTypeBase[]> => {
     let queryParams = 'guess-product-type?';
@@ -71,7 +71,7 @@ const useFetchProduct = () => {
 
 const useFetchProvider = () => {
   const fetchProvider = async (
-    productTypeValue: string,
+    productTypeValue: string | null,
     inputValue?: string
   ): Promise<IOptionTypeBase[]> => {
     let queryParams = 'providers?';
@@ -111,8 +111,8 @@ const useFetchUserSettings = async () => {
     }
   } catch (error) {
     showErrorMessage(
-      `Unable to contact the EODAG server. Are you sure the address is ${eodagServer}/ ?`,
-      {}
+      "EODAG server error",
+      `Unable to contact the EODAG server. Are you sure the address is ${eodagServer}/ ?`
     );
   }
 };

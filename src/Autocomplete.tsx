@@ -103,7 +103,7 @@ class IntegrationReactSelect extends React.Component<IProps> {
       loadSuggestions
     } = this.props;
 
-    const currentValue: OptionTypeBase = value
+    const currentValue: OptionTypeBase | undefined = value
       ? suggestions.find(e => e.value === value)
       : undefined;
 
