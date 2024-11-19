@@ -11,7 +11,6 @@ import {
   Notebook,
   NotebookActions
 } from '@jupyterlab/notebook';
-//import { CodeCellModel } from '@jupyterlab/cells';
 import { showErrorMessage } from '@jupyterlab/apputils';
 import { concat, get, isNull, isUndefined } from 'lodash';
 import { FormComponent } from './FormComponent';
@@ -115,19 +114,17 @@ export class EodagBrowser extends React.Component<IProps, IState> {
     return this.state.searching;
   };
 
-  // getCodeCell = (code: string) => {
-  //   return new CodeCellModel({
-  //     cell: {
-  //       cell_type: 'code',
-  //       metadata: {
-  //         trusted: false,
-  //         collapsed: false,
-  //         tags: ['Injected by EODAG plugin']
-  //       },
-  //       source: code,
-  //     }
-  //   });
-  // };
+  getCodeCell = (code: string) => {
+    return {
+        cell_type: 'code',
+        metadata: {
+          trusted: false,
+          collapsed: false,
+          tags: ['Injected by EODAG plugin']
+        },
+        source: code,
+    }
+  };
 
   getEodagSettings = async () => {
     const _serverSettings = ServerConnection.makeSettings();
@@ -175,12 +172,13 @@ export class EodagBrowser extends React.Component<IProps, IState> {
         }
       });
     }
+    const cell = this.getCodeCell(code)
 
     if (replaceCode && isReplaceCellExist) {
       notebook.activeCellIndex = this.state.replaceCellIndex;
       NotebookActions.deleteCells(notebook);
       NotebookActions.insertBelow(notebook)
-      //model.cells.insert(this.state.replaceCellIndex, cell);
+      model.sharedModel.insertCell(this.state.replaceCellIndex, cell);
       notebook.activeCellIndex = this.state.replaceCellIndex;
     }
 
@@ -188,12 +186,12 @@ export class EodagBrowser extends React.Component<IProps, IState> {
       this.setState({
         replaceCellIndex: activeCellIndex + 1
       });
-      //model.cells.insert(activeCellIndex + 1, cell);
+      model.sharedModel.insertCell(activeCellIndex + 1, cell);
       NotebookActions.selectBelow(notebook);
     }
 
     if (!replaceCode) {
-      //model.cells.insert(activeCellIndex + 1, cell);
+      model.sharedModel.insertCell(activeCellIndex + 1, cell);
       NotebookActions.selectBelow(notebook);
     }
   };
@@ -249,8 +247,6 @@ export class EodagBrowser extends React.Component<IProps, IState> {
       var input = this.state.formValues
     }
     const code = formatCode(input, replaceCode);
-    //const cell = this.getCodeCell(code);
-
     this.handleCellInsertionPosition(notebook, model, code, replaceCode);
   };
 

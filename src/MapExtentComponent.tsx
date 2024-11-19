@@ -98,7 +98,7 @@ export default class MapExtentComponent extends React.Component<
    * but only redraw every 500ms thanks to throttle
    */
   invalidateMapSize = throttle(() => {
-    this.map?.leafletElement?.invalidateSize();
+    this.map?.invalidateSize();
   }, 500);
 
   onDrawStop = (e: LeafletMouseEvent) => {

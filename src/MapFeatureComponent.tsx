@@ -51,7 +51,7 @@ export default class MapFeatureComponent extends React.Component<
   };
   constructor(props: IProps) {
     super(props);
-    const featureGeoJSONs = new L.GeoJSON(props.features.features);
+    const featureGeoJSONs = new window.L.GeoJSON(props.features.features);
     const bounds = featureGeoJSONs.getBounds();
     this.state = {
       bounds,
@@ -66,7 +66,7 @@ export default class MapFeatureComponent extends React.Component<
         // Handle zoom on a product
         if (this.props.zoomFeature) {
           let bounds;
-          this.map.leafletElement.eachLayer((layer: FeatureGroup) => {
+          this.map.eachLayer((layer: FeatureGroup) => {
             if (
               get(layer, 'feature.id', null) === prevProps.highlightFeature.id
             ) {
@@ -74,7 +74,7 @@ export default class MapFeatureComponent extends React.Component<
             }
           });
           if (bounds) {
-            this.map.leafletElement.flyToBounds(bounds, {});
+            this.map.flyToBounds(bounds, {});
           }
         }
       }
@@ -82,7 +82,7 @@ export default class MapFeatureComponent extends React.Component<
         // Handle set feature (un)highlighted
         if (this.props.highlightFeature) {
           // Highlight a feature
-          this.map.leafletElement.eachLayer((layer: FeatureGroup) => {
+          this.map.eachLayer((layer: FeatureGroup) => {
             if (
               get(layer, 'feature.id', null) === this.props.highlightFeature.id
             ) {
@@ -92,7 +92,7 @@ export default class MapFeatureComponent extends React.Component<
           });
         } else {
           // Remove highlight on feature
-          this.map.leafletElement.eachLayer((layer: FeatureGroup) => {
+          this.map.eachLayer((layer: FeatureGroup) => {
             if (
               get(layer, 'feature.id', null) === prevProps.highlightFeature.id
             ) {
@@ -105,10 +105,10 @@ export default class MapFeatureComponent extends React.Component<
   }
 
   onMouseOver = (e: LeafletMouseEvent) => {
-    const productId = e.propagatedFrom.feature.id;
+    const productId = e.target.feature.id;
     this.props.handleHoverFeature(productId);
-    e.propagatedFrom.setStyle(MapFeatureComponent.HIGHLIGHT_EXTENT_STYLE);
-    e.propagatedFrom.bringToFront();
+    e.target.setStyle(MapFeatureComponent.HIGHLIGHT_EXTENT_STYLE);
+    e.target.bringToFront();
     this.setState({
       featureHover: productId
     });
@@ -116,16 +116,16 @@ export default class MapFeatureComponent extends React.Component<
 
   onMouseOut = (e: LeafletMouseEvent) => {
     this.props.handleHoverFeature(null);
-    e.propagatedFrom.setStyle(MapFeatureComponent.DEFAULT_EXTENT_STYLE);
+    e.target.setStyle(MapFeatureComponent.DEFAULT_EXTENT_STYLE);
     this.setState({
       featureHover: null
     });
   };
 
   onClick = (e: LeafletMouseEvent) => {
-    const productId = e.propagatedFrom.feature.id;
-    e.propagatedFrom.setStyle(MapFeatureComponent.HIGHLIGHT_EXTENT_STYLE);
-    e.propagatedFrom.bringToFront();
+    const productId = e.target.feature.id;
+    e.target.setStyle(MapFeatureComponent.HIGHLIGHT_EXTENT_STYLE);
+    e.target.bringToFront();
     this.props.handleClickFeature(productId);
 
     this.setState({
