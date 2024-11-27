@@ -118,11 +118,10 @@ class MuiVirtualizedTable extends React.PureComponent<IMuiVirtualizedTableProps>
       columnIndex !== undefined &&
       columns[columnIndex].handleClick
     ) {
-      var temp_handle = columns[columnIndex].handleClick
-      if(!isUndefined(temp_handle)){
+      var temp_handle = columns[columnIndex].handleClick;
+      if (!isUndefined(temp_handle)) {
         handleClick = handleClick;
       }
-      
     }
     return (
       <button
@@ -154,7 +153,10 @@ class MuiVirtualizedTable extends React.PureComponent<IMuiVirtualizedTableProps>
     };
 
     const inner =
-      !disableSort && sort !== null && sort !== undefined && sortDirection != undefined ? (
+      !disableSort &&
+      sort !== null &&
+      sort !== undefined &&
+      sortDirection != undefined ? (
         <TableSortLabelWithoutMUI
           active={dataKey === sortBy}
           direction={direction[sortDirection]}

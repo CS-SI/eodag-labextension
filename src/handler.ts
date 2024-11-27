@@ -35,7 +35,7 @@ export async function requestAPI<T>(
       // Now TypeScript knows `error` is of type `Error`
       throw new ServerConnection.NetworkError(error as TypeError);
     } else {
-      throw Error("unknown error")
+      throw Error('unknown error');
     }
   }
 

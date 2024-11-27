@@ -11,4 +11,3 @@ project_short_description: Searching remote sensed imagery from various image pr
 python_name: eodag_labextension
 repository: https://github.com/CS-SI/eodag-labextension.git
 test: false
-

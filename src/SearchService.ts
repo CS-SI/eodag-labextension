@@ -33,8 +33,8 @@ class SearchService {
    * @return a promise that will receive features
    */
   search(page = 1, formValues: IFormInput | undefined) {
-    if (isUndefined(formValues)){
-      throw new Error("Input undefined")
+    if (isUndefined(formValues)) {
+      throw new Error('Input undefined');
     }
     const url = this.getSearchURL(formValues.productType);
     let parameters: ISearchParameters = {

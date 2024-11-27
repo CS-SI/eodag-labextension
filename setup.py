@@ -63,9 +63,6 @@ setup_args = dict(
         "notebook>=6.0.3,<7.0.0",
         "eodag[notebook]>=3.1.0",
         "orjson",
-        # ipyleaflet is not needed, but versions >= 0.17.4 will make the labextension crash
-        # try removing this dependency when updating leaflet and/or jupyterlab
-        "ipyleaflet<0.17.4",
     ],
     extras_require={
         "dev": [

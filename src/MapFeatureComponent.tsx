@@ -56,7 +56,7 @@ export default class MapFeatureComponent extends React.Component<
     this.state = {
       bounds,
       featureHover: null,
-      featureSelected: ""
+      featureSelected: ''
     };
   }
 
@@ -171,7 +171,7 @@ export default class MapFeatureComponent extends React.Component<
               layer.on({
                 mouseover: this.onMouseOver,
                 mouseout: this.onMouseOut,
-                click: this.onClick,
+                click: this.onClick
               });
             }}
           />

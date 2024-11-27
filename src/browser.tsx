@@ -116,14 +116,14 @@ export class EodagBrowser extends React.Component<IProps, IState> {
 
   getCodeCell = (code: string) => {
     return {
-        cell_type: 'code',
-        metadata: {
-          trusted: false,
-          collapsed: false,
-          tags: ['Injected by EODAG plugin']
-        },
-        source: code,
-    }
+      cell_type: 'code',
+      metadata: {
+        trusted: false,
+        collapsed: false,
+        tags: ['Injected by EODAG plugin']
+      },
+      source: code
+    };
   };
 
   getEodagSettings = async () => {
@@ -172,12 +172,12 @@ export class EodagBrowser extends React.Component<IProps, IState> {
         }
       });
     }
-    const cell = this.getCodeCell(code)
+    const cell = this.getCodeCell(code);
 
     if (replaceCode && isReplaceCellExist) {
       notebook.activeCellIndex = this.state.replaceCellIndex;
       NotebookActions.deleteCells(notebook);
-      NotebookActions.insertBelow(notebook)
+      NotebookActions.insertBelow(notebook);
       model.sharedModel.insertCell(this.state.replaceCellIndex, cell);
       notebook.activeCellIndex = this.state.replaceCellIndex;
     }
@@ -206,8 +206,8 @@ export class EodagBrowser extends React.Component<IProps, IState> {
 
     const notebook = this.props.tracker.currentWidget.content;
     const model = notebook.model;
-    if (isNull(model)){
-      showErrorMessage("no model", "")
+    if (isNull(model)) {
+      showErrorMessage('no model', '');
       return;
     }
 
@@ -218,33 +218,32 @@ export class EodagBrowser extends React.Component<IProps, IState> {
     if (model.defaultKernelLanguage !== 'python') {
       showErrorMessage(
         'Active notebook uses wrong kernel language. Only python is supported',
-        ""
+        ''
       );
       return;
     }
 
     if (model.readOnly) {
-      showErrorMessage('Unable to inject cell into read-only notebook', "");
+      showErrorMessage('Unable to inject cell into read-only notebook', '');
       return;
     }
 
     const replaceCode = await this.getEodagSettings();
-    if(isUndefined(this.state.formValues)){
+    if (isUndefined(this.state.formValues)) {
       var geom: IGeometry = {
-        type: "Point",
-        coordinates: [0,0]
-      }
+        type: 'Point',
+        coordinates: [0, 0]
+      };
       var input: IFormInput = {
         startDate: new Date(),
         endDate: new Date(),
-        productType: "",
-        provider: "",
+        productType: '',
+        provider: '',
         cloud: 100,
         geometry: geom
-      }
-    }
-    else {
-      var input = this.state.formValues
+      };
+    } else {
+      var input = this.state.formValues;
     }
     const code = formatCode(input, replaceCode);
     this.handleCellInsertionPosition(notebook, model, code, replaceCode);

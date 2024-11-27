@@ -55,7 +55,7 @@ const tooltipDark: VariantType = 'dark';
 const tooltipBottom: PlacesType = 'bottom';
 
 // Override modal's default style
-if(!isUndefined(Modal.defaultStyles.overlay)){
+if (!isUndefined(Modal.defaultStyles.overlay)) {
   Modal.defaultStyles.overlay.zIndex = 4;
 }
 

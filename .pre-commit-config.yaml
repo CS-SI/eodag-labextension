@@ -38,6 +38,8 @@ repos:
     rev: v8.24.0
     hooks:
       - id: eslint
+        language: node
+        language_version: '22.11.0'
         additional_dependencies:
           - eslint@8.23.1
           - typescript@4.3.5
@@ -51,8 +53,12 @@ repos:
     rev: v2.7.1
     hooks:
       - id: prettier
+        language: node
+        language_version: '22.11.0'
 
   - repo: https://github.com/igorshubovych/markdownlint-cli
     rev: v0.32.2
     hooks:
       - id: markdownlint
+        language: node
+        language_version: '22.11.0'

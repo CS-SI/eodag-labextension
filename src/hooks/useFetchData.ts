@@ -32,7 +32,7 @@ const fetchData = async <T>({
   } catch (error) {
     showErrorMessage(
       'EODAG server error',
-      `Unable to contact the EODAG server. Are you sure the address is ${eodagServer}/ ?`,
+      `Unable to contact the EODAG server. Are you sure the address is ${eodagServer}/ ?`
     );
     return Promise.reject(error);
   }
@@ -111,7 +111,7 @@ const useFetchUserSettings = async () => {
     }
   } catch (error) {
     showErrorMessage(
-      "EODAG server error",
+      'EODAG server error',
       `Unable to contact the EODAG server. Are you sure the address is ${eodagServer}/ ?`
     );
   }
