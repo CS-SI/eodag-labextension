@@ -6,7 +6,7 @@ Note: you will need NodeJS to build the extension package.
 
 The `jlpm` command is JupyterLab's pinned version of
 [yarn](https://yarnpkg.com/) that is installed with JupyterLab. You may use
-`yarn` or `npm` in lieu of `jlpm` below.
+`yarn` or `npm` in lieu of `jlpm` below. _Python 3.9 is required_
 
 ```bash
 # Clone the repo to your local environment
