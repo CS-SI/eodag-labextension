@@ -1,0 +1,107 @@
+{
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "$id": "http://127.0.0.1:8088/collections/S2_MSI_L1C/queryables",
+  "type": "object",
+  "title": "Queryables for EODAG STAC API",
+  "description": "Queryable names for the EODAG STAC API Item Search filter. ",
+  "properties": {
+    "start_datetime": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "format": "date",
+          "type": "string"
+        }
+      ],
+      "title": "start_datetime"
+    },
+    "end_datetime": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "format": "date",
+          "type": "string"
+        }
+      ],
+      "title": "end_datetime"
+    },
+    "geometry": {
+      "description": "Geometry",
+      "ref": "https://schemas.stacspec.org/v1.0.0/item-spec/json-schema/item.json#/geometry"
+    },
+    "constellation": {
+      "title": "constellation",
+      "type": "string"
+    },
+    "platform": {
+      "title": "platform",
+      "type": "string"
+    },
+    "instruments": {
+      "title": "instruments",
+      "type": "string"
+    },
+    "processing:level": {
+      "title": "level",
+      "type": "string"
+    },
+    "gsd": {
+      "title": "gsd",
+      "type": "integer"
+    },
+    "oseo:organisationName": {
+      "title": "organisationName",
+      "type": "string"
+    },
+    "sat:absolute_orbit": {
+      "title": "absolute_orbit",
+      "type": "integer"
+    },
+    "sat:orbit_state": {
+      "title": "orbit_state",
+      "type": "string"
+    },
+    "eo:cloud_cover": {
+      "exclusiveMaximum": 100,
+      "exclusiveMinimum": 0,
+      "title": "cloud_cover",
+      "type": "integer"
+    },
+    "sar:instrument_mode": {
+      "title": "instrument_mode",
+      "type": "string"
+    },
+    "sar:polarizations": {
+      "title": "polarizations",
+      "type": "string"
+    },
+    "datetime": {
+      "description": "Datetime - use parameters year, month, day, time instead if available",
+      "ref": "https://schemas.stacspec.org/v1.0.0/item-spec/json-schema/datetime.json#/properties/datetime"
+    },
+    "bbox": {
+      "description": "BBox",
+      "type": "array",
+      "oneOf": [
+        {
+          "minItems": 4,
+          "maxItems": 4
+        },
+        {
+          "minItems": 6,
+          "maxItems": 6
+        }
+      ],
+      "items": {
+        "type": "number"
+      }
+    }
+  },
+  "additionalProperties": true
+}
