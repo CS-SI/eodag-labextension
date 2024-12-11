@@ -7,6 +7,7 @@
 import logging
 import re
 
+import eodag
 import orjson
 import tornado
 from eodag import EODataAccessGateway, SearchResult
@@ -283,6 +284,29 @@ class MethodAndPathMatch(tornado.routing.PathMatches):
         return super().match(request)
 
 
+class QueryablesHandler(APIHandler):
+    """EODAG queryables handler"""
+
+    @tornado.web.authenticated
+    def get(self):
+        """Get endpoint"""
+        query_dict = parse_qs(self.request.query)
+
+        queryables_kwargs = self._get_queryables_kwargs(query_dict)
+        queryables_dict = eodag_api.list_queryables(**queryables_kwargs)
+        json_schema = queryables_dict.get_model().model_json_schema()
+        self.finish(json_schema)
+
+    def _get_queryables_kwargs(self, query_dict):
+        queryables_kwargs = {}
+        fixed_params = ("eodag:provider", "eodag:productType")
+        for key, value in query_dict.items():
+            if key in fixed_params:
+                key = key.removeprefix("eodag:")
+            queryables_kwargs[key] = value[0]
+        return queryables_kwargs
+
+
 def setup_handlers(web_app, url_path):
     """Configure the routes of web_app"""
 
@@ -295,6 +319,7 @@ def setup_handlers(web_app, url_path):
     reload_pattern = url_path_join(base_url, url_path, "reload")
     providers_pattern = url_path_join(base_url, url_path, "providers")
     guess_product_types_pattern = url_path_join(base_url, url_path, "guess-product-type")
+    queryables_pattern = url_path_join(base_url, url_path, "queryables")
     search_pattern = url_path_join(base_url, url_path, r"(?P<product_type>[\w\-\.]+)")
     default_pattern = url_path_join(base_url, url_path, r".*")
 
@@ -304,6 +329,7 @@ def setup_handlers(web_app, url_path):
         (reload_pattern, ReloadHandler),
         (providers_pattern, ProvidersHandler),
         (guess_product_types_pattern, GuessProductTypeHandler),
+        (queryables_pattern, QueryablesHandler),
         (MethodAndPathMatch("POST", search_pattern), SearchHandler),
         (default_pattern, NotFoundHandler),
     ]
