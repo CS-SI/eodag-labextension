@@ -1,8 +1,12 @@
 # Contributing
 
-## Development install
+## Prerequisites
 
-Note: you will need NodeJS to build the extension package.
+- NodeJS
+- Python version between 3.9 and 3.12 included (3.13 not yet supported)
+- Cargo (Rust package manager)
+
+## Development install
 
 The `jlpm` command is JupyterLab's pinned version of
 [yarn](https://yarnpkg.com/) that is installed with JupyterLab. You may use
@@ -17,6 +21,7 @@ source venv/bin/activate
 # Install package in development mode
 pip install -r requirements-dev.txt
 # Link your development version of the extension with JupyterLab
+jlpm install
 jupyter labextension develop . --overwrite
 # Rebuild extension Typescript source after making changes
 jlpm run build
