@@ -61,7 +61,9 @@ setup_args = dict(
         "jupyterlab~=3.0",
         "tornado>=6.0.3,<7.0.0",
         "notebook>=6.0.3,<7.0.0",
-        "eodag[notebook]>=3.0.0b1",
+        # FIXME explicitely install eodag from develop branch until queryables
+        # get released
+        "eodag[notebook] @ git+https://github.com/CS-SI/eodag.git@develop",
         "orjson",
         # ipyleaflet is not needed, but versions >= 0.17.4 will make the labextension crash
         # try removing this dependency when updating leaflet and/or jupyterlab

@@ -285,6 +285,27 @@ class MethodAndPathMatch(tornado.routing.PathMatches):
         return super().match(request)
 
 
+class QueryablesHandler(APIHandler):
+    """EODAG queryables handler"""
+
+    @tornado.web.authenticated
+    def get(self):
+        """Get endpoint"""
+        query_dict = parse_qs(self.request.query)
+
+        queryables_kwargs = {key: value[0] for key, value in query_dict.items()}
+        queryables_dict = eodag_api.list_queryables(**queryables_kwargs)
+        json_schema = queryables_dict.get_model().model_json_schema()
+        self._remove_null_defaults(json_schema)
+        json_schema["additionalProperties"] = queryables_dict.additional_properties
+        self.finish(json_schema)
+
+    def _remove_null_defaults(self, json_schema):
+        for item in json_schema["properties"].values():
+            if item.get("default") is None:
+                item.pop("default", None)
+
+
 def setup_handlers(web_app, url_path):
     """Configure the routes of web_app"""
 
@@ -297,6 +318,7 @@ def setup_handlers(web_app, url_path):
     reload_pattern = url_path_join(base_url, url_path, "reload")
     providers_pattern = url_path_join(base_url, url_path, "providers")
     guess_product_types_pattern = url_path_join(base_url, url_path, "guess-product-type")
+    queryables_pattern = url_path_join(base_url, url_path, "queryables")
     search_pattern = url_path_join(base_url, url_path, r"(?P<product_type>[\w\-\.]+)")
     default_pattern = url_path_join(base_url, url_path, r".*")
 
@@ -306,6 +328,7 @@ def setup_handlers(web_app, url_path):
         (reload_pattern, ReloadHandler),
         (providers_pattern, ProvidersHandler),
         (guess_product_types_pattern, GuessProductTypeHandler),
+        (queryables_pattern, QueryablesHandler),
         (MethodAndPathMatch("POST", search_pattern), SearchHandler),
         (default_pattern, NotFoundHandler),
     ]
