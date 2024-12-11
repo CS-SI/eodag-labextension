@@ -292,7 +292,7 @@ class QueryablesHandler(APIHandler):
         """Get endpoint"""
         query_dict = parse_qs(self.request.query)
 
-        queryables_kwargs = self._get_queryables_kwargs(query_dict)
+        queryables_kwargs = {key: value[0] for key, value in query_dict.items()}
         queryables_dict = eodag_api.list_queryables(**queryables_kwargs)
         json_schema = queryables_dict.get_model().model_json_schema()
         self._remove_null_defaults(json_schema)
@@ -304,15 +304,6 @@ class QueryablesHandler(APIHandler):
         for item in json_schema['properties'].values():
             if item.get("default") is None:
                 item.pop('default', None)
-
-    def _get_queryables_kwargs(self, query_dict):
-        queryables_kwargs = {}
-        fixed_params = ("eodag:provider", "eodag:productType")
-        for key, value in query_dict.items():
-            if key in fixed_params:
-                key = key.removeprefix("eodag:")
-            queryables_kwargs[key] = value[0]
-        return queryables_kwargs
 
 
 def setup_handlers(web_app, url_path):
