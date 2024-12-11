@@ -8,6 +8,7 @@ from unittest import mock
 
 from eodag import SearchResult
 from eodag.api.core import DEFAULT_ITEMS_PER_PAGE
+from eodag.types.queryables import QueryablesDict
 from notebook.notebookapp import NotebookApp
 from shapely.geometry import shape
 from tornado.testing import AsyncHTTPTestCase
@@ -216,3 +217,19 @@ class TestEodagLabExtensionHandler(AsyncHTTPTestCase):
         # geom error
         mock_search.reset_mock()
         self.fetch_results_error("/eodag/S2_MSI_L1C", 400, method="POST", body=json.dumps({"geom": {"foo": "bar"}}))
+
+    @mock.patch("eodag.api.core.EODataAccessGateway.list_queryables", autospec=True, return_value=QueryablesDict([]))
+    def test_queryables(self, mock_list_queryables):
+        results = self.fetch_results(
+            "/eodag/queryables?"
+            "eodag:provider=some_provider&eodag:productType=some_product_type"
+            "&param1=paramValue1&param2=paramValue2"
+        )
+        self.assertEqual(results["properties"], {})
+        mock_list_queryables.assert_called_with(
+            mock.ANY,
+            provider="some_provider",
+            productType="some_product_type",
+            param1="paramValue1",
+            param2="paramValue2",
+        )
