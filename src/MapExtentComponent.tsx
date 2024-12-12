@@ -3,13 +3,13 @@
  * All rights reserved
  */
 
-import * as React from 'react';
-import { Map, TileLayer, FeatureGroup } from 'react-leaflet';
-import { EditControl } from 'react-leaflet-draw';
-import { throttle } from 'lodash';
-import { EODAG_TILE_URL, EODAG_TILE_COPYRIGHT } from './config';
-import { IGeometry } from './types';
 import { LeafletMouseEvent } from 'leaflet';
+import { throttle } from 'lodash';
+import * as React from 'react';
+import { FeatureGroup, Map, TileLayer } from 'react-leaflet';
+import { EditControl } from 'react-leaflet-draw';
+import { EODAG_TILE_COPYRIGHT, EODAG_TILE_URL } from './config';
+import { IGeometry } from './types';
 import { EodagWidget } from './widget';
 
 export interface IProps {
@@ -92,7 +92,7 @@ export default class MapExtentComponent extends React.Component<
    * but only redraw every 500ms thanks to throttle
    */
   invalidateMapSize = throttle(() => {
-    this.map.leafletElement.invalidateSize();
+    this.map?.leafletElement?.invalidateSize();
   }, 500);
 
   onDrawStop = (e: LeafletMouseEvent) => {
