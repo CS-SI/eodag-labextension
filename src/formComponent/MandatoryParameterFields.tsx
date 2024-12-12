@@ -19,9 +19,11 @@ const MandatoryParameterFields = ({
 
   const renderField = (param: any) => {
     const { key, value } = param;
+
+    value.selected ??= undefined;
+
     const { type, description, title, selected } = value || {};
     const enumList = value?.enum || value?.items?.enum || [];
-
     const renderSelectField = () => (
       <select
         className="jp-EodagWidget-select"
@@ -93,16 +95,6 @@ const MandatoryParameterFields = ({
         {params
           .filter((param: any) => param.mandatory === mandatory)
           .map((param: any) => {
-            console.log('Rendering param:', param);
-            const { key, value } = param;
-            const { type } = param.value;
-            const listEnum = value.enum;
-            listEnum ? console.log(listEnum) : console.warn('no ENUM');
-            if (!value || !type) {
-              console.warn(`Paramètre invalide pour ${key}:`, param);
-              console.warn({ key }, { value }, { type });
-            }
-
             return (
               <div key={param.key}>
                 <label className="jp-EodagWidget-input-name">
