@@ -13,7 +13,11 @@ import { ThreeDots } from 'react-loader-spinner';
 import { PlacesType, Tooltip, VariantType } from 'react-tooltip';
 import Autocomplete from '../Autocomplete';
 
-import { determineIfMandatory, fetchRawData } from '../helpers/fetchParameters';
+import {
+  determineMandatoryProperties,
+  fetchRawData,
+  isAdditionalParameters
+} from '../helpers/fetchParameters';
 import { useFetchProduct, useFetchProvider } from '../hooks/useFetchData';
 import {
   CarbonCalendarAddAlt,
@@ -24,6 +28,7 @@ import MapExtentComponent from '../MapExtentComponent';
 import SearchService from '../SearchService';
 import { IFormInput } from '../types';
 import AdditionalParameterFields from './AdditionalParameterFields';
+import MandatoryParameterFields from './MandatoryParameterFields';
 
 export interface IProps {
   handleShowFeature: any;
@@ -102,10 +107,6 @@ export const FormComponent: FC<IProps> = ({
       if (reloadIndicator) {
         setFetchCount(fetchCount => fetchCount + 1);
       }
-      const parameters = await fetchRawData();
-      console.log('+'.repeat(25));
-      parameters.forEach(param => console.log(determineIfMandatory(param)));
-      console.log('+'.repeat(25));
     };
     fetchData();
   }, [providerValue, reloadIndicator]);
@@ -167,6 +168,32 @@ export const FormComponent: FC<IProps> = ({
 
   const loadProductTypesSuggestions = useFetchProduct();
   const loadProviderSuggestions = useFetchProvider();
+
+  const [params, setParams] = useState(null);
+  const [additionalParameters, setAdditionalParameters] =
+    useState<boolean>(false);
+  const fetchData = async (provider: string, productType: any) => {
+    const parameters = await fetchRawData(provider, productType).then(data => {
+      setAdditionalParameters(isAdditionalParameters(data));
+      return determineMandatoryProperties(data);
+    });
+
+    setParams(parameters);
+    console.log(parameters);
+  };
+
+  useEffect(() => {
+    if (providerValue && productTypeValue) {
+      fetchData(providerValue, productTypeValue);
+    }
+  }, [providerValue, productTypeValue]);
+
+  // TODO : - Use this to send data to backend
+  useEffect(() => {
+    if (params) {
+      console.log(params);
+    }
+  }, [params]);
 
   return (
     <div className="jp-EodagWidget-wrapper">
@@ -310,7 +337,12 @@ export const FormComponent: FC<IProps> = ({
               />
             </div>
           </label>
-          <AdditionalParameterFields {...{ control, register, resetField }} />
+
+          {params && <MandatoryParameterFields {...{ params, setParams }} />}
+
+          <AdditionalParameterFields
+            {...{ control, register, resetField, additionalParameters }}
+          />
         </div>
         <div className="jp-EodagWidget-form-buttons">
           <div className="jp-EodagWidget-form-buttons-wrapper">
