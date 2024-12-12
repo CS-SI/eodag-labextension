@@ -7,7 +7,6 @@
 import logging
 import re
 
-import eodag
 import orjson
 import tornado
 from eodag import EODataAccessGateway, SearchResult
@@ -296,14 +295,13 @@ class QueryablesHandler(APIHandler):
         queryables_dict = eodag_api.list_queryables(**queryables_kwargs)
         json_schema = queryables_dict.get_model().model_json_schema()
         self._remove_null_defaults(json_schema)
-        json_schema["required"] = []
-        json_schema["additionalProperties"] = False
+        json_schema["additionalProperties"] = queryables_dict.additional_properties
         self.finish(json_schema)
 
     def _remove_null_defaults(self, json_schema):
-        for item in json_schema['properties'].values():
+        for item in json_schema["properties"].values():
             if item.get("default") is None:
-                item.pop('default', None)
+                item.pop("default", None)
 
 
 def setup_handlers(web_app, url_path):

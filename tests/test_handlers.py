@@ -218,7 +218,11 @@ class TestEodagLabExtensionHandler(AsyncHTTPTestCase):
         mock_search.reset_mock()
         self.fetch_results_error("/eodag/S2_MSI_L1C", 400, method="POST", body=json.dumps({"geom": {"foo": "bar"}}))
 
-    @mock.patch("eodag.api.core.EODataAccessGateway.list_queryables", autospec=True, return_value=QueryablesDict([]))
+    @mock.patch(
+        "eodag.api.core.EODataAccessGateway.list_queryables",
+        autospec=True,
+        return_value=QueryablesDict(additional_properties=False),
+    )
     def test_queryables(self, mock_list_queryables):
         results = self.fetch_results(
             "/eodag/queryables?"
@@ -226,6 +230,7 @@ class TestEodagLabExtensionHandler(AsyncHTTPTestCase):
             "&param1=paramValue1&param2=paramValue2"
         )
         self.assertEqual(results["properties"], {})
+        self.assertFalse(results["additionalProperties"])
         mock_list_queryables.assert_called_with(
             mock.ANY,
             provider="some_provider",
