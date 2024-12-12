@@ -139,7 +139,7 @@ export const FormComponent: FC<IProps> = ({
     saveFormValues(data);
 
     if (!openModal) {
-      handleGenerateQuery();
+      handleGenerateQuery(params);
     }
 
     if (openModal) {
@@ -156,7 +156,7 @@ export const FormComponent: FC<IProps> = ({
           setIsLoadingSearch(false);
           handleShowFeature(featureCollection, openModal);
           if (!openModal) {
-            handleGenerateQuery();
+            handleGenerateQuery(params);
           }
         })
         .catch(error => {
@@ -179,7 +179,6 @@ export const FormComponent: FC<IProps> = ({
     });
 
     setParams(parameters);
-    console.log(parameters);
   };
 
   useEffect(() => {
@@ -191,7 +190,6 @@ export const FormComponent: FC<IProps> = ({
   // TODO : - Use this to send data to backend
   useEffect(() => {
     if (params) {
-      console.log(params);
     }
   }, [params]);
 

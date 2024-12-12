@@ -190,14 +190,27 @@ export class EodagBrowser extends React.Component<IProps, IState> {
     }
   };
 
-  handleGenerateQuery = async () => {
+  handleGenerateQuery = async (parameters: any) => {
     this.setState({
       openDialog: false
     });
-
     if (!this.props.tracker.currentWidget) {
       return;
     }
+
+    // console.log(parameters);
+    // const updatedParameters = parameters.map((param: any) => ({
+    //   name: param.value?.title || '',
+    //   value: param.value?.selected || ''
+    // }));
+
+    // this.setState(prevState => ({
+    //   formValues: {
+    //     ...prevState.formValues,
+    //     additionnalParameters: updatedParameters
+    //   }
+    // }));
+    // console.log('formValues', this.state.formValues);
 
     const notebook = this.props.tracker.currentWidget.content;
     const model = notebook.model;
