@@ -1,6 +1,6 @@
 import React from 'react';
-import MultiSelect from './MultiSelect';
 import { Parameter } from '../types';
+import MultiSelect from './MultiSelect';
 
 const ParameterFields = ({
   params,
@@ -24,7 +24,9 @@ const ParameterFields = ({
     value.selected ??= value.default ?? undefined;
 
     const { type, description, title, selected } = value || {};
-    const enumList = value?.enum || value?.items?.enum ||
+    const enumList =
+      value?.enum ||
+      value?.items?.enum ||
       (typeof value?.items?.const === 'string' ? [value?.items?.const] : []);
     const renderSelectField = () => (
       <select
@@ -37,7 +39,7 @@ const ParameterFields = ({
         value={selected || ''}
       >
         {enumList.map((option: any, index: number) => (
-          <option key={index} value={option}>
+          <option key={`${index}-${option}`} value={option}>
             {option}
           </option>
         ))}
@@ -65,7 +67,17 @@ const ParameterFields = ({
     );
 
     const renderMultiSelectField = () => {
-      const selectedValues = Array.isArray(selected) ? selected : selected ? [selected] : [];
+      const toArray = (value: string): string[] => {
+        if (Array.isArray(value)) {
+          return value;
+        }
+        if (value) {
+          return [value];
+        }
+        return [];
+      };
+
+      const selectedValues = toArray(selected);
 
       return (
         <MultiSelect
