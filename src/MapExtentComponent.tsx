@@ -8,7 +8,7 @@ import { throttle } from 'lodash';
 import * as React from 'react';
 import { FeatureGroup, Map, TileLayer } from 'react-leaflet';
 import { EditControl } from 'react-leaflet-draw';
-import { EODAG_TILE_COPYRIGHT, EODAG_TILE_URL } from './config';
+import { EODAG_TILE_COPYRIGHT, EODAG_TILE_URL, EODAG_TILE_ZOOM_OFFSET } from './config';
 import { IGeometry } from './types';
 import { EodagWidget } from './widget';
 
@@ -173,7 +173,7 @@ export default class MapExtentComponent extends React.Component<
           this.map = ref;
         }}
       >
-        <TileLayer url={EODAG_TILE_URL} attribution={EODAG_TILE_COPYRIGHT} />
+        <TileLayer url={EODAG_TILE_URL} attribution={EODAG_TILE_COPYRIGHT} zoomOffset={EODAG_TILE_ZOOM_OFFSET} />
         <FeatureGroup>
           <EditControl
             position="topright"
