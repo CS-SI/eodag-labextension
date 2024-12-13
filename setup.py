@@ -7,7 +7,13 @@ import json
 from pathlib import Path
 
 import setuptools
-from jupyter_packaging import combine_commands, create_cmdclass, ensure_targets, install_npm, skip_if_exists
+from jupyter_packaging import (
+    combine_commands,
+    create_cmdclass,
+    ensure_targets,
+    install_npm,
+    skip_if_exists,
+)
 
 HERE = Path(__file__).parent.resolve()
 
@@ -26,13 +32,25 @@ labext_name = "eodag-labextension"
 data_files_spec = [
     ("share/jupyter/labextensions/%s" % labext_name, str(lab_path), "**"),
     ("share/jupyter/labextensions/%s" % labext_name, str(HERE), "install.json"),
-    ("etc/jupyter/jupyter_notebook_config.d", "jupyter-config/jupyter_notebook_config.d", "eodag_labextension.json"),
-    ("etc/jupyter/jupyter_server_config.d", "jupyter-config/jupyter_server_config.d", "eodag_labextension.json"),
+    (
+        "etc/jupyter/jupyter_notebook_config.d",
+        "jupyter-config/jupyter_notebook_config.d",
+        "eodag_labextension.json",
+    ),
+    (
+        "etc/jupyter/jupyter_server_config.d",
+        "jupyter-config/jupyter_server_config.d",
+        "eodag_labextension.json",
+    ),
 ]
 
-cmdclass = create_cmdclass("jsdeps", package_data_spec=package_data_spec, data_files_spec=data_files_spec)
+cmdclass = create_cmdclass(
+    "jsdeps", package_data_spec=package_data_spec, data_files_spec=data_files_spec
+)
 
-js_command = combine_commands(install_npm(HERE, build_cmd="build:prod", npm=["jlpm"]), ensure_targets(jstargets))
+js_command = combine_commands(
+    install_npm(HERE, build_cmd="build:prod", npm=["jlpm"]), ensure_targets(jstargets)
+)
 
 is_repo = (HERE / ".git").exists()
 if is_repo:
@@ -63,7 +81,7 @@ setup_args = dict(
         "notebook>=6.0.3,<7.0.0",
         # FIXME explicitely install eodag from develop branch until queryables
         # get released
-        "eodag[notebook] @ git+https://github.com/CS-SI/eodag.git@develop",
+        "eodag[notebook] @ git+https://github.com/CS-SI/eodag.git@fix-build-index-failure",
         "orjson",
         # ipyleaflet is not needed, but versions >= 0.17.4 will make the labextension crash
         # try removing this dependency when updating leaflet and/or jupyterlab

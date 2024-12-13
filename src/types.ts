@@ -39,3 +39,20 @@ export interface IFeaturePropertie {
 }
 
 export type MapSettings = { lat: number; lon: number; zoom: number };
+
+export interface Queryables {
+  properties: { [key: string]: { [key: string]: unknown } };
+  required?: string[];
+  additionalProperties: boolean;
+}
+
+export interface QueryablesResult {
+  parameters: Parameter[];
+  additionalParameters: boolean;
+}
+
+export interface Parameter {
+  key: string;
+  value: { [key: string]: any };
+  mandatory: boolean;
+}
