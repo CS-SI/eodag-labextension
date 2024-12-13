@@ -21,8 +21,6 @@ const ParameterFields = ({
   const renderField = (param: Parameter) => {
     const { key, value } = param;
 
-    console.log(key)
-
     value.selected ??= value.default ?? undefined;
 
     const { type, description, title, selected } = value || {};
