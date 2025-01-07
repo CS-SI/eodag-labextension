@@ -126,3 +126,5 @@ dmypy.json
 
 # IDE
 .idea/
+
+.venv/
