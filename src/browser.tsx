@@ -229,12 +229,13 @@ export class EodagBrowser extends React.Component<IProps, IState> {
     }
 
     const replaceCode = await this.getEodagSettings();
+    let input: IFormInput;
     if (isUndefined(this.state.formValues)) {
-      var geom: IGeometry = {
+      let geom: IGeometry = {
         type: 'Point',
         coordinates: [0, 0]
       };
-      var input: IFormInput = {
+      input = {
         startDate: new Date(),
         endDate: new Date(),
         productType: '',
@@ -243,7 +244,7 @@ export class EodagBrowser extends React.Component<IProps, IState> {
         geometry: geom
       };
     } else {
-      var input = this.state.formValues;
+      input = this.state.formValues;
     }
     const code = formatCode(input, replaceCode);
     this.handleCellInsertionPosition(notebook, model, code, replaceCode);
