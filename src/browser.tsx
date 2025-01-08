@@ -231,7 +231,7 @@ export class EodagBrowser extends React.Component<IProps, IState> {
     const replaceCode = await this.getEodagSettings();
     let input: IFormInput;
     if (isUndefined(this.state.formValues)) {
-      let geom: IGeometry = {
+      const geom: IGeometry = {
         type: 'Point',
         coordinates: [0, 0]
       };

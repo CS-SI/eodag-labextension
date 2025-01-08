@@ -118,7 +118,7 @@ class MuiVirtualizedTable extends React.PureComponent<IMuiVirtualizedTableProps>
       columnIndex !== undefined &&
       columns[columnIndex].handleClick
     ) {
-      let temp_handle = columns[columnIndex].handleClick;
+      const temp_handle = columns[columnIndex].handleClick;
       if (!isUndefined(temp_handle)) {
         handleClick = temp_handle;
       }
