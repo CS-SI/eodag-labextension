@@ -27,10 +27,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Set yarn version
-        run: |
-          npm install --global yarn
-          yarn set version 3.8.7
       - name: Install node
         uses: actions/setup-node@v3
         with:
