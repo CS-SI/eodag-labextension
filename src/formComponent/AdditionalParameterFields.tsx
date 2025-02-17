@@ -49,53 +49,52 @@ const AdditionalParameterFields = ({
           </a>
         </div>
 
-        {
-          additionalParameters && fields.map((field, index) => {
-            return (
-              <div key={field.id}>
-                <section className={'section'} key={field.id}>
-                  <input
-                    placeholder="Name"
-                    {...register(`additionnalParameters.${index}.name` as const)}
-                  />
-                  <input
-                    placeholder="Value"
-                    {...register(`additionnalParameters.${index}.value` as const)}
-                  />
-                  <button
-                    type="button"
-                    className="jp-EodagWidget-additionnalParameters-deletebutton"
-                    onClick={() =>
-                      fields.length === 1 ? clearInput(index) : remove(index)
-                    }
-                    data-tooltip-id="parameters-delete"
-                    data-tooltip-content="remove additionnal parameter"
-                    data-tooltip-variant={tooltipWarning}
-                    data-tooltip-place={tooltipTop}
-                  >
-                    <CarbonTrashCan height="20" width="20" />
-                    <Tooltip
-                      id="parameters-delete"
-                      className="jp-Eodag-tooltip"
-                    />
-                  </button>
-                  <button
-                    type="button"
-                    className="jp-EodagWidget-additionnalParameters-addbutton"
-                    onClick={() => append({ name: '', value: '' })}
-                    data-tooltip-id="parameters-add"
-                    data-tooltip-content="add a new additionnal parameter"
-                    data-tooltip-variant={tooltipDark}
-                    data-tooltip-place={tooltipTop}
-                  >
-                    <CarbonAddFilled height="20" width="20" />
-                    <Tooltip id="parameters-add" className="jp-Eodag-tooltip" />
-                  </button>
-                </section>
-              </div>
-            );
-          })
-        }
+        {additionalParameters ? (
+          fields.map((field, index) => (
+            <div key={field.id}>
+              <section className={'section'}>
+                <input
+                  placeholder="Name"
+                  {...register(`additionnalParameters.${index}.name` as const)}
+                />
+                <input
+                  placeholder="Value"
+                  {...register(`additionnalParameters.${index}.value` as const)}
+                />
+                <button
+                  type="button"
+                  className="jp-EodagWidget-additionnalParameters-deletebutton"
+                  onClick={() =>
+                    fields.length === 1 ? clearInput(index) : remove(index)
+                  }
+                  data-tooltip-id="parameters-delete"
+                  data-tooltip-content="remove additionnal parameter"
+                  data-tooltip-variant={tooltipWarning}
+                  data-tooltip-place={tooltipTop}
+                >
+                  <CarbonTrashCan height="20" width="20" />
+                  <Tooltip id="parameters-delete" className="jp-Eodag-tooltip" />
+                </button>
+                <button
+                  type="button"
+                  className="jp-EodagWidget-additionnalParameters-addbutton"
+                  onClick={() => append({ name: '', value: '' })}
+                  data-tooltip-id="parameters-add"
+                  data-tooltip-content="add a new additionnal parameter"
+                  data-tooltip-variant={tooltipDark}
+                  data-tooltip-place={tooltipTop}
+                >
+                  <CarbonAddFilled height="20" width="20" />
+                  <Tooltip id="parameters-add" className="jp-Eodag-tooltip" />
+                </button>
+              </section>
+            </div>
+          ))
+        ) : (
+          <p className="jp-EodagWidget-noParametersMessage">
+            Additional parameters are not allowed with this product type.
+          </p>
+        )}
       </div>
     </>
   );

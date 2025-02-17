@@ -1,6 +1,7 @@
 import React from 'react';
 import MultiSelect from './MultiSelect';
 import { Parameter } from '../types';
+import Select from 'react-select/src/Select';
 
 const ParameterFields = ({
   params,
@@ -26,22 +27,43 @@ const ParameterFields = ({
     const { type, description, title, selected } = value || {};
     const enumList = value?.enum || value?.items?.enum ||
       (typeof value?.items?.const === 'string' ? [value?.items?.const] : []);
-    const renderSelectField = () => (
-      <select
+    // const renderSelectField = () => (
+    //   <select
+    //     className="jp-EodagWidget-select"
+    //     style={{ width: '100%', height: '2rem', borderRadius: '.2rem' }}
+    //     aria-label={title}
+    //     placeholder={title}
+    //     title={description || undefined}
+    //     onChange={e => handleSelectChange(key, e.target.value)}
+    //     value={selected || ''}
+    //     required={param.mandatory}
+    //   >
+    //     {enumList.map((option: any, index: number) => (
+    //       <option key={index} value={option}>
+    //         {option}
+    //       </option>
+    //     ))}
+    //   </select>
+    // );
+
+    const renderSelectField2 = () => (
+      <Select
         className="jp-EodagWidget-select"
-        style={{ width: '100%', height: '2rem', borderRadius: '.2rem' }}
+        classNamePrefix="jp-EodagWidget-select"
         aria-label={title}
         placeholder={title}
         title={description || undefined}
         onChange={e => handleSelectChange(key, e.target.value)}
         value={selected || ''}
+        required={param.mandatory}
+        isClearable
       >
         {enumList.map((option: any, index: number) => (
           <option key={index} value={option}>
             {option}
           </option>
         ))}
-      </select>
+      </Select>
     );
 
     const renderInputField = (type: string) => (
@@ -60,6 +82,7 @@ const ParameterFields = ({
         placeholder={title}
         title={description || undefined}
         value={selected || ''}
+        required={param.mandatory}
         onChange={e => handleSelectChange(key, e.target.value)}
       />
     );
@@ -82,7 +105,7 @@ const ParameterFields = ({
       case 'string':
       case 'integer':
         return enumList.length > 0
-          ? renderSelectField()
+          ? renderSelectField2()
           : renderInputField(type);
       case 'array':
         return renderMultiSelectField();
@@ -106,7 +129,9 @@ const ParameterFields = ({
               <div key={param.key}>
                 <label className="jp-EodagWidget-input-name">
                   {param.value.title}
-                  <div style={{ marginTop: 10 }}>{renderField(param)}</div>
+                  <div style={{ marginTop: 10 }}>
+                    {renderField(param)}
+                  </div>
                 </label>
               </div>
             );
