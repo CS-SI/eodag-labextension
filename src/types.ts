@@ -46,11 +46,6 @@ export interface Queryables {
   additionalProperties: boolean;
 }
 
-export interface QueryablesResult {
-  parameters: Parameter[];
-  additionalParameters: boolean;
-}
-
 export interface Parameter {
   key: string;
   value: { [key: string]: any };

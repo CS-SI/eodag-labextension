@@ -13,7 +13,7 @@ import { ThreeDots } from 'react-loader-spinner';
 import { PlacesType, Tooltip, VariantType } from 'react-tooltip';
 import Autocomplete from '../Autocomplete';
 
-import { fetchQueryables } from '../helpers/fetchParameters';
+import { fetchQueryables } from '../helpers/fetchQueryables';
 import { useFetchProduct, useFetchProvider } from '../hooks/useFetchData';
 import { ServerConnection } from '@jupyterlab/services';
 import {
@@ -173,26 +173,49 @@ export const FormComponent: FC<IProps> = ({
   const [params, setParams] = useState(null);
   const [additionalParameters, setAdditionalParameters] =
     useState<boolean>(true);
-  const fetchData = async (provider: string, productType: any, query_params: { [key: string]: any } | undefined = undefined) => {
+  const [mandatoryParameters, setMandatoryParameters] = useState<Set<string>>(new Set());
 
+  const fetchData = async (
+    provider: string,
+    productType: any,
+    query_params: { [key: string]: any } | undefined = undefined,
+    setMandatory: boolean = false
+  ) => {
+    let queryables;
+
+    // Isolate the fetch queryables call and handle errors specifically for it
     try {
-      const parameters = await fetchQueryables(provider, productType, query_params).then(queryables => {
-        setAdditionalParameters(queryables.additionalParameters);
-        return queryables.parameters;
-      });
-      setParams(parameters);
+      queryables = await fetchQueryables(provider, productType, query_params);
     } catch (error) {
       if (error instanceof ServerConnection.ResponseError) {
         showErrorMessage('Bad response from server:', error);
+      } else {
+        console.error("Error fetching queryables:", error);
       }
-
+      return;
     }
 
+    // Proceed with the rest of the logic only if fetchQueryables is successful
+    setAdditionalParameters(queryables.additionalProperties);
+
+    if (setMandatory) {
+      setMandatoryParameters(queryables.required);
+    }
+
+    const params = Object.entries(queryables.properties)
+      .map(([key, value]) => ({
+        key,
+        value,
+        mandatory: mandatoryParameters.has(key),
+      }));
+
+    setParams(params);
   };
+
 
   useEffect(() => {
     if (providerValue && productTypeValue) {
-      fetchData(providerValue, productTypeValue);
+      fetchData(providerValue, productTypeValue, undefined, true);
     }
   }, [providerValue, productTypeValue]);
 
