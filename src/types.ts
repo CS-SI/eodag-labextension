@@ -11,6 +11,7 @@ export interface IFormInput {
   provider: string;
   cloud: number;
   additionnalParameters?: { name: string; value: string }[];
+  [key: string]: any;
 }
 
 export interface ISearchParameters {
