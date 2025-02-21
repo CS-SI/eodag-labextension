@@ -25,7 +25,7 @@ import MapExtentComponent from '../MapExtentComponent';
 import SearchService from '../SearchService';
 import { IFormInput } from '../types';
 import AdditionalParameterFields from './AdditionalParameterFields';
-import ParameterFields from './ParameterFields';
+import ParameterGroup from './ParameterGroup';
 
 export interface IProps {
   handleShowFeature: any;
@@ -74,16 +74,20 @@ export const FormComponent: FC<IProps> = ({
   const [providerValue, setProviderValue] = useState(null);
   const [productTypeValue, setProductTypeValue] = useState(null);
   const [fetchCount, setFetchCount] = useState(0);
-
+  const [params, setParams] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [additionalParameters, setAdditionalParameters] =
+    useState<boolean>(true);
 
   const {
     control,
     handleSubmit,
     // clearErrors,
     register,
-    resetField
-    // formState: { errors }
+    reset,
+    resetField,
+    formState: { errors },
+    getValues
   } = useForm<IFormInput>({
     defaultValues: {
       startDate: defaultStartDate,
@@ -91,6 +95,8 @@ export const FormComponent: FC<IProps> = ({
       cloud: 100
     }
   });
+
+  const formValues = getValues()
 
   useEffect(() => {
     if (!reloadIndicator) {
@@ -170,22 +176,16 @@ export const FormComponent: FC<IProps> = ({
   const loadProductTypesSuggestions = useFetchProduct();
   const loadProviderSuggestions = useFetchProvider();
 
-  const [params, setParams] = useState(null);
-  const [additionalParameters, setAdditionalParameters] =
-    useState<boolean>(true);
-  const [mandatoryParameters, setMandatoryParameters] = useState<Set<string>>(new Set());
-
-  const fetchData = async (
-    provider: string,
-    productType: any,
+  const fetchParameters = async (
     query_params: { [key: string]: any } | undefined = undefined,
-    setMandatory: boolean = false
-  ) => {
+  ): Promise<{ [key: string]: any; }> => {
     let queryables;
+
+    setLoading(true);
 
     // Isolate the fetch queryables call and handle errors specifically for it
     try {
-      queryables = await fetchQueryables(provider, productType, query_params);
+      queryables = await fetchQueryables(providerValue, productTypeValue, query_params);
     } catch (error) {
       if (error instanceof ServerConnection.ResponseError) {
         showErrorMessage('Bad response from server:', error);
@@ -194,28 +194,32 @@ export const FormComponent: FC<IProps> = ({
       }
       return;
     }
-
-    // Proceed with the rest of the logic only if fetchQueryables is successful
     setAdditionalParameters(queryables.additionalProperties);
 
-    if (setMandatory) {
-      setMandatoryParameters(queryables.required);
-    }
+    setParams(queryables.properties);
 
-    const params = Object.entries(queryables.properties)
-      .map(([key, value]) => ({
-        key,
-        value,
-        mandatory: mandatoryParameters.has(key),
-      }));
+    setLoading(false);
 
-    setParams(params);
+    return queryables.properties;
   };
 
-
   useEffect(() => {
-    if (providerValue && productTypeValue) {
-      fetchData(providerValue, productTypeValue, undefined, true);
+    if (productTypeValue) {
+      fetchParameters().then((params) => {
+        const defaultValues = params.reduce((
+          acc: { [x: string]: any; },
+          param: { key: string; value: { default: any; }; }
+        ) => { acc[param.key] = param.value?.default; return acc; }, {});
+
+        reset({
+          ...defaultValues,
+          provider: formValues.provider,
+          productType: formValues.productType,
+          additionnalParameters: formValues.additionnalParameters
+        });
+      }).catch(error => {
+        console.error("Error fetching parameters:", error);
+      });
     }
   }, [providerValue, productTypeValue]);
 
@@ -227,9 +231,7 @@ export const FormComponent: FC<IProps> = ({
       return acc;
     }, {} as { [key: string]: string }) : undefined;
 
-    setLoading(true);
-    fetchData(providerValue, productTypeValue, query_params)
-      .then(() => setLoading(false));
+    fetchParameters(query_params);
 
   }, [params]);
 
@@ -285,6 +287,10 @@ export const FormComponent: FC<IProps> = ({
                   setProductTypeValue(e?.value);
                   if (e?.value === undefined) {
                     setParams([])
+                    reset({
+                      provider: formValues.provider,
+                      additionnalParameters: formValues.additionnalParameters
+                    });
                   }
                 }}
               />
@@ -380,12 +386,41 @@ export const FormComponent: FC<IProps> = ({
             </div>
           </label>
 
-          {params && <ParameterFields {...{ params, setParams }} />}
+          {params && (
+            <>
+              <div style={{ marginTop: '0' }}>
+                <p>Mandatory parameters</p>
+                <div className="jp-EodagWidget-field">
+                  <ParameterGroup {...{ control, params, setParams }} mandatory />
+                </div>
+              </div>
+
+              <div style={{ marginTop: '2rem' }}>
+                <p>Optional parameters</p>
+                <div className="jp-EodagWidget-field">
+                  <ParameterGroup {...{ control, params, setParams }} />
+                </div>
+              </div>
+            </>
+          )}
+
 
           <AdditionalParameterFields
             {...{ control, register, resetField, additionalParameters }}
           />
         </div>
+        {/* Show all error messages */}
+        {Object.keys(errors).length > 0 && (
+          <div style={{ color: 'red', marginBottom: '10px' }}>
+            <ul>
+              {Object.keys(errors).map((field) => (
+                <li key={field}>
+                  <strong>{field}</strong>: {errors[field]?.message} {/* Show error key and message */}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
         <div className="jp-EodagWidget-form-buttons">
           <div className="jp-EodagWidget-form-buttons-wrapper">
             {isLoadingSearch ? (
@@ -468,6 +503,11 @@ export const FormComponent: FC<IProps> = ({
           </div>
         </div>
       </form>
+      {/* Debugging section: Display current form values */}
+      <div style={{ marginTop: '20px', padding: '10px', backgroundColor: '#f0f0f0' }}>
+        <h4>Current Form Values (for debugging):</h4>
+        <pre>{JSON.stringify(formValues, null, 2)}</pre> {/* Display current form values */}
+      </div>
     </div>
   );
 };

@@ -2,12 +2,11 @@ import { requestAPI } from "../handler";
 import { Queryables } from "../types";
 
 export const fetchQueryables = async (
-  provider: string | undefined,
+  provider: string | null,
   productType: string,
   filterParameters: { [key: string]: any } | undefined
 ): Promise<{
   properties: { [key: string]: any; },
-  required: Set<string>,
   additionalProperties: boolean
 }> => {
   const params = new URLSearchParams({ productType });
@@ -33,18 +32,21 @@ export const fetchQueryables = async (
     );
   }
 
-  const filteredProperties: { [key: string]: any } = {};
-  Object.entries(queryables.properties).forEach(([key, value]) => {
-    if (!["productType", "startTimeFromAscendingNode", "completionTimeFromAscendingNode", "geom"].includes(key)) {
-      filteredProperties[key] = value;
-    }
-  });
+  // TODO: review the list of exclusion keys
+  const excludedKeys = new Set(["productType", "startTimeFromAscendingNode", "completionTimeFromAscendingNode", "geom", "start_datetime", "end_datetime", "end", "bbox"]);
 
   const requiredSet = new Set(queryables.required || []);
 
+  const properties = Object.entries(queryables.properties)
+    .filter(([key]) => !excludedKeys.has(key))
+    .map(([key, value]) => ({
+      key,
+      value,
+      mandatory: requiredSet.has(key),
+    }));
+
   return {
-    properties: filteredProperties,
-    required: requiredSet,
+    properties: properties,
     additionalProperties: queryables.additionalProperties,
   };
 };
