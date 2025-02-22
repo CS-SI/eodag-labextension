@@ -56,6 +56,23 @@ class SearchService {
       );
     }
 
+    // Map any extra dynamic properties (excluding already handled ones)
+    const excludedKeys = new Set([
+      "startDate",
+      "endDate",
+      "cloud",
+      "productType",
+      "geometry",
+      "provider",
+      "additionnalParameters"
+    ]);
+
+    Object.keys(formValues).forEach(key => {
+      if (!excludedKeys.has(key)) {
+        parameters[key] = formValues[key];
+      }
+    });
+
     const headers = new Headers({
       'Content-Type': 'application/json'
     });
