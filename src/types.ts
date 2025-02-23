@@ -9,7 +9,6 @@ export interface IFormInput {
   endDate: Date;
   productType: string;
   provider: string;
-  cloud: number;
   additionnalParameters?: { name: string; value: string }[];
   [key: string]: any;
 }
@@ -17,7 +16,6 @@ export interface IFormInput {
 export interface ISearchParameters {
   dtstart?: string; // format: YYYY-MM-DD
   dtend?: string; // format: YYYY-MM-DD
-  cloudCover?: number;
   page?: number;
   geom?: IGeometry;
   [key: string]: any;

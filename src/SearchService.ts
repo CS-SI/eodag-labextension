@@ -39,7 +39,6 @@ class SearchService {
         ? formatDate(formValues.startDate)
         : undefined,
       dtend: formValues.endDate ? formatDate(formValues.endDate) : undefined,
-      cloudCover: formValues.cloud < 100 ? formValues.cloud : undefined,
       page: page,
       geom: formValues.geometry,
       provider: formValues.provider
@@ -60,7 +59,6 @@ class SearchService {
     const excludedKeys = new Set([
       "startDate",
       "endDate",
-      "cloud",
       "productType",
       "geometry",
       "provider",
