@@ -190,7 +190,7 @@ export class EodagBrowser extends React.Component<IProps, IState> {
     }
   };
 
-  handleGenerateQuery = async (parameters: any) => {
+  handleGenerateQuery = async (parameters: Parameter[]) => {
     this.setState({
       openDialog: false
     });

@@ -23,9 +23,10 @@ import {
 } from '../icones.js';
 import MapExtentComponent from '../MapExtentComponent';
 import SearchService from '../SearchService';
-import { IFormInput } from '../types';
+import { IFormInput, OptionType, Parameter } from '../types';
 import AdditionalParameterFields from './AdditionalParameterFields';
 import ParameterGroup from './ParameterGroup';
+import DropdownButton from './DropdownButton';
 
 export interface IProps {
   handleShowFeature: any;
@@ -74,10 +75,11 @@ export const FormComponent: FC<IProps> = ({
   const [providerValue, setProviderValue] = useState(null);
   const [productTypeValue, setProductTypeValue] = useState(null);
   const [fetchCount, setFetchCount] = useState(0);
-  const [params, setParams] = useState(null);
+  const [params, setParams] = useState<Parameter[]>(null);
   const [loading, setLoading] = useState(false);
   const [additionalParameters, setAdditionalParameters] =
     useState<boolean>(true);
+  const [optionalParams, setOptionalParams] = useState<OptionType[]>([]);
 
   const {
     control,
@@ -141,12 +143,10 @@ export const FormComponent: FC<IProps> = ({
       return;
     }
 
-    console.log("Submit data :", data)
-
     saveFormValues(data);
 
     if (!openModal) {
-      handleGenerateQuery();
+      handleGenerateQuery(params);
     }
 
     if (openModal) {
@@ -163,7 +163,7 @@ export const FormComponent: FC<IProps> = ({
           setIsLoadingSearch(false);
           handleShowFeature(featureCollection, openModal);
           if (!openModal) {
-            handleGenerateQuery();
+            handleGenerateQuery(params);
           }
         })
         .catch(error => {
@@ -178,7 +178,7 @@ export const FormComponent: FC<IProps> = ({
 
   const fetchParameters = async (
     query_params: { [key: string]: any } | undefined = undefined,
-  ): Promise<{ [key: string]: any; }> => {
+  ): Promise<Parameter[]> => {
     let queryables;
 
     setLoading(true);
@@ -206,10 +206,13 @@ export const FormComponent: FC<IProps> = ({
   useEffect(() => {
     if (productTypeValue) {
       fetchParameters().then((params) => {
-        const defaultValues = params.reduce((
-          acc: { [x: string]: any; },
-          param: { key: string; value: { default: any; }; }
-        ) => { acc[param.key] = param.value?.default; return acc; }, {});
+        const defaultValues = params.reduce((acc: { [key: string]: any }, param: Parameter) => {
+          // Ensure param.value contains a 'default' property before accessing it
+          if (param.value && 'default' in param.value) {
+            acc[param.key] = param.value.default;
+          }
+          return acc;
+        }, {});
 
         reset({
           ...defaultValues,
@@ -217,6 +220,10 @@ export const FormComponent: FC<IProps> = ({
           productType: formValues.productType,
           additionnalParameters: formValues.additionnalParameters
         });
+
+        const optionals = params.filter((param) => param.mandatory === false).map((param) => ({ value: param.key, label: param.key }));
+
+        setOptionalParams(optionals)
       }).catch(error => {
         console.error("Error fetching parameters:", error);
       });
@@ -232,9 +239,17 @@ export const FormComponent: FC<IProps> = ({
     }, {} as { [key: string]: string }) : undefined;
 
     fetchParameters(query_params);
-
   }, [params]);
 
+  const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
+
+  const handleSelect = (param: OptionType): void => {
+    if (selectedOptions.includes(param.value)) {
+      setSelectedOptions(selectedOptions.filter(option => option !== param.value));
+    } else {
+      setSelectedOptions([...selectedOptions, param.value]);
+    }
+  };
 
   return (
     <div className="jp-EodagWidget-wrapper">
@@ -386,23 +401,27 @@ export const FormComponent: FC<IProps> = ({
             </div>
           </label>
 
-          {params && (
-            <>
-              <div style={{ marginTop: '0' }}>
-                <p>Mandatory parameters</p>
-                <div className="jp-EodagWidget-field">
-                  <ParameterGroup {...{ control, params, setParams }} mandatory />
-                </div>
-              </div>
 
-              <div style={{ marginTop: '2rem' }}>
-                <p>Optional parameters</p>
-                <div className="jp-EodagWidget-field">
-                  <ParameterGroup {...{ control, params, setParams }} />
-                </div>
+          <div style={{ marginTop: "0" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginLeft: "10px", marginRight: "10px" }}>
+              <p className='jp-EodagWidget-section-title'>Parameters</p>
+              <DropdownButton
+                options={optionalParams}
+                onSelect={handleSelect}
+                selectedOptions={selectedOptions}
+              />
+            </div>
+            {params && (
+              <div className="jp-EodagWidget-field">
+                <ParameterGroup {...{ control, params, setParams }} mandatory />
+                <ParameterGroup {...{
+                  control,
+                  params: params.filter(param => selectedOptions.includes(param.key)),
+                  setParams
+                }} />
               </div>
-            </>
-          )}
+            )}
+          </div>
 
           <AdditionalParameterFields
             {...{ control, register, resetField, additionalParameters }}

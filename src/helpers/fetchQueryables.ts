@@ -1,12 +1,12 @@
 import { requestAPI } from "../handler";
-import { Queryables } from "../types";
+import { Parameter, Queryables } from "../types";
 
 export const fetchQueryables = async (
   provider: string | null,
   productType: string,
   filterParameters: { [key: string]: any } | undefined
 ): Promise<{
-  properties: { [key: string]: any; },
+  properties: Parameter[],
   additionalProperties: boolean
 }> => {
   const params = new URLSearchParams({ productType });
@@ -33,7 +33,7 @@ export const fetchQueryables = async (
   }
 
   // TODO: review the list of exclusion keys
-  const excludedKeys = new Set(["productType", "startTimeFromAscendingNode", "completionTimeFromAscendingNode", "geom", "start_datetime", "end_datetime", "end", "bbox"]);
+  const excludedKeys = new Set(["productType", "startTimeFromAscendingNode", "completionTimeFromAscendingNode", "geom", "start_datetime", "end_datetime", "end", "bbox", "geometry"]);
 
   const requiredSet = new Set(queryables.required || []);
 

@@ -52,3 +52,8 @@ export interface Parameter {
   value: { [key: string]: any };
   mandatory: boolean;
 }
+
+export interface OptionType {
+  value: string;
+  label: string;
+}
