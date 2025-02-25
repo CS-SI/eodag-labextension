@@ -255,246 +255,246 @@ export const FormComponent: FC<IProps> = ({
   return (
     <div className="jp-EodagWidget-wrapper">
       <FormProvider {...formInput}>
-      <form onSubmit={handleSubmit(onSubmit)} className="jp-EodagWidget-form">
-        <div className="jp-EodagWidget-map">
-          <Controller
-            name="geometry"
-            control={control}
-            rules={{ required: false }}
-            render={({ field: { onChange, value } }) => (
-              <MapExtentComponent geometry={value} onChange={onChange} />
-            )}
-          />
-        </div>
-        <div className="jp-EodagWidget-field">
-          <Controller
-            name="provider"
-            control={control}
-            render={({ field: { onChange, value } }) => (
-              <Autocomplete
-                label="Provider"
-                placeholder="Any"
-                suggestions={providers}
-                value={value}
-                loadSuggestions={(inputValue: string) =>
-                  loadProviderSuggestions(null, inputValue)
-                }
-                handleChange={(e: IOptionTypeBase | null) => {
-                  onChange(e?.value);
-                  setProviderValue(e?.value);
-                }}
-              />
-            )}
-          />
-          <Controller
-            name="productType"
-            control={control}
-            rules={{ required: true }}
-            render={({ field: { onChange, value } }) => (
-              <Autocomplete
-                label="Product Type"
-                suggestions={productTypes}
-                placeholder="S2_..."
-                value={value}
-                loadSuggestions={(inputValue: string) =>
-                  loadProductTypesSuggestions(providerValue, inputValue)
-                }
-                handleChange={(e: IOptionTypeBase | null) => {
-                  onChange(e?.value);
-                  setProductTypeValue(e?.value);
-                  if (e?.value === undefined) {
-                    setParams([])
-                    setOptionalParams([])
-                    reset({
-                      provider: formValues.provider,
-                      additionnalParameters: formValues.additionnalParameters
-                    });
+        <form onSubmit={handleSubmit(onSubmit)} className="jp-EodagWidget-form">
+          <div className="jp-EodagWidget-map">
+            <Controller
+              name="geometry"
+              control={control}
+              rules={{ required: false }}
+              render={({ field: { onChange, value } }) => (
+                <MapExtentComponent geometry={value} onChange={onChange} />
+              )}
+            />
+          </div>
+          <div className="jp-EodagWidget-field">
+            <Controller
+              name="provider"
+              control={control}
+              render={({ field: { onChange, value } }) => (
+                <Autocomplete
+                  label="Provider"
+                  placeholder="Any"
+                  suggestions={providers}
+                  value={value}
+                  loadSuggestions={(inputValue: string) =>
+                    loadProviderSuggestions(null, inputValue)
                   }
-                }}
-              />
-            )}
-          />
-          <div className="jp-EodagWidget-form-date-picker">
-            <label htmlFor="startDate" className="jp-EodagWidget-input-name">
-              Date range
-            </label>
-            <div className="jp-EodagWidget-form-date-picker-wrapper">
-              <div className="jp-EodagWidget-input-wrapper">
-                <CarbonCalendarAddAlt height="22" width="22" />
-                <Controller
-                  name="startDate"
-                  control={control}
-                  rules={{ required: false }}
-                  render={({ field: { onChange, onBlur, value } }) => (
-                    <DatePicker
-                      className="jp-EodagWidget-input jp-EodagWidget-input-with-svg"
-                      selectsStart
-                      startDate={startDate}
-                      endDate={endDate}
-                      maxDate={endDate}
-                      onChange={(d: Date) => {
-                        setStartDate(d);
-                        onChange(d);
-                      }}
-                      onBlur={onBlur}
-                      selected={value}
-                      dateFormat={'dd/MM/yyyy'}
-                      showMonthDropdown
-                      showYearDropdown
-                      dropdownMode="select"
-                      isClearable
-                      placeholderText="Start"
-                    />
-                  )}
+                  handleChange={(e: IOptionTypeBase | null) => {
+                    onChange(e?.value);
+                    setProviderValue(e?.value);
+                  }}
                 />
-              </div>
+              )}
+            />
+            <Controller
+              name="productType"
+              control={control}
+              rules={{ required: true }}
+              render={({ field: { onChange, value } }) => (
+                <Autocomplete
+                  label="Product Type"
+                  suggestions={productTypes}
+                  placeholder="S2_..."
+                  value={value}
+                  loadSuggestions={(inputValue: string) =>
+                    loadProductTypesSuggestions(providerValue, inputValue)
+                  }
+                  handleChange={(e: IOptionTypeBase | null) => {
+                    onChange(e?.value);
+                    setProductTypeValue(e?.value);
+                    if (e?.value === undefined) {
+                      setParams([])
+                      setOptionalParams([])
+                      reset({
+                        provider: formValues.provider,
+                        additionnalParameters: formValues.additionnalParameters
+                      });
+                    }
+                  }}
+                />
+              )}
+            />
+            <div className="jp-EodagWidget-form-date-picker">
+              <label htmlFor="startDate" className="jp-EodagWidget-input-name">
+                Date range
+              </label>
+              <div className="jp-EodagWidget-form-date-picker-wrapper">
+                <div className="jp-EodagWidget-input-wrapper">
+                  <CarbonCalendarAddAlt height="22" width="22" />
+                  <Controller
+                    name="startDate"
+                    control={control}
+                    rules={{ required: false }}
+                    render={({ field: { onChange, onBlur, value } }) => (
+                      <DatePicker
+                        className="jp-EodagWidget-input jp-EodagWidget-input-with-svg"
+                        selectsStart
+                        startDate={startDate}
+                        endDate={endDate}
+                        maxDate={endDate}
+                        onChange={(d: Date) => {
+                          setStartDate(d);
+                          onChange(d);
+                        }}
+                        onBlur={onBlur}
+                        selected={value}
+                        dateFormat={'dd/MM/yyyy'}
+                        showMonthDropdown
+                        showYearDropdown
+                        dropdownMode="select"
+                        isClearable
+                        placeholderText="Start"
+                      />
+                    )}
+                  />
+                </div>
 
-              <div className="jp-EodagWidget-input-wrapper">
-                <CarbonCalendarAddAlt height="22" width="22" />
-                <Controller
-                  name="endDate"
-                  control={control}
-                  rules={{ required: false }}
-                  render={({ field: { onChange, onBlur, value } }) => (
-                    <DatePicker
-                      className="jp-EodagWidget-input jp-EodagWidget-input-with-svg"
-                      selectsStart
-                      startDate={startDate}
-                      endDate={endDate}
-                      onChange={(d: Date) => {
-                        setEndDate(d);
-                        onChange(d);
-                      }}
-                      onBlur={onBlur}
-                      selected={value}
-                      dateFormat={'dd/MM/yyyy'}
-                      showMonthDropdown
-                      showYearDropdown
-                      dropdownMode="select"
-                      isClearable
-                      placeholderText="End"
-                    />
-                  )}
-                />
+                <div className="jp-EodagWidget-input-wrapper">
+                  <CarbonCalendarAddAlt height="22" width="22" />
+                  <Controller
+                    name="endDate"
+                    control={control}
+                    rules={{ required: false }}
+                    render={({ field: { onChange, onBlur, value } }) => (
+                      <DatePicker
+                        className="jp-EodagWidget-input jp-EodagWidget-input-with-svg"
+                        selectsStart
+                        startDate={startDate}
+                        endDate={endDate}
+                        onChange={(d: Date) => {
+                          setEndDate(d);
+                          onChange(d);
+                        }}
+                        onBlur={onBlur}
+                        selected={value}
+                        dateFormat={'dd/MM/yyyy'}
+                        showMonthDropdown
+                        showYearDropdown
+                        dropdownMode="select"
+                        isClearable
+                        placeholderText="End"
+                      />
+                    )}
+                  />
+                </div>
               </div>
             </div>
-          </div>
 
-          <div style={{ marginTop: "10px" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginLeft: "10px", marginRight: "10px" }}>
-              <p className='jp-EodagWidget-section-title'>Parameters</p>
-              <DropdownButton
-                options={optionalParams}
+            <div style={{ marginTop: "10px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginLeft: "10px", marginRight: "10px" }}>
+                <p className='jp-EodagWidget-section-title'>Parameters</p>
+                <DropdownButton
+                  options={optionalParams}
                   onSelect={handleSelectDropdown}
-                selectedOptions={selectedOptions}
-                disabled={!optionalParams.length}
-              />
-            </div>
-            <div className="jp-EodagWidget-field">
-              {!params || !params.length ? (
-                <div style={{ margin: "10px 0", color: "secondary" }}>
-                  <p>Select a product type to access more filters.</p>
-                </div>
-              ) :
-                <>
-                    <ParameterGroup {...{ params, setParams }} mandatory />
-                    <ParameterGroup {...{params: params.filter(param => selectedOptions.includes(param.key)), setParams }} />
-                </>}
-            </div>
-          </div>
-
-          <AdditionalParameterFields
-            {...{ control, register, resetField, productType: productTypeValue, additionalParameters }}
-          />
-
-        </div>
-        <div className="jp-EodagWidget-form-buttons">
-          <div className="jp-EodagWidget-form-buttons-wrapper">
-            {isLoadingSearch ? (
-              <div className="jp-EodagWidget-loader">
-                <p>Generating</p>
-                <ThreeDots
-                  height="35"
-                  width="35"
-                  radius="9"
-                  color="#1976d2"
-                  ariaLabel="three-dots-loading"
-                  wrapperStyle={{}}
-                  visible={true}
+                  selectedOptions={selectedOptions}
+                  disabled={!optionalParams.length}
                 />
               </div>
-            ) : (
-              <>
-                <div className="jp-EodagWidget-buttons">
-                  <button
-                    type="submit"
-                    color="primary"
-                    className={
-                      !productTypeValue
-                        ? 'jp-EodagWidget-buttons-button jp-EodagWidget-buttons-button__disabled'
-                        : 'jp-EodagWidget-buttons-button'
-                    }
-                    disabled={isLoadingSearch}
-                    onClick={() => setOpenModal(true)}
-                    data-tooltip-id="btn-preview-results"
-                    data-tooltip-content="You need to select a product type to preview the results"
-                    data-tooltip-variant={tooltipDark}
-                    data-tooltip-place={tooltipTop}
-                  >
-                    <CodiconOpenPreview width="21" height="21" />
-                    <p>
-                      Preview
-                      <br />
-                      Results
-                    </p>
-                    {!productTypeValue && (
-                      <Tooltip
-                        id="btn-preview-results"
-                        className="jp-Eodag-tooltip"
-                      />
-                    )}
-                  </button>
-                </div>
-                <div className="jp-EodagWidget-buttons">
-                  <button
-                    type="submit"
-                    color="primary"
-                    className={
-                      !productTypeValue
-                        ? 'jp-EodagWidget-buttons-button jp-EodagWidget-buttons-button__disabled'
-                        : 'jp-EodagWidget-buttons-button'
-                    }
-                    disabled={isLoadingSearch}
-                    onClick={() => setOpenModal(false)}
-                    data-tooltip-id="btn-generate-value"
-                    data-tooltip-content="You need to select a product type to generate the code"
-                    data-tooltip-variant={tooltipDark}
-                    data-tooltip-place={tooltipTop}
-                  >
-                    <PhFileCode height="21" width="21" />
-                    <p>
-                      Generate
-                      <br />
-                      Code
-                    </p>
-                    {!productTypeValue && (
-                      <Tooltip
-                        id="btn-generate-value"
-                        className="jp-Eodag-tooltip"
-                      />
-                    )}
-                  </button>
-                </div>
-              </>
-            )}
+              <div className="jp-EodagWidget-field">
+                {!params || !params.length ? (
+                  <div style={{ margin: "10px 0", color: "secondary" }}>
+                    <p>Select a product type to access more filters.</p>
+                  </div>
+                ) :
+                  <>
+                    <ParameterGroup {...{ params, setParams }} mandatory />
+                    <ParameterGroup {...{ params, setParams, selectedOptions }} />
+                  </>}
+              </div>
+            </div>
+
+            <AdditionalParameterFields
+              {...{ control, register, resetField, productType: productTypeValue, additionalParameters }}
+            />
+
           </div>
+          <div className="jp-EodagWidget-form-buttons">
+            <div className="jp-EodagWidget-form-buttons-wrapper">
+              {isLoadingSearch ? (
+                <div className="jp-EodagWidget-loader">
+                  <p>Generating</p>
+                  <ThreeDots
+                    height="35"
+                    width="35"
+                    radius="9"
+                    color="#1976d2"
+                    ariaLabel="three-dots-loading"
+                    wrapperStyle={{}}
+                    visible={true}
+                  />
+                </div>
+              ) : (
+                <>
+                  <div className="jp-EodagWidget-buttons">
+                    <button
+                      type="submit"
+                      color="primary"
+                      className={
+                        !productTypeValue
+                          ? 'jp-EodagWidget-buttons-button jp-EodagWidget-buttons-button__disabled'
+                          : 'jp-EodagWidget-buttons-button'
+                      }
+                      disabled={isLoadingSearch}
+                      onClick={() => setOpenModal(true)}
+                      data-tooltip-id="btn-preview-results"
+                      data-tooltip-content="You need to select a product type to preview the results"
+                      data-tooltip-variant={tooltipDark}
+                      data-tooltip-place={tooltipTop}
+                    >
+                      <CodiconOpenPreview width="21" height="21" />
+                      <p>
+                        Preview
+                        <br />
+                        Results
+                      </p>
+                      {!productTypeValue && (
+                        <Tooltip
+                          id="btn-preview-results"
+                          className="jp-Eodag-tooltip"
+                        />
+                      )}
+                    </button>
+                  </div>
+                  <div className="jp-EodagWidget-buttons">
+                    <button
+                      type="submit"
+                      color="primary"
+                      className={
+                        !productTypeValue
+                          ? 'jp-EodagWidget-buttons-button jp-EodagWidget-buttons-button__disabled'
+                          : 'jp-EodagWidget-buttons-button'
+                      }
+                      disabled={isLoadingSearch}
+                      onClick={() => setOpenModal(false)}
+                      data-tooltip-id="btn-generate-value"
+                      data-tooltip-content="You need to select a product type to generate the code"
+                      data-tooltip-variant={tooltipDark}
+                      data-tooltip-place={tooltipTop}
+                    >
+                      <PhFileCode height="21" width="21" />
+                      <p>
+                        Generate
+                        <br />
+                        Code
+                      </p>
+                      {!productTypeValue && (
+                        <Tooltip
+                          id="btn-generate-value"
+                          className="jp-Eodag-tooltip"
+                        />
+                      )}
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+        </form>
+        {/* Debugging section: Display current form values */}
+        <div style={{ marginTop: '20px', padding: '10px', backgroundColor: '#f0f0f0' }}>
+          <h4>Current Form Values (for debugging):</h4>
+          <pre>{JSON.stringify(formValues, null, 2)}</pre> {/* Display current form values */}
         </div>
-      </form>
-      {/* Debugging section: Display current form values */}
-      <div style={{ marginTop: '20px', padding: '10px', backgroundColor: '#f0f0f0' }}>
-        <h4>Current Form Values (for debugging):</h4>
-        <pre>{JSON.stringify(formValues, null, 2)}</pre> {/* Display current form values */}
-      </div>
       </FormProvider>
     </div>
   );
