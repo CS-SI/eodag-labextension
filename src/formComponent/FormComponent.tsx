@@ -8,7 +8,7 @@ import 'isomorphic-fetch';
 import React, { FC, useEffect, useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import { Controller, SubmitHandler, useForm } from 'react-hook-form';
+import { Controller, FormProvider, SubmitHandler, useForm } from 'react-hook-form';
 import { ThreeDots } from 'react-loader-spinner';
 import { PlacesType, Tooltip, VariantType } from 'react-tooltip';
 import Autocomplete from '../Autocomplete';
@@ -80,6 +80,13 @@ export const FormComponent: FC<IProps> = ({
     useState<boolean>(true);
   const [optionalParams, setOptionalParams] = useState<OptionType[]>([]);
 
+  const formInput = useForm<IFormInput>({
+    defaultValues: {
+      startDate: defaultStartDate,
+      endDate: defaultEndDate,
+    }
+  });
+
   const {
     control,
     handleSubmit,
@@ -89,13 +96,7 @@ export const FormComponent: FC<IProps> = ({
     resetField,
     // formState: { errors },
     getValues,
-    setValue,
-  } = useForm<IFormInput>({
-    defaultValues: {
-      startDate: defaultStartDate,
-      endDate: defaultEndDate,
-    }
-  });
+  } = formInput;
 
   const formValues = getValues()
 
@@ -222,7 +223,7 @@ export const FormComponent: FC<IProps> = ({
 
         setSelectedOptions([]);
 
-        const optionals = params.filter((param) => param.mandatory === false).map((param) => ({ value: param.key, label: param.key }));
+        const optionals = params.filter((param) => param.mandatory === false).map((param) => ({ value: param.key, label: param.value.title ?? param.key }));
         setOptionalParams(optionals)
       }).catch(error => {
         console.error("Error fetching parameters:", error);
@@ -243,7 +244,7 @@ export const FormComponent: FC<IProps> = ({
 
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
 
-  const handleSelect = (param: OptionType): void => {
+  const handleSelectDropdown = (param: OptionType): void => {
     if (selectedOptions.includes(param.value)) {
       setSelectedOptions(selectedOptions.filter(option => option !== param.value));
     } else {
@@ -253,6 +254,7 @@ export const FormComponent: FC<IProps> = ({
 
   return (
     <div className="jp-EodagWidget-wrapper">
+      <FormProvider {...formInput}>
       <form onSubmit={handleSubmit(onSubmit)} className="jp-EodagWidget-form">
         <div className="jp-EodagWidget-map">
           <Controller
@@ -383,7 +385,7 @@ export const FormComponent: FC<IProps> = ({
               <p className='jp-EodagWidget-section-title'>Parameters</p>
               <DropdownButton
                 options={optionalParams}
-                onSelect={handleSelect}
+                  onSelect={handleSelectDropdown}
                 selectedOptions={selectedOptions}
                 disabled={!optionalParams.length}
               />
@@ -395,13 +397,8 @@ export const FormComponent: FC<IProps> = ({
                 </div>
               ) :
                 <>
-                  <ParameterGroup {...{ control, params, setParams, setValue }} mandatory />
-                  <ParameterGroup {...{
-                    control,
-                    params: params.filter(param => selectedOptions.includes(param.key)),
-                    setParams,
-                    setValue,
-                  }} />
+                    <ParameterGroup {...{ params, setParams }} mandatory />
+                    <ParameterGroup {...{params: params.filter(param => selectedOptions.includes(param.key)), setParams }} />
                 </>}
             </div>
           </div>
@@ -498,6 +495,7 @@ export const FormComponent: FC<IProps> = ({
         <h4>Current Form Values (for debugging):</h4>
         <pre>{JSON.stringify(formValues, null, 2)}</pre> {/* Display current form values */}
       </div>
+      </FormProvider>
     </div>
   );
 };
