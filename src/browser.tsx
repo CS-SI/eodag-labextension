@@ -197,18 +197,6 @@ export class EodagBrowser extends React.Component<IProps, IState> {
       return;
     }
 
-    const updatedParameters = parameters.map((param: Parameter) => ({
-      name: param.key || '',
-      value: param.value?.selected || ''
-    }));
-
-    this.setState(prevState => ({
-      formValues: {
-        ...prevState.formValues,
-        additionnalParameters: updatedParameters
-      }
-    }));
-
     const notebook = this.props.tracker.currentWidget.content;
     const model = notebook.model;
 

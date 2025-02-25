@@ -96,6 +96,7 @@ export const FormComponent: FC<IProps> = ({
     resetField,
     // formState: { errors },
     getValues,
+    setValue,
   } = formInput;
 
   const formValues = getValues()
@@ -221,8 +222,6 @@ export const FormComponent: FC<IProps> = ({
           additionnalParameters: formValues.additionnalParameters
         });
 
-        setSelectedOptions([]);
-
         const optionals = params.filter((param) => param.mandatory === false).map((param) => ({ value: param.key, label: param.value.title ?? param.key }));
         setOptionalParams(optionals)
       }).catch(error => {
@@ -301,6 +300,12 @@ export const FormComponent: FC<IProps> = ({
                   }
                   handleChange={(e: IOptionTypeBase | null) => {
                     onChange(e?.value);
+
+                    if (e?.value !== productTypeValue) {
+                      setSelectedOptions([]);
+                      setValue('additionnalParameters', [{ name: '', value: '' }]);
+                    }
+
                     setProductTypeValue(e?.value);
                     if (e?.value === undefined) {
                       setParams([])
