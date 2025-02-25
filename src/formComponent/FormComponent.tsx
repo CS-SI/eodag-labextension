@@ -495,11 +495,6 @@ export const FormComponent: FC<IProps> = ({
             </div>
           </div>
         </form>
-        {/* Debugging section: Display current form values */}
-        <div style={{ marginTop: '20px', padding: '10px', backgroundColor: '#f0f0f0' }}>
-          <h4>Current Form Values (for debugging):</h4>
-          <pre>{JSON.stringify(formValues, null, 2)}</pre> {/* Display current form values */}
-        </div>
       </FormProvider>
     </div>
   );
