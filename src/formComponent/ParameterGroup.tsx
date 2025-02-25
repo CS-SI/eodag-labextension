@@ -10,7 +10,7 @@ interface ParameterGroupProps {
   selectedOptions?: string[];
 }
 
-const ParameterGroup: React.FC<ParameterGroupProps> = ({ params, setParams, mandatory = false
+const ParameterGroup: React.FC<ParameterGroupProps> = ({ params, setParams, mandatory = false, selectedOptions = []
 }) => {
   const { formState: { errors }, setValue, control } = useFormContext();
 
@@ -188,18 +188,23 @@ const ParameterGroup: React.FC<ParameterGroupProps> = ({ params, setParams, mand
   return (
     <>
       {
-        params.filter(param => param.mandatory === mandatory)
-          .map(param => (
-            <div key={param.key}>
-              {param.key === 'cloudCover' ? renderCloudCoverField(param) : (
-                <label className="jp-EodagWidget-input-name">
-                  {param.value.title}
-                  {param.mandatory && <span style={{ color: 'red', marginLeft: 4, fontWeight: 'bold' }}> *</span>}
-                  <div style={{ marginTop: 10 }}>{renderField(param)}</div>
-                </label>
-              )}
-            </div>
-          ))
+        params.filter(param => {
+          if (mandatory) {
+            return param.mandatory;
+          } else {
+            return selectedOptions.includes(param.key);
+          }
+        }).map(param => (
+          <div key={param.key}>
+            {param.key === 'cloudCover' ? renderCloudCoverField(param) : (
+              <label className="jp-EodagWidget-input-name">
+                {param.value.title}
+                {param.mandatory && <span style={{ color: 'red', marginLeft: 4, fontWeight: 'bold' }}> *</span>}
+                <div style={{ marginTop: 10 }}>{renderField(param)}</div>
+              </label>
+            )}
+          </div>
+        ))
       }
     </>
   );
