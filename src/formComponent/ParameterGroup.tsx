@@ -1,19 +1,19 @@
 import React, { ChangeEvent } from 'react';
 import Select, { MultiValue } from 'react-select';
-import { Controller } from 'react-hook-form';
-import { IFormInput, Parameter } from '../types';
-import { Control } from 'react-hook-form';
+import { Controller, useFormContext } from 'react-hook-form';
+import { Parameter } from '../types';
 
 interface ParameterGroupProps {
   params: Parameter[];
   setParams: (params: Parameter[]) => void;
-  setValue: (name: string, value: any) => void;
-  control: Control<IFormInput, any>;
   mandatory?: boolean;
+  selectedOptions?: string[];
 }
 
-const ParameterGroup: React.FC<ParameterGroupProps> = ({ params, setParams, setValue, control, mandatory = false
+const ParameterGroup: React.FC<ParameterGroupProps> = ({ params, setParams, mandatory = false
 }) => {
+  const { formState: { errors }, setValue, control } = useFormContext();
+
   const handleSelectChange = (
     key: string,
     newValue: number | string | { value: string; label: string } | MultiValue<string | { value: string; label: string }>,
@@ -40,7 +40,7 @@ const ParameterGroup: React.FC<ParameterGroupProps> = ({ params, setParams, setV
 
     if (onChange) onChange(selectedValue);
 
-    // Update the parameters with the new selected value
+    // Set selectedValue in params
     const updatedParams = params.map(param =>
       param.key === key
         ? { ...param, value: { ...param.value, selected: selectedValue } }
@@ -79,7 +79,7 @@ const ParameterGroup: React.FC<ParameterGroupProps> = ({ params, setParams, setV
         rules={{ required: mandatory && enumList.length > 0 }}
         render={({ field: { onChange } }) => (
           <Select
-            className="jp-EodagWidget-select"
+            className={`jp-EodagWidget-select ${errors[key] ? 'jp-EodagWidget-input-error' : ''}`}
             classNamePrefix="jp-EodagWidget-select"
             aria-label={title}
             placeholder={`Select a ${title}...`}
@@ -111,7 +111,7 @@ const ParameterGroup: React.FC<ParameterGroupProps> = ({ params, setParams, setV
         rules={{ required: mandatory }}
         render={({ field: { onChange } }) => (
           <input
-            className="jp-EodagWidget-input"
+            className={`jp-EodagWidget-input ${errors[key] ? 'jp-EodagWidget-input-error' : ''}`}
             type={type === 'integer' ? 'number' : 'text'}
             style={{
               width: '100%',
@@ -194,6 +194,7 @@ const ParameterGroup: React.FC<ParameterGroupProps> = ({ params, setParams, setV
               {param.key === 'cloudCover' ? renderCloudCoverField(param) : (
                 <label className="jp-EodagWidget-input-name">
                   {param.value.title}
+                  {param.mandatory && <span style={{ color: 'red', marginLeft: 4, fontWeight: 'bold' }}> *</span>}
                   <div style={{ marginTop: 10 }}>{renderField(param)}</div>
                 </label>
               )}
