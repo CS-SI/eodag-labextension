@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { OptionType } from "../types";
+import { CarbonAddFilled } from "../icones";
 
 
 // Props for DropdownButton component
@@ -12,7 +13,7 @@ interface DropdownButtonProps {
 }
 
 const DropdownButton: React.FC<DropdownButtonProps> = (
-    { options, onSelect, selectedOptions, buttonLabel = "Insert field", disabled = false }
+    { options, onSelect, selectedOptions, buttonLabel = "Optional parameter", disabled = false }
 ) => {
     const [showDropdown, setShowDropdown] = useState<boolean>(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
@@ -41,6 +42,7 @@ const DropdownButton: React.FC<DropdownButtonProps> = (
                 disabled={disabled}
             >
                 {buttonLabel}
+                <CarbonAddFilled height="15" width="15" style={{ marginLeft: "5px" }} />
             </button>
 
             {/* Dropdown Menu */}

@@ -72,6 +72,8 @@ const ParameterGroup: React.FC<ParameterGroupProps> = ({ params, setParams, mand
     const { key, value, mandatory } = param;
     const { type, title, default: defaultValue } = value;
 
+    const lowercaseTitle = title.charAt(0).toLowerCase() + title.slice(1);
+
     return (
       <Controller
         name={key}
@@ -82,7 +84,7 @@ const ParameterGroup: React.FC<ParameterGroupProps> = ({ params, setParams, mand
             className={`jp-EodagWidget-select ${errors[key] ? 'jp-EodagWidget-input-error' : ''}`}
             classNamePrefix="jp-EodagWidget-select"
             aria-label={title}
-            placeholder={`Select a ${title}...`}
+            placeholder={`Select a ${lowercaseTitle}...`}
             defaultValue={getSelectedValue(type, defaultValue)}
             onChange={(selectedOption) => {
               handleSelectChange(key, selectedOption, onChange);
@@ -121,7 +123,7 @@ const ParameterGroup: React.FC<ParameterGroupProps> = ({ params, setParams, mand
               padding: '0.25rem 0.5rem',
               boxSizing: 'border-box',
             }}
-            placeholder={`Select a ${title}...`}
+            placeholder={`${title}...`}
             title={description || undefined}
             value={selected || ''}
             onChange={e => handleSelectChange(key, e.target.value, onChange)}

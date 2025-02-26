@@ -251,6 +251,28 @@ export const FormComponent: FC<IProps> = ({
     }
   };
 
+  const renderNoParamsMessage = () => (
+    <div style={{ margin: "10px 0" }}>
+      <p>Select a product type to unlock parameters.</p>
+    </div>
+  );
+
+  const renderParameterGroups = () => (
+    <>
+      {params.some(param => param.mandatory) || selectedOptions.length > 0 ? (
+        <>
+          <ParameterGroup {...{ params, setParams }} mandatory />
+          <ParameterGroup {...{ params, setParams, selectedOptions }} />
+        </>
+      ) : (
+        <div style={{ margin: "10px 0" }}>
+          <p>No required parameter for this product type.</p>
+        </div>
+      )}
+    </>
+  );
+
+
   return (
     <div className="jp-EodagWidget-wrapper">
       <FormProvider {...formInput}>
@@ -396,15 +418,7 @@ export const FormComponent: FC<IProps> = ({
                 />
               </div>
               <div className="jp-EodagWidget-field">
-                {!params || !params.length ? (
-                  <div style={{ margin: "10px 0", color: "secondary" }}>
-                    <p>Select a product type to access more filters.</p>
-                  </div>
-                ) :
-                  <>
-                    <ParameterGroup {...{ params, setParams }} mandatory />
-                    <ParameterGroup {...{ params, setParams, selectedOptions }} />
-                  </>}
+                {!params || !params.length ? renderNoParamsMessage() : renderParameterGroups()}
               </div>
             </div>
 

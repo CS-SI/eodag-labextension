@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {CSSProperties} from 'react';
 
 export interface ISVGProps {
   strokeColor?: string;
@@ -23,6 +23,7 @@ export interface ISVGProps {
   className3?: string;
   className4?: string;
   className5?: string;
+  style?: CSSProperties;
 }
 
 export const CarbonInformation = (props: ISVGProps) => {
