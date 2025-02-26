@@ -53,7 +53,7 @@ const AdditionalParameterFields = ({
 
         {!productType ? (
           <p className="jp-EodagWidget-noParametersMessage">
-            Select a product type to access more filters.
+            Select a product type to unlock additional parameters.
           </p>
         ) :
           additionalParameters ? (

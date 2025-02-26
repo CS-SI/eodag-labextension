@@ -243,6 +243,8 @@
 }
 
 .jp-EodagWidget .jp-EodagWidget-form .jp-EodagWidget-optional-button {
+  display: flex;
+  align-items: center;
   border: none;
   background: none;
   color: #2196f3;
