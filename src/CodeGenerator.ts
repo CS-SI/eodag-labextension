@@ -68,20 +68,24 @@ search_results = dag.search(`;
     code += `
     cloudCover=${cloud},`;
   }
-  if (additionnalParameters[0].name && additionnalParameters[0].value) {
+  const filteredParameters = additionnalParameters.filter(
+    ({ name, value }) => name && value && name !== '' && value !== ''
+  )
+  console.log(filteredParameters)
+  if (filteredParameters.length > 0) {
     code +=
       '\n' +
       tab +
       '**{\n' +
-      additionnalParameters
-        .filter(
-          ({ name, value }) => name && value && name !== '' && value !== ''
-        )
-        .filter(({ name, value }) => name !== '' && value !== '')
-        .map(
-          ({ name, value }) =>
-            `${tab + tab}"${name.trim()}": "${value.trim()}",`
-        )
+
+      filteredParameters.map(({ name, value }) => {
+        const processedValue = Array.isArray(value)
+          ? `[${value.map((item: any) => (typeof item === 'string' ? `"${item.trim()}"` : item)).join(', ')}]`
+          : typeof value === 'string'
+            ? `"${value.trim()}"`
+            : value;
+        return `${tab + tab}"${name}": ${processedValue},`;
+      })
         .join('\n');
     code += '\n' + `${tab}}`;
   }

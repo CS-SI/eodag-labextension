@@ -22,7 +22,7 @@ import { useFetchUserSettings } from './hooks/useFetchData';
 import { CarbonSettings, IcBaselineRefresh } from './icones';
 import ModalComponent from './ModalComponent';
 import SearchService from './SearchService';
-import { IFormInput } from './types';
+import { IFormInput, Parameter } from './types';
 
 export interface IProps {
   tracker: INotebookTracker;
@@ -193,10 +193,21 @@ export class EodagBrowser extends React.Component<IProps, IState> {
     this.setState({
       openDialog: false
     });
-
     if (!this.props.tracker.currentWidget) {
       return;
     }
+
+    const updatedParameters = parameters.map((param: Parameter) => ({
+      name: param.key || '',
+      value: param.value?.selected || ''
+    }));
+
+    this.setState(prevState => ({
+      formValues: {
+        ...prevState.formValues,
+        additionnalParameters: updatedParameters
+      }
+    }));
 
     const notebook = this.props.tracker.currentWidget.content;
     const model = notebook.model;
