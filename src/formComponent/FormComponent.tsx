@@ -86,7 +86,7 @@ export const FormComponent: FC<IProps> = ({
     register,
     reset,
     resetField,
-    formState: { errors },
+    // formState: { errors },
     getValues
   } = useForm<IFormInput>({
     defaultValues: {
@@ -146,7 +146,7 @@ export const FormComponent: FC<IProps> = ({
     saveFormValues(data);
 
     if (!openModal) {
-      handleGenerateQuery(params);
+      handleGenerateQuery();
     }
 
     if (openModal) {
@@ -163,7 +163,7 @@ export const FormComponent: FC<IProps> = ({
           setIsLoadingSearch(false);
           handleShowFeature(featureCollection, openModal);
           if (!openModal) {
-            handleGenerateQuery(params);
+            handleGenerateQuery();
           }
         })
         .catch(error => {
@@ -404,23 +404,10 @@ export const FormComponent: FC<IProps> = ({
             </>
           )}
 
-
           <AdditionalParameterFields
             {...{ control, register, resetField, additionalParameters }}
           />
         </div>
-        {/* Show all error messages */}
-        {Object.keys(errors).length > 0 && (
-          <div style={{ color: 'red', marginBottom: '10px' }}>
-            <ul>
-              {Object.keys(errors).map((field) => (
-                <li key={field}>
-                  <strong>{field}</strong>: {errors[field]?.message} {/* Show error key and message */}
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
         <div className="jp-EodagWidget-form-buttons">
           <div className="jp-EodagWidget-form-buttons-wrapper">
             {isLoadingSearch ? (

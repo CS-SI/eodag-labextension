@@ -18,7 +18,7 @@ const ParameterGroup: React.FC<ParameterGroupProps> = ({ params, setParams, cont
     newValue: string | { value: string; label: string } | MultiValue<string | { value: string; label: string }>,
     onChange: (...event: any[]) => void | undefined = undefined
   ) => {
-    let selectedValue: string | string[];
+    let selectedValue: null | string | string[];
 
     if (typeof newValue === 'string') {
       // If it's a string, use the string as is
@@ -31,6 +31,8 @@ const ParameterGroup: React.FC<ParameterGroupProps> = ({ params, setParams, cont
     } else if (newValue && 'value' in newValue) {
       // If it's a single object (single select), use the 'value' from the object
       selectedValue = newValue.value;
+    } else if (newValue === null) {
+      selectedValue = undefined;
     } else {
       throw new Error('Invalid value type');
     }
@@ -73,8 +75,7 @@ const ParameterGroup: React.FC<ParameterGroupProps> = ({ params, setParams, cont
       <Controller
         name={key}
         control={control}
-        rules={{ required: mandatory }}
-        // defaultValue={debugController(key, defaultValue)}
+        rules={{ required: mandatory && enumList.length > 0 }}
         render={({ field: { onChange } }) => (
           <Select
             className="jp-EodagWidget-select"
@@ -103,21 +104,27 @@ const ParameterGroup: React.FC<ParameterGroupProps> = ({ params, setParams, cont
     const { type, title, description, selected } = value || {};
 
     return (
-      <input
-        className="jp-EodagWidget-input"
-        type={type === 'integer' ? 'number' : 'text'}
-        style={{
-          width: '100%',
-          height: '2rem',
-          borderRadius: '.2rem',
-          border: '1px solid #ccc',
-          padding: '0.5rem',
-        }}
-        placeholder={title}
-        title={description || undefined}
-        value={selected || ''}
-        required={param.mandatory}
-        onChange={e => handleSelectChange(key, e.target.value)}
+      <Controller
+        name={key}
+        control={control}
+        rules={{ required: mandatory }}
+        render={({ field: { onChange } }) => (
+          <input
+            className="jp-EodagWidget-input"
+            type={type === 'integer' ? 'number' : 'text'}
+            style={{
+              width: '100%',
+              height: '1.5rem',
+              borderRadius: '.2rem',
+              border: '1px solid #ccc',
+              padding: '0.25rem 0.5rem',
+            }}
+            placeholder={title}
+            title={description || undefined}
+            value={selected || ''}
+            onChange={e => handleSelectChange(key, e.target.value, onChange)}
+          />
+        )}
       />
     );
   };
