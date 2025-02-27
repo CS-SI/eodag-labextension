@@ -114,10 +114,11 @@ const ParameterGroup: React.FC<ParameterGroupProps> = ({ params, setParams, cont
             type={type === 'integer' ? 'number' : 'text'}
             style={{
               width: '100%',
-              height: '1.5rem',
+              height: '2rem',
               borderRadius: '.2rem',
               border: '1px solid #ccc',
               padding: '0.25rem 0.5rem',
+              boxSizing: 'border-box',
             }}
             placeholder={title}
             title={description || undefined}
