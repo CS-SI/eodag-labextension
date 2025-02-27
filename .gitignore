@@ -109,6 +109,9 @@ dmypy.json
 
 # End of https://www.gitignore.io/api/python
 
+# python virtual environments
+.venv*
+
 # OSX files
 .DS_Store
 

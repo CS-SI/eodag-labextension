@@ -1,15 +1,16 @@
 import React from 'react';
 import MultiSelect from './MultiSelect';
+import { Parameter } from '../types';
 
-const MandatoryParameterFields = ({
+const ParameterFields = ({
   params,
   setParams
 }: {
-  params: any;
-  setParams: (params: any) => void;
+  params: Parameter[];
+  setParams: (params: Parameter[]) => void;
 }) => {
   const handleSelectChange = (key: string, newValue: string | string[]) => {
-    const updatedParams = params.map((param: any) =>
+    const updatedParams = params.map((param: Parameter) =>
       param.key === key
         ? { ...param, value: { ...param.value, selected: newValue } }
         : param
@@ -17,13 +18,16 @@ const MandatoryParameterFields = ({
     setParams(updatedParams);
   };
 
-  const renderField = (param: any) => {
+  const renderField = (param: Parameter) => {
     const { key, value } = param;
 
-    value.selected ??= undefined;
+    console.log(key)
+
+    value.selected ??= value.default ?? undefined;
 
     const { type, description, title, selected } = value || {};
-    const enumList = value?.enum || value?.items?.enum || [];
+    const enumList = value?.enum || value?.items?.enum ||
+      (typeof value?.items?.const === 'string' ? [value?.items?.const] : []);
     const renderSelectField = () => (
       <select
         className="jp-EodagWidget-select"
@@ -62,14 +66,19 @@ const MandatoryParameterFields = ({
       />
     );
 
-    const renderMultiSelectField = () => (
-      <MultiSelect
-        options={enumList}
-        title={description || undefined}
-        selectedValues={selected || []}
-        onChange={updatedValues => handleSelectChange(key, updatedValues)}
-      />
-    );
+    const renderMultiSelectField = () => {
+      const selectedValues = Array.isArray(selected) ? selected : selected ? [selected] : [];
+
+      return (
+        <MultiSelect
+          options={enumList}
+          title={description || undefined}
+          selectedValues={selectedValues}
+          onChange={updatedValues => handleSelectChange(key, updatedValues)}
+          disabled={enumList.length === 0}
+        />
+      );
+    };
 
     switch (type) {
       case 'string':
@@ -115,4 +124,4 @@ const MandatoryParameterFields = ({
     </>
   );
 };
-export default MandatoryParameterFields;
+export default ParameterFields;
