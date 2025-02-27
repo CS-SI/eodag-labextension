@@ -183,7 +183,8 @@ const ParameterGroup: React.FC<ParameterGroupProps> = ({ params, setParams, mand
       case 'array':
         return renderSelectField(param, enumList);
       default:
-        throw new Error(`Unsupported type: ${value.type}`);
+        console.error(`Unsupported type: ${value.type}`);
+        return <p style={{ color: "red" }}>This parameter is not working. Unsupported type: {value.type}</p>
     }
   };
 

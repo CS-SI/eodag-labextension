@@ -13,7 +13,7 @@ interface DropdownButtonProps {
 }
 
 const DropdownButton: React.FC<DropdownButtonProps> = (
-    { options, onSelect, selectedOptions, buttonLabel = "Optional parameter", disabled = false }
+    { options, onSelect, selectedOptions, buttonLabel = "More parameters", disabled = false }
 ) => {
     const [showDropdown, setShowDropdown] = useState<boolean>(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
