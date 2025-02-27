@@ -13,12 +13,9 @@ import { ThreeDots } from 'react-loader-spinner';
 import { PlacesType, Tooltip, VariantType } from 'react-tooltip';
 import Autocomplete from '../Autocomplete';
 
-import {
-  determineMandatoryProperties,
-  fetchRawData,
-  isAdditionalParameters
-} from '../helpers/fetchParameters';
+import { fetchQueryables } from '../helpers/fetchParameters';
 import { useFetchProduct, useFetchProvider } from '../hooks/useFetchData';
+import { ServerConnection } from '@jupyterlab/services';
 import {
   CarbonCalendarAddAlt,
   CodiconOpenPreview,
@@ -28,7 +25,7 @@ import MapExtentComponent from '../MapExtentComponent';
 import SearchService from '../SearchService';
 import { IFormInput } from '../types';
 import AdditionalParameterFields from './AdditionalParameterFields';
-import MandatoryParameterFields from './MandatoryParameterFields';
+import ParameterFields from './ParameterFields';
 
 export interface IProps {
   handleShowFeature: any;
@@ -77,6 +74,8 @@ export const FormComponent: FC<IProps> = ({
   const [providerValue, setProviderValue] = useState(null);
   const [productTypeValue, setProductTypeValue] = useState(null);
   const [fetchCount, setFetchCount] = useState(0);
+
+  const [loading, setLoading] = useState(false);
 
   const {
     control,
@@ -136,6 +135,8 @@ export const FormComponent: FC<IProps> = ({
       return;
     }
 
+    console.log("Submit data :", data)
+
     saveFormValues(data);
 
     if (!openModal) {
@@ -171,14 +172,22 @@ export const FormComponent: FC<IProps> = ({
 
   const [params, setParams] = useState(null);
   const [additionalParameters, setAdditionalParameters] =
-    useState<boolean>(false);
-  const fetchData = async (provider: string, productType: any) => {
-    const parameters = await fetchRawData(provider, productType).then(data => {
-      setAdditionalParameters(isAdditionalParameters(data));
-      return determineMandatoryProperties(data);
-    });
+    useState<boolean>(true);
+  const fetchData = async (provider: string, productType: any, query_params: { [key: string]: any } | undefined = undefined) => {
 
-    setParams(parameters);
+    try {
+      const parameters = await fetchQueryables(provider, productType, query_params).then(queryables => {
+        setAdditionalParameters(queryables.additionalParameters);
+        return queryables.parameters;
+      });
+      setParams(parameters);
+    } catch (error) {
+      if (error instanceof ServerConnection.ResponseError) {
+        showErrorMessage('Bad response from server:', error);
+      }
+
+    }
+
   };
 
   useEffect(() => {
@@ -187,11 +196,20 @@ export const FormComponent: FC<IProps> = ({
     }
   }, [providerValue, productTypeValue]);
 
-  // TODO : - Use this to send data to backend
   useEffect(() => {
-    if (params) {
-    }
+    if (!params || additionalParameters || !productTypeValue || loading) return;
+
+    const query_params = params ? params.reduce((acc: { [key: string]: string }, curr: any) => {
+      acc[curr.key] = curr.value.selected;
+      return acc;
+    }, {} as { [key: string]: string }) : undefined;
+
+    setLoading(true);
+    fetchData(providerValue, productTypeValue, query_params)
+      .then(() => setLoading(false));
+
   }, [params]);
+
 
   return (
     <div className="jp-EodagWidget-wrapper">
@@ -242,6 +260,9 @@ export const FormComponent: FC<IProps> = ({
                 handleChange={(e: IOptionTypeBase | null) => {
                   onChange(e?.value);
                   setProductTypeValue(e?.value);
+                  if (e?.value === undefined) {
+                    setParams([])
+                  }
                 }}
               />
             )}
@@ -336,7 +357,7 @@ export const FormComponent: FC<IProps> = ({
             </div>
           </label>
 
-          {params && <MandatoryParameterFields {...{ params, setParams }} />}
+          {params && <ParameterFields {...{ params, setParams }} />}
 
           <AdditionalParameterFields
             {...{ control, register, resetField, additionalParameters }}
