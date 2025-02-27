@@ -5,7 +5,7 @@
 
 import { showErrorMessage } from '@jupyterlab/apputils';
 import 'isomorphic-fetch';
-import React, { ChangeEvent, FC, useEffect, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
@@ -69,11 +69,10 @@ export const FormComponent: FC<IProps> = ({
   const defaultEndDate: Date = undefined;
   const [startDate, setStartDate] = useState(undefined);
   const [endDate, setEndDate] = useState(undefined);
-  const [cloud, setCloud] = useState(100);
   const [isLoadingSearch, setIsLoadingSearch] = useState(false);
   const [openModal, setOpenModal] = useState(true);
   const [providerValue, setProviderValue] = useState(null);
-  const [productTypeValue, setProductTypeValue] = useState(null);
+  const [productTypeValue, setProductTypeValue] = useState<string>(null);
   const [fetchCount, setFetchCount] = useState(0);
   const [params, setParams] = useState<Parameter[]>(null);
   const [loading, setLoading] = useState(false);
@@ -89,12 +88,12 @@ export const FormComponent: FC<IProps> = ({
     reset,
     resetField,
     // formState: { errors },
-    getValues
+    getValues,
+    setValue,
   } = useForm<IFormInput>({
     defaultValues: {
       startDate: defaultStartDate,
       endDate: defaultEndDate,
-      cloud: 100
     }
   });
 
@@ -194,9 +193,9 @@ export const FormComponent: FC<IProps> = ({
       }
       return;
     }
-    setAdditionalParameters(queryables.additionalProperties);
-
     setParams(queryables.properties);
+
+    setAdditionalParameters(queryables.additionalProperties);
 
     setLoading(false);
 
@@ -221,8 +220,9 @@ export const FormComponent: FC<IProps> = ({
           additionnalParameters: formValues.additionnalParameters
         });
 
-        const optionals = params.filter((param) => param.mandatory === false).map((param) => ({ value: param.key, label: param.key }));
+        setSelectedOptions([]);
 
+        const optionals = params.filter((param) => param.mandatory === false).map((param) => ({ value: param.key, label: param.key }));
         setOptionalParams(optionals)
       }).catch(error => {
         console.error("Error fetching parameters:", error);
@@ -302,6 +302,7 @@ export const FormComponent: FC<IProps> = ({
                   setProductTypeValue(e?.value);
                   if (e?.value === undefined) {
                     setParams([])
+                    setOptionalParams([])
                     reset({
                       provider: formValues.provider,
                       additionnalParameters: formValues.additionnalParameters
@@ -376,56 +377,39 @@ export const FormComponent: FC<IProps> = ({
               </div>
             </div>
           </div>
-          <label className="jp-EodagWidget-input-name">
-            Max cloud cover {cloud}%
-            <div className="jp-EodagWidget-slider">
-              <Controller
-                name="cloud"
-                control={control}
-                rules={{ required: false }}
-                render={({ field: { onChange, value } }) => (
-                  <input
-                    type="range"
-                    min="0"
-                    max="100"
-                    value={value}
-                    aria-labelledby="cloud"
-                    onChange={(event: ChangeEvent<HTMLInputElement>) => {
-                      const value = parseInt(event.target.value, 10);
-                      onChange(value);
-                      setCloud(value);
-                    }}
-                  />
-                )}
-              />
-            </div>
-          </label>
 
-
-          <div style={{ marginTop: "0" }}>
+          <div style={{ marginTop: "10px" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginLeft: "10px", marginRight: "10px" }}>
               <p className='jp-EodagWidget-section-title'>Parameters</p>
               <DropdownButton
                 options={optionalParams}
                 onSelect={handleSelect}
                 selectedOptions={selectedOptions}
+                disabled={!optionalParams.length}
               />
             </div>
-            {params && (
-              <div className="jp-EodagWidget-field">
-                <ParameterGroup {...{ control, params, setParams }} mandatory />
-                <ParameterGroup {...{
-                  control,
-                  params: params.filter(param => selectedOptions.includes(param.key)),
-                  setParams
-                }} />
-              </div>
-            )}
+            <div className="jp-EodagWidget-field">
+              {!params || !params.length ? (
+                <div style={{ margin: "10px 0", color: "secondary" }}>
+                  <p>Select a product type to access more filters.</p>
+                </div>
+              ) :
+                <>
+                  <ParameterGroup {...{ control, params, setParams, setValue }} mandatory />
+                  <ParameterGroup {...{
+                    control,
+                    params: params.filter(param => selectedOptions.includes(param.key)),
+                    setParams,
+                    setValue,
+                  }} />
+                </>}
+            </div>
           </div>
 
           <AdditionalParameterFields
-            {...{ control, register, resetField, additionalParameters }}
+            {...{ control, register, resetField, productType: productTypeValue, additionalParameters }}
           />
+
         </div>
         <div className="jp-EodagWidget-form-buttons">
           <div className="jp-EodagWidget-form-buttons-wrapper">

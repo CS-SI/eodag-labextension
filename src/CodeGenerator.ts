@@ -16,7 +16,6 @@ const formatCode = (
     endDate,
     productType,
     geometry,
-    cloud,
     additionnalParameters,
     provider,
     ...extraParams
@@ -64,10 +63,6 @@ search_results = dag.search(`;
   if (end) {
     code += `
     end="${end}",`;
-  }
-  if (cloud !== 100) {
-    code += `
-    cloudCover=${cloud},`;
   }
   const filteredParameters = additionnalParameters.filter(
     ({ name, value }) => name && value && name !== '' && value !== ''

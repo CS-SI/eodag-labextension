@@ -12,7 +12,7 @@ interface DropdownButtonProps {
 }
 
 const DropdownButton: React.FC<DropdownButtonProps> = (
-    { options, onSelect, selectedOptions, buttonLabel = "Insert field +", disabled = false }
+    { options, onSelect, selectedOptions, buttonLabel = "Insert field", disabled = false }
 ) => {
     const [showDropdown, setShowDropdown] = useState<boolean>(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
@@ -33,15 +33,7 @@ const DropdownButton: React.FC<DropdownButtonProps> = (
     return (
         <div style={{ position: "relative" }} ref={dropdownRef}>
             {/* Button */}
-            <button
-                style={{
-                    border: "none",
-                    background: "none",
-                    color: "primary",
-                    fontSize: "14px",
-                    cursor: "pointer",
-                    padding: "5px",
-                }}
+            <button className="jp-EodagWidget-optional-button"
                 onClick={(event) => {
                     event.preventDefault(); // Prevent form submission
                     setShowDropdown((prev) => !prev);
@@ -52,40 +44,42 @@ const DropdownButton: React.FC<DropdownButtonProps> = (
             </button>
 
             {/* Dropdown Menu */}
-            {showDropdown && (
-                <div
-                    style={{
-                        position: "absolute",
-                        right: 0,
-                        background: "white",
-                        border: "1px solid #ccc",
-                        borderRadius: "4px",
-                        boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
-                        zIndex: 1000,
-                        marginTop: "5px",
-                        minWidth: "150px",
-                        maxWidth: "300px",
-                    }}
-                >
-                    <ul style={{ listStyle: "none", margin: 0, padding: "5px 0" }}>
-                        {options.map((option) => (
-                            <li
-                                key={option.value}
-                                style={{ display: "flex", alignItems: "center", padding: "5px 10px" }}
-                                onClick={() => onSelect(option)}
-                            >
-                                <input
-                                    type="checkbox"
-                                    checked={selectedOptions.includes(option.value)}
-                                    style={{ marginRight: "10px" }}
-                                />
-                                <span>{option.label}</span>
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-            )}
-        </div>
+            {
+                showDropdown && (
+                    <div
+                        style={{
+                            position: "absolute",
+                            right: 0,
+                            background: "white",
+                            border: "1px solid #ccc",
+                            borderRadius: "4px",
+                            boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
+                            zIndex: 1000,
+                            marginTop: "5px",
+                            minWidth: "150px",
+                            maxWidth: "300px",
+                        }}
+                    >
+                        <ul style={{ listStyle: "none", margin: 0, padding: "5px 0" }}>
+                            {options.map((option) => (
+                                <li
+                                    key={option.value}
+                                    style={{ display: "flex", alignItems: "center", padding: "5px 10px" }}
+                                    onClick={() => onSelect(option)}
+                                >
+                                    <input
+                                        type="checkbox"
+                                        checked={selectedOptions.includes(option.value)}
+                                        style={{ marginRight: "10px" }}
+                                    />
+                                    <span>{option.label}</span>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                )
+            }
+        </div >
     );
 };
 

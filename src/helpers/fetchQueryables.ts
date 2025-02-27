@@ -33,7 +33,21 @@ export const fetchQueryables = async (
   }
 
   // TODO: review the list of exclusion keys
-  const excludedKeys = new Set(["productType", "startTimeFromAscendingNode", "completionTimeFromAscendingNode", "geom", "start_datetime", "end_datetime", "end", "bbox", "geometry"]);
+  const excludedKeys = new Set([
+    "productType",
+    // geometry related keys because they are handled by the map
+    "bbox",
+    "geom",
+    "geometry",
+    // temporal keys because they are handled by the date picker
+    "startTimeFromAscendingNode",
+    "completionTimeFromAscendingNode",
+    "start_datetime",
+    "end_datetime",
+    "startdate",
+    "enddate",
+    "end",
+  ]);
 
   const requiredSet = new Set(queryables.required || []);
 

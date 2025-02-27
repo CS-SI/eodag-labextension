@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ChangeEvent } from 'react';
 import Select, { MultiValue } from 'react-select';
 import { Controller } from 'react-hook-form';
 import { IFormInput, Parameter } from '../types';
@@ -7,21 +7,22 @@ import { Control } from 'react-hook-form';
 interface ParameterGroupProps {
   params: Parameter[];
   setParams: (params: Parameter[]) => void;
+  setValue: (name: string, value: any) => void;
   control: Control<IFormInput, any>;
   mandatory?: boolean;
 }
 
-const ParameterGroup: React.FC<ParameterGroupProps> = ({ params, setParams, control, mandatory = false
+const ParameterGroup: React.FC<ParameterGroupProps> = ({ params, setParams, setValue, control, mandatory = false
 }) => {
   const handleSelectChange = (
     key: string,
-    newValue: string | { value: string; label: string } | MultiValue<string | { value: string; label: string }>,
+    newValue: number | string | { value: string; label: string } | MultiValue<string | { value: string; label: string }>,
     onChange: (...event: any[]) => void | undefined = undefined
   ) => {
-    let selectedValue: null | string | string[];
+    let selectedValue: undefined | number | string | string[];
 
-    if (typeof newValue === 'string') {
-      // If it's a string, use the string as is
+    if (typeof newValue === 'string' || typeof newValue === 'number') {
+      // If it's a literal, use it as it is
       selectedValue = newValue;
     } else if (Array.isArray(newValue)) {
       // If it's an array (multi-select), check the type of each item
@@ -69,7 +70,7 @@ const ParameterGroup: React.FC<ParameterGroupProps> = ({ params, setParams, cont
 
   const renderSelectField = (param: Parameter, enumList: string[]) => {
     const { key, value, mandatory } = param;
-    const { type, title, default: defaultValue } = value || {};
+    const { type, title, default: defaultValue } = value;
 
     return (
       <Controller
@@ -81,7 +82,7 @@ const ParameterGroup: React.FC<ParameterGroupProps> = ({ params, setParams, cont
             className="jp-EodagWidget-select"
             classNamePrefix="jp-EodagWidget-select"
             aria-label={title}
-            placeholder={title}
+            placeholder={`Select a ${title}...`}
             defaultValue={getSelectedValue(type, defaultValue)}
             onChange={(selectedOption) => {
               handleSelectChange(key, selectedOption, onChange);
@@ -101,7 +102,7 @@ const ParameterGroup: React.FC<ParameterGroupProps> = ({ params, setParams, cont
 
   const renderInputField = (param: Parameter) => {
     const { key, value } = param;
-    const { type, title, description, selected } = value || {};
+    const { type, title, description, selected } = value;
 
     return (
       <Controller
@@ -120,7 +121,7 @@ const ParameterGroup: React.FC<ParameterGroupProps> = ({ params, setParams, cont
               padding: '0.25rem 0.5rem',
               boxSizing: 'border-box',
             }}
-            placeholder={title}
+            placeholder={`Select a ${title}...`}
             title={description || undefined}
             value={selected || ''}
             onChange={e => handleSelectChange(key, e.target.value, onChange)}
@@ -130,13 +131,48 @@ const ParameterGroup: React.FC<ParameterGroupProps> = ({ params, setParams, cont
     );
   };
 
+  const renderCloudCoverField = (param: Parameter) => {
+    const defaultCloudCover = 100;
+
+    const { key, value, mandatory } = param;
+    const { selected = defaultCloudCover } = value;
+
+    setValue(key, selected);
+
+    return (
+      <label className="jp-EodagWidget-input-name">
+        Max cloud cover {selected}%
+        <div className="jp-EodagWidget-slider">
+          <Controller
+            name={key}
+            control={control}
+            rules={{ required: mandatory }}
+            render={({ field: { onChange, value } }) => (
+              <input
+                type="range"
+                min="0"
+                max="100"
+                value={value ?? defaultCloudCover}
+                aria-label="Max cloud cover"
+                onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                  const value = parseInt(event.target.value, 10);
+                  onChange(value);
+                  handleSelectChange(key, value, onChange);
+                }}
+              />
+            )}
+          />
+        </div>
+      </label>
+    )
+  };
+
   const renderField = (param: Parameter) => {
     const value = param.value || {};
 
     const enumList: string[] = value.type === 'array'
       ? value.items?.enum || (value.items?.const ? [value.items?.const] : [])
       : value?.enum || (value?.const ? [value?.const] : []);
-
 
     switch (value.type) {
       case 'string':
@@ -145,7 +181,7 @@ const ParameterGroup: React.FC<ParameterGroupProps> = ({ params, setParams, cont
       case 'array':
         return renderSelectField(param, enumList);
       default:
-        return null;
+        throw new Error(`Unsupported type: ${value.type}`);
     }
   };
 
@@ -155,10 +191,12 @@ const ParameterGroup: React.FC<ParameterGroupProps> = ({ params, setParams, cont
         params.filter(param => param.mandatory === mandatory)
           .map(param => (
             <div key={param.key}>
-              <label className="jp-EodagWidget-input-name">
-                {param.value.title}
-                <div style={{ marginTop: 10 }}>{renderField(param)}</div>
-              </label>
+              {param.key === 'cloudCover' ? renderCloudCoverField(param) : (
+                <label className="jp-EodagWidget-input-name">
+                  {param.value.title}
+                  <div style={{ marginTop: 10 }}>{renderField(param)}</div>
+                </label>
+              )}
             </div>
           ))
       }
