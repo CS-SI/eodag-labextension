@@ -1,13 +1,13 @@
-import { requestAPI } from "../handler";
-import { Parameter, Queryables } from "../types";
+import { requestAPI } from '../handler';
+import { Parameter, Queryables } from '../types';
 
 export const fetchQueryables = async (
   provider: string | null,
   productType: string,
   filterParameters: { [key: string]: any } | undefined
 ): Promise<{
-  properties: Parameter[],
-  additionalProperties: boolean
+  properties: Parameter[];
+  additionalProperties: boolean;
 }> => {
   const params = new URLSearchParams({ productType });
 
@@ -15,12 +15,13 @@ export const fetchQueryables = async (
 
   if (filterParameters) {
     Object.entries(filterParameters).forEach(([key, value]) => {
-      params.append(key, value ?? "");
+      params.append(key, value ?? '');
     });
   }
 
-  const queryables = await requestAPI(`queryables?${params.toString()}`) as Queryables;
-
+  const queryables = (await requestAPI(
+    `queryables?${params.toString()}`
+  )) as Queryables;
 
   if (!queryables.properties) {
     throw new Error('The response is missing the "properties" attribute.');
@@ -34,19 +35,19 @@ export const fetchQueryables = async (
 
   // TODO: review the list of exclusion keys
   const excludedKeys = new Set([
-    "productType",
+    'productType',
     // geometry related keys because they are handled by the map
-    "bbox",
-    "geom",
-    "geometry",
+    'bbox',
+    'geom',
+    'geometry',
     // temporal keys because they are handled by the date picker
-    "startTimeFromAscendingNode",
-    "completionTimeFromAscendingNode",
-    "start_datetime",
-    "end_datetime",
-    "startdate",
-    "enddate",
-    "end",
+    'startTimeFromAscendingNode',
+    'completionTimeFromAscendingNode',
+    'start_datetime',
+    'end_datetime',
+    'startdate',
+    'enddate',
+    'end'
   ]);
 
   const requiredSet = new Set(queryables.required || []);
@@ -56,11 +57,11 @@ export const fetchQueryables = async (
     .map(([key, value]) => ({
       key,
       value,
-      mandatory: requiredSet.has(key),
+      mandatory: requiredSet.has(key)
     }));
 
   return {
     properties: properties,
-    additionalProperties: queryables.additionalProperties,
+    additionalProperties: queryables.additionalProperties
   };
 };

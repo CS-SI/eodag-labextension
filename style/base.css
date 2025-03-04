@@ -96,7 +96,7 @@
   align-items: center;
 }
 
-.jp-EodagWidget-input-wrapper>svg {
+.jp-EodagWidget-input-wrapper > svg {
   display: inline-block;
   color: var(--gray);
 }
@@ -202,7 +202,9 @@
   border-radius: 5px;
 }
 
-.jp-EodagWidget .jp-EodagWidget-form .jp-EodagWidget-input-wrapper:nth-child(1) {
+.jp-EodagWidget
+  .jp-EodagWidget-form
+  .jp-EodagWidget-input-wrapper:nth-child(1) {
   margin-right: 0.1rem;
 }
 
@@ -213,7 +215,9 @@
   top: 5px;
 }
 
-.jp-EodagWidget .jp-EodagWidget-form .jp-EodagWidget-input-wrapper:focus-within {
+.jp-EodagWidget
+  .jp-EodagWidget-form
+  .jp-EodagWidget-input-wrapper:focus-within {
   border: 1px solid #2196f3;
 }
 
@@ -258,26 +262,43 @@
   cursor: not-allowed;
 }
 
-.jp-EodagWidget .jp-EodagWidget-form .jp-EodagWidget-optional-button:not(:disabled):hover {
+.jp-EodagWidget
+  .jp-EodagWidget-form
+  .jp-EodagWidget-optional-button:not(:disabled):hover {
   color: rgb(59, 172, 255);
 }
 
-.jp-EodagWidget .jp-EodagWidget-form .jp-EodagWidget-field .jp-EodagWidget-additionnalParameters {
+.jp-EodagWidget
+  .jp-EodagWidget-form
+  .jp-EodagWidget-field
+  .jp-EodagWidget-additionnalParameters {
   margin-top: 10px;
 }
 
-.jp-EodagWidget .jp-EodagWidget-form .jp-EodagWidget-field .jp-EodagWidget-additionnalParameters .jp-EodagWidget-input-name {
+.jp-EodagWidget
+  .jp-EodagWidget-form
+  .jp-EodagWidget-field
+  .jp-EodagWidget-additionnalParameters
+  .jp-EodagWidget-input-name {
   margin-bottom: 10px;
 }
 
-.jp-EodagWidget .jp-EodagWidget-form .jp-EodagWidget-field .jp-EodagWidget-additionnalParameters .section {
+.jp-EodagWidget
+  .jp-EodagWidget-form
+  .jp-EodagWidget-field
+  .jp-EodagWidget-additionnalParameters
+  .section {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 0.3rem;
 }
 
-.jp-EodagWidget .jp-EodagWidget-form .jp-EodagWidget-field .jp-EodagWidget-additionnalParameters input {
+.jp-EodagWidget
+  .jp-EodagWidget-form
+  .jp-EodagWidget-field
+  .jp-EodagWidget-additionnalParameters
+  input {
   margin: 0 0.1em;
   line-height: var(--jp-private-commandpalette-search-height);
   border: 1px solid var(--jp-border-color0);
@@ -286,26 +307,48 @@
   width: 40%;
 }
 
-.jp-EodagWidget .jp-EodagWidget-form .jp-EodagWidget-field .jp-EodagWidget-additionnalParameters .jp-EodagWidget-additionnalParameters-label-icon-wrapper {
+.jp-EodagWidget
+  .jp-EodagWidget-form
+  .jp-EodagWidget-field
+  .jp-EodagWidget-additionnalParameters
+  .jp-EodagWidget-additionnalParameters-label-icon-wrapper {
   display: flex;
   align-items: center;
   margin-bottom: 10px;
 }
 
-.jp-EodagWidget .jp-EodagWidget-form .jp-EodagWidget-field .jp-EodagWidget-additionnalParameters .jp-EodagWidget-additionnalParameters-label-icon-wrapper a {
+.jp-EodagWidget
+  .jp-EodagWidget-form
+  .jp-EodagWidget-field
+  .jp-EodagWidget-additionnalParameters
+  .jp-EodagWidget-additionnalParameters-label-icon-wrapper
+  a {
   display: inline-flex;
   margin-left: 5px;
 }
 
-.jp-EodagWidget .jp-EodagWidget-form .jp-EodagWidget-field .jp-EodagWidget-additionnalParameters .jp-EodagWidget-additionnalParameters-label-icon-wrapper a:hover {
+.jp-EodagWidget
+  .jp-EodagWidget-form
+  .jp-EodagWidget-field
+  .jp-EodagWidget-additionnalParameters
+  .jp-EodagWidget-additionnalParameters-label-icon-wrapper
+  a:hover {
   color: #677381;
 }
 
-.jp-EodagWidget .jp-EodagWidget-form .jp-EodagWidget-field .jp-EodagWidget-additionnalParameters input:focus-within {
+.jp-EodagWidget
+  .jp-EodagWidget-form
+  .jp-EodagWidget-field
+  .jp-EodagWidget-additionnalParameters
+  input:focus-within {
   border: 1px solid #2196f3;
 }
 
-.jp-EodagWidget .jp-EodagWidget-form .jp-EodagWidget-field .jp-EodagWidget-additionnalParameters input::placeholder {
+.jp-EodagWidget
+  .jp-EodagWidget-form
+  .jp-EodagWidget-field
+  .jp-EodagWidget-additionnalParameters
+  input::placeholder {
   padding-left: 0.3rem;
 }
 
@@ -353,7 +396,7 @@ section button .jp-EodagWidget-additionnalParameters-addbutton svg,
 }
 
 .jp-EodagWidget-select__indicator-separator,
-.jp-EodagWidget-select__dropdown-indicator>div>svg {
+.jp-EodagWidget-select__dropdown-indicator > div > svg {
   color: var(--light-gray) !important;
 }
 
@@ -476,7 +519,9 @@ section button .jp-EodagWidget-additionnalParameters-addbutton svg,
   width: 50%;
 }
 
-.jp-EodagWidget-modal .jp-EodagWidget-modal-container .jp-EodagWidget-modal-footer {
+.jp-EodagWidget-modal
+  .jp-EodagWidget-modal-container
+  .jp-EodagWidget-modal-footer {
   display: flex;
   justify-content: center;
   background-color: var(--jp-brand-color1);
@@ -540,7 +585,7 @@ section button .jp-EodagWidget-additionnalParameters-addbutton svg,
   z-index: 2;
 }
 
-#jp-left-stack>.lm-Widget {
+#jp-left-stack > .lm-Widget {
   min-width: 315px !important;
 }
 

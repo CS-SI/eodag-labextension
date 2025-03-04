@@ -20,8 +20,7 @@ module.exports = {
         custom: {
           regex: '^I[A-Z]',
           match: true
-        },
-        'prettier/prettier': ['error', { endOfLine: 'auto' }]
+        }
       }
     ],
     '@typescript-eslint/no-unused-vars': ['warn', { args: 'none' }],

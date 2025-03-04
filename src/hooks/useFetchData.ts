@@ -2,7 +2,11 @@ import { showErrorMessage } from '@jupyterlab/apputils';
 import { URLExt } from '@jupyterlab/coreutils';
 import { ServerConnection } from '@jupyterlab/services';
 import { EODAG_SERVER_ADRESS } from './../config';
-import { IOptionTypeBase, IProduct, IProvider } from './../formComponent/FormComponent';
+import {
+  IOptionTypeBase,
+  IProduct,
+  IProvider
+} from './../formComponent/FormComponent';
 
 interface IFetchDataProps<T> {
   queryParams: string;

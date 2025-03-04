@@ -57,12 +57,12 @@ class SearchService {
 
     // Map any extra dynamic properties (excluding already handled ones)
     const excludedKeys = new Set([
-      "startDate",
-      "endDate",
-      "productType",
-      "geometry",
-      "provider",
-      "additionnalParameters"
+      'startDate',
+      'endDate',
+      'productType',
+      'geometry',
+      'provider',
+      'additionnalParameters'
     ]);
 
     Object.keys(formValues).forEach(key => {

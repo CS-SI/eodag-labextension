@@ -66,34 +66,48 @@ search_results = dag.search(`;
   }
   const filteredParameters = additionnalParameters.filter(
     ({ name, value }) => name && value && name !== '' && value !== ''
-  )
+  );
 
-  const extraParamEntries = Object.entries(extraParams).filter(([_, value]) => value !== undefined);
+  const extraParamEntries = Object.entries(extraParams).filter(
+    ([_, value]) => value !== undefined
+  );
 
   if (filteredParameters.length > 0 || extraParamEntries.length > 0) {
     code += '\n' + tab + '**{\n';
 
     // Map additionnalParameters
-    code += filteredParameters.map(({ name, value }) => {
-      const processedValue = Array.isArray(value)
-        ? `[${value.map((item: any) => (typeof item === 'string' ? `"${item.trim()}"` : item)).join(', ')}]`
-        : typeof value === 'string'
+    code += filteredParameters
+      .map(({ name, value }) => {
+        const processedValue = Array.isArray(value)
+          ? `[${value
+              .map((item: any) =>
+                typeof item === 'string' ? `"${item.trim()}"` : item
+              )
+              .join(', ')}]`
+          : typeof value === 'string'
           ? `"${value.trim()}"`
           : value;
-      return `${tab + tab}"${name}": ${processedValue},`;
-    }).join('\n');
+        return `${tab + tab}"${name}": ${processedValue},`;
+      })
+      .join('\n');
 
     // Map extra parameters dynamically
     if (extraParamEntries.length > 0) {
       if (filteredParameters.length > 0) code += '\n'; // Separate sections
-      code += extraParamEntries.map(([key, value]) => {
-        const processedValue = Array.isArray(value)
-          ? `[${value.map((item: any) => (typeof item === 'string' ? `"${item.trim()}"` : item)).join(', ')}]`
-          : typeof value === 'string'
+      code += extraParamEntries
+        .map(([key, value]) => {
+          const processedValue = Array.isArray(value)
+            ? `[${value
+                .map((item: any) =>
+                  typeof item === 'string' ? `"${item.trim()}"` : item
+                )
+                .join(', ')}]`
+            : typeof value === 'string'
             ? `"${value.trim()}"`
             : value;
-        return `${tab + tab}"${key}": ${processedValue},`;
-      }).join('\n');
+          return `${tab + tab}"${key}": ${processedValue},`;
+        })
+        .join('\n');
     }
 
     code += '\n' + `${tab}}`; // Close dictionary

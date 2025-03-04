@@ -39,11 +39,7 @@ class ProductTypeHandler(APIHandler):
         query_dict = parse_qs(self.request.query)
 
         provider = None
-        if (
-            "provider" in query_dict
-            and isinstance(query_dict["provider"], list)
-            and len(query_dict["provider"]) > 0
-        ):
+        if "provider" in query_dict and isinstance(query_dict["provider"], list) and len(query_dict["provider"]) > 0:
             provider = query_dict.pop("provider")[0]
         provider = None if not provider or provider == "null" else provider
 
@@ -81,9 +77,7 @@ class ProvidersHandler(APIHandler):
             and len(query_dict["product_type"]) > 0
         ):
             available_providers_kwargs["product_type"] = query_dict["product_type"][0]
-        available_providers = eodag_api.available_providers(
-            **available_providers_kwargs
-        )
+        available_providers = eodag_api.available_providers(**available_providers_kwargs)
 
         all_providers_list = [
             dict(
@@ -98,26 +92,17 @@ class ProvidersHandler(APIHandler):
         all_providers_list.sort(key=lambda x: (x["priority"] * -1, x["provider"]))
 
         returned_providers = []
-        if (
-            "keywords" in query_dict
-            and isinstance(query_dict["keywords"], list)
-            and len(query_dict["keywords"]) > 0
-        ):
+        if "keywords" in query_dict and isinstance(query_dict["keywords"], list) and len(query_dict["keywords"]) > 0:
             # 1. List providers starting with given keyword
             first_keyword = query_dict["keywords"][0].lower()
-            returned_providers = [
-                p
-                for p in all_providers_list
-                if p["provider"].lower().startswith(first_keyword)
-            ]
+            returned_providers = [p for p in all_providers_list if p["provider"].lower().startswith(first_keyword)]
             providers_ids = [p["provider"] for p in returned_providers]
 
             # 2. List providers containing given keyword
             returned_providers += [
                 p
                 for p in all_providers_list
-                if first_keyword in p["provider"].lower()
-                and p["provider"] not in providers_ids
+                if first_keyword in p["provider"].lower() and p["provider"] not in providers_ids
             ]
             providers_ids = [p["provider"] for p in returned_providers]
 
@@ -125,8 +110,7 @@ class ProvidersHandler(APIHandler):
             returned_providers += [
                 p
                 for p in all_providers_list
-                if first_keyword in (p["description"] or "").lower()
-                and p["provider"] not in providers_ids
+                if first_keyword in (p["description"] or "").lower() and p["provider"] not in providers_ids
             ]
         else:
             returned_providers = all_providers_list
@@ -144,11 +128,7 @@ class GuessProductTypeHandler(APIHandler):
         query_dict = parse_qs(self.request.query)
 
         provider = None
-        if (
-            "provider" in query_dict
-            and isinstance(query_dict["provider"], list)
-            and len(query_dict["provider"]) > 0
-        ):
+        if "provider" in query_dict and isinstance(query_dict["provider"], list) and len(query_dict["provider"]) > 0:
             provider = query_dict.pop("provider")[0]
         provider = None if not provider or provider == "null" else provider
 
@@ -164,31 +144,22 @@ class GuessProductTypeHandler(APIHandler):
             ):
                 # 1. List product types starting with given keywords
                 first_keyword = query_dict["keywords"][0].lower()
-                returned_product_types = [
-                    pt
-                    for pt in all_product_types
-                    if pt["ID"].lower().startswith(first_keyword)
-                ]
+                returned_product_types = [pt for pt in all_product_types if pt["ID"].lower().startswith(first_keyword)]
                 returned_product_types_ids = [pt["ID"] for pt in returned_product_types]
 
                 # 2. List product types containing keyword
                 returned_product_types += [
                     pt
                     for pt in all_product_types
-                    if first_keyword in pt["ID"].lower()
-                    and pt["ID"] not in returned_product_types_ids
+                    if first_keyword in pt["ID"].lower() and pt["ID"] not in returned_product_types_ids
                 ]
-                returned_product_types_ids += [
-                    pt["ID"] for pt in returned_product_types
-                ]
+                returned_product_types_ids += [pt["ID"] for pt in returned_product_types]
 
                 # 3. Append guessed product types
                 guess_kwargs = {}
                 # ["aa bb", "cc-dd_ee"] to "*aa* AND *bb* AND *cc-dd_ee*"
                 for k, v in query_dict.items():
-                    guess_kwargs[k] = " AND ".join(
-                        re.sub(r"(\S+)", r"*\1*", " ".join(v)).split(" ")
-                    )
+                    guess_kwargs[k] = " AND ".join(re.sub(r"(\S+)", r"*\1*", " ".join(v)).split(" "))
 
                 # guessed product types ids
                 guessed_ids_list = eodag_api.guess_product_type(**guess_kwargs)
@@ -196,8 +167,7 @@ class GuessProductTypeHandler(APIHandler):
                 returned_product_types += [
                     pt
                     for pt in all_product_types
-                    if pt["ID"] in guessed_ids_list
-                    and pt["ID"] not in returned_product_types_ids
+                    if pt["ID"] in guessed_ids_list and pt["ID"] not in returned_product_types_ids
                 ]
             else:
                 returned_product_types = all_product_types
@@ -248,9 +218,7 @@ class SearchHandler(APIHandler):
         arguments = dict((k, v) for k, v in arguments.items() if v is not None)
 
         try:
-            products = eodag_api.search(
-                productType=product_type, count=True, **arguments
-            )
+            products = eodag_api.search(productType=product_type, count=True, **arguments)
         except ValidationError as e:
             self.set_status(400)
             self.finish({"error": e.message})
@@ -265,9 +233,7 @@ class SearchHandler(APIHandler):
             return
         except AuthenticationError as e:
             self.set_status(403)
-            self.finish(
-                {"error": f"AuthenticationError: Please check your credentials ({e})"}
-            )
+            self.finish({"error": f"AuthenticationError: Please check your credentials ({e})"})
             return
         except Exception as e:
             self.set_status(502)
@@ -334,9 +300,7 @@ class QueryablesHandler(APIHandler):
         }
         logger.error(queryables_kwargs)
         try:
-            queryables_dict = eodag_api.list_queryables(
-                fetch_providers=False, **queryables_kwargs
-            )
+            queryables_dict = eodag_api.list_queryables(fetch_providers=False, **queryables_kwargs)
             json_schema = queryables_dict.get_model().model_json_schema()
             self._remove_null_defaults(json_schema)
             json_schema["additionalProperties"] = queryables_dict.additional_properties
@@ -362,9 +326,7 @@ def setup_handlers(web_app, url_path):
     product_types_pattern = url_path_join(base_url, url_path, "product-types")
     reload_pattern = url_path_join(base_url, url_path, "reload")
     providers_pattern = url_path_join(base_url, url_path, "providers")
-    guess_product_types_pattern = url_path_join(
-        base_url, url_path, "guess-product-type"
-    )
+    guess_product_types_pattern = url_path_join(base_url, url_path, "guess-product-type")
     queryables_pattern = url_path_join(base_url, url_path, "queryables")
     search_pattern = url_path_join(base_url, url_path, r"(?P<product_type>[\w\-\.]+)")
     default_pattern = url_path_join(base_url, url_path, r".*")

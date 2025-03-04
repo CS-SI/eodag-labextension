@@ -8,7 +8,12 @@ import 'isomorphic-fetch';
 import React, { FC, useEffect, useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import { Controller, FormProvider, SubmitHandler, useForm } from 'react-hook-form';
+import {
+  Controller,
+  FormProvider,
+  SubmitHandler,
+  useForm
+} from 'react-hook-form';
 import { ThreeDots } from 'react-loader-spinner';
 import { PlacesType, Tooltip, VariantType } from 'react-tooltip';
 import Autocomplete from '../Autocomplete';
@@ -83,7 +88,7 @@ export const FormComponent: FC<IProps> = ({
   const formInput = useForm<IFormInput>({
     defaultValues: {
       startDate: defaultStartDate,
-      endDate: defaultEndDate,
+      endDate: defaultEndDate
     }
   });
 
@@ -96,10 +101,10 @@ export const FormComponent: FC<IProps> = ({
     resetField,
     // formState: { errors },
     getValues,
-    setValue,
+    setValue
   } = formInput;
 
-  const formValues = getValues()
+  const formValues = getValues();
 
   useEffect(() => {
     if (!reloadIndicator) {
@@ -178,7 +183,7 @@ export const FormComponent: FC<IProps> = ({
   const loadProviderSuggestions = useFetchProvider();
 
   const fetchParameters = async (
-    query_params: { [key: string]: any } | undefined = undefined,
+    query_params: { [key: string]: any } | undefined = undefined
   ): Promise<Parameter[]> => {
     let queryables;
 
@@ -186,12 +191,16 @@ export const FormComponent: FC<IProps> = ({
 
     // Isolate the fetch queryables call and handle errors specifically for it
     try {
-      queryables = await fetchQueryables(providerValue, productTypeValue, query_params);
+      queryables = await fetchQueryables(
+        providerValue,
+        productTypeValue,
+        query_params
+      );
     } catch (error) {
       if (error instanceof ServerConnection.ResponseError) {
         showErrorMessage('Bad response from server:', error);
       } else {
-        console.error("Error fetching queryables:", error);
+        console.error('Error fetching queryables:', error);
       }
       return;
     }
@@ -206,37 +215,49 @@ export const FormComponent: FC<IProps> = ({
 
   useEffect(() => {
     if (productTypeValue) {
-      fetchParameters().then((params) => {
-        const defaultValues = params.reduce((acc: { [key: string]: any }, param: Parameter) => {
-          // Ensure param.value contains a 'default' property before accessing it
-          if (param.value && 'default' in param.value) {
-            acc[param.key] = param.value.default;
-          }
-          return acc;
-        }, {});
+      fetchParameters()
+        .then(params => {
+          const defaultValues = params.reduce(
+            (acc: { [key: string]: any }, param: Parameter) => {
+              // Ensure param.value contains a 'default' property before accessing it
+              if (param.value && 'default' in param.value) {
+                acc[param.key] = param.value.default;
+              }
+              return acc;
+            },
+            {}
+          );
 
-        reset({
-          ...defaultValues,
-          provider: formValues.provider,
-          productType: formValues.productType,
-          additionnalParameters: formValues.additionnalParameters
+          reset({
+            ...defaultValues,
+            provider: formValues.provider,
+            productType: formValues.productType,
+            additionnalParameters: formValues.additionnalParameters
+          });
+
+          const optionals = params
+            .filter(param => param.mandatory === false)
+            .map(param => ({
+              value: param.key,
+              label: param.value.title ?? param.key
+            }));
+          setOptionalParams(optionals);
+        })
+        .catch(error => {
+          console.error('Error fetching parameters:', error);
         });
-
-        const optionals = params.filter((param) => param.mandatory === false).map((param) => ({ value: param.key, label: param.value.title ?? param.key }));
-        setOptionalParams(optionals)
-      }).catch(error => {
-        console.error("Error fetching parameters:", error);
-      });
     }
   }, [providerValue, productTypeValue]);
 
   useEffect(() => {
     if (!params || additionalParameters || !productTypeValue || loading) return;
 
-    const query_params = params ? params.reduce((acc: { [key: string]: string }, curr: any) => {
-      acc[curr.key] = curr.value.selected;
-      return acc;
-    }, {} as { [key: string]: string }) : undefined;
+    const query_params = params
+      ? params.reduce((acc: { [key: string]: string }, curr: any) => {
+          acc[curr.key] = curr.value.selected;
+          return acc;
+        }, {} as { [key: string]: string })
+      : undefined;
 
     fetchParameters(query_params);
   }, [params]);
@@ -245,14 +266,16 @@ export const FormComponent: FC<IProps> = ({
 
   const handleSelectDropdown = (param: OptionType): void => {
     if (selectedOptions.includes(param.value)) {
-      setSelectedOptions(selectedOptions.filter(option => option !== param.value));
+      setSelectedOptions(
+        selectedOptions.filter(option => option !== param.value)
+      );
     } else {
       setSelectedOptions([...selectedOptions, param.value]);
     }
   };
 
   const renderNoParamsMessage = () => (
-    <div style={{ margin: "10px 0" }}>
+    <div style={{ margin: '10px 0' }}>
       <p>Select a product type to unlock parameters.</p>
     </div>
   );
@@ -265,13 +288,12 @@ export const FormComponent: FC<IProps> = ({
           <ParameterGroup {...{ params, setParams, selectedOptions }} />
         </>
       ) : (
-        <div style={{ margin: "10px 0" }}>
+        <div style={{ margin: '10px 0' }}>
           <p>No required parameter for this product type.</p>
         </div>
       )}
     </>
   );
-
 
   return (
     <div className="jp-EodagWidget-wrapper">
@@ -325,13 +347,15 @@ export const FormComponent: FC<IProps> = ({
 
                     if (e?.value !== productTypeValue) {
                       setSelectedOptions([]);
-                      setValue('additionnalParameters', [{ name: '', value: '' }]);
+                      setValue('additionnalParameters', [
+                        { name: '', value: '' }
+                      ]);
                     }
 
                     setProductTypeValue(e?.value);
                     if (e?.value === undefined) {
-                      setParams([])
-                      setOptionalParams([])
+                      setParams([]);
+                      setOptionalParams([]);
                       reset({
                         provider: formValues.provider,
                         additionnalParameters: formValues.additionnalParameters
@@ -407,9 +431,17 @@ export const FormComponent: FC<IProps> = ({
               </div>
             </div>
 
-            <div style={{ marginTop: "10px" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginLeft: "10px", marginRight: "10px" }}>
-                <p className='jp-EodagWidget-section-title'>Parameters</p>
+            <div style={{ marginTop: '10px' }}>
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  marginLeft: '10px',
+                  marginRight: '10px'
+                }}
+              >
+                <p className="jp-EodagWidget-section-title">Parameters</p>
                 <DropdownButton
                   options={optionalParams}
                   onSelect={handleSelectDropdown}
@@ -418,14 +450,21 @@ export const FormComponent: FC<IProps> = ({
                 />
               </div>
               <div className="jp-EodagWidget-field">
-                {!params || !params.length ? renderNoParamsMessage() : renderParameterGroups()}
+                {!params || !params.length
+                  ? renderNoParamsMessage()
+                  : renderParameterGroups()}
               </div>
             </div>
 
             <AdditionalParameterFields
-              {...{ control, register, resetField, productType: productTypeValue, additionalParameters }}
+              {...{
+                control,
+                register,
+                resetField,
+                productType: productTypeValue,
+                additionalParameters
+              }}
             />
-
           </div>
           <div className="jp-EodagWidget-form-buttons">
             <div className="jp-EodagWidget-form-buttons-wrapper">

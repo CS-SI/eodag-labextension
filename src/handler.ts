@@ -45,7 +45,10 @@ export async function requestAPI<T>(
   }
 
   if (!response.ok) {
-    throw new ServerConnection.ResponseError(response, JSON.stringify(data.message || data));
+    throw new ServerConnection.ResponseError(
+      response,
+      JSON.stringify(data.message || data)
+    );
   }
 
   return data;

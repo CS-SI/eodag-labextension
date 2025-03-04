@@ -10,13 +10,25 @@ interface ParameterGroupProps {
   selectedOptions?: string[];
 }
 
-const ParameterGroup: React.FC<ParameterGroupProps> = ({ params, setParams, mandatory = false, selectedOptions = []
+const ParameterGroup: React.FC<ParameterGroupProps> = ({
+  params,
+  setParams,
+  mandatory = false,
+  selectedOptions = []
 }) => {
-  const { formState: { errors }, setValue, control } = useFormContext();
+  const {
+    formState: { errors },
+    setValue,
+    control
+  } = useFormContext();
 
   const handleSelectChange = (
     key: string,
-    newValue: number | string | { value: string; label: string } | MultiValue<string | { value: string; label: string }>,
+    newValue:
+      | number
+      | string
+      | { value: string; label: string }
+      | MultiValue<string | { value: string; label: string }>,
     onChange: (...event: any[]) => void | undefined = undefined
   ) => {
     let selectedValue: undefined | number | string | string[];
@@ -50,21 +62,31 @@ const ParameterGroup: React.FC<ParameterGroupProps> = ({ params, setParams, mand
     setParams(updatedParams);
   };
 
-  const getSelectedValue = (type: string, selectedValue: string | string[] | undefined) => {
-    if (type === 'array' && selectedValue !== undefined || Array.isArray(selectedValue)) {
+  const getSelectedValue = (
+    type: string,
+    selectedValue: string | string[] | undefined
+  ) => {
+    if (
+      (type === 'array' && selectedValue !== undefined) ||
+      Array.isArray(selectedValue)
+    ) {
       // If it's an array or the type is 'array', return an array of option objects
-      return (Array.isArray(selectedValue) ? selectedValue : [selectedValue]).map(item => ({
+      return (
+        Array.isArray(selectedValue) ? selectedValue : [selectedValue]
+      ).map(item => ({
         value: item,
-        label: item,
+        label: item
       }));
     }
 
     // For single value (when it's not an array)
     return selectedValue
-      ? [{
-        value: selectedValue,
-        label: selectedValue,
-      }]
+      ? [
+          {
+            value: selectedValue,
+            label: selectedValue
+          }
+        ]
       : [];
   };
 
@@ -81,12 +103,14 @@ const ParameterGroup: React.FC<ParameterGroupProps> = ({ params, setParams, mand
         rules={{ required: mandatory && enumList.length > 0 }}
         render={({ field: { onChange } }) => (
           <Select
-            className={`jp-EodagWidget-select ${errors[key] ? 'jp-EodagWidget-input-error' : ''}`}
+            className={`jp-EodagWidget-select ${
+              errors[key] ? 'jp-EodagWidget-input-error' : ''
+            }`}
             classNamePrefix="jp-EodagWidget-select"
             aria-label={title}
             placeholder={`Select a ${lowercaseTitle}...`}
             defaultValue={getSelectedValue(type, defaultValue)}
-            onChange={(selectedOption) => {
+            onChange={selectedOption => {
               handleSelectChange(key, selectedOption, onChange);
             }}
             isClearable
@@ -94,7 +118,7 @@ const ParameterGroup: React.FC<ParameterGroupProps> = ({ params, setParams, mand
             isMulti={type === 'array'}
             options={enumList.map(item => ({
               value: item,
-              label: item.charAt(0).toUpperCase() + item.slice(1),
+              label: item.charAt(0).toUpperCase() + item.slice(1)
             }))}
           />
         )}
@@ -113,7 +137,9 @@ const ParameterGroup: React.FC<ParameterGroupProps> = ({ params, setParams, mand
         rules={{ required: mandatory }}
         render={({ field: { onChange } }) => (
           <input
-            className={`jp-EodagWidget-input ${errors[key] ? 'jp-EodagWidget-input-error' : ''}`}
+            className={`jp-EodagWidget-input ${
+              errors[key] ? 'jp-EodagWidget-input-error' : ''
+            }`}
             type={type === 'integer' ? 'number' : 'text'}
             style={{
               width: '100%',
@@ -121,7 +147,7 @@ const ParameterGroup: React.FC<ParameterGroupProps> = ({ params, setParams, mand
               borderRadius: '.2rem',
               border: '1px solid #ccc',
               padding: '0.25rem 0.5rem',
-              boxSizing: 'border-box',
+              boxSizing: 'border-box'
             }}
             placeholder={`${title}...`}
             title={description || undefined}
@@ -166,49 +192,65 @@ const ParameterGroup: React.FC<ParameterGroupProps> = ({ params, setParams, mand
           />
         </div>
       </label>
-    )
+    );
   };
 
   const renderField = (param: Parameter) => {
     const value = param.value || {};
 
-    const enumList: string[] = value.type === 'array'
-      ? value.items?.enum || (value.items?.const ? [value.items?.const] : [])
-      : value?.enum || (value?.const ? [value?.const] : []);
+    const enumList: string[] =
+      value.type === 'array'
+        ? value.items?.enum || (value.items?.const ? [value.items?.const] : [])
+        : value?.enum || (value?.const ? [value?.const] : []);
 
     switch (value.type) {
       case 'string':
       case 'integer':
-        return enumList.length > 0 ? renderSelectField(param, enumList) : renderInputField(param);
+        return enumList.length > 0
+          ? renderSelectField(param, enumList)
+          : renderInputField(param);
       case 'array':
         return renderSelectField(param, enumList);
       default:
         console.error(`Unsupported type: ${value.type}`);
-        return <p style={{ color: "red" }}>This parameter is not working. Unsupported type: {value.type}</p>
+        return (
+          <p style={{ color: 'red' }}>
+            This parameter is not working. Unsupported type: {value.type}
+          </p>
+        );
     }
   };
 
   return (
     <>
-      {
-        params.filter(param => {
+      {params
+        .filter(param => {
           if (mandatory) {
             return param.mandatory;
           } else {
             return selectedOptions.includes(param.key);
           }
-        }).map(param => (
+        })
+        .map(param => (
           <div key={param.key}>
-            {param.key === 'cloudCover' ? renderCloudCoverField(param) : (
+            {param.key === 'cloudCover' ? (
+              renderCloudCoverField(param)
+            ) : (
               <label className="jp-EodagWidget-input-name">
                 {param.value.title}
-                {param.mandatory && <span style={{ color: 'red', marginLeft: 4, fontWeight: 'bold' }}> *</span>}
+                {param.mandatory && (
+                  <span
+                    style={{ color: 'red', marginLeft: 4, fontWeight: 'bold' }}
+                  >
+                    {' '}
+                    *
+                  </span>
+                )}
                 <div style={{ marginTop: 10 }}>{renderField(param)}</div>
               </label>
             )}
           </div>
-        ))
-      }
+        ))}
     </>
   );
 };
