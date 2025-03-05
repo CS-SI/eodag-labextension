@@ -210,6 +210,8 @@ class SearchHandler(APIHandler):
         provider = arguments.pop("provider", None)
         if provider and provider != "null":
             arguments["provider"] = provider
+            # only raise error if provider selected, if not enable search fallback
+            arguments["raise_errors"] = True
 
         # We remove potential None values to use the default values of the search method
         arguments = dict((k, v) for k, v in arguments.items() if v is not None)

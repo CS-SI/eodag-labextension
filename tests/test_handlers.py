@@ -182,6 +182,7 @@ class TestEodagLabExtensionHandler(AsyncHTTPTestCase):
             foo="bar",
             provider="cop_dataspace",
             count=True,
+            raise_errors=True,
         )
         self.assertDictEqual(
             result,
