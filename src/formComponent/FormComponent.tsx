@@ -230,6 +230,7 @@ export const FormComponent: FC<IProps> = ({
 
           reset({
             ...defaultValues,
+            geometry: formValues.geometry,
             provider: formValues.provider,
             productType: formValues.productType,
             additionnalParameters: formValues.additionnalParameters
@@ -357,6 +358,7 @@ export const FormComponent: FC<IProps> = ({
                       setParams([]);
                       setOptionalParams([]);
                       reset({
+                        geometry: formValues.geometry,
                         provider: formValues.provider,
                         additionnalParameters: formValues.additionnalParameters
                       });
