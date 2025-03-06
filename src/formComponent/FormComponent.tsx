@@ -28,7 +28,7 @@ import {
 } from '../icones.js';
 import MapExtentComponent from '../MapExtentComponent';
 import SearchService from '../SearchService';
-import { IFormInput, OptionType, Parameter } from '../types';
+import { IFormInput, IOptionType, IParameter } from '../types';
 import AdditionalParameterFields from './AdditionalParameterFields';
 import ParameterGroup from './ParameterGroup';
 import DropdownButton from './DropdownButton';
@@ -79,11 +79,11 @@ export const FormComponent: FC<IProps> = ({
   const [providerValue, setProviderValue] = useState(null);
   const [productTypeValue, setProductTypeValue] = useState<string>(null);
   const [fetchCount, setFetchCount] = useState(0);
-  const [params, setParams] = useState<Parameter[]>(null);
+  const [params, setParams] = useState<IParameter[]>(null);
   const [loading, setLoading] = useState(false);
   const [additionalParameters, setAdditionalParameters] =
     useState<boolean>(true);
-  const [optionalParams, setOptionalParams] = useState<OptionType[]>([]);
+  const [optionalParams, setOptionalParams] = useState<IOptionType[]>([]);
 
   const formInput = useForm<IFormInput>({
     defaultValues: {
@@ -184,7 +184,7 @@ export const FormComponent: FC<IProps> = ({
 
   const fetchParameters = async (
     query_params: { [key: string]: any } | undefined = undefined
-  ): Promise<Parameter[]> => {
+  ): Promise<IParameter[]> => {
     let queryables;
 
     setLoading(true);
@@ -218,7 +218,7 @@ export const FormComponent: FC<IProps> = ({
       fetchParameters()
         .then(params => {
           const defaultValues = params.reduce(
-            (acc: { [key: string]: any }, param: Parameter) => {
+            (acc: { [key: string]: any }, param: IParameter) => {
               // Ensure param.value contains a 'default' property before accessing it
               if (param.value && 'default' in param.value) {
                 acc[param.key] = param.value.default;
@@ -251,7 +251,9 @@ export const FormComponent: FC<IProps> = ({
   }, [providerValue, productTypeValue]);
 
   useEffect(() => {
-    if (!params || additionalParameters || !productTypeValue || loading) return;
+    if (!params || additionalParameters || !productTypeValue || loading) {
+      return;
+    }
 
     const query_params = params
       ? params.reduce((acc: { [key: string]: string }, curr: any) => {
@@ -265,7 +267,7 @@ export const FormComponent: FC<IProps> = ({
 
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
 
-  const handleSelectDropdown = (param: OptionType): void => {
+  const handleSelectDropdown = (param: IOptionType): void => {
     if (selectedOptions.includes(param.value)) {
       setSelectedOptions(
         selectedOptions.filter(option => option !== param.value)

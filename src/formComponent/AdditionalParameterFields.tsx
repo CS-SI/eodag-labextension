@@ -5,7 +5,7 @@ import { CarbonAddFilled, CarbonInformation, CarbonTrashCan } from '../icones';
 import { IFormInput } from '../types';
 import { tooltipDark, tooltipTop, tooltipWarning } from './FormComponent';
 
-export interface AdditionalParameterFieldsProps
+export interface IAdditionalParameterFieldsProps
   extends Partial<UseFormReturn<IFormInput>> {
   productType: string;
   additionalParameters: boolean;
@@ -17,10 +17,10 @@ const AdditionalParameterFields = ({
   resetField,
   productType,
   additionalParameters
-}: AdditionalParameterFieldsProps) => {
+}: IAdditionalParameterFieldsProps) => {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
-  const { fields, append, remove, update } = useFieldArray({
+  const { fields, append, remove } = useFieldArray({
     control,
     name: 'additionnalParameters'
   });

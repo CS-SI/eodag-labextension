@@ -1,16 +1,16 @@
 import React, { ChangeEvent } from 'react';
 import Select, { MultiValue } from 'react-select';
 import { Controller, useFormContext } from 'react-hook-form';
-import { Parameter } from '../types';
+import { IParameter } from '../types';
 
-interface ParameterGroupProps {
-  params: Parameter[];
-  setParams: (params: Parameter[]) => void;
+interface IParameterGroupProps {
+  params: IParameter[];
+  setParams: (params: IParameter[]) => void;
   mandatory?: boolean;
   selectedOptions?: string[];
 }
 
-const ParameterGroup: React.FC<ParameterGroupProps> = ({
+const ParameterGroup: React.FC<IParameterGroupProps> = ({
   params,
   setParams,
   mandatory = false,
@@ -50,7 +50,9 @@ const ParameterGroup: React.FC<ParameterGroupProps> = ({
       throw new Error('Invalid value type');
     }
 
-    if (onChange) onChange(selectedValue);
+    if (onChange) {
+      onChange(selectedValue);
+    }
 
     // Set selectedValue in params
     const updatedParams = params.map(param =>
@@ -90,7 +92,7 @@ const ParameterGroup: React.FC<ParameterGroupProps> = ({
       : [];
   };
 
-  const renderSelectField = (param: Parameter, enumList: string[]) => {
+  const renderSelectField = (param: IParameter, enumList: string[]) => {
     const { key, value, mandatory } = param;
     const { type, title, default: defaultValue } = value;
 
@@ -126,7 +128,7 @@ const ParameterGroup: React.FC<ParameterGroupProps> = ({
     );
   };
 
-  const renderInputField = (param: Parameter) => {
+  const renderInputField = (param: IParameter) => {
     const { key, value } = param;
     const { type, title, description, selected } = value;
 
@@ -159,7 +161,7 @@ const ParameterGroup: React.FC<ParameterGroupProps> = ({
     );
   };
 
-  const renderCloudCoverField = (param: Parameter) => {
+  const renderCloudCoverField = (param: IParameter) => {
     const defaultCloudCover = 100;
 
     const { key, value, mandatory } = param;
@@ -195,7 +197,7 @@ const ParameterGroup: React.FC<ParameterGroupProps> = ({
     );
   };
 
-  const renderField = (param: Parameter) => {
+  const renderField = (param: IParameter) => {
     const value = param.value || {};
 
     const enumList: string[] =

@@ -1,17 +1,19 @@
 import { requestAPI } from '../handler';
-import { Parameter, Queryables } from '../types';
+import { IParameter, IQueryables } from '../types';
 
 export const fetchQueryables = async (
   provider: string | null,
   productType: string,
   filterParameters: { [key: string]: any } | undefined
 ): Promise<{
-  properties: Parameter[];
+  properties: IParameter[];
   additionalProperties: boolean;
 }> => {
   const params = new URLSearchParams({ productType });
 
-  if (provider) params.append('provider', provider);
+  if (provider) {
+    params.append('provider', provider);
+  }
 
   if (filterParameters) {
     Object.entries(filterParameters).forEach(([key, value]) => {
@@ -21,7 +23,7 @@ export const fetchQueryables = async (
 
   const queryables = (await requestAPI(
     `queryables?${params.toString()}`
-  )) as Queryables;
+  )) as IQueryables;
 
   if (!queryables.properties) {
     throw new Error('The response is missing the "properties" attribute.');

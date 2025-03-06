@@ -22,7 +22,7 @@ import { useFetchUserSettings } from './hooks/useFetchData';
 import { CarbonSettings, IcBaselineRefresh } from './icones';
 import ModalComponent from './ModalComponent';
 import SearchService from './SearchService';
-import { IFormInput, Parameter } from './types';
+import { IFormInput, IParameter } from './types';
 
 export interface IProps {
   tracker: INotebookTracker;
@@ -189,7 +189,7 @@ export class EodagBrowser extends React.Component<IProps, IState> {
     }
   };
 
-  handleGenerateQuery = async (parameters: Parameter[]) => {
+  handleGenerateQuery = async (parameters: IParameter[]) => {
     this.setState({
       openDialog: false
     });

@@ -93,7 +93,9 @@ search_results = dag.search(`;
 
     // Map extra parameters dynamically
     if (extraParamEntries.length > 0) {
-      if (filteredParameters.length > 0) code += '\n'; // Separate sections
+      if (filteredParameters.length > 0) {
+        code += '\n';
+      } // Separate sections
       code += extraParamEntries
         .map(([key, value]) => {
           const processedValue = Array.isArray(value)

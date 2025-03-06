@@ -1,17 +1,17 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { OptionType } from '../types';
+import { IOptionType } from '../types';
 import { CarbonAddFilled } from '../icones';
 
 // Props for DropdownButton component
-interface DropdownButtonProps {
-  options: OptionType[];
-  onSelect: (option: OptionType) => void;
+interface IDropdownButtonProps {
+  options: IOptionType[];
+  onSelect: (option: IOptionType) => void;
   selectedOptions: string[];
   buttonLabel?: string;
   disabled?: boolean;
 }
 
-const DropdownButton: React.FC<DropdownButtonProps> = ({
+const DropdownButton: React.FC<IDropdownButtonProps> = ({
   options,
   onSelect,
   selectedOptions,
