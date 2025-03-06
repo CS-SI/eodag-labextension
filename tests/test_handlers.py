@@ -150,7 +150,11 @@ class TestEodagLabExtensionHandler(AsyncHTTPTestCase):
     def test_post_not_found(self):
         self.fetch_results_error("/eodag/foo/bar", 404, method="POST", body=json.dumps({}))
 
-    @mock.patch("eodag.api.core.EODataAccessGateway.search", autospec=True, return_value=SearchResult([], 0))
+    @mock.patch(
+        "eodag.api.core.EODataAccessGateway.search",
+        autospec=True,
+        return_value=SearchResult([], 0),
+    )
     def test_search(self, mock_search):
         geom_dict = {
             "type": "Polygon",
@@ -213,11 +217,21 @@ class TestEodagLabExtensionHandler(AsyncHTTPTestCase):
 
         # date error
         mock_search.reset_mock()
-        self.fetch_results_error("/eodag/S2_MSI_L1C", 400, method="POST", body=json.dumps({"dtstart": "2024-015-01"}))
+        self.fetch_results_error(
+            "/eodag/S2_MSI_L1C",
+            400,
+            method="POST",
+            body=json.dumps({"dtstart": "2024-015-01"}),
+        )
 
         # geom error
         mock_search.reset_mock()
-        self.fetch_results_error("/eodag/S2_MSI_L1C", 400, method="POST", body=json.dumps({"geom": {"foo": "bar"}}))
+        self.fetch_results_error(
+            "/eodag/S2_MSI_L1C",
+            400,
+            method="POST",
+            body=json.dumps({"geom": {"foo": "bar"}}),
+        )
 
     @mock.patch(
         "eodag.api.core.EODataAccessGateway.list_queryables",
@@ -234,6 +248,7 @@ class TestEodagLabExtensionHandler(AsyncHTTPTestCase):
         self.assertFalse(results["additionalProperties"])
         mock_list_queryables.assert_called_with(
             mock.ANY,
+            fetch_providers=False,
             provider="some_provider",
             productType="some_product_type",
             param1="paramValue1",
