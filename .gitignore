@@ -37,6 +37,7 @@ share/python-wheels/
 .installed.cfg
 *.egg
 MANIFEST
+.yarn
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
@@ -107,6 +108,9 @@ dmypy.json
 .pyre/
 
 # End of https://www.gitignore.io/api/python
+
+# python virtual environments
+.venv*
 
 # OSX files
 .DS_Store

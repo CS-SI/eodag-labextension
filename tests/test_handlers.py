@@ -8,6 +8,7 @@ from unittest import mock
 
 from eodag import SearchResult
 from eodag.api.core import DEFAULT_ITEMS_PER_PAGE
+from eodag.types.queryables import QueryablesDict
 from notebook.notebookapp import NotebookApp
 from shapely.geometry import shape
 from tornado.testing import AsyncHTTPTestCase
@@ -149,7 +150,11 @@ class TestEodagLabExtensionHandler(AsyncHTTPTestCase):
     def test_post_not_found(self):
         self.fetch_results_error("/eodag/foo/bar", 404, method="POST", body=json.dumps({}))
 
-    @mock.patch("eodag.api.core.EODataAccessGateway.search", autospec=True, return_value=SearchResult([], 0))
+    @mock.patch(
+        "eodag.api.core.EODataAccessGateway.search",
+        autospec=True,
+        return_value=SearchResult([], 0),
+    )
     def test_search(self, mock_search):
         geom_dict = {
             "type": "Polygon",
@@ -212,8 +217,40 @@ class TestEodagLabExtensionHandler(AsyncHTTPTestCase):
 
         # date error
         mock_search.reset_mock()
-        self.fetch_results_error("/eodag/S2_MSI_L1C", 400, method="POST", body=json.dumps({"dtstart": "2024-015-01"}))
+        self.fetch_results_error(
+            "/eodag/S2_MSI_L1C",
+            400,
+            method="POST",
+            body=json.dumps({"dtstart": "2024-015-01"}),
+        )
 
         # geom error
         mock_search.reset_mock()
-        self.fetch_results_error("/eodag/S2_MSI_L1C", 400, method="POST", body=json.dumps({"geom": {"foo": "bar"}}))
+        self.fetch_results_error(
+            "/eodag/S2_MSI_L1C",
+            400,
+            method="POST",
+            body=json.dumps({"geom": {"foo": "bar"}}),
+        )
+
+    @mock.patch(
+        "eodag.api.core.EODataAccessGateway.list_queryables",
+        autospec=True,
+        return_value=QueryablesDict(additional_properties=False),
+    )
+    def test_queryables(self, mock_list_queryables):
+        results = self.fetch_results(
+            "/eodag/queryables?"
+            "provider=some_provider&productType=some_product_type"
+            "&param1=paramValue1&param2=paramValue2"
+        )
+        self.assertEqual(results["properties"], {})
+        self.assertFalse(results["additionalProperties"])
+        mock_list_queryables.assert_called_with(
+            mock.ANY,
+            fetch_providers=False,
+            provider="some_provider",
+            productType="some_product_type",
+            param1="paramValue1",
+            param2="paramValue2",
+        )

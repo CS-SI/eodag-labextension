@@ -125,6 +125,8 @@ export default class DescriptionProductComponent extends React.Component<
                   <a href={value} target="_blank">
                     {value}
                   </a>
+                ) : Array.isArray(value) ? (
+                  value.join(', ')
                 ) : (
                   value
                 )}

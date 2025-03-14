@@ -2,7 +2,11 @@ import { showErrorMessage } from '@jupyterlab/apputils';
 import { URLExt } from '@jupyterlab/coreutils';
 import { ServerConnection } from '@jupyterlab/services';
 import { EODAG_SERVER_ADRESS } from './../config';
-import { IOptionTypeBase, IProduct, IProvider } from './../FormComponent';
+import {
+  IOptionTypeBase,
+  IProduct,
+  IProvider
+} from './../formComponent/FormComponent';
 
 interface IFetchDataProps<T> {
   queryParams: string;
@@ -14,10 +18,7 @@ const fetchData = async <T>({
   onSuccess
 }: IFetchDataProps<T>): Promise<IOptionTypeBase[]> => {
   const serverSettings = ServerConnection.makeSettings();
-  const eodagServer = URLExt.join(
-    serverSettings.baseUrl,
-    `${EODAG_SERVER_ADRESS}`
-  );
+  const eodagServer = URLExt.join(serverSettings.baseUrl, EODAG_SERVER_ADRESS);
 
   try {
     const response = await fetch(URLExt.join(eodagServer, queryParams), {
@@ -99,10 +100,7 @@ const useFetchProvider = () => {
 
 const useFetchUserSettings = async () => {
   const serverSettings = ServerConnection.makeSettings();
-  const eodagServer = URLExt.join(
-    serverSettings.baseUrl,
-    `${EODAG_SERVER_ADRESS}`
-  );
+  const eodagServer = URLExt.join(serverSettings.baseUrl, EODAG_SERVER_ADRESS);
 
   try {
     const response = await fetch(URLExt.join(eodagServer, 'reload'), {

@@ -2,28 +2,27 @@
  * Copyright 2022 CS GROUP - France, http://www.c-s.fr
  * All rights reserved
  */
-
-import * as React from 'react';
+import { showErrorMessage } from '@jupyterlab/apputils';
+import { CodeCellModel } from '@jupyterlab/cells';
+import { URLExt } from '@jupyterlab/coreutils';
 import {
-  NotebookActions,
+  INotebookModel,
   INotebookTracker,
   Notebook,
-  INotebookModel
+  NotebookActions
 } from '@jupyterlab/notebook';
-import { CodeCellModel } from '@jupyterlab/cells';
-import { showErrorMessage } from '@jupyterlab/apputils';
-import { concat, get } from 'lodash';
-import { FormComponent } from './FormComponent';
-import ModalComponent from './ModalComponent';
-import formatCode from './CodeGenerator';
-import SearchService from './SearchService';
-import { IFormInput } from './types';
 import { ServerConnection } from '@jupyterlab/services';
+import { concat, get } from 'lodash';
+import * as React from 'react';
+import { PlacesType, Tooltip, VariantType } from 'react-tooltip';
+import formatCode from './CodeGenerator';
 import { EODAG_SETTINGS_ADDRESS } from './config';
-import { URLExt } from '@jupyterlab/coreutils';
+import { FormComponent } from './formComponent/FormComponent';
 import { useFetchUserSettings } from './hooks/useFetchData';
 import { CarbonSettings, IcBaselineRefresh } from './icones';
-import { Tooltip, PlacesType, VariantType } from 'react-tooltip';
+import ModalComponent from './ModalComponent';
+import SearchService from './SearchService';
+import { IFormInput, IParameter } from './types';
 
 export interface IProps {
   tracker: INotebookTracker;
@@ -190,11 +189,10 @@ export class EodagBrowser extends React.Component<IProps, IState> {
     }
   };
 
-  handleGenerateQuery = async () => {
+  handleGenerateQuery = async (parameters: IParameter[]) => {
     this.setState({
       openDialog: false
     });
-
     if (!this.props.tracker.currentWidget) {
       return;
     }
