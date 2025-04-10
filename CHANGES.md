@@ -1,5 +1,13 @@
 # Release history
 
+## 4.0.0 (2025-04-10)
+
+- **Dynamic search form based on queryables** [(#168)](https://github.com/CS-SI/eodag-labextension/pull/168)
+- Search errors handling fix [(#170)](https://github.com/CS-SI/eodag-labextension/pull/170)
+- Drop support for Python 3.8 [(#166)](https://github.com/CS-SI/eodag-labextension/pull/166)
+- Updates dependencies and developement tools versions [(#163)](https://github.com/CS-SI/eodag-labextension/pull/163)
+  [(#169)](https://github.com/CS-SI/eodag-labextension/pull/169)[(#172)](https://github.com/CS-SI/eodag-labextension/pull/172)
+
 ## 3.7.0 (2024-10-10)
 
 - [3.7.0b1] Update to `eodag v3` search api [(#153)](https://github.com/CS-SI/eodag-labextension/pull/153)

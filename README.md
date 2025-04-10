@@ -9,6 +9,8 @@ Searching and browsing remote sensed imagery directly from JupyterLab.
 
 ![screencast](https://raw.githubusercontent.com/CS-SI/eodag-labextension/develop/notebooks/images/eodag_labext_screencast.gif)
 
+> _v3.7.0 screencast_
+
 This extension is using the [eodag](https://github.com/CS-SI/eodag) library to efficiently search from various image
 providers. It can transform search results to code cells into the active Python notebook to further process/visualize
 the dataset.
@@ -81,10 +83,10 @@ With displayed search form, you can enter search extent and following search cri
   ![product types](https://raw.githubusercontent.com/CS-SI/eodag-labextension/develop/notebooks/images/eodag_labext_product_types.png)
 
 - **Date range**: minimal and maximal dates of the search temporal window.
-- **Max cloud cover**: maximum cloud cover allowed in search results in percent. 100% will disable cloud cover
-  filtering.
-- **Additional parameters**: used to enter key-value pairs criteria for the request. See
-  [available parameters in EODAG documentation](https://eodag.readthedocs.io/en/stable/add_provider.html#opensearch-parameters-csv).
+- **Parameters**: Select a product type to unlock parameters. Click on _"More parameters"_, select desired parameters
+  and set their associated value that should be sent as search criteria.
+- **Custom parameters**: used to enter key-value pairs criteria for the request that are not available as queryable
+  through _"Parameters"_.
 
 As **search geometry** you can draw multiple extents, or use none. Each extent can be a rectangle or a free polygon.
 
