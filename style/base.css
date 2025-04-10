@@ -17,6 +17,7 @@
   overflow: auto;
   padding: 5px;
 }
+
 .jp-EodagWidget-products-search {
   overflow: auto;
   height: 100%;
@@ -27,6 +28,7 @@
   justify-content: space-between;
   align-items: center;
 }
+
 .jp-EodagWidget-header {
   border-bottom: var(--jp-border-width) solid var(--jp-border-color2);
   flex: 0 0 auto;
@@ -61,28 +63,39 @@
   display: flex;
   flex-direction: column;
 }
+
 .jp-EodagWidget-form-buttons {
   width: 100%;
   max-width: 450px;
   margin: auto;
 }
+
 .jp-EodagWidget-form-buttons-wrapper {
   display: flex;
   justify-content: space-evenly;
 }
+
 .jp-EodagWidget-loader {
   margin-top: 30px;
   display: flex;
   align-items: center;
 }
+
 .jp-EodagWidget-loader p {
   margin-right: 10px;
   font-weight: bold;
 }
+
+.jp-EodagWidget-input-error {
+  border: 2px solid red !important;
+  border-radius: 5px;
+}
+
 .jp-EodagWidget-input-wrapper {
   display: flex;
   align-items: center;
 }
+
 .jp-EodagWidget-input-wrapper > svg {
   display: inline-block;
   color: var(--gray);
@@ -97,6 +110,7 @@
   justify-content: space-between;
   margin-top: 10px;
 }
+
 .jp-EodagWidget .jp-EodagWidget-form .jp-EodagWidget-buttons {
   display: flex;
   justify-content: center;
@@ -144,6 +158,7 @@
   position: relative;
   z-index: 1000;
 }
+
 .jp-EodagWidget .jp-EodagWidget-form .jp-EodagWidget-slider {
   display: flex;
   align-items: center;
@@ -154,18 +169,22 @@
 .jp-EodagWidget-map {
   height: 300px;
 }
+
 .jp-EodagWidget .jp-EodagWidget-form .jp-EodagWidget-field {
   padding: 0 10px;
   max-width: 450px;
   margin: auto;
 }
+
 .jp-EodagWidget .jp-EodagWidget-form .jp-EodagWidget-field fieldset {
   margin-top: 1.5em;
 }
+
 .jp-EodagWidget .jp-EodagWidget-form .jp-EodagWidget-input-name {
   margin-top: 1em;
   display: block;
 }
+
 .jp-EodagWidget-input-name-checkbox-wrapper {
   margin-top: 1em;
   display: flex;
@@ -173,6 +192,7 @@
   justify-content: start;
   align-items: center;
 }
+
 .jp-EodagWidget .jp-EodagWidget-form .jp-EodagWidget-input-wrapper {
   padding: 0px 8px;
   border: 1px solid var(--jp-border-color0);
@@ -187,17 +207,20 @@
   .jp-EodagWidget-input-wrapper:nth-child(1) {
   margin-right: 0.1rem;
 }
+
 .jp-EodagWidget .jp-EodagWidget-form .jp-EodagWidget-input-wrapper:after {
   content: ' ';
   position: absolute;
   right: 5px;
   top: 5px;
 }
+
 .jp-EodagWidget
   .jp-EodagWidget-form
   .jp-EodagWidget-input-wrapper:focus-within {
   border: 1px solid #2196f3;
 }
+
 .jp-EodagWidget .jp-EodagWidget-form .jp-EodagWidget-input {
   background: transparent;
   width: calc(100% - 18px);
@@ -214,7 +237,42 @@
 }
 
 .jp-EodagWidget .jp-EodagWidget-form .jp-EodagWidget-additionnalParameters {
+  margin-top: 10px;
   padding: 0 10px;
+}
+
+.jp-EodagWidget .jp-EodagWidget-form .jp-EodagWidget-section-title {
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.jp-EodagWidget .jp-EodagWidget-form .jp-EodagWidget-optional-button {
+  display: flex;
+  align-items: center;
+  border: none;
+  background: none;
+  color: #2196f3;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 5px;
+}
+
+.jp-EodagWidget .jp-EodagWidget-form .jp-EodagWidget-optional-button:disabled {
+  color: gray;
+  cursor: not-allowed;
+}
+
+.jp-EodagWidget
+  .jp-EodagWidget-form
+  .jp-EodagWidget-optional-button:not(:disabled):hover {
+  color: rgb(59, 172, 255);
+}
+
+.jp-EodagWidget
+  .jp-EodagWidget-form
+  .jp-EodagWidget-field
+  .jp-EodagWidget-additionnalParameters {
+  margin-top: 10px;
 }
 
 .jp-EodagWidget
@@ -248,6 +306,7 @@
   color: var(--jp-ui-font-color0);
   width: 40%;
 }
+
 .jp-EodagWidget
   .jp-EodagWidget-form
   .jp-EodagWidget-field
@@ -255,7 +314,9 @@
   .jp-EodagWidget-additionnalParameters-label-icon-wrapper {
   display: flex;
   align-items: center;
+  margin-bottom: 10px;
 }
+
 .jp-EodagWidget
   .jp-EodagWidget-form
   .jp-EodagWidget-field
@@ -265,6 +326,7 @@
   display: inline-flex;
   margin-left: 5px;
 }
+
 .jp-EodagWidget
   .jp-EodagWidget-form
   .jp-EodagWidget-field
@@ -273,6 +335,7 @@
   a:hover {
   color: #677381;
 }
+
 .jp-EodagWidget
   .jp-EodagWidget-form
   .jp-EodagWidget-field
@@ -280,6 +343,7 @@
   input:focus-within {
   border: 1px solid #2196f3;
 }
+
 .jp-EodagWidget
   .jp-EodagWidget-form
   .jp-EodagWidget-field
@@ -347,6 +411,7 @@ section button .jp-EodagWidget-additionnalParameters-addbutton svg,
   outline: none;
   background: var(--jp-layout-color0);
 }
+
 .jp-EodagWidget input[type='range']::-webkit-slider-runnable-track {
   width: 100%;
   height: 7px;
@@ -355,6 +420,7 @@ section button .jp-EodagWidget-additionnalParameters-addbutton svg,
   border-radius: 0px;
   border: 1px solid var(--jp-border-color0);
 }
+
 .jp-EodagWidget input[type='range']::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
@@ -368,6 +434,7 @@ section button .jp-EodagWidget-additionnalParameters-addbutton svg,
   color: var(--jp-brand-color1);
   margin-top: -8px;
 }
+
 .jp-EodagWidget input[type='range']::-moz-range-track {
   width: 100%;
   height: 7px;
@@ -389,10 +456,12 @@ section button .jp-EodagWidget-additionnalParameters-addbutton svg,
   color: var(--jp-brand-color1);
   margin-top: -8px;
 }
+
 .jp-EodagWidget input[type='range']::-moz-range-progress {
   height: 0;
   background: transparent;
 }
+
 .jp-EodagWidget input[type='range']::-ms-track {
   width: 100%;
   height: 7px;
@@ -402,6 +471,7 @@ section button .jp-EodagWidget-additionnalParameters-addbutton svg,
   border: 1px solid var(--jp-border-color0);
   color: transparent;
 }
+
 .jp-EodagWidget input[type='range']::-ms-thumb {
   appearance: none;
   padding: 0;
@@ -414,12 +484,15 @@ section button .jp-EodagWidget-additionnalParameters-addbutton svg,
   color: var(--jp-brand-color1);
   margin-top: -8px;
 }
+
 .jp-EodagWidget input[type='range']::-ms-tooltip {
   display: none;
 }
+
 .jp-EodagWidget input[type='range']::-ms-fill-lower {
   background: transparent;
 }
+
 .jp-EodagWidget input[type='range']::-ms-fill-upper {
   background: transparent;
 }
@@ -428,6 +501,7 @@ section button .jp-EodagWidget-additionnalParameters-addbutton svg,
   display: flex;
   justify-content: center;
 }
+
 .jp-EodagWidget-modal .jp-EodagWidget-small-quicklook {
   max-height: 200px;
   max-width: 200px;
@@ -459,9 +533,11 @@ section button .jp-EodagWidget-additionnalParameters-addbutton svg,
 .jp-EodagWidget-modal .jp-EodagWidget-browse-wrapper {
   height: calc(100% - 130px);
 }
+
 .jp-EodagWidget-modal .jp-EodagWidget-loading-wrapper {
   margin-right: 10px;
 }
+
 .jp-EodagWidget-modal .jp-EodagWidget-browse-title {
   display: flex;
   justify-content: flex-end;
@@ -508,6 +584,7 @@ section button .jp-EodagWidget-additionnalParameters-addbutton svg,
 #jp-left-stack {
   z-index: 2;
 }
+
 #jp-left-stack > .lm-Widget {
   min-width: 315px !important;
 }
@@ -521,21 +598,26 @@ section button .jp-EodagWidget-additionnalParameters-addbutton svg,
 .jp-EodagWidget-browse-wrapper .noClick {
   cursor: initial;
 }
+
 .jp-EodagWidget-browse-wrapper .tableCell {
   flex: 1;
 }
+
 .jp-EodagWidget-browse-wrapper .headerRow {
   height: 40px;
   border-bottom: 2px solid #2196f3;
   color: #818181;
 }
+
 .jp-EodagWidget-browse-wrapper .tableRow {
   cursor: pointer;
   border-bottom: 1px solid rgba(180, 180, 180, 0.719);
 }
+
 .jp-EodagWidget-browse-wrapper .tableRow:hover {
   background-color: rgba(180, 180, 180, 0.747);
 }
+
 .jp-EodagWidget-browse-wrapper .flexContainer {
   text-align: center;
   font-size: 14px;
@@ -544,6 +626,7 @@ section button .jp-EodagWidget-additionnalParameters-addbutton svg,
   box-sizing: border-box;
   justify-content: center;
 }
+
 .jp-EodagWidget-appbar button,
 .jp-EodagWidget-browse-wrapper button,
 .jp-EodagWidget-modal-footer button {
@@ -553,6 +636,7 @@ section button .jp-EodagWidget-additionnalParameters-addbutton svg,
   font-size: 18px;
   cursor: pointer;
 }
+
 .jp-EodagWidget-appbar button,
 .jp-EodagWidget-modal-footer button {
   color: white;
@@ -568,6 +652,7 @@ section button .jp-EodagWidget-additionnalParameters-addbutton svg,
 .jp-EodagWidget-modal-footer button:hover {
   background-color: var(--button-hover);
 }
+
 .jp-EodagWidget-apply {
   float: right;
   padding: 3px 6px;
@@ -585,6 +670,7 @@ label.jp-EodagWidget-input-name:nth-child(3) {
   0% {
     transform: rotate(0deg);
   }
+
   100% {
     transform: rotate(360deg);
   }

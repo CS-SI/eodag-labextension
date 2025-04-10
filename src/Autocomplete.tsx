@@ -10,11 +10,11 @@ import {
   SingleValueProps,
   ValueContainerProps
 } from 'react-select';
-import { Tooltip, PlacesType, VariantType } from 'react-tooltip';
-import { OptionTypeBase } from 'react-select/src/types';
 import AsyncSelect from 'react-select/async';
+import { OptionTypeBase } from 'react-select/src/types';
+import { PlacesType, Tooltip, VariantType } from 'react-tooltip';
 
-import { IOptionTypeBase } from './FormComponent';
+import { IOptionTypeBase } from './formComponent/FormComponent';
 
 function NoOptionsMessage(props: any) {
   return (

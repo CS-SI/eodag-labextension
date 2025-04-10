@@ -39,7 +39,6 @@ class SearchService {
         ? formatDate(formValues.startDate)
         : undefined,
       dtend: formValues.endDate ? formatDate(formValues.endDate) : undefined,
-      cloudCover: formValues.cloud < 100 ? formValues.cloud : undefined,
       page: page,
       geom: formValues.geometry,
       provider: formValues.provider
@@ -55,6 +54,22 @@ class SearchService {
         )
       );
     }
+
+    // Map any extra dynamic properties (excluding already handled ones)
+    const excludedKeys = new Set([
+      'startDate',
+      'endDate',
+      'productType',
+      'geometry',
+      'provider',
+      'additionnalParameters'
+    ]);
+
+    Object.keys(formValues).forEach(key => {
+      if (!excludedKeys.has(key)) {
+        parameters[key] = formValues[key];
+      }
+    });
 
     const headers = new Headers({
       'Content-Type': 'application/json'

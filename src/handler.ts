@@ -6,6 +6,7 @@
 import { URLExt } from '@jupyterlab/coreutils';
 
 import { ServerConnection } from '@jupyterlab/services';
+import { EODAG_SERVER_ADRESS } from './config';
 
 /**
  * Call the API extension
@@ -22,7 +23,7 @@ export async function requestAPI<T>(
   const settings = ServerConnection.makeSettings();
   const requestUrl = URLExt.join(
     settings.baseUrl,
-    'eodag-labextension', // API Namespace
+    EODAG_SERVER_ADRESS, // API Namespace
     endPoint
   );
 
@@ -30,7 +31,7 @@ export async function requestAPI<T>(
   try {
     response = await ServerConnection.makeRequest(requestUrl, init, settings);
   } catch (error) {
-    throw new ServerConnection.NetworkError(error);
+    throw new ServerConnection.NetworkError(error as TypeError);
   }
 
   let data: any = await response.text();
@@ -39,12 +40,15 @@ export async function requestAPI<T>(
     try {
       data = JSON.parse(data);
     } catch (error) {
-      console.log('Not a JSON response body.', response);
+      console.error('Not a JSON response body.', response);
     }
   }
 
   if (!response.ok) {
-    throw new ServerConnection.ResponseError(response, data.message || data);
+    throw new ServerConnection.ResponseError(
+      response,
+      JSON.stringify(data.message || data)
+    );
   }
 
   return data;

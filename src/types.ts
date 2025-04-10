@@ -9,14 +9,13 @@ export interface IFormInput {
   endDate: Date;
   productType: string;
   provider: string;
-  cloud: number;
   additionnalParameters?: { name: string; value: string }[];
+  [key: string]: any;
 }
 
 export interface ISearchParameters {
   dtstart?: string; // format: YYYY-MM-DD
   dtend?: string; // format: YYYY-MM-DD
-  cloudCover?: number;
   page?: number;
   geom?: IGeometry;
   [key: string]: any;
@@ -39,3 +38,20 @@ export interface IFeaturePropertie {
 }
 
 export type MapSettings = { lat: number; lon: number; zoom: number };
+
+export interface IQueryables {
+  properties: { [key: string]: { [key: string]: unknown } };
+  required?: string[];
+  additionalProperties: boolean;
+}
+
+export interface IParameter {
+  key: string;
+  value: { [key: string]: any };
+  mandatory: boolean;
+}
+
+export interface IOptionType {
+  value: string;
+  label: string;
+}
