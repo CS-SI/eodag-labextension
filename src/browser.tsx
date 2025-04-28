@@ -3,7 +3,6 @@
  * All rights reserved
  */
 import { showErrorMessage } from '@jupyterlab/apputils';
-import { CodeCellModel } from '@jupyterlab/cells';
 import { URLExt } from '@jupyterlab/coreutils';
 import {
   INotebookModel,
@@ -11,25 +10,18 @@ import {
   Notebook,
   NotebookActions
 } from '@jupyterlab/notebook';
-import { showErrorMessage } from '@jupyterlab/apputils';
 import { concat, get, isNull, isUndefined } from 'lodash';
-import { FormComponent } from './FormComponent';
 import ModalComponent from './ModalComponent';
 import formatCode from './CodeGenerator';
 import SearchService from './SearchService';
-import { IFormInput, IGeometry } from './types';
+import { IFormInput, IGeometry, IParameter } from './types';
 import { ServerConnection } from '@jupyterlab/services';
-import { concat, get } from 'lodash';
 import * as React from 'react';
 import { PlacesType, Tooltip, VariantType } from 'react-tooltip';
-import formatCode from './CodeGenerator';
 import { EODAG_SETTINGS_ADDRESS } from './config';
 import { FormComponent } from './formComponent/FormComponent';
 import { useFetchUserSettings } from './hooks/useFetchData';
 import { CarbonSettings, IcBaselineRefresh } from './icones';
-import ModalComponent from './ModalComponent';
-import SearchService from './SearchService';
-import { IFormInput, IParameter } from './types';
 
 export interface IProps {
   tracker: INotebookTracker;

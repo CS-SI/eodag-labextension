@@ -20,5 +20,11 @@
     "strictNullChecks": true,
     "target": "ES2018"
   },
-  "include": ["src/*", "src/hooks/*", "style/index.js"]
+  "include": [
+    "src/*",
+    "src/hooks/*",
+    "style/index.js",
+    "src/formComponent/*",
+    "src/helpers/*"
+  ]
 }

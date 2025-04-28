@@ -65,8 +65,8 @@ search_results = dag.search(`;
     code += `
     end="${end}",`;
   }
-  var filteredParameters: {"name": string, "value": string}[] = []
-  if (!isUndefined(additionnalParameters)){
+  let filteredParameters: { name: string; value: string }[] = [];
+  if (!isUndefined(additionnalParameters)) {
     filteredParameters = additionnalParameters.filter(
       ({ name, value }) => name && value && name !== '' && value !== ''
     );

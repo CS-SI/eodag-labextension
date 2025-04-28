@@ -70,16 +70,16 @@ export const FormComponent: FC<IProps> = ({
 }) => {
   const [productTypes, setProductTypes] = useState<IOptionTypeBase[]>();
   const [providers, setProviders] = useState<IOptionTypeBase[]>();
-  const defaultStartDate: Date = undefined;
-  const defaultEndDate: Date = undefined;
+  const defaultStartDate: Date | undefined = undefined;
+  const defaultEndDate: Date | undefined = undefined;
   const [startDate, setStartDate] = useState(undefined);
   const [endDate, setEndDate] = useState(undefined);
   const [isLoadingSearch, setIsLoadingSearch] = useState(false);
   const [openModal, setOpenModal] = useState(true);
   const [providerValue, setProviderValue] = useState(null);
-  const [productTypeValue, setProductTypeValue] = useState<string>(null);
+  const [productTypeValue, setProductTypeValue] = useState<string>('');
   const [fetchCount, setFetchCount] = useState(0);
-  const [params, setParams] = useState<IParameter[]>(null);
+  const [params, setParams] = useState<IParameter[]>([]);
   const [loading, setLoading] = useState(false);
   const [additionalParameters, setAdditionalParameters] =
     useState<boolean>(true);
@@ -202,7 +202,7 @@ export const FormComponent: FC<IProps> = ({
       } else {
         console.error('Error fetching queryables:', error);
       }
-      return;
+      return [];
     }
     setParams(queryables.properties);
 
@@ -387,7 +387,7 @@ export const FormComponent: FC<IProps> = ({
                         startDate={startDate}
                         endDate={endDate}
                         maxDate={endDate}
-                        onChange={(d: Date) => {
+                        onChange={(d: any) => {
                           setStartDate(d);
                           onChange(d);
                         }}
@@ -416,7 +416,7 @@ export const FormComponent: FC<IProps> = ({
                         selectsStart
                         startDate={startDate}
                         endDate={endDate}
-                        onChange={(d: Date) => {
+                        onChange={(d: any) => {
                           setEndDate(d);
                           onChange(d);
                         }}

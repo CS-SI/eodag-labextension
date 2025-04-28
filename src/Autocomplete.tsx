@@ -84,7 +84,7 @@ const listcomponents = {
 };
 
 interface IProps {
-  suggestions: OptionTypeBase[];
+  suggestions: IOptionTypeBase[] | undefined;
   value: string;
   handleChange: any;
   label: string;
@@ -104,7 +104,7 @@ class IntegrationReactSelect extends React.Component<IProps> {
     } = this.props;
 
     const currentValue: OptionTypeBase | undefined = value
-      ? suggestions.find(e => e.value === value)
+      ? suggestions && suggestions.find(e => e.value === value)
       : undefined;
 
     return (

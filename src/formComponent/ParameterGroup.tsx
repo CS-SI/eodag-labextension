@@ -29,7 +29,7 @@ const ParameterGroup: React.FC<IParameterGroupProps> = ({
       | string
       | { value: string; label: string }
       | MultiValue<string | { value: string; label: string }>,
-    onChange: (...event: any[]) => void | undefined = undefined
+    onChange: ((...event: any[]) => void) | undefined = undefined
   ) => {
     let selectedValue: undefined | number | string | string[];
 
@@ -113,7 +113,7 @@ const ParameterGroup: React.FC<IParameterGroupProps> = ({
             placeholder={`Select a ${lowercaseTitle}...`}
             defaultValue={getSelectedValue(type, defaultValue)}
             onChange={selectedOption => {
-              handleSelectChange(key, selectedOption, onChange);
+              handleSelectChange(key, value[key], onChange);
             }}
             isClearable
             isDisabled={enumList.length === 0}
