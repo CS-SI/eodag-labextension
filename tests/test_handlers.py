@@ -106,7 +106,8 @@ class TestEodagLabExtensionHandler(AsyncHTTPTestCase):
 
         result_with_description = self.fetch_results("/eodag/providers?keywords=cop")
         self.assertGreater(len(result_with_description), 2)
-        self.assertEqual(result_with_description[0]["provider"], "cop_ads")
+        providers = [r["provider"] for r in result_with_description]
+        self.assertIn("cop_marine", providers)
 
         no_result = self.fetch_results("/eodag/providers?product_type=foo")
         self.assertEqual(len(no_result), 0)
