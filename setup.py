@@ -59,7 +59,7 @@ setup_args = dict(
     packages=setuptools.find_packages(),
     install_requires=[
         "jupyterlab~=4.0",
-        "tornado>=6.0.3,<7.0.0",
+        "tornado>=6.4.1,<7.0.0",
         "notebook>=6.0.3,<7.0.0",
         "eodag[notebook]>=3.1.0",
         "orjson",
