@@ -21,7 +21,7 @@ jobs:
         with:
           python-version: '3.9'
       - name: Run pre-commit action
-        uses: pre-commit/action@v2.0.0
+        uses: pre-commit/action@v3.0.1
   build:
     runs-on: ubuntu-latest
     steps:
@@ -46,7 +46,6 @@ jobs:
           restore-keys: |
             pip-3.9-
             pip-
-
 
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
