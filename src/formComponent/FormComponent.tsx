@@ -320,7 +320,7 @@ export const FormComponent: FC<IProps> = ({
                 <Autocomplete
                   label="Provider"
                   placeholder="Any"
-                  suggestions={providers}
+                  suggestions={providers ? providers : []}
                   value={value}
                   loadSuggestions={(inputValue: string) =>
                     loadProviderSuggestions(null, inputValue)
@@ -339,7 +339,7 @@ export const FormComponent: FC<IProps> = ({
               render={({ field: { onChange, value } }) => (
                 <Autocomplete
                   label="Product Type"
-                  suggestions={productTypes}
+                  suggestions={productTypes ? productTypes : []}
                   placeholder="S2_..."
                   value={value}
                   loadSuggestions={(inputValue: string) =>

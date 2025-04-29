@@ -84,7 +84,7 @@ const listcomponents = {
 };
 
 interface IProps {
-  suggestions: IOptionTypeBase[] | undefined;
+  suggestions: IOptionTypeBase[];
   value: string;
   handleChange: any;
   label: string;

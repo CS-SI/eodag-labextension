@@ -68,8 +68,7 @@ setup_args = dict(
         "dev": [
             "black",
             "pre-commit",
-            # pytest pinned until https://github.com/pytest-dev/pytest/issues/12263 is fixes
-            "pytest < 8.2.0",
+            "pytest~=8.2.0",
             "shapely",
         ]
     },
