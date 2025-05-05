@@ -89,8 +89,8 @@ search_results = dag.search(`;
               )
               .join(', ')}]`
           : typeof value === 'string'
-          ? `"${value.trim()}"`
-          : value;
+            ? `"${value.trim()}"`
+            : value;
         return `${tab + tab}"${name}": ${processedValue},`;
       })
       .join('\n');
@@ -109,8 +109,8 @@ search_results = dag.search(`;
                 )
                 .join(', ')}]`
             : typeof value === 'string'
-            ? `"${value.trim()}"`
-            : value;
+              ? `"${value.trim()}"`
+              : value;
           return `${tab + tab}"${key}": ${processedValue},`;
         })
         .join('\n');

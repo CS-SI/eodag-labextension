@@ -256,10 +256,13 @@ export const FormComponent: FC<IProps> = ({
     }
 
     const query_params = params
-      ? params.reduce((acc: { [key: string]: string }, curr: any) => {
-          acc[curr.key] = curr.value.selected;
-          return acc;
-        }, {} as { [key: string]: string })
+      ? params.reduce(
+          (acc: { [key: string]: string }, curr: any) => {
+            acc[curr.key] = curr.value.selected;
+            return acc;
+          },
+          {} as { [key: string]: string }
+        )
       : undefined;
 
     fetchParameters(query_params);

@@ -153,15 +153,15 @@ export default class MapFeatureComponent extends React.Component<
   render() {
     const { bounds } = this.state;
     // make sure that bounds is a LatLngBounds object
-    let corner1 = L.latLng(
+    const corner1 = L.latLng(
       bounds.getSouthWest().lat,
       bounds.getSouthWest().lng
     );
-    let corner2 = L.latLng(
+    const corner2 = L.latLng(
       bounds.getNorthEast().lat,
       bounds.getNorthEast().lng
     );
-    let bounds_lng = L.latLngBounds(corner1, corner2);
+    const bounds_lng = L.latLngBounds(corner1, corner2);
     return (
       <MapContainer
         bounds={bounds_lng}
