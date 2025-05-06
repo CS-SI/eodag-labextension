@@ -68,7 +68,7 @@ setup_args = dict(
         "dev": [
             "black",
             "pre-commit",
-            "pytest~=8.2.0",
+            "pytest",
             "shapely",
         ]
     },
