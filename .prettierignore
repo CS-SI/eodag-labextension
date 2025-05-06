@@ -2,4 +2,5 @@ node_modules
 **/node_modules
 **/lib
 **/package.json
-eodag-labextension
+!/package.json
+eodag_labextension

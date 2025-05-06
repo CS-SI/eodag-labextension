@@ -15,7 +15,7 @@ import {
   TableHeaderProps,
   ColumnProps
 } from 'react-virtualized';
-import { get } from 'lodash';
+import { get, isUndefined } from 'lodash';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearchPlus } from '@fortawesome/free-solid-svg-icons';
 
@@ -90,11 +90,11 @@ class MuiVirtualizedTable extends React.PureComponent<IMuiVirtualizedTableProps>
     return {};
   };
 
-  cellRenderer = ({ cellData, columnIndex = null }: TableCellProps) => {
+  cellRenderer = ({ cellData, columnIndex = -1 }: TableCellProps) => {
     const { columns } = this.props;
     let isPercent = false;
     if (
-      columnIndex !== null &&
+      columnIndex !== -1 &&
       columnIndex !== undefined &&
       columns[columnIndex].percent
     ) {
@@ -107,18 +107,21 @@ class MuiVirtualizedTable extends React.PureComponent<IMuiVirtualizedTableProps>
     }
   };
 
-  buttonRenderer = ({ columnIndex = null, rowData }: TableCellProps) => {
+  buttonRenderer = ({ columnIndex = -1, rowData }: TableCellProps) => {
     const { columns } = this.props;
     // Retrieve event handler from column def
     let handleClick = (dataId: number | string) => {
       // do nothing.
     };
     if (
-      columnIndex !== null &&
+      columnIndex !== -1 &&
       columnIndex !== undefined &&
       columns[columnIndex].handleClick
     ) {
-      handleClick = columns[columnIndex].handleClick;
+      const temp_handle = columns[columnIndex].handleClick;
+      if (!isUndefined(temp_handle)) {
+        handleClick = temp_handle;
+      }
     }
     return (
       <button
@@ -131,7 +134,7 @@ class MuiVirtualizedTable extends React.PureComponent<IMuiVirtualizedTableProps>
     );
   };
 
-  selectorRenderer = ({ columnIndex = null }) => {
+  selectorRenderer = ({ columnIndex = -1 }) => {
     // Not used right now
     return <div>Cellule selector</div>;
   };
@@ -150,7 +153,10 @@ class MuiVirtualizedTable extends React.PureComponent<IMuiVirtualizedTableProps>
     };
 
     const inner =
-      !disableSort && sort !== null && sort !== undefined ? (
+      !disableSort &&
+      sort !== null &&
+      sort !== undefined &&
+      sortDirection !== undefined ? (
         <TableSortLabelWithoutMUI
           active={dataKey === sortBy}
           direction={direction[sortDirection]}

@@ -10,7 +10,7 @@ import { ServerConnection } from '@jupyterlab/services';
 import { URLExt } from '@jupyterlab/coreutils';
 import { formatDate } from './utils';
 import { IFormInput, ISearchParameters } from './types';
-import _ from 'lodash';
+import _, { isUndefined } from 'lodash';
 
 class SearchService {
   /**
@@ -32,7 +32,10 @@ class SearchService {
    * @param formValues parameters to pass to EODAG search
    * @return a promise that will receive features
    */
-  search(page = 1, formValues: IFormInput) {
+  search(page = 1, formValues: IFormInput | undefined) {
+    if (isUndefined(formValues)) {
+      throw new Error('Input undefined');
+    }
     const url = this.getSearchURL(formValues.productType);
     let parameters: ISearchParameters = {
       dtstart: formValues.startDate

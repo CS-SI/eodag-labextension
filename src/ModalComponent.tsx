@@ -5,7 +5,7 @@
 
 import * as React from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
-import { find, isEqual, get } from 'lodash';
+import { find, isEqual, get, isUndefined } from 'lodash';
 import Modal, { Styles } from 'react-modal';
 import MapFeatureComponent from './MapFeatureComponent';
 import BrowseComponent from './BrowseComponent';
@@ -55,7 +55,10 @@ const tooltipDark: VariantType = 'dark';
 const tooltipBottom: PlacesType = 'bottom';
 
 // Override modal's default style
-Modal.defaultStyles.overlay.zIndex = 4;
+if (!isUndefined(Modal.defaultStyles.overlay)) {
+  Modal.defaultStyles.overlay.zIndex = 4;
+}
+
 Modal.setAppElement('body');
 export default class ModalComponent extends React.Component<IProps, IState> {
   constructor(props: IProps) {

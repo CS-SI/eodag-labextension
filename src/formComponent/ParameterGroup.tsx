@@ -28,8 +28,9 @@ const ParameterGroup: React.FC<IParameterGroupProps> = ({
       | number
       | string
       | { value: string; label: string }
-      | MultiValue<string | { value: string; label: string }>,
-    onChange: (...event: any[]) => void | undefined = undefined
+      | MultiValue<string | { value: string; label: string }>
+      | null,
+    onChange: ((...event: any[]) => void) | undefined = undefined
   ) => {
     let selectedValue: undefined | number | string | string[];
 
@@ -47,7 +48,7 @@ const ParameterGroup: React.FC<IParameterGroupProps> = ({
     } else if (newValue === null) {
       selectedValue = undefined;
     } else {
-      throw new Error('Invalid value type');
+      throw new Error('Invalid value type ' + typeof newValue);
     }
 
     if (onChange) {
