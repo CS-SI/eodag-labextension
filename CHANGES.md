@@ -1,5 +1,9 @@
 # Release history
 
+## 4.1.0b1 (2024-05-06)
+
+- Jupyterlab v4 upgrade [(#161)](https://github.com/CS-SI/eodag-labextension/pull/161)
+
 ## 4.0.0 (2025-04-10)
 
 - **Dynamic search form based on queryables** [(#168)](https://github.com/CS-SI/eodag-labextension/pull/168)
