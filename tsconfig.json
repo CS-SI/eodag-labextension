@@ -6,6 +6,7 @@
     "esModuleInterop": true,
     "incremental": true,
     "jsx": "react",
+    "lib": ["es2020", "dom"],
     "module": "esnext",
     "moduleResolution": "node",
     "noEmitOnError": true,
@@ -16,10 +17,14 @@
     "outDir": "lib",
     "rootDir": "src",
     "strict": true,
-    "strictNullChecks": false,
-    "target": "es2017",
-    "types": [],
-    "skipLibCheck": true
+    "strictNullChecks": true,
+    "target": "ES2018"
   },
-  "include": ["src/**/*", "style/*"]
+  "include": [
+    "src/*",
+    "src/hooks/*",
+    "style/index.js",
+    "src/formComponent/*",
+    "src/helpers/*"
+  ]
 }

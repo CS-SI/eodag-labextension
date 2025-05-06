@@ -4,6 +4,7 @@ import { Tooltip } from 'react-tooltip';
 import { CarbonAddFilled, CarbonTrashCan } from '../icones';
 import { IFormInput } from '../types';
 import { tooltipDark, tooltipTop, tooltipWarning } from './FormComponent';
+import { isUndefined } from 'lodash';
 
 export interface IAdditionalParameterFieldsProps
   extends Partial<UseFormReturn<IFormInput>> {
@@ -26,10 +27,14 @@ const AdditionalParameterFields = ({
   });
   fields[0] = { name: '', value: '', id: '999' };
 
-  const clearInput = (index: number): void => {
-    resetField(`additionnalParameters.${index}.name`);
-    resetField(`additionnalParameters.${index}.value`);
-  };
+  let clearInput: (index: number) => void;
+  if (!isUndefined(resetField)) {
+    clearInput = (index: number): void => {
+      resetField(`additionnalParameters.${index}.name`);
+      resetField(`additionnalParameters.${index}.value`);
+    };
+  }
+
   return (
     <div className="jp-EodagWidget-additionnalParameters">
       <p
@@ -39,7 +44,7 @@ const AdditionalParameterFields = ({
         Custom Parameters
       </p>
 
-      {!productType ? (
+      {!productType || isUndefined(register) ? (
         <p className="jp-EodagWidget-noParametersMessage">
           Select a product type to unlock custom parameters.
         </p>
@@ -59,7 +64,9 @@ const AdditionalParameterFields = ({
                 type="button"
                 className="jp-EodagWidget-additionnalParameters-deletebutton"
                 onClick={() =>
-                  fields.length === 1 ? clearInput(index) : remove(index)
+                  fields.length === 1 && clearInput
+                    ? clearInput(index)
+                    : remove(index)
                 }
                 data-tooltip-id="parameters-delete"
                 data-tooltip-content="remove custom parameter"

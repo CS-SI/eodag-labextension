@@ -58,21 +58,17 @@ setup_args = dict(
     cmdclass=cmdclass,
     packages=setuptools.find_packages(),
     install_requires=[
-        "jupyterlab~=3.0",
-        "tornado>=6.0.3,<7.0.0",
+        "jupyterlab~=4.0",
+        "tornado>=6.4.1,<7.0.0",
         "notebook>=6.0.3,<7.0.0",
         "eodag[notebook]>=3.1.0",
         "orjson",
-        # ipyleaflet is not needed, but versions >= 0.17.4 will make the labextension crash
-        # try removing this dependency when updating leaflet and/or jupyterlab
-        "ipyleaflet<0.17.4",
     ],
     extras_require={
         "dev": [
             "black",
             "pre-commit",
-            # pytest pinned until https://github.com/pytest-dev/pytest/issues/12263 is fixes
-            "pytest < 8.2.0",
+            "pytest",
             "shapely",
         ]
     },

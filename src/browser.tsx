@@ -3,7 +3,6 @@
  * All rights reserved
  */
 import { showErrorMessage } from '@jupyterlab/apputils';
-import { CodeCellModel } from '@jupyterlab/cells';
 import { URLExt } from '@jupyterlab/coreutils';
 import {
   INotebookModel,
@@ -11,18 +10,18 @@ import {
   Notebook,
   NotebookActions
 } from '@jupyterlab/notebook';
+import { concat, get, isNull, isUndefined } from 'lodash';
+import ModalComponent from './ModalComponent';
+import formatCode from './CodeGenerator';
+import SearchService from './SearchService';
+import { IFormInput, IGeometry, IParameter } from './types';
 import { ServerConnection } from '@jupyterlab/services';
-import { concat, get } from 'lodash';
 import * as React from 'react';
 import { PlacesType, Tooltip, VariantType } from 'react-tooltip';
-import formatCode from './CodeGenerator';
 import { EODAG_SETTINGS_ADDRESS } from './config';
 import { FormComponent } from './formComponent/FormComponent';
 import { useFetchUserSettings } from './hooks/useFetchData';
 import { CarbonSettings, IcBaselineRefresh } from './icones';
-import ModalComponent from './ModalComponent';
-import SearchService from './SearchService';
-import { IFormInput, IParameter } from './types';
 
 export interface IProps {
   tracker: INotebookTracker;
@@ -33,7 +32,7 @@ export interface IState {
   features: any;
   openDialog: any;
   searching: any;
-  formValues: IFormInput;
+  formValues: IFormInput | undefined;
   replaceCellIndex: number;
   isLoading: boolean;
   reloadIndicator: boolean;
@@ -50,7 +49,7 @@ export class EodagBrowser extends React.Component<IProps, IState> {
       openDialog: false,
       searching: false,
       formValues: undefined,
-      replaceCellIndex: undefined,
+      replaceCellIndex: 0,
       isLoading: false,
       reloadIndicator: false
     };
@@ -108,17 +107,15 @@ export class EodagBrowser extends React.Component<IProps, IState> {
   };
 
   getCodeCell = (code: string) => {
-    return new CodeCellModel({
-      cell: {
-        cell_type: 'code',
-        metadata: {
-          trusted: false,
-          collapsed: false,
-          tags: ['Injected by EODAG plugin']
-        },
-        source: [code]
-      }
-    });
+    return {
+      cell_type: 'code',
+      metadata: {
+        trusted: false,
+        collapsed: false,
+        tags: ['Injected by EODAG plugin']
+      },
+      source: code
+    };
   };
 
   getEodagSettings = async () => {
@@ -146,7 +143,7 @@ export class EodagBrowser extends React.Component<IProps, IState> {
   handleCellInsertionPosition = (
     notebook: Notebook,
     model: INotebookModel,
-    cell: CodeCellModel,
+    code: string,
     replaceCode: boolean
   ) => {
     const activeCellIndex = notebook.activeCellIndex;
@@ -167,11 +164,13 @@ export class EodagBrowser extends React.Component<IProps, IState> {
         }
       });
     }
+    const cell = this.getCodeCell(code);
 
     if (replaceCode && isReplaceCellExist) {
       notebook.activeCellIndex = this.state.replaceCellIndex;
       NotebookActions.deleteCells(notebook);
-      model.cells.insert(this.state.replaceCellIndex, cell);
+      NotebookActions.insertBelow(notebook);
+      model.sharedModel.insertCell(this.state.replaceCellIndex, cell);
       notebook.activeCellIndex = this.state.replaceCellIndex;
     }
 
@@ -179,12 +178,12 @@ export class EodagBrowser extends React.Component<IProps, IState> {
       this.setState({
         replaceCellIndex: activeCellIndex + 1
       });
-      model.cells.insert(activeCellIndex + 1, cell);
+      model.sharedModel.insertCell(activeCellIndex + 1, cell);
       NotebookActions.selectBelow(notebook);
     }
 
     if (!replaceCode) {
-      model.cells.insert(activeCellIndex + 1, cell);
+      model.sharedModel.insertCell(activeCellIndex + 1, cell);
       NotebookActions.selectBelow(notebook);
     }
   };
@@ -199,6 +198,10 @@ export class EodagBrowser extends React.Component<IProps, IState> {
 
     const notebook = this.props.tracker.currentWidget.content;
     const model = notebook.model;
+    if (isNull(model)) {
+      showErrorMessage('no model', '');
+      return;
+    }
 
     while (!model.defaultKernelLanguage) {
       await new Promise(resolve => setTimeout(resolve, 100));
@@ -207,21 +210,36 @@ export class EodagBrowser extends React.Component<IProps, IState> {
     if (model.defaultKernelLanguage !== 'python') {
       showErrorMessage(
         'Active notebook uses wrong kernel language. Only python is supported',
-        {}
+        ''
       );
       return;
     }
 
     if (model.readOnly) {
-      showErrorMessage('Unable to inject cell into read-only notebook', {});
+      showErrorMessage('Unable to inject cell into read-only notebook', '');
       return;
     }
 
     const replaceCode = await this.getEodagSettings();
-    const code = formatCode(this.state.formValues, replaceCode);
-    const cell = this.getCodeCell(code);
-
-    this.handleCellInsertionPosition(notebook, model, cell, replaceCode);
+    let input: IFormInput;
+    if (isUndefined(this.state.formValues)) {
+      const geom: IGeometry = {
+        type: 'Point',
+        coordinates: [0, 0]
+      };
+      input = {
+        startDate: new Date(),
+        endDate: new Date(),
+        productType: '',
+        provider: '',
+        cloud: 100,
+        geometry: geom
+      };
+    } else {
+      input = this.state.formValues;
+    }
+    const code = formatCode(input, replaceCode);
+    this.handleCellInsertionPosition(notebook, model, code, replaceCode);
   };
 
   handleCloseModal = () => {

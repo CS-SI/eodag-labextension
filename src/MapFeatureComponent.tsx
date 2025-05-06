@@ -4,7 +4,7 @@
  */
 
 import * as React from 'react';
-import { Map, TileLayer, GeoJSON } from 'react-leaflet';
+import { MapContainer, TileLayer, GeoJSON } from 'react-leaflet';
 import { isEmpty, get } from 'lodash';
 import { EODAG_TILE_URL, EODAG_TILE_COPYRIGHT } from './config';
 import L, { FeatureGroup, LeafletMouseEvent } from 'leaflet';
@@ -51,12 +51,12 @@ export default class MapFeatureComponent extends React.Component<
   };
   constructor(props: IProps) {
     super(props);
-    const featureGeoJSONs = new L.GeoJSON(props.features.features);
+    const featureGeoJSONs = new window.L.GeoJSON(props.features.features);
     const bounds = featureGeoJSONs.getBounds();
     this.state = {
       bounds,
       featureHover: null,
-      featureSelected: null
+      featureSelected: ''
     };
   }
 
@@ -66,7 +66,7 @@ export default class MapFeatureComponent extends React.Component<
         // Handle zoom on a product
         if (this.props.zoomFeature) {
           let bounds;
-          this.map.leafletElement.eachLayer((layer: FeatureGroup) => {
+          this.map.eachLayer((layer: FeatureGroup) => {
             if (
               get(layer, 'feature.id', null) === prevProps.highlightFeature.id
             ) {
@@ -74,7 +74,7 @@ export default class MapFeatureComponent extends React.Component<
             }
           });
           if (bounds) {
-            this.map.leafletElement.flyToBounds(bounds, {});
+            this.map.flyToBounds(bounds, {});
           }
         }
       }
@@ -82,7 +82,7 @@ export default class MapFeatureComponent extends React.Component<
         // Handle set feature (un)highlighted
         if (this.props.highlightFeature) {
           // Highlight a feature
-          this.map.leafletElement.eachLayer((layer: FeatureGroup) => {
+          this.map.eachLayer((layer: FeatureGroup) => {
             if (
               get(layer, 'feature.id', null) === this.props.highlightFeature.id
             ) {
@@ -92,7 +92,7 @@ export default class MapFeatureComponent extends React.Component<
           });
         } else {
           // Remove highlight on feature
-          this.map.leafletElement.eachLayer((layer: FeatureGroup) => {
+          this.map.eachLayer((layer: FeatureGroup) => {
             if (
               get(layer, 'feature.id', null) === prevProps.highlightFeature.id
             ) {
@@ -105,10 +105,10 @@ export default class MapFeatureComponent extends React.Component<
   }
 
   onMouseOver = (e: LeafletMouseEvent) => {
-    const productId = e.layer.feature.id;
+    const productId = e.target.feature.id;
     this.props.handleHoverFeature(productId);
-    e.layer.setStyle(MapFeatureComponent.HIGHLIGHT_EXTENT_STYLE);
-    e.layer.bringToFront();
+    e.target.setStyle(MapFeatureComponent.HIGHLIGHT_EXTENT_STYLE);
+    e.target.bringToFront();
     this.setState({
       featureHover: productId
     });
@@ -116,16 +116,16 @@ export default class MapFeatureComponent extends React.Component<
 
   onMouseOut = (e: LeafletMouseEvent) => {
     this.props.handleHoverFeature(null);
-    e.layer.setStyle(MapFeatureComponent.DEFAULT_EXTENT_STYLE);
+    e.target.setStyle(MapFeatureComponent.DEFAULT_EXTENT_STYLE);
     this.setState({
       featureHover: null
     });
   };
 
   onClick = (e: LeafletMouseEvent) => {
-    const productId = e.propagatedFrom.feature.id;
-    e.layer.setStyle(MapFeatureComponent.HIGHLIGHT_EXTENT_STYLE);
-    e.layer.bringToFront();
+    const productId = e.target.feature.id;
+    e.target.setStyle(MapFeatureComponent.HIGHLIGHT_EXTENT_STYLE);
+    e.target.bringToFront();
     this.props.handleClickFeature(productId);
 
     this.setState({
@@ -152,9 +152,19 @@ export default class MapFeatureComponent extends React.Component<
 
   render() {
     const { bounds } = this.state;
+    // make sure that bounds is a LatLngBounds object
+    const corner1 = L.latLng(
+      bounds.getSouthWest().lat,
+      bounds.getSouthWest().lng
+    );
+    const corner2 = L.latLng(
+      bounds.getNorthEast().lat,
+      bounds.getNorthEast().lng
+    );
+    const bounds_lng = L.latLngBounds(corner1, corner2);
     return (
-      <Map
-        bounds={bounds}
+      <MapContainer
+        bounds={bounds_lng}
         ref={ref => {
           this.map = ref;
         }}
@@ -167,12 +177,16 @@ export default class MapFeatureComponent extends React.Component<
             }`}
             data={this.props.features}
             style={this.getStyle}
-            onMouseOut={this.onMouseOut}
-            onMouseOver={this.onMouseOver}
-            onclick={this.onClick}
+            onEachFeature={(feature, layer) => {
+              layer.on({
+                mouseover: this.onMouseOver,
+                mouseout: this.onMouseOut,
+                click: this.onClick
+              });
+            }}
           />
         ) : null}
-      </Map>
+      </MapContainer>
     );
   }
 }

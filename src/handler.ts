@@ -31,7 +31,12 @@ export async function requestAPI<T>(
   try {
     response = await ServerConnection.makeRequest(requestUrl, init, settings);
   } catch (error) {
-    throw new ServerConnection.NetworkError(error as TypeError);
+    if (error instanceof Error) {
+      // Now TypeScript knows `error` is of type `Error`
+      throw new ServerConnection.NetworkError(error as TypeError);
+    } else {
+      throw Error('unknown error');
+    }
   }
 
   let data: any = await response.text();
