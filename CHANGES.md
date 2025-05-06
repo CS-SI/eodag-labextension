@@ -1,6 +1,6 @@
 # Release history
 
-## 5.0.0b1 (2024-05-06)
+## 5.0.0b1 (2025-05-06)
 
 - Jupyterlab v4 upgrade [(#161)](https://github.com/CS-SI/eodag-labextension/pull/161)
 
