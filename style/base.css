@@ -573,6 +573,10 @@ section button .jp-EodagWidget-additionnalParameters-addbutton svg,
   color: white;
 }
 
+.jp-EodagWidget-appbar p {
+  margin: 0;
+}
+
 .jp-Eodag-tooltip {
   max-width: 200px;
   padding: 8px 16px !important;
