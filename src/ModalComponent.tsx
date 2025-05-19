@@ -15,6 +15,9 @@ import DescriptionProductComponent from './DescriptionProductComponent';
 import { Tooltip, PlacesType, VariantType } from 'react-tooltip';
 
 const customStyles: Styles = {
+  overlay: {
+    zIndex: 10
+  },
   content: {
     top: '0px',
     left: '0px',
@@ -22,7 +25,7 @@ const customStyles: Styles = {
     bottom: 'auto',
     height: 'auto',
     width: '100%',
-    zIndex: 4,
+    zIndex: 10,
     marginRight: '0',
     padding: '0',
     borderRadius: 'none',
