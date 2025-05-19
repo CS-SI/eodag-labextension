@@ -404,6 +404,15 @@ section button .jp-EodagWidget-additionnalParameters-addbutton svg,
   color: var(--light-gray) !important;
 }
 
+.jp-SettingsPanel legend {
+  font-size: var(--jp-content-font-size2);
+  color: var(--jp-ui-font-color0);
+  flex-basis: 100%;
+  padding: 4px 0;
+  font-weight: var(--jp-content-header-font-weight);
+  border-bottom: 1px solid var(--jp-border-color2);
+}
+
 .jp-EodagWidget-select__placeholder {
   color: var(--gray) !important;
 }
