@@ -324,13 +324,13 @@ export const FormComponent: FC<IProps> = ({
                   label="Provider"
                   placeholder="Any"
                   suggestions={providers ? providers : []}
-                  value={value}
+                  value={value ?? null}
                   loadSuggestions={(inputValue: string) =>
                     loadProviderSuggestions(null, inputValue)
                   }
                   handleChange={(e: IOptionTypeBase | null) => {
-                    onChange(e?.value);
-                    setProviderValue(e?.value);
+                    onChange(e === null ? null : e.value);
+                    setProviderValue(e === null ? null : e.value);
                   }}
                 />
               )}
@@ -344,22 +344,13 @@ export const FormComponent: FC<IProps> = ({
                   label="Product Type"
                   suggestions={productTypes ? productTypes : []}
                   placeholder="S2_..."
-                  value={value}
+                  value={value ?? null}
                   loadSuggestions={(inputValue: string) =>
                     loadProductTypesSuggestions(providerValue, inputValue)
                   }
                   handleChange={(e: IOptionTypeBase | null) => {
-                    onChange(e?.value);
-
-                    if (e?.value !== productTypeValue) {
-                      setSelectedOptions([]);
-                      setValue('additionnalParameters', [
-                        { name: '', value: '' }
-                      ]);
-                    }
-
-                    setProductTypeValue(e?.value);
-                    if (e?.value === undefined) {
+                    if (e === null) {
+                      setProductTypeValue('');
                       setParams([]);
                       setOptionalParams([]);
                       reset({
@@ -367,7 +358,18 @@ export const FormComponent: FC<IProps> = ({
                         provider: formValues.provider,
                         additionnalParameters: formValues.additionnalParameters
                       });
+                      return onChange(null);
                     }
+                    onChange(e.value);
+
+                    if (e.value !== productTypeValue) {
+                      setSelectedOptions([]);
+                      setValue('additionnalParameters', [
+                        { name: '', value: '' }
+                      ]);
+                    }
+
+                    setProductTypeValue(e.value);
                   }}
                 />
               )}

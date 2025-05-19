@@ -29,8 +29,10 @@ function NoOptionsMessage(props: any) {
     </div>
   );
 }
+
 const tooltipDark: VariantType = 'dark';
 const tooltipRight: PlacesType = 'right';
+
 function Option(props: OptionProps<OptionTypeBase, false>) {
   // Tooltip on the right
   return (
@@ -102,11 +104,12 @@ class IntegrationReactSelect extends React.Component<IProps> {
       placeholder,
       loadSuggestions
     } = this.props;
-
-    const currentValue: OptionTypeBase | undefined = value
-      ? suggestions && suggestions.find(e => e.value === value)
-      : undefined;
-
+    let currentValue: OptionTypeBase | null;
+    if (value) {
+      currentValue = suggestions.find(e => e.value === value) ?? null;
+    } else {
+      currentValue = null;
+    }
     return (
       <div className="jp-EodagWidget-field">
         <label className="jp-EodagWidget-input-name">
