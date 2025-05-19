@@ -7,6 +7,10 @@
   --base-font-size: 14px;
 }
 
+p {
+  margin: unset;
+}
+
 .jp-EodagWidget {
   display: flex;
   flex-direction: column;
@@ -571,10 +575,6 @@ section button .jp-EodagWidget-additionnalParameters-addbutton svg,
   padding: 12px 10px;
   font-size: 20px;
   color: white;
-}
-
-.jp-EodagWidget-appbar p {
-  margin: 0;
 }
 
 .jp-Eodag-tooltip {
