@@ -7,6 +7,7 @@ import {
   IProduct,
   IProvider
 } from './../formComponent/FormComponent';
+import { useCallback, useState } from 'react';
 
 interface IFetchDataProps<T> {
   queryParams: string;
@@ -39,63 +40,85 @@ const fetchData = async <T>({
 };
 
 const useFetchProduct = () => {
-  const fetchProduct = async (
-    providerValue: string | null,
-    inputValue?: string
-  ): Promise<IOptionTypeBase[]> => {
-    let queryParams = 'guess-product-type?';
+  const [fetchProductLoading, setFetchProductLoading] = useState(false);
 
-    if (inputValue) {
-      queryParams += `keywords=${inputValue}`;
-    }
+  const fetchProduct = useCallback(
+    async (
+      providerValue: string | null,
+      inputValue?: string
+    ): Promise<IOptionTypeBase[]> => {
+      setFetchProductLoading(true);
+      let queryParams = 'guess-product-type?';
 
-    if (providerValue) {
-      queryParams += queryParams.includes('keywords') ? '&' : '';
-      queryParams += `provider=${providerValue}`;
-    }
-    return fetchData<IProduct>({
-      queryParams,
-      onSuccess: data =>
-        Promise.resolve(
-          data.map((d: IProduct) => ({
-            value: d.ID,
-            label: d.ID,
-            description: d.title
-          }))
-        )
-    });
-  };
+      if (inputValue) {
+        queryParams += `keywords=${inputValue}`;
+      }
 
-  return fetchProduct;
+      if (providerValue) {
+        queryParams += queryParams.includes('keywords') ? '&' : '';
+        queryParams += `provider=${providerValue}`;
+      }
+
+      return fetchData<IProduct>({
+        queryParams,
+        onSuccess: data =>
+          Promise.resolve(
+            data.map((d: IProduct) => ({
+              value: d.ID,
+              label: d.ID,
+              description: d.title
+            }))
+          )
+      }).finally(() => {
+        setFetchProductLoading(false);
+      });
+    },
+    []
+  );
+
+  return { fetchProduct, fetchProductLoading };
 };
 
 const useFetchProvider = () => {
-  const fetchProvider = async (
-    productTypeValue: string | null,
-    inputValue?: string
-  ): Promise<IOptionTypeBase[]> => {
-    let queryParams = 'providers?';
+  const [fetchProvidersLoading, setFetchProviderLoading] =
+    useState<boolean>(false);
 
-    if (inputValue) {
-      queryParams += `keywords=${inputValue}`;
-    }
-    if (productTypeValue) {
-      queryParams += `product_type=${productTypeValue}`;
-    }
-    return fetchData<IProvider>({
-      queryParams,
-      onSuccess: data =>
-        Promise.resolve(
-          data.map((d: IProvider) => ({
-            value: d.provider,
-            label: d.provider,
-            description: d.description
-          }))
-        )
-    });
-  };
+  const fetchProvider = useCallback(
+    async (
+      productTypeValue: string | null,
+      inputValue?: string
+    ): Promise<IOptionTypeBase[]> => {
+      setFetchProviderLoading(true);
+      let queryParams = 'providers?';
 
-  return fetchProvider;
+      if (inputValue) {
+        queryParams += `keywords=${inputValue}`;
+      }
+      if (productTypeValue) {
+        queryParams += queryParams.includes('keywords') ? '&' : '';
+        queryParams += `product_type=${productTypeValue}`;
+      }
+
+      try {
+        return await fetchData<IProvider>({
+          queryParams,
+          onSuccess: data =>
+            Promise.resolve(
+              data.map((d: IProvider) => ({
+                value: d.provider,
+                label: d.provider,
+                description: d.description
+              }))
+            )
+        });
+      } finally {
+        setFetchProviderLoading(false);
+      }
+    },
+    []
+  );
+
+  return { fetchProvider, fetchProvidersLoading };
 };
 
 const useFetchUserSettings = async () => {

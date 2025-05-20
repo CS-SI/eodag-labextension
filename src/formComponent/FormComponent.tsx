@@ -84,6 +84,8 @@ export const FormComponent: FC<IProps> = ({
   const [additionalParameters, setAdditionalParameters] =
     useState<boolean>(true);
   const [optionalParams, setOptionalParams] = useState<IOptionType[]>([]);
+  const { fetchProvider, fetchProvidersLoading } = useFetchProvider();
+  const { fetchProduct, fetchProductLoading } = useFetchProduct();
 
   const formInput = useForm<IFormInput>({
     defaultValues: {
@@ -114,7 +116,6 @@ export const FormComponent: FC<IProps> = ({
 
   useEffect(() => {
     const fetchData = async () => {
-      const fetchProduct = useFetchProduct();
       const productList = await fetchProduct(providerValue);
       setProductTypes(productList);
       if (reloadIndicator) {
@@ -126,7 +127,6 @@ export const FormComponent: FC<IProps> = ({
 
   useEffect(() => {
     const fetchData = async () => {
-      const fetchProvider = useFetchProvider();
       const providerList = await fetchProvider(productTypeValue);
 
       setProviders(providerList);
@@ -178,9 +178,6 @@ export const FormComponent: FC<IProps> = ({
         });
     }
   };
-
-  const loadProductTypesSuggestions = useFetchProduct();
-  const loadProviderSuggestions = useFetchProvider();
 
   const fetchParameters = async (
     query_params: { [key: string]: any } | undefined = undefined
@@ -326,8 +323,9 @@ export const FormComponent: FC<IProps> = ({
                   placeholder="Any"
                   suggestions={providers ? providers : []}
                   value={value ?? null}
+                  disabled={fetchProvidersLoading}
                   loadSuggestions={(inputValue: string) =>
-                    loadProviderSuggestions(null, inputValue)
+                    fetchProvider(null, inputValue)
                   }
                   handleChange={(e: IOptionTypeBase | null) => {
                     onChange(e === null ? null : e.value);
@@ -346,8 +344,9 @@ export const FormComponent: FC<IProps> = ({
                   suggestions={productTypes ? productTypes : []}
                   placeholder="S2_..."
                   value={value ?? null}
+                  disabled={fetchProductLoading}
                   loadSuggestions={(inputValue: string) =>
-                    loadProductTypesSuggestions(providerValue, inputValue)
+                    fetchProduct(providerValue, inputValue)
                   }
                   handleChange={(e: IOptionTypeBase | null) => {
                     if (e === null) {
