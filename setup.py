@@ -63,6 +63,7 @@ setup_args = dict(
         "notebook>=6.0.3,<7.0.0",
         "eodag[notebook]>=3.1.0",
         "orjson",
+        "pydantic-settings",
     ],
     extras_require={
         "dev": [

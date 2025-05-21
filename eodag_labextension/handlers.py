@@ -25,6 +25,8 @@ from jupyter_server.base.handlers import APIHandler
 from jupyter_server.utils import url_path_join
 from shapely.geometry import shape
 
+from eodag_labextension.config import Settings
+
 eodag_api = EODataAccessGateway()
 
 logger = logging.getLogger("eodag-labextension.handlers")
@@ -60,6 +62,15 @@ class ReloadHandler(APIHandler):
     def get(self):
         """Get endpoint"""
         eodag_api.__init__()
+
+
+class InfoHandler(APIHandler):
+    """EODAG info handler"""
+
+    @tornado.web.authenticated
+    def get(self):
+        """Get endpoint"""
+        self.write(orjson.dumps(Settings().model_dump()))
 
 
 class ProvidersHandler(APIHandler):
@@ -325,6 +336,7 @@ def setup_handlers(web_app, url_path):
     host_pattern = r".*$"
     product_types_pattern = url_path_join(base_url, url_path, "product-types")
     reload_pattern = url_path_join(base_url, url_path, "reload")
+    info_pattern = url_path_join(base_url, url_path, "info")
     providers_pattern = url_path_join(base_url, url_path, "providers")
     guess_product_types_pattern = url_path_join(base_url, url_path, "guess-product-type")
     queryables_pattern = url_path_join(base_url, url_path, "queryables")
@@ -338,6 +350,7 @@ def setup_handlers(web_app, url_path):
         (providers_pattern, ProvidersHandler),
         (guess_product_types_pattern, GuessProductTypeHandler),
         (queryables_pattern, QueryablesHandler),
+        (info_pattern, InfoHandler),
         (MethodAndPathMatch("POST", search_pattern), SearchHandler),
         (default_pattern, NotFoundHandler),
     ]
