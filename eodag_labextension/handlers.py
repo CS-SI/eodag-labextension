@@ -10,7 +10,7 @@ from typing import Any
 
 import orjson
 import tornado
-from eodag import EODataAccessGateway, SearchResult
+from eodag import EODataAccessGateway, SearchResult, setup_logging
 from eodag.api.core import DEFAULT_ITEMS_PER_PAGE, DEFAULT_PAGE
 from eodag.utils import parse_qs
 from eodag.utils.exceptions import (
@@ -30,6 +30,10 @@ from eodag_labextension.config import Settings
 eodag_api = EODataAccessGateway()
 
 logger = logging.getLogger("eodag-labextension.handlers")
+
+
+if Settings().debug:
+    setup_logging(3)
 
 
 class ProductTypeHandler(APIHandler):

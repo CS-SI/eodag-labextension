@@ -11,7 +11,7 @@ from importlib.metadata import distributions
 from typing import Optional
 
 from pydantic import BaseModel
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class PackageInfo(BaseModel):
@@ -20,8 +20,8 @@ class PackageInfo(BaseModel):
     version: str
 
 
-def get_packages_infos(filter: Optional[str] = None) -> dict[str, PackageInfo]:
-    """Get packages infos"""
+def get_packages_info(filter: Optional[str] = None) -> dict[str, PackageInfo]:
+    """Get packages info"""
     infos: dict[str, PackageInfo] = {}
 
     pattern = re.compile(filter) if filter else None
@@ -37,6 +37,8 @@ def get_packages_infos(filter: Optional[str] = None) -> dict[str, PackageInfo]:
 class Settings(BaseSettings):
     """EODAG Labextension config"""
 
+    model_config = SettingsConfigDict(env_prefix="eodag_labextension__")
+
     debug: bool = False
 
-    packages: dict[str, PackageInfo] = get_packages_infos("^eodag.*$")
+    packages: dict[str, PackageInfo] = get_packages_info("^eodag.*$")
