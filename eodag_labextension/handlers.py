@@ -4,8 +4,10 @@
 
 """Tornado web requests handlers"""
 
+import asyncio
 import logging
 import re
+from functools import partial
 from typing import Any
 
 import orjson
@@ -27,7 +29,9 @@ from shapely.geometry import shape
 
 from eodag_labextension.config import Settings
 
-eodag_api = EODataAccessGateway()
+eodag_api = None
+
+eodag_lock = tornado.locks.Lock()
 
 logger = logging.getLogger("eodag-labextension.handlers")
 
@@ -36,11 +40,24 @@ if Settings().debug:
     setup_logging(3)
 
 
+async def get_eodag_api():
+    """EODataAccessGateway on-demand instanciation"""
+    global eodag_api
+
+    current_loop = asyncio.get_running_loop()
+    if eodag_api is None:
+        async with eodag_lock:
+            # Double-check to avoid race condition
+            if eodag_api is None:
+                eodag_api = await current_loop.run_in_executor(None, EODataAccessGateway)
+    return eodag_api
+
+
 class ProductTypeHandler(APIHandler):
     """Product type listing handler"""
 
     @tornado.web.authenticated
-    def get(self):
+    async def get(self):
         """Get endpoint"""
         query_dict = parse_qs(self.request.query)
 
@@ -50,38 +67,44 @@ class ProductTypeHandler(APIHandler):
         provider = None if not provider or provider == "null" else provider
 
         try:
-            product_types = eodag_api.list_product_types(provider=provider)
+            dag = await get_eodag_api()
+            current_loop = asyncio.get_running_loop()
+            product_types = await current_loop.run_in_executor(None, partial(dag.list_product_types, provider=provider))
         except UnsupportedProvider as e:
             self.set_status(400)
             self.finish({"error": str(e)})
             return
 
-        self.write(orjson.dumps(product_types))
+        self.finish(orjson.dumps(product_types))
 
 
 class ReloadHandler(APIHandler):
     """EODAG API reload handler"""
 
     @tornado.web.authenticated
-    def get(self):
+    async def get(self):
         """Get endpoint"""
-        eodag_api.__init__()
+        dag = await get_eodag_api()
+        current_loop = asyncio.get_running_loop()
+        await current_loop.run_in_executor(None, dag.__init__)
 
 
 class InfoHandler(APIHandler):
     """EODAG info handler"""
 
     @tornado.web.authenticated
-    def get(self):
+    async def get(self):
         """Get endpoint"""
-        self.write(orjson.dumps(Settings().model_dump()))
+        current_loop = asyncio.get_running_loop()
+        result = await current_loop.run_in_executor(None, lambda: Settings().model_dump())
+        self.finish(orjson.dumps(result))
 
 
 class ProvidersHandler(APIHandler):
     """Providers listing handler"""
 
     @tornado.web.authenticated
-    def get(self):
+    async def get(self):
         """Get endpoint"""
 
         available_providers_kwargs = {}
@@ -92,7 +115,11 @@ class ProvidersHandler(APIHandler):
             and len(query_dict["product_type"]) > 0
         ):
             available_providers_kwargs["product_type"] = query_dict["product_type"][0]
-        available_providers = eodag_api.available_providers(**available_providers_kwargs)
+        dag = await get_eodag_api()
+        current_loop = asyncio.get_running_loop()
+        available_providers = await current_loop.run_in_executor(
+            None, partial(dag.available_providers, **available_providers_kwargs)
+        )
 
         all_providers_list = [
             dict(
@@ -101,7 +128,7 @@ class ProvidersHandler(APIHandler):
                 description=getattr(conf, "description", None),
                 url=getattr(conf, "url", None),
             )
-            for provider, conf in eodag_api.providers_config.items()
+            for provider, conf in dag.providers_config.items()
             if provider in available_providers
         ]
         all_providers_list.sort(key=lambda x: (x["priority"] * -1, x["provider"]))
@@ -130,14 +157,14 @@ class ProvidersHandler(APIHandler):
         else:
             returned_providers = all_providers_list
 
-        self.write(orjson.dumps(returned_providers))
+        self.finish(orjson.dumps(returned_providers))
 
 
 class GuessProductTypeHandler(APIHandler):
     """Guess product type method handler"""
 
     @tornado.web.authenticated
-    def get(self):
+    async def get(self):
         """Get endpoint"""
 
         query_dict = parse_qs(self.request.query)
@@ -147,10 +174,15 @@ class GuessProductTypeHandler(APIHandler):
             provider = query_dict.pop("provider")[0]
         provider = None if not provider or provider == "null" else provider
 
+        dag = await get_eodag_api()
+        current_loop = asyncio.get_running_loop()
+
         returned_product_types = []
         try:
             # fetch all product types
-            all_product_types = eodag_api.list_product_types(provider=provider)
+            all_product_types = await current_loop.run_in_executor(
+                None, partial(dag.list_product_types, provider=provider)
+            )
 
             if (
                 "keywords" in query_dict
@@ -177,7 +209,9 @@ class GuessProductTypeHandler(APIHandler):
                     guess_kwargs[k] = " AND ".join(re.sub(r"(\S+)", r"*\1*", " ".join(v)).split(" "))
 
                 # guessed product types ids
-                guessed_ids_list = eodag_api.guess_product_type(**guess_kwargs)
+                guessed_ids_list = await current_loop.run_in_executor(
+                    None, partial(dag.guess_product_type, **guess_kwargs)
+                )
                 # product types with full associated metadata
                 returned_product_types += [
                     pt
@@ -187,9 +221,9 @@ class GuessProductTypeHandler(APIHandler):
             else:
                 returned_product_types = all_product_types
 
-            self.write(orjson.dumps(returned_product_types))
+            self.finish(orjson.dumps(returned_product_types))
         except NoMatchingProductType:
-            self.write(orjson.dumps(returned_product_types))
+            self.finish(orjson.dumps(returned_product_types))
         except UnsupportedProvider as e:
             self.set_status(400)
             self.finish({"error": str(e)})
@@ -200,7 +234,7 @@ class SearchHandler(APIHandler):
     """Search products handler"""
 
     @tornado.web.authenticated
-    def post(self, product_type):
+    async def post(self, product_type):
         """Post endpoint"""
 
         arguments = orjson.loads(self.request.body)
@@ -233,7 +267,11 @@ class SearchHandler(APIHandler):
         arguments = dict((k, v) for k, v in arguments.items() if v is not None)
 
         try:
-            products = eodag_api.search(productType=product_type, count=True, **arguments)
+            dag = await get_eodag_api()
+            current_loop = asyncio.get_running_loop()
+            products = await current_loop.run_in_executor(
+                None, partial(dag.search, productType=product_type, count=True, **arguments)
+            )
         except ValidationError as e:
             self.set_status(400)
             self.finish({"error": e.message})
@@ -305,7 +343,7 @@ class QueryablesHandler(APIHandler):
     """EODAG queryables handler"""
 
     @tornado.web.authenticated
-    def get(self):
+    async def get(self):
         """Get endpoint"""
         query_dict = parse_qs(self.request.query, keep_blank_values=True)
         queryables_kwargs = {
@@ -315,7 +353,11 @@ class QueryablesHandler(APIHandler):
         }
         logger.error(queryables_kwargs)
         try:
-            queryables_dict = eodag_api.list_queryables(fetch_providers=False, **queryables_kwargs)
+            dag = await get_eodag_api()
+            current_loop = asyncio.get_running_loop()
+            queryables_dict = await current_loop.run_in_executor(
+                None, partial(dag.list_queryables, fetch_providers=False, **queryables_kwargs)
+            )
             json_schema = queryables_dict.get_model().model_json_schema()
             self._remove_null_defaults(json_schema)
             json_schema["additionalProperties"] = queryables_dict.additional_properties
