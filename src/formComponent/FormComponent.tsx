@@ -275,6 +275,7 @@ export const FormComponent: FC<IProps> = ({
       setSelectedOptions(
         selectedOptions.filter(option => option !== param.value)
       );
+      resetField(param.value);
     } else {
       setSelectedOptions([...selectedOptions, param.value]);
     }
