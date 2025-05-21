@@ -7,6 +7,7 @@ import re
 from unittest import mock
 
 from eodag import SearchResult
+from eodag import __version__ as eodag_version
 from eodag.api.core import DEFAULT_ITEMS_PER_PAGE
 from eodag.types.queryables import QueryablesDict
 from notebook.notebookapp import NotebookApp
@@ -14,6 +15,7 @@ from shapely.geometry import shape
 from tornado.testing import AsyncHTTPTestCase
 from tornado.web import authenticated
 
+from eodag_labextension import __version__ as labextension_version
 from eodag_labextension import load_jupyter_server_extension
 from eodag_labextension.handlers import APIHandler
 
@@ -255,3 +257,9 @@ class TestEodagLabExtensionHandler(AsyncHTTPTestCase):
             param1="paramValue1",
             param2="paramValue2",
         )
+
+    def test_info(self):
+        infos = self.fetch_results("/eodag/info")
+        self.assertIn("packages", infos)
+        self.assertEqual(infos["packages"]["eodag"]["version"], eodag_version)
+        self.assertEqual(infos["packages"]["eodag_labextension"]["version"], labextension_version)
