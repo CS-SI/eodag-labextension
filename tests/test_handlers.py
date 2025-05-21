@@ -263,3 +263,8 @@ class TestEodagLabExtensionHandler(AsyncHTTPTestCase):
         self.assertIn("packages", infos)
         self.assertEqual(infos["packages"]["eodag"]["version"], eodag_version)
         self.assertEqual(infos["packages"]["eodag_labextension"]["version"], labextension_version)
+
+    @mock.patch.dict(os.environ, {"EODAG_LABEXTENSION__DEBUG": "true"})
+    def test_debug(self):
+        infos = self.fetch_results("/eodag/info")
+        self.assertTrue(infos["debug"])
