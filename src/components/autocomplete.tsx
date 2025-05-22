@@ -6,7 +6,7 @@ import {
   SingleValueProps,
   ValueContainerProps
 } from 'react-select';
-import { PlacesType, Tooltip, VariantType } from 'react-tooltip';
+import { Tooltip } from 'react-tooltip';
 import { IOptionTypeBase } from '../formComponent/FormComponent';
 import { MenuList } from './menuList';
 
@@ -34,11 +34,37 @@ const NoOptionsMessage = (props: any) => (
 const Option = (props: OptionProps<IOptionTypeBase, false>) => (
   <div
     data-tooltip-id={tooltipId}
-    data-tooltip-content={props.data.description}
-    data-tooltip-variant={'dark' as VariantType}
-    data-tooltip-place={'right' as PlacesType}
+    data-tooltip-html={`<div><p>${props.data.description}</p><br /><em>${props.data.label}</em></div>`}
+    data-tooltip-variant="dark"
+    data-tooltip-place="right"
+    style={{
+      maxHeight: 44,
+      overflow: 'hidden'
+    }}
   >
-    <components.Option {...props}>{props.children}</components.Option>
+    <components.Option
+      {...props}
+      innerProps={{
+        ...props.innerProps,
+        style: {
+          ...props.innerProps.style,
+          display: 'flex',
+          alignItems: 'center',
+          height: '44px',
+          padding: '0 12px'
+        }
+      }}
+    >
+      <p
+        style={{
+          whiteSpace: 'nowrap',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis'
+        }}
+      >
+        {props.children}
+      </p>
+    </components.Option>
   </div>
 );
 
