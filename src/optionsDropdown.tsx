@@ -71,12 +71,12 @@ export const OptionsMenuDropdown: React.FC<IOptionsMenuDropdownProps> = ({
         type: 'divider'
       },
       {
-        name: `EODAG version: ${version}`,
+        name: `EODAG v${version}`,
         type: 'link',
         disabled: true
       },
       {
-        name: `EODAG LabExtension version: ${labExtensionVersion}`,
+        name: `EODAG LabExtension v${labExtensionVersion}`,
         type: 'link',
         disabled: true
       }
