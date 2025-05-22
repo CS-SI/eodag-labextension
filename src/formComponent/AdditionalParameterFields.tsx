@@ -19,8 +19,6 @@ const AdditionalParameterFields = ({
   productType,
   additionalParameters
 }: IAdditionalParameterFieldsProps) => {
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
   const { fields, append, remove } = useFieldArray({
     control,
     name: 'additionnalParameters'
