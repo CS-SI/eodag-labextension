@@ -55,7 +55,7 @@ export default class MapExtentComponent extends React.Component<
     this.state = {
       lat: 46.8,
       lon: 1.8,
-      zoom: props.mapSettings?.zoom_offset || 4,
+      zoom: props.mapSettings?.zoomOffset || 4,
       geometry: props.geometry
     };
     this.handleMapSettingsChange = this.handleMapSettingsChange.bind(this);
@@ -178,8 +178,8 @@ export default class MapExtentComponent extends React.Component<
   render() {
     const { zoom, lat, lon } = this.state;
     const { mapSettings } = this.props;
-    const { tile_url, tile_attribution, zoom_offset } = mapSettings;
     const position: [number, number] = [lat, lon];
+    console.log('mapSettings : ', mapSettings);
     return (
       <MapContainer
         center={position}
@@ -187,12 +187,11 @@ export default class MapExtentComponent extends React.Component<
         ref={ref => {
           this.map = ref;
         }}
-        minZoom={Math.abs(zoom_offset)}
+        minZoom={Math.abs(mapSettings?.zoom_offset)}
       >
         <TileLayer
-          url={tile_url}
-          attribution={tile_attribution}
-          zoomOffset={zoom_offset}
+          url={mapSettings?.tile_url}
+          attribution={mapSettings?.tile_attributions}
         />
         <FeatureGroup>
           <EditControl
