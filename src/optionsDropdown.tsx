@@ -3,6 +3,7 @@ import React, { useMemo, useState } from 'react';
 import { Divider, IconButton, Menu, MenuItem } from '@mui/material';
 // Icons
 import SettingsIcon from '@mui/icons-material/SettingsOutlined';
+import EditIcon from '@mui/icons-material/EditOutlined';
 import BookIcon from '@mui/icons-material/BookOutlined';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
@@ -19,12 +20,14 @@ export interface IOptionsMenuDropdownItems {
 
 interface IOptionsMenuDropdownProps {
   openSettings: () => void;
+  openEodagConfigEditor: () => void;
   version: string;
   labExtensionVersion: string;
 }
 
 export const OptionsMenuDropdown: React.FC<IOptionsMenuDropdownProps> = ({
   openSettings,
+  openEodagConfigEditor,
   version,
   labExtensionVersion
 }) => {
@@ -38,12 +41,12 @@ export const OptionsMenuDropdown: React.FC<IOptionsMenuDropdownProps> = ({
         icon: <SettingsIcon />,
         onClick: () => openSettings()
       },
-      // {
-      //   name: 'Edit EODAG user configuration',
-      //   icon: <EditIcon />,
-      //   type: 'onClick',
-      //   onClick: () => {}
-      // },
+      {
+        name: 'Edit EODAG user configuration',
+        icon: <EditIcon />,
+        type: 'onClick',
+        onClick: () => openEodagConfigEditor()
+      },
       {
         name: '',
         type: 'divider'
