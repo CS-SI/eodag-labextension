@@ -32,6 +32,7 @@ import { IFormInput, IOptionType, IParameter } from '../types';
 import AdditionalParameterFields from './AdditionalParameterFields';
 import ParameterGroup from './ParameterGroup';
 import DropdownButton from './DropdownButton';
+import { IMapSettings } from '../browser';
 
 export interface IProps {
   handleShowFeature: any;
@@ -40,6 +41,7 @@ export interface IProps {
   isNotebookCreated: any;
   reloadIndicator: boolean;
   onFetchComplete: () => void;
+  mapSettings?: IMapSettings;
 }
 
 export interface IOptionTypeBase {
@@ -66,7 +68,8 @@ export const FormComponent: FC<IProps> = ({
   handleGenerateQuery,
   isNotebookCreated,
   reloadIndicator,
-  onFetchComplete
+  onFetchComplete,
+  mapSettings
 }) => {
   const [productTypes, setProductTypes] = useState<IOptionTypeBase[]>();
   const [providers, setProviders] = useState<IOptionTypeBase[]>();
@@ -309,7 +312,11 @@ export const FormComponent: FC<IProps> = ({
               control={control}
               rules={{ required: false }}
               render={({ field: { onChange, value } }) => (
-                <MapExtentComponent geometry={value} onChange={onChange} />
+                <MapExtentComponent
+                  geometry={value}
+                  onChange={onChange}
+                  mapSettings={mapSettings}
+                />
               )}
             />
           </div>
