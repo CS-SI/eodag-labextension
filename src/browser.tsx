@@ -88,6 +88,17 @@ export class EodagBrowser extends React.Component<IProps, IState> {
     return true;
   };
 
+  handleOpenEodagConfig = async () => {
+    // File that uses a symbolic link to the eodag config file,
+    // present in the ~/.config/eodag/eodag.yml
+    const filePath = '/user-config/eodag.yml';
+
+    await this.props.commands.execute('docmanager:open', {
+      path: filePath,
+      factory: 'Editor'
+    });
+  };
+
   handleShowFeature = (features: any, openModal: boolean) => {
     this.setState({
       features,
@@ -318,6 +329,7 @@ export class EodagBrowser extends React.Component<IProps, IState> {
             </button>
             <OptionsMenuDropdown
               openSettings={this.handleOpenSettings}
+              openEodagConfigEditor={this.handleOpenEodagConfig}
               version={this.state.eodagVersion ?? 'Loading ...'}
               labExtensionVersion={
                 this.state.eodagLabExtensionVersion ?? 'Loading ...'
