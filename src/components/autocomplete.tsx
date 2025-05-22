@@ -19,6 +19,8 @@ interface IProps {
   loadSuggestions?: (inputValue: string) => Promise<IOptionTypeBase[]>;
 }
 
+const tooltipId = 'tooltip-global';
+
 const NoOptionsMessage = (props: any) => (
   <div
     color="textSecondary"
@@ -31,13 +33,12 @@ const NoOptionsMessage = (props: any) => (
 
 const Option = (props: OptionProps<IOptionTypeBase, false>) => (
   <div
-    data-tooltip-id={props.label}
+    data-tooltip-id={tooltipId}
     data-tooltip-content={props.data.description}
     data-tooltip-variant={'dark' as VariantType}
     data-tooltip-place={'right' as PlacesType}
   >
     <components.Option {...props}>{props.children}</components.Option>
-    <Tooltip id={props.label} className="jp-Eodag-tooltip" />
   </div>
 );
 
@@ -101,6 +102,8 @@ export const Autocomplete: React.FC<IProps> = ({
           />
         </div>
       </label>
+
+      <Tooltip id={tooltipId} className="jp-Eodag-tooltip" />
     </div>
   );
 };
