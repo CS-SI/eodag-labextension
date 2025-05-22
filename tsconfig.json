@@ -6,7 +6,10 @@
     "esModuleInterop": true,
     "incremental": true,
     "jsx": "react",
-    "lib": ["es2020", "dom"],
+    "lib": [
+      "es2020",
+      "dom"
+    ],
     "module": "esnext",
     "moduleResolution": "node",
     "noEmitOnError": true,
@@ -25,6 +28,7 @@
     "src/hooks/*",
     "style/index.js",
     "src/formComponent/*",
+    "src/components/*",
     "src/helpers/*"
   ]
 }
