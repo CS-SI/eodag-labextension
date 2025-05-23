@@ -1,7 +1,7 @@
 import React, { ChangeEvent } from 'react';
 import Select, { MultiValue } from 'react-select';
 import { Controller, useFormContext } from 'react-hook-form';
-import { IParameter } from '../types';
+import { IParameter } from '../../types';
 
 interface IParameterGroupProps {
   params: IParameter[];
@@ -82,7 +82,7 @@ const ParameterGroup: React.FC<IParameterGroupProps> = ({
       }));
     }
 
-    // For single value (when it's not an array)
+    // For a single value (when it's not an array)
     return selectedValue
       ? [
           {
