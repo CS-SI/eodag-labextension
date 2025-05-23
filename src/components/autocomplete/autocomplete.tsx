@@ -7,12 +7,13 @@ import {
   ValueContainerProps
 } from 'react-select';
 import { Tooltip } from 'react-tooltip';
-import { IOptionTypeBase } from '../formComponent/FormComponent';
+import { IOptionTypeBase } from '../formComponent/formComponent';
 import { MenuList } from './menuList';
 
 interface IProps {
   suggestions: IOptionTypeBase[];
   value: string;
+  disabled?: boolean;
   handleChange: (option: IOptionTypeBase | null) => void;
   label: string;
   placeholder?: string;
@@ -103,6 +104,7 @@ export const Autocomplete: React.FC<IProps> = ({
   value,
   handleChange,
   placeholder,
+  disabled,
   loadSuggestions
 }) => {
   const currentValue = useMemo(
@@ -123,6 +125,7 @@ export const Autocomplete: React.FC<IProps> = ({
             components={listComponents}
             value={currentValue}
             onChange={handleChange}
+            isDisabled={disabled}
             placeholder={placeholder}
             isClearable
           />

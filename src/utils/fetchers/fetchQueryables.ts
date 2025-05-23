@@ -1,5 +1,5 @@
-import { requestAPI } from '../handler';
-import { IParameter, IQueryables } from '../types';
+import { requestAPI } from './requestApi';
+import { IParameter, IQueryables } from '../../types';
 
 export const fetchQueryables = async (
   provider: string | null,

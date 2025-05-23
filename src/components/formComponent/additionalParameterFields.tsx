@@ -1,9 +1,9 @@
 import React from 'react';
 import { useFieldArray, UseFormReturn } from 'react-hook-form';
 import { Tooltip } from 'react-tooltip';
-import { CarbonAddFilled, CarbonTrashCan } from '../icones';
-import { IFormInput } from '../types';
-import { tooltipDark, tooltipTop, tooltipWarning } from './FormComponent';
+import { CarbonAddFilled, CarbonTrashCan } from '../icons';
+import { IFormInput } from '../../types';
+import { tooltipDark, tooltipTop, tooltipWarning } from './formComponent';
 import { isUndefined } from 'lodash';
 
 export interface IAdditionalParameterFieldsProps
@@ -12,7 +12,7 @@ export interface IAdditionalParameterFieldsProps
   additionalParameters: boolean;
 }
 
-const AdditionalParameterFields = ({
+export const AdditionalParameterFields = ({
   control,
   register,
   resetField,
@@ -21,20 +21,20 @@ const AdditionalParameterFields = ({
 }: IAdditionalParameterFieldsProps) => {
   const { fields, append, remove } = useFieldArray({
     control,
-    name: 'additionnalParameters'
+    name: 'additionalParameters'
   });
   fields[0] = { name: '', value: '', id: '999' };
 
   let clearInput: (index: number) => void;
   if (!isUndefined(resetField)) {
     clearInput = (index: number): void => {
-      resetField(`additionnalParameters.${index}.name`);
-      resetField(`additionnalParameters.${index}.value`);
+      resetField(`additionalParameters.${index}.name`);
+      resetField(`additionalParameters.${index}.value`);
     };
   }
 
   return (
-    <div className="jp-EodagWidget-additionnalParameters">
+    <div className="jp-EodagWidget-additionalParameters">
       <p
         className="jp-EodagWidget-section-title"
         style={{ marginBottom: '10px' }}
@@ -52,15 +52,15 @@ const AdditionalParameterFields = ({
             <section className={'section'}>
               <input
                 placeholder="Name"
-                {...register(`additionnalParameters.${index}.name` as const)}
+                {...register(`additionalParameters.${index}.name` as const)}
               />
               <input
                 placeholder="Value"
-                {...register(`additionnalParameters.${index}.value` as const)}
+                {...register(`additionalParameters.${index}.value` as const)}
               />
               <button
                 type="button"
-                className="jp-EodagWidget-additionnalParameters-deletebutton"
+                className="jp-EodagWidget-additionalParameters-deletebutton"
                 onClick={() =>
                   fields.length === 1 && clearInput
                     ? clearInput(index)
@@ -76,7 +76,7 @@ const AdditionalParameterFields = ({
               </button>
               <button
                 type="button"
-                className="jp-EodagWidget-additionnalParameters-addbutton"
+                className="jp-EodagWidget-additionalParameters-addbutton"
                 onClick={() => append({ name: '', value: '' })}
                 data-tooltip-id="parameters-add"
                 data-tooltip-content="add a new custom parameter"
@@ -97,5 +97,3 @@ const AdditionalParameterFields = ({
     </div>
   );
 };
-
-export default AdditionalParameterFields;
