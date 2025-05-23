@@ -5,23 +5,28 @@
 
 import 'react-datepicker/dist/react-datepicker.css';
 import 'isomorphic-fetch';
-import { EODAG_SERVER_ADRESS } from './config';
+import { EODAG_SERVER_ADDRESS } from '../config/config';
 import { ServerConnection } from '@jupyterlab/services';
 import { URLExt } from '@jupyterlab/coreutils';
-import { formatDate } from './utils';
-import { IFormInput, ISearchParameters } from './types';
+import { IFormInput, ISearchParameters } from '../types';
 import _, { isUndefined } from 'lodash';
+
+const formatDate = (date: Date): string => {
+  const local = new Date(date);
+  local.setMinutes(date.getMinutes() - date.getTimezoneOffset());
+  return local.toJSON().slice(0, 10);
+};
 
 class SearchService {
   /**
-   * @param page The page to fetch
    * @returns the URL to fetch from the EODAG server to get products
+   * @param productType
    */
   getSearchURL(productType: string) {
     const _serverSettings = ServerConnection.makeSettings();
     const _eodag_server = URLExt.join(
       _serverSettings.baseUrl,
-      `${EODAG_SERVER_ADRESS}`
+      `${EODAG_SERVER_ADDRESS}`
     );
     return URLExt.join(_eodag_server, `${productType}`);
   }
@@ -32,7 +37,7 @@ class SearchService {
    * @param formValues parameters to pass to EODAG search
    * @return a promise that will receive features
    */
-  search(page = 1, formValues: IFormInput | undefined) {
+  async search(page = 1, formValues: IFormInput | undefined) {
     if (isUndefined(formValues)) {
       throw new Error('Input undefined');
     }
@@ -47,11 +52,11 @@ class SearchService {
       provider: formValues.provider
     };
 
-    if (formValues.additionnalParameters) {
+    if (formValues.additionalParameters) {
       parameters = _.extend(
         parameters,
         _.fromPairs(
-          formValues.additionnalParameters
+          formValues.additionalParameters
             .filter(({ name, value }) => name !== '' && value !== '')
             .map(({ name, value }) => [name, value])
         )
@@ -65,7 +70,7 @@ class SearchService {
       'productType',
       'geometry',
       'provider',
-      'additionnalParameters'
+      'additionalParameters'
     ]);
 
     Object.keys(formValues).forEach(key => {
@@ -78,7 +83,7 @@ class SearchService {
       'Content-Type': 'application/json'
     });
 
-    // Set cross-site cookie header
+    // Set a cross-site cookie header
     if (typeof document !== 'undefined' && document?.cookie) {
       const xsrfToken = this.getCookie('_xsrf');
       if (xsrfToken !== undefined) {
@@ -93,18 +98,15 @@ class SearchService {
       headers: headers
     });
 
-    return fetch(request).then(async response => {
-      if (!response.ok) {
-        const msg = await response.json();
-        throw new Error(`${msg.error}`);
-      }
-      return response.json();
-    });
+    const response = await fetch(request);
+    if (!response.ok) {
+      const msg = await response.json();
+      throw new Error(`${msg.error}`);
+    }
+    return await response.json();
   }
 
-  /**
-   * Get a cookie from the document.
-   */
+  // Get a cookie from the document.
   getCookie(name: string): string | undefined {
     // From http://www.tornadoweb.org/en/stable/guide/security.html
     const matches = document.cookie.match('\\b' + name + '=([^;]*)\\b');

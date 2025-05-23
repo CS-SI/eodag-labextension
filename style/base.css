@@ -240,7 +240,7 @@ p {
   color: var(--gray);
 }
 
-.jp-EodagWidget .jp-EodagWidget-form .jp-EodagWidget-additionnalParameters {
+.jp-EodagWidget .jp-EodagWidget-form .jp-EodagWidget-additionalParameters {
   margin-top: 10px;
   padding: 0 10px;
 }
@@ -275,14 +275,14 @@ p {
 .jp-EodagWidget
   .jp-EodagWidget-form
   .jp-EodagWidget-field
-  .jp-EodagWidget-additionnalParameters {
+  .jp-EodagWidget-additionalParameters {
   margin-top: 10px;
 }
 
 .jp-EodagWidget
   .jp-EodagWidget-form
   .jp-EodagWidget-field
-  .jp-EodagWidget-additionnalParameters
+  .jp-EodagWidget-additionalParameters
   .jp-EodagWidget-input-name {
   margin-bottom: 10px;
 }
@@ -290,7 +290,7 @@ p {
 .jp-EodagWidget
   .jp-EodagWidget-form
   .jp-EodagWidget-field
-  .jp-EodagWidget-additionnalParameters
+  .jp-EodagWidget-additionalParameters
   .section {
   display: flex;
   justify-content: space-between;
@@ -301,7 +301,7 @@ p {
 .jp-EodagWidget
   .jp-EodagWidget-form
   .jp-EodagWidget-field
-  .jp-EodagWidget-additionnalParameters
+  .jp-EodagWidget-additionalParameters
   input {
   margin: 0 0.1em;
   line-height: var(--jp-private-commandpalette-search-height);
@@ -314,8 +314,8 @@ p {
 .jp-EodagWidget
   .jp-EodagWidget-form
   .jp-EodagWidget-field
-  .jp-EodagWidget-additionnalParameters
-  .jp-EodagWidget-additionnalParameters-label-icon-wrapper {
+  .jp-EodagWidget-additionalParameters
+  .jp-EodagWidget-additionalParameters-label-icon-wrapper {
   display: flex;
   align-items: center;
   margin-bottom: 10px;
@@ -324,8 +324,8 @@ p {
 .jp-EodagWidget
   .jp-EodagWidget-form
   .jp-EodagWidget-field
-  .jp-EodagWidget-additionnalParameters
-  .jp-EodagWidget-additionnalParameters-label-icon-wrapper
+  .jp-EodagWidget-additionalParameters
+  .jp-EodagWidget-additionalParameters-label-icon-wrapper
   a {
   display: inline-flex;
   margin-left: 5px;
@@ -334,8 +334,8 @@ p {
 .jp-EodagWidget
   .jp-EodagWidget-form
   .jp-EodagWidget-field
-  .jp-EodagWidget-additionnalParameters
-  .jp-EodagWidget-additionnalParameters-label-icon-wrapper
+  .jp-EodagWidget-additionalParameters
+  .jp-EodagWidget-additionalParameters-label-icon-wrapper
   a:hover {
   color: #677381;
 }
@@ -343,7 +343,7 @@ p {
 .jp-EodagWidget
   .jp-EodagWidget-form
   .jp-EodagWidget-field
-  .jp-EodagWidget-additionnalParameters
+  .jp-EodagWidget-additionalParameters
   input:focus-within {
   border: 1px solid #2196f3;
 }
@@ -351,14 +351,14 @@ p {
 .jp-EodagWidget
   .jp-EodagWidget-form
   .jp-EodagWidget-field
-  .jp-EodagWidget-additionnalParameters
+  .jp-EodagWidget-additionalParameters
   input::placeholder {
   padding-left: 0.3rem;
 }
 
-.jp-EodagWidget-additionnalParameters-deletebutton,
-.jp-EodagWidget-additionnalParameters-addbutton,
-.jp-EodagWidget-settingsbutton {
+.jp-EodagWidget-additionalParameters-deletebutton,
+.jp-EodagWidget-additionalParameters-addbutton,
+.jp-EodagWidget-settingsButton {
   cursor: pointer;
   border-radius: 50%;
   border-width: 0px;
@@ -367,16 +367,16 @@ p {
   align-items: center;
 }
 
-section button .jp-EodagWidget-additionnalParameters-deletebutton svg,
-section button .jp-EodagWidget-additionnalParameters-addbutton svg,
-.jp-EodagWidget-settingsbutton svg {
+section button .jp-EodagWidget-additionalParameters-deletebutton svg,
+section button .jp-EodagWidget-additionalParameters-addbutton svg,
+.jp-EodagWidget-settingsButton svg {
   color: #000000;
   background-color: #ffffff;
 }
 
-.jp-EodagWidget-additionnalParameters-deletebutton svg:hover,
-.jp-EodagWidget-additionnalParameters-addbutton svg:hover,
-.jp-EodagWidget-settingsbutton svg:hover {
+.jp-EodagWidget-additionalParameters-deletebutton svg:hover,
+.jp-EodagWidget-additionalParameters-addbutton svg:hover,
+.jp-EodagWidget-settingsButton svg:hover {
   color: #677381;
 }
 
