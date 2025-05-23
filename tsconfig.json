@@ -18,14 +18,8 @@
     "rootDir": "src",
     "strict": true,
     "strictNullChecks": true,
-    "target": "ES2018"
+    "target": "ES2018",
+    "baseUrl": "./src"
   },
-  "include": [
-    "src/*",
-    "src/hooks/*",
-    "style/index.js",
-    "src/formComponent/*",
-    "src/components/*",
-    "src/helpers/*"
-  ]
+  "include": ["src/**/*", "style/index.js", "src/utils/**/*"]
 }

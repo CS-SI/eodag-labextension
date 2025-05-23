@@ -7,17 +7,22 @@
 
 import { geojsonToWKT } from '@terraformer/wkt';
 
-import { IFormInput } from './types';
-import { formatDate } from './utils';
+import { IFormInput } from '../types';
 import { isUndefined } from 'lodash';
 
-const formatCode = (
+const formatDate = (date: Date): string => {
+  const local = new Date(date);
+  local.setMinutes(date.getMinutes() - date.getTimezoneOffset());
+  return local.toJSON().slice(0, 10);
+};
+
+export const formatCode = (
   {
     startDate,
     endDate,
     productType,
     geometry,
-    additionnalParameters,
+    additionalParameters,
     provider,
     ...extraParams
   }: IFormInput,
@@ -66,8 +71,8 @@ search_results = dag.search(`;
     end="${end}",`;
   }
   let filteredParameters: { name: string; value: string }[] = [];
-  if (!isUndefined(additionnalParameters)) {
-    filteredParameters = additionnalParameters.filter(
+  if (!isUndefined(additionalParameters)) {
+    filteredParameters = additionalParameters.filter(
       ({ name, value }) => name && value && name !== '' && value !== ''
     );
   }
@@ -79,7 +84,7 @@ search_results = dag.search(`;
   if (filteredParameters.length > 0 || extraParamEntries.length > 0) {
     code += '\n' + tab + '**{\n';
 
-    // Map additionnalParameters
+    // Map additionalParameters
     code += filteredParameters
       .map(({ name, value }) => {
         const processedValue = Array.isArray(value)
@@ -122,5 +127,3 @@ search_results = dag.search(`;
 
   return code;
 };
-
-export default formatCode;

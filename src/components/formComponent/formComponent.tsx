@@ -16,22 +16,18 @@ import {
 } from 'react-hook-form';
 import { ThreeDots } from 'react-loader-spinner';
 import { PlacesType, Tooltip, VariantType } from 'react-tooltip';
-import { Autocomplete } from '../components/autocomplete';
-
-import { fetchQueryables } from '../helpers/fetchQueryables';
-import { useFetchProduct, useFetchProvider } from '../hooks/useFetchData';
+import { Autocomplete } from '../autocomplete/autocomplete';
+import { useFetchProducts } from '../../hooks/useFetchProducts';
+import { fetchQueryables } from '../../utils/fetchers/fetchQueryables';
+import { useFetchProviders } from '../../hooks/useFetchProviders';
 import { ServerConnection } from '@jupyterlab/services';
-import {
-  CarbonCalendarAddAlt,
-  CodiconOpenPreview,
-  PhFileCode
-} from '../icones';
-import MapExtentComponent from '../MapExtentComponent';
-import SearchService from '../SearchService';
-import { IFormInput, IOptionType, IParameter } from '../types';
-import AdditionalParameterFields from './AdditionalParameterFields';
-import ParameterGroup from './ParameterGroup';
-import DropdownButton from './DropdownButton';
+import { CarbonCalendarAddAlt, CodiconOpenPreview, PhFileCode } from '../icons';
+import { MapExtent } from '../mapExtent';
+import SearchService from '../../utils/searchService';
+import { IFormInput, IOptionType, IParameter } from '../../types';
+import { AdditionalParameterFields } from './additionalParameterFields';
+import ParameterGroup from './parameterGroup';
+import { DropdownButton } from './dropdownButton';
 import { IMapSettings } from '../browser';
 
 export interface IProps {
@@ -87,8 +83,8 @@ export const FormComponent: FC<IProps> = ({
   const [additionalParameters, setAdditionalParameters] =
     useState<boolean>(true);
   const [optionalParams, setOptionalParams] = useState<IOptionType[]>([]);
-  const { fetchProvider, fetchProvidersLoading } = useFetchProvider();
-  const { fetchProduct, fetchProductLoading } = useFetchProduct();
+  const { fetchProviders, fetchProvidersLoading } = useFetchProviders();
+  const { fetchProducts, fetchProductLoading } = useFetchProducts();
 
   const formInput = useForm<IFormInput>({
     defaultValues: {
@@ -119,7 +115,7 @@ export const FormComponent: FC<IProps> = ({
 
   useEffect(() => {
     const fetchData = async () => {
-      const productList = await fetchProduct(providerValue);
+      const productList = await fetchProducts(providerValue);
       setProductTypes(productList);
       if (reloadIndicator) {
         setFetchCount(fetchCount => fetchCount + 1);
@@ -130,7 +126,7 @@ export const FormComponent: FC<IProps> = ({
 
   useEffect(() => {
     const fetchData = async () => {
-      const providerList = await fetchProvider(productTypeValue);
+      const providerList = await fetchProviders(productTypeValue);
 
       setProviders(providerList);
       if (reloadIndicator) {
@@ -233,7 +229,7 @@ export const FormComponent: FC<IProps> = ({
             geometry: formValues.geometry,
             provider: formValues.provider,
             productType: formValues.productType,
-            additionnalParameters: formValues.additionnalParameters
+            additionalParameters: formValues.additionalParameters
           });
 
           const optionals = params
@@ -312,7 +308,7 @@ export const FormComponent: FC<IProps> = ({
               control={control}
               rules={{ required: false }}
               render={({ field: { onChange, value } }) => (
-                <MapExtentComponent
+                <MapExtent
                   geometry={value}
                   onChange={onChange}
                   mapSettings={mapSettings}
@@ -332,7 +328,7 @@ export const FormComponent: FC<IProps> = ({
                   value={value ?? null}
                   disabled={fetchProvidersLoading}
                   loadSuggestions={(inputValue: string) =>
-                    fetchProvider(null, inputValue)
+                    fetchProviders(null, inputValue)
                   }
                   handleChange={(e: IOptionTypeBase | null) => {
                     onChange(e === null ? null : e.value);
@@ -353,7 +349,7 @@ export const FormComponent: FC<IProps> = ({
                   value={value ?? null}
                   disabled={fetchProductLoading}
                   loadSuggestions={(inputValue: string) =>
-                    fetchProduct(providerValue, inputValue)
+                    fetchProducts(providerValue, inputValue)
                   }
                   handleChange={(e: IOptionTypeBase | null) => {
                     if (e === null) {
@@ -363,7 +359,7 @@ export const FormComponent: FC<IProps> = ({
                       reset({
                         geometry: formValues.geometry,
                         provider: formValues.provider,
-                        additionnalParameters: formValues.additionnalParameters
+                        additionalParameters: formValues.additionalParameters
                       });
                       return onChange(null);
                     }
@@ -371,7 +367,7 @@ export const FormComponent: FC<IProps> = ({
 
                     if (e.value !== productTypeValue) {
                       setSelectedOptions([]);
-                      setValue('additionnalParameters', [
+                      setValue('additionalParameters', [
                         { name: '', value: '' }
                       ]);
                     }

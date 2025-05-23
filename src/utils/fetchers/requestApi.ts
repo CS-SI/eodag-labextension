@@ -6,7 +6,7 @@
 import { URLExt } from '@jupyterlab/coreutils';
 
 import { ServerConnection } from '@jupyterlab/services';
-import { EODAG_SERVER_ADRESS } from './config';
+import { EODAG_SERVER_ADDRESS } from '../../config/config';
 
 /**
  * Call the API extension
@@ -23,7 +23,7 @@ export async function requestAPI<T>(
   const settings = ServerConnection.makeSettings();
   const requestUrl = URLExt.join(
     settings.baseUrl,
-    EODAG_SERVER_ADRESS, // API Namespace
+    EODAG_SERVER_ADDRESS, // API Namespace
     endPoint
   );
 
