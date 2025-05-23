@@ -5,10 +5,9 @@
 
 /**
  * Address used to contact the EODAG server
- *
  * This is the notebook server REST API extension
  */
-export const EODAG_SERVER_ADRESS = 'eodag';
+export const EODAG_SERVER_ADDRESS = 'eodag';
 
 /**
  * Address used to contact the EODAG settings

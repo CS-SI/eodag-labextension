@@ -7,12 +7,13 @@ import {
   ValueContainerProps
 } from 'react-select';
 import { Tooltip } from 'react-tooltip';
-import { IOptionTypeBase } from '../formComponent/FormComponent';
+import { IOptionTypeBase } from '../formComponent/formComponent';
 import { MenuList } from './menuList';
 
 interface IAutocompleteProps {
   suggestions: IOptionTypeBase[];
   value: string;
+  disabled?: boolean;
   handleChange: (option: IOptionTypeBase | null) => void;
   label: string;
   disabled: boolean;
@@ -126,6 +127,7 @@ export const Autocomplete: React.FC<IAutocompleteProps> = ({
             value={currentValue}
             isDisabled={disabled}
             onChange={handleChange}
+            isDisabled={disabled}
             placeholder={placeholder}
             isClearable
           />

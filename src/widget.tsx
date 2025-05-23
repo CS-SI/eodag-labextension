@@ -7,10 +7,10 @@ import { INotebookTracker } from '@jupyterlab/notebook';
 import { Widget } from '@lumino/widgets';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { EodagBrowser } from './browser';
+import { EodagBrowser } from './components/browser';
 
 import { LabIcon } from '@jupyterlab/ui-components';
-import { Signal, ISignal } from '@lumino/signaling';
+import { ISignal, Signal } from '@lumino/signaling';
 import iconSvgStr from '../style/icon.svg';
 
 export const logoIcon = new LabIcon({
@@ -19,13 +19,9 @@ export const logoIcon = new LabIcon({
 });
 
 export class EodagWidget extends Widget {
+  private static _instance: EodagWidget | null = null;
   tracker: INotebookTracker;
   commands: any;
-  private static _instance: EodagWidget | null = null;
-  _mapSettingsChanged = new Signal<
-    this,
-    { lat: number; lon: number; zoom: number }
-  >(this);
 
   /**
    * Construct a new EodagBrowser widget.
@@ -44,15 +40,20 @@ export class EodagWidget extends Widget {
     this.update();
   }
 
-  static getCurrentInstance(): EodagWidget | null {
-    return EodagWidget._instance;
-  }
+  _mapSettingsChanged = new Signal<
+    this,
+    { lat: number; lon: number; zoom: number }
+  >(this);
 
   get mapSettingsChanged(): ISignal<
     this,
     { lat: number; lon: number; zoom: number }
   > {
     return this._mapSettingsChanged;
+  }
+
+  static getCurrentInstance(): EodagWidget | null {
+    return EodagWidget._instance;
   }
 
   updateMapSettings(lat: number, lon: number, zoom: number): void {
