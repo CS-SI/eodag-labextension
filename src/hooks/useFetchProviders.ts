@@ -1,9 +1,11 @@
 import { useCallback, useState } from 'react';
-import {
-  IOptionTypeBase,
-  IProvider
-} from '../components/formComponent/formComponent';
+import { IOptionTypeBase } from '../components/formComponent/formComponent';
 import { fetchData } from '../utils/fetchers/fetchData';
+
+interface IProvider {
+  provider: string;
+  description: string;
+}
 
 export const useFetchProviders = () => {
   const [fetchProvidersLoading, setFetchProviderLoading] =

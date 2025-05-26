@@ -3614,6 +3614,7 @@ __metadata:
     react-loader-spinner: ^6.1.6
     react-modal: 3.15.1
     react-select: 5.4.0
+    react-spinners: ^0.17.0
     react-tooltip: ~5.26.3
     react-virtualized: ^9.22.4
     react-window: ^1.8.11
@@ -6186,6 +6187,16 @@ __metadata:
     react: ^16.8.0 || ^17.0.0 || ^18.0.0
     react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
   checksum: da896f0f8b3c7f6250148ce9ded1ace60abb35b812be50d34cf7ba980b12ca75533c3bbfd9e722530cc0e70c17e8997c3c7e93743877d84c00b0d90e4da521e6
+  languageName: node
+  linkType: hard
+
+"react-spinners@npm:^0.17.0":
+  version: 0.17.0
+  resolution: "react-spinners@npm:0.17.0"
+  peerDependencies:
+    react: ^16.0.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+    react-dom: ^16.0.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+  checksum: 5790462437cae07763657cc32e7ebd2252465df70b1ee822a34c92191496219e8c77a2a10f55b9a9f804ec6d79c690c6dedfefd96333228b0a4ffd6d9dcf3d04
   languageName: node
   linkType: hard
 
