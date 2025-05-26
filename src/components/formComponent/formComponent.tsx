@@ -8,18 +8,11 @@ import 'isomorphic-fetch';
 import React, { FC, useEffect, useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import {
-  Controller,
-  FormProvider,
-  SubmitHandler,
-  useForm
-} from 'react-hook-form';
+import { Controller, FormProvider, SubmitHandler, useForm } from 'react-hook-form';
 import { ThreeDots } from 'react-loader-spinner';
 import { PlacesType, Tooltip, VariantType } from 'react-tooltip';
 import { Autocomplete } from '../autocomplete/autocomplete';
-import { useFetchProducts } from '../../hooks/useFetchProducts';
 import { fetchQueryables } from '../../utils/fetchers/fetchQueryables';
-import { useFetchProviders } from '../../hooks/useFetchProviders';
 import { ServerConnection } from '@jupyterlab/services';
 import { CarbonCalendarAddAlt, CodiconOpenPreview, PhFileCode } from '../icons';
 import { MapExtent } from '../mapExtent';
@@ -30,42 +23,42 @@ import ParameterGroup from './parameterGroup';
 import { DropdownButton } from './dropdownButton';
 import { IMapSettings } from '../browser';
 
-export interface IProps {
+export interface IFormComponentsProps {
   handleShowFeature: any;
   saveFormValues: (formValue: IFormInput) => void;
   handleGenerateQuery: any;
   isNotebookCreated: any;
-  reloadIndicator: boolean;
-  onFetchComplete: () => void;
   mapSettings?: IMapSettings;
+  fetchProducts: (
+    providerValue: string | null,
+    inputValue?: string
+  ) => Promise<IOptionTypeBase[]>;
+  fetchProviders: (
+    productTypeValue: string | null,
+    inputValue?: string
+  ) => Promise<IOptionTypeBase[]>;
+  fetchProvidersLoading: boolean;
+  fetchProductsLoading: boolean;
 }
 
 export interface IOptionTypeBase {
   [key: string]: any;
 }
 
-export interface IProduct {
-  ID: string;
-  title: string;
-}
-
-export interface IProvider {
-  provider: string;
-  description: string;
-}
-
 export const tooltipDark: VariantType = 'dark';
 export const tooltipWarning: VariantType = 'warning';
 export const tooltipTop: PlacesType = 'top';
 
-export const FormComponent: FC<IProps> = ({
+export const FormComponent: FC<IFormComponentsProps> = ({
   handleShowFeature,
   saveFormValues,
   handleGenerateQuery,
   isNotebookCreated,
-  reloadIndicator,
-  onFetchComplete,
-  mapSettings
+  mapSettings,
+  fetchProducts,
+  fetchProviders,
+  fetchProvidersLoading,
+  fetchProductsLoading
 }) => {
   const [productTypes, setProductTypes] = useState<IOptionTypeBase[]>();
   const [providers, setProviders] = useState<IOptionTypeBase[]>();
@@ -77,14 +70,11 @@ export const FormComponent: FC<IProps> = ({
   const [openModal, setOpenModal] = useState(true);
   const [providerValue, setProviderValue] = useState(null);
   const [productTypeValue, setProductTypeValue] = useState<string>('');
-  const [fetchCount, setFetchCount] = useState(0);
   const [params, setParams] = useState<IParameter[]>([]);
   const [loading, setLoading] = useState(false);
   const [additionalParameters, setAdditionalParameters] =
     useState<boolean>(true);
   const [optionalParams, setOptionalParams] = useState<IOptionType[]>([]);
-  const { fetchProviders, fetchProvidersLoading } = useFetchProviders();
-  const { fetchProducts, fetchProductLoading } = useFetchProducts();
 
   const formInput = useForm<IFormInput>({
     defaultValues: {
@@ -108,40 +98,20 @@ export const FormComponent: FC<IProps> = ({
   const formValues = getValues();
 
   useEffect(() => {
-    if (!reloadIndicator) {
-      setFetchCount(0);
-    }
-  }, [reloadIndicator]);
-
-  useEffect(() => {
     const fetchData = async () => {
       const productList = await fetchProducts(providerValue);
       setProductTypes(productList);
-      if (reloadIndicator) {
-        setFetchCount(fetchCount => fetchCount + 1);
-      }
     };
     fetchData();
-  }, [providerValue, reloadIndicator]);
+  }, [providerValue]);
 
   useEffect(() => {
     const fetchData = async () => {
       const providerList = await fetchProviders(productTypeValue);
-
       setProviders(providerList);
-      if (reloadIndicator) {
-        setFetchCount(fetchCount => fetchCount + 1);
-      }
     };
-
     fetchData();
-  }, [productTypeValue, reloadIndicator]);
-
-  useEffect(() => {
-    if (fetchCount === 2) {
-      onFetchComplete();
-    }
-  }, [fetchCount, onFetchComplete]);
+  }, [productTypeValue]);
 
   const onSubmit: SubmitHandler<IFormInput> = data => {
     if (!isNotebookCreated()) {
@@ -347,7 +317,7 @@ export const FormComponent: FC<IProps> = ({
                   suggestions={productTypes ? productTypes : []}
                   placeholder="S2_..."
                   value={value ?? null}
-                  disabled={fetchProductLoading}
+                  disabled={fetchProductsLoading}
                   loadSuggestions={(inputValue: string) =>
                     fetchProducts(providerValue, inputValue)
                   }
