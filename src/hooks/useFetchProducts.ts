@@ -1,9 +1,11 @@
 import { useCallback, useState } from 'react';
-import {
-  IOptionTypeBase,
-  IProduct
-} from '../components/formComponent/formComponent';
+import { IOptionTypeBase } from '../components/formComponent/formComponent';
 import { fetchData } from '../utils/fetchers/fetchData';
+
+interface IProduct {
+  ID: string;
+  title: string;
+}
 
 export const useFetchProducts = () => {
   const [fetchProductLoading, setFetchProductLoading] = useState(false);

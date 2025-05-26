@@ -9,11 +9,12 @@ import {
 import { Tooltip } from 'react-tooltip';
 import { IOptionTypeBase } from '../formComponent/formComponent';
 import { MenuList } from './menuList';
+import { LoadingState } from '../loadingState/loadingState';
 
 interface IProps {
   suggestions: IOptionTypeBase[];
   value: string;
-  disabled?: boolean;
+  disabled: boolean;
   handleChange: (option: IOptionTypeBase | null) => void;
   label: string;
   placeholder?: string;
@@ -117,18 +118,19 @@ export const Autocomplete: React.FC<IProps> = ({
       <label className="jp-EodagWidget-input-name">
         {label}
         <div style={{ marginTop: 10 }}>
-          <AsyncSelect
-            className="jp-EodagWidget-select"
-            classNamePrefix="jp-EodagWidget-select"
-            defaultOptions={suggestions}
-            loadOptions={loadSuggestions}
-            components={listComponents}
-            value={currentValue}
-            onChange={handleChange}
-            isDisabled={disabled}
-            placeholder={placeholder}
-            isClearable
-          />
+          <LoadingState disabled={disabled}>
+            <AsyncSelect
+              className="jp-EodagWidget-select"
+              classNamePrefix="jp-EodagWidget-select"
+              defaultOptions={suggestions}
+              loadOptions={loadSuggestions}
+              components={listComponents}
+              value={currentValue}
+              onChange={handleChange}
+              placeholder={placeholder}
+              isClearable
+            />
+          </LoadingState>
         </div>
       </label>
 
