@@ -5,8 +5,8 @@
   "description": "Settings for EODAG extension.",
   "properties": {
     "replaceCode": {
-      "title": "Replace existing search code",
-      "description": "Replace the existing search code containing matching comment with the new code.",
+      "title": "Replace existing generated code in Notebook",
+      "description": "Newly generated code will replace existing one instead of inserting it in a new cell (reference comment usage).",
       "type": "boolean",
       "default": false
     },
