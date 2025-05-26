@@ -9,18 +9,22 @@ export const eodagServer = URLExt.join(
   EODAG_SERVER_ADDRESS
 );
 
-export const useFetchUserSettings = async () => {
-  try {
-    const response = await fetch(URLExt.join(eodagServer, 'reload'), {
-      credentials: 'same-origin'
-    });
-    if (response.status >= 400) {
-      throw new Error('Bad response from server');
+export const useFetchUserSettings = () => {
+  const fetchUserSettings = async () => {
+    try {
+      const response = await fetch(URLExt.join(eodagServer, 'reload'), {
+        credentials: 'same-origin'
+      });
+      if (response.status >= 400) {
+        throw new Error('Bad response from server');
+      }
+    } catch (error) {
+      showErrorMessage(
+        'EODAG server error',
+        `Unable to contact the EODAG server. Are you sure the address is ${eodagServer}/ ?`
+      );
     }
-  } catch (error) {
-    showErrorMessage(
-      'EODAG server error',
-      `Unable to contact the EODAG server. Are you sure the address is ${eodagServer}/ ?`
-    );
-  }
+  };
+
+  return { fetchUserSettings };
 };
