@@ -90,6 +90,7 @@ interface IProps {
   value: string;
   handleChange: any;
   label: string;
+  disabled?: boolean;
   placeholder?: string;
   loadSuggestions?: (inputValue: string) => Promise<IOptionTypeBase[]>;
 }
@@ -102,6 +103,7 @@ class IntegrationReactSelect extends React.Component<IProps> {
       value,
       handleChange,
       placeholder,
+      disabled = false,
       loadSuggestions
     } = this.props;
     let currentValue: OptionTypeBase | null;
@@ -127,6 +129,7 @@ class IntegrationReactSelect extends React.Component<IProps> {
               components={listcomponents}
               value={currentValue}
               onChange={handleChange}
+              isDisabled={disabled}
               placeholder={placeholder}
               isClearable
             />
