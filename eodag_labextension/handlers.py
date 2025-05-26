@@ -45,12 +45,10 @@ async def get_eodag_api():
     global eodag_api
 
     current_loop = asyncio.get_running_loop()
-    if eodag_api is None:
-        async with eodag_lock:
-            # Double-check to avoid race condition
-            if eodag_api is None:
-                eodag_api = await current_loop.run_in_executor(None, EODataAccessGateway)
-    return eodag_api
+    async with eodag_lock:
+        if eodag_api is None:
+            eodag_api = await current_loop.run_in_executor(None, EODataAccessGateway)
+        return eodag_api
 
 
 class ProductTypeHandler(APIHandler):
@@ -86,7 +84,8 @@ class ReloadHandler(APIHandler):
         """Get endpoint"""
         dag = await get_eodag_api()
         current_loop = asyncio.get_running_loop()
-        await current_loop.run_in_executor(None, dag.__init__)
+        async with eodag_lock:
+            await current_loop.run_in_executor(None, dag.__init__)
 
 
 class InfoHandler(APIHandler):
