@@ -4,6 +4,8 @@
 import json
 import os
 import re
+from pathlib import Path
+from tempfile import TemporaryDirectory
 from unittest import mock
 
 from eodag import SearchResult
@@ -18,7 +20,7 @@ from tornado.web import authenticated
 
 from eodag_labextension import __version__ as labextension_version
 from eodag_labextension import load_jupyter_server_extension
-from eodag_labextension.handlers import APIHandler
+from eodag_labextension.handlers import APIHandler, get_eodag_api, set_conf_symlink
 
 
 class MockUser:
@@ -282,3 +284,24 @@ class TestEodagLabExtensionHandler(AsyncHTTPTestCase):
     async def test_debug(self):
         infos = await self.fetch_results("/eodag/info")
         self.assertTrue(infos["debug"])
+
+    @gen_test(timeout=120)
+    async def test_set_conf_symlink(self):
+        with TemporaryDirectory() as tmpdir:
+            custom_cfg_file = Path(tmpdir) / "foo.yml"
+            custom_cfg_file.touch()
+            custom_cfg_file_str = str(custom_cfg_file.absolute())
+            local_cfg_file = Path(".eodag") / "eodag.yml"
+
+            # custom config file
+            with mock.patch.dict(os.environ, {"EODAG_CFG_FILE": custom_cfg_file_str}):
+                eodag_api = await get_eodag_api()
+                set_conf_symlink(eodag_api)
+                self.assertTrue(os.path.isdir(".eodag"))
+                self.assertTrue(os.path.islink(str(local_cfg_file)))
+                self.assertEqual(custom_cfg_file, Path(os.readlink(str(local_cfg_file))))
+
+            # default config file
+            set_conf_symlink(eodag_api)
+            self.assertTrue(os.path.islink(".eodag"))
+            self.assertEqual(Path(eodag_api.conf_dir) / "eodag.yml", Path(os.readlink(".eodag")) / "eodag.yml")
