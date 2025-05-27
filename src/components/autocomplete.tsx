@@ -10,11 +10,12 @@ import { Tooltip } from 'react-tooltip';
 import { IOptionTypeBase } from '../formComponent/FormComponent';
 import { MenuList } from './menuList';
 
-interface IProps {
+interface IAutocompleteProps {
   suggestions: IOptionTypeBase[];
   value: string;
   handleChange: (option: IOptionTypeBase | null) => void;
   label: string;
+  disabled: boolean;
   placeholder?: string;
   loadSuggestions?: (inputValue: string) => Promise<IOptionTypeBase[]>;
 }
@@ -97,12 +98,13 @@ const listComponents = {
   MenuList
 };
 
-export const Autocomplete: React.FC<IProps> = ({
+export const Autocomplete: React.FC<IAutocompleteProps> = ({
   label,
   suggestions,
   value,
   handleChange,
   placeholder,
+  disabled,
   loadSuggestions
 }) => {
   const currentValue = useMemo(
@@ -122,6 +124,7 @@ export const Autocomplete: React.FC<IProps> = ({
             loadOptions={loadSuggestions}
             components={listComponents}
             value={currentValue}
+            isDisabled={disabled}
             onChange={handleChange}
             placeholder={placeholder}
             isClearable
