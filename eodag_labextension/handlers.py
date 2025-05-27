@@ -6,7 +6,9 @@
 
 import asyncio
 import logging
+import os
 import re
+import shutil
 from functools import partial
 from typing import Any
 
@@ -40,6 +42,39 @@ if Settings().debug:
     setup_logging(3)
 
 
+def set_conf_symlink(eodag_api):
+    """Check and create .eodag symlink to user conf directory"""
+    try:
+        userconf_env = os.getenv("EODAG_CFG_FILE")
+        userconf_src = userconf_env or os.path.join(eodag_api.conf_dir, "eodag.yml")
+        # check if exists
+        if os.path.islink(".eodag"):
+            userdir_dst = os.readlink(".eodag")
+            if os.path.isdir(userdir_dst):
+                userconf_dst = os.path.join(userdir_dst, "eodag.yml")
+                if userconf_src == userconf_dst:
+                    logger.debug("Re-using existing .eodag symlink to user configuration")
+                    return
+        # remove existing
+        if os.path.islink(".eodag") or os.path.isfile(".eodag"):
+            logger.debug("remove existing .eodag symlink")
+            os.remove(".eodag")
+        if os.path.isdir(".eodag"):
+            logger.debug("remove existing .eodag directory")
+            shutil.rmtree(".eodag")
+
+        # create symlink
+        if userconf_env:
+            logger.debug(f"Creating .eodag symlink to custom user configuration {userconf_env}")
+            os.mkdir(".eodag")
+            os.symlink(userconf_env, os.path.join(".eodag", "eodag.yml"))
+        else:
+            logger.debug("Creating .eodag symlink to user configuration")
+            os.symlink(eodag_api.conf_dir, ".eodag")
+    except OSError as err:
+        logger.error("Could not create .eodag symlink to user configuration: " + str(err))
+
+
 async def get_eodag_api():
     """EODataAccessGateway on-demand instanciation"""
     global eodag_api
@@ -48,6 +83,7 @@ async def get_eodag_api():
     async with eodag_lock:
         if eodag_api is None:
             eodag_api = await current_loop.run_in_executor(None, EODataAccessGateway)
+            set_conf_symlink(eodag_api)
         return eodag_api
 
 
