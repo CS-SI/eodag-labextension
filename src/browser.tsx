@@ -93,9 +93,16 @@ export class EodagBrowser extends React.Component<IProps, IState> {
     // present in the ~/.config/eodag/eodag.yml
     const filePath = '/eodag-config/eodag.yml';
 
-    await this.props.commands.execute('docmanager:open', {
+    const widget = await this.props.commands.execute('docmanager:open', {
       path: filePath,
       factory: 'Editor'
+    });
+
+    const context = widget.context;
+
+    // Reload user settings when the file is changed
+    context.fileChanged.connect(() => {
+      this.reloadUserSettings();
     });
   };
 
