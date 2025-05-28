@@ -127,33 +127,40 @@ class TestEodagLabExtensionHandler(AsyncHTTPTestCase):
     async def test_guess_product_types(self):
         all_results = await self.fetch_results("/eodag/guess-product-type")
         self.assertIn("S2_MSI_L1C", [pt["ID"] for pt in all_results])
+        self.assertListEqual(sorted(list(all_results[0].keys())), ["ID", "title"])
 
         one_provider_results = await self.fetch_results("/eodag/guess-product-type?provider=creodias")
         self.assertLess(len(one_provider_results), len(all_results))
         self.assertIn("COP_DEM_GLO90_DGED", [pt["ID"] for pt in all_results])
+        self.assertListEqual(sorted(list(one_provider_results[0].keys())), ["ID", "title"])
 
         one_result = await self.fetch_results("/eodag/guess-product-type?keywords=S2_MSI_L1C")
         self.assertEqual(len(one_result), 1)
         self.assertEqual(one_result[0]["ID"], "S2_MSI_L1C")
+        self.assertListEqual(sorted(list(one_result[0].keys())), ["ID", "title"])
 
         another_result = await self.fetch_results("/eodag/guess-product-type?keywords=Sentinel2%20L1C")
         self.assertEqual(len(another_result), 1)
         self.assertEqual(another_result[0]["ID"], "S2_MSI_L1C")
+        self.assertListEqual(sorted(list(another_result[0].keys())), ["ID", "title"])
 
         more_results = await self.fetch_results("/eodag/guess-product-type?keywords=Sentinel")
         self.assertGreater(len(more_results), 1)
         self.assertLess(len(more_results), len(all_results))
         self.assertIn("S2_MSI_L1C", [pt["ID"] for pt in more_results])
+        self.assertListEqual(sorted(list(more_results[0].keys())), ["ID", "title"])
 
         less_results = await self.fetch_results("/eodag/guess-product-type?keywords=Sentinel&provider=peps")
         self.assertGreater(len(more_results), 1)
         self.assertLess(len(less_results), len(more_results))
         self.assertEqual(less_results[0]["ID"], "S1_SAR_GRD")
+        self.assertListEqual(sorted(list(less_results[0].keys())), ["ID", "title"])
 
         other_results = await self.fetch_results("/eodag/guess-product-type?keywords=cop")
         self.assertGreater(len(other_results), 1)
         self.assertLess(len(other_results), len(all_results))
         self.assertTrue(other_results[0]["ID"].lower().startswith("cop"))
+        self.assertListEqual(sorted(list(other_results[0].keys())), ["ID", "title"])
 
         await self.fetch_results_error("/eodag/guess-product-type?provider=foo", 400)
 
