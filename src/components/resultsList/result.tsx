@@ -1,17 +1,16 @@
 import React from 'react';
 import Chip from '@mui/material/Chip';
+import IconButton from '@mui/material/IconButton';
+import CloudIcon from '@mui/icons-material/Cloud';
+import ZoomInIcon from '@mui/icons-material/ZoomIn';
+import { IFeature } from '../../types';
 
 interface IResultProps {
-  rowData: {
-    id: string;
-    startTimeFromAscendingNode?: string;
-    endTimeFromAscendingNode?: string;
-    thumbnail?: string;
-    cloudCover?: number;
-  };
+  rowData: IFeature;
   isSelected: boolean;
   isHighlighted: boolean;
   onClick: (id: string) => void;
+  onZoom: (id: string) => void;
   onHover: (id: string | null) => void;
   style: React.CSSProperties;
 }
@@ -32,62 +31,64 @@ export const Result: React.FC<IResultProps> = ({
   isSelected,
   isHighlighted,
   onClick,
+  onZoom,
   onHover,
   style
 }) => {
-  console.log('rowData : ', rowData);
+  const preview = rowData.thumbnail
+    ? rowData.thumbnail
+    : rowData.quicklook
+      ? rowData.quicklook
+      : null;
+
   return (
-    <div
-      className={'result_row'}
-      style={{
-        ...style,
-        backgroundColor: isSelected
-          ? '#757575'
-          : isHighlighted
-            ? '#eeeeee'
-            : 'white'
-      }}
-      onClick={() => onClick(rowData.id)}
-      onMouseEnter={() => onHover(rowData.id)}
-      onMouseLeave={() => onHover(null)}
-      role="row"
-      tabIndex={0}
-    >
+    <div className={'result_wrapper'} style={style} role="row" tabIndex={0}>
       <div className={'result_preview'}>
-        <img src={rowData.thumbnail} alt={'data preview'} />
+        {preview ? <img src={preview} alt={'data preview'} /> : null}
       </div>
-      <div className={'result_infos'}>
-        <div className={'result_tags'}>
-          {rowData.cloudCover && (
-            <Chip
-              label={`${Number(rowData.cloudCover).toFixed(2)} %`}
-              size={'small'}
-            />
-          )}
+      <div
+        onMouseEnter={() => onHover(rowData.id)}
+        onMouseLeave={() => onHover(null)}
+        role="row"
+        onClick={() => onClick(rowData.id)}
+        className={'result_row'}
+        style={{
+          border:
+            isSelected || isHighlighted
+              ? '2px solid #007AFF'
+              : '2px solid transparent'
+        }}
+      >
+        <div className={'result_infos'}>
+          {/* Move this condition under the result_tags div when other infos might come */}
+          {rowData.cloudCover ? (
+            <div className={'result_tags'}>
+              <Chip
+                className={'jp-EodagWidget-chip'}
+                icon={<CloudIcon />}
+                label={`${Number(rowData.cloudCover).toFixed(2)}%`}
+                size={'small'}
+              />
+            </div>
+          ) : null}
+          <span className={'result_id'}>{rowData.id}</span>
+          {rowData.startTimeFromAscendingNode ? (
+            <span className={'result_time'}>
+              {`${formatDate(rowData.startTimeFromAscendingNode)} (UTC)`}
+            </span>
+          ) : null}
+          <IconButton
+            size={'small'}
+            className={'result_zoom_button'}
+            onClick={e => {
+              e.stopPropagation();
+              return onZoom(rowData.id);
+            }}
+          >
+            <ZoomInIcon fontSize={'inherit'} />
+          </IconButton>
         </div>
-        <span className={'result_id'}>{rowData.id}</span>
-        {rowData.startTimeFromAscendingNode ? (
-          <span className={'result_time'}>
-            {`${formatDate(rowData.startTimeFromAscendingNode)} (UTC)`}
-          </span>
-        ) : null}
       </div>
-      {/*<div style={{ flex: 3 }}>{rowData.endTimeFromAscendingNode || '-'}</div>*/}
-      {/*<div style={{ flex: 1, textAlign: 'right' }}>*/}
-      {/*  {rowData.cloudCover !== undefined*/}
-      {/*    ? `${parseInt(rowData.cloudCover, 10)} %`*/}
-      {/*    : '-'}*/}
-      {/*</div>*/}
-      {/*<div style={{ flex: 1, textAlign: 'center' }}>*/}
-      {/*  <button*/}
-      {/*    onClick={e => {*/}
-      {/*      e.stopPropagation();*/}
-      {/*      alert(`Zoom sur feature ${rowData.id}`);*/}
-      {/*    }}*/}
-      {/*  >*/}
-      {/*    🔍*/}
-      {/*  </button>*/}
-      {/*</div>*/}
     </div>
   );
 };

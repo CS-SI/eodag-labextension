@@ -56,3 +56,18 @@ export interface IOptionType {
   value: string;
   label: string;
 }
+
+// TODO: Need to type this
+export interface IFeatures {
+  type: any;
+  features: any[];
+}
+
+export interface IFeature {
+  id: string;
+  startTimeFromAscendingNode?: string;
+  endTimeFromAscendingNode?: string;
+  thumbnail?: string;
+  quicklook?: string;
+  cloudCover?: number;
+}
