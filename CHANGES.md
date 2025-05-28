@@ -1,5 +1,80 @@
 # Release history
 
+## v5.0.0 (2025-05-28)
+
+### Refactoring
+
+- [v5.0.0b1] Jupyterlab v4 upgrade ([#161](https://github.com/CS-SI/eodag-labextension/pull/161),
+  [`06bbd4d`](https://github.com/CS-SI/eodag-labextension/commit/06bbd4d7503c331193237e06c0dca03da9ca3d64))
+
+- **handlers**: Do not return unnecessary product types fields
+  ([#201](https://github.com/CS-SI/eodag-labextension/pull/201),
+  [`d5443fc`](https://github.com/CS-SI/eodag-labextension/commit/d5443fca95650cfe67bba86c2af34cf55509b5cc))
+
+### Features
+
+- **autocomplete**: Add options virtualization on Autocomplete component
+  ([#196](https://github.com/CS-SI/eodag-labextension/pull/196),
+  [`5c77582`](https://github.com/CS-SI/eodag-labextension/commit/5c7758292961205951be7087bdcc1078a9223241))
+
+- **main form**: Async handlers and loading state that disables the selects when fetchs are loading
+  ([#188](https://github.com/CS-SI/eodag-labextension/pull/188),
+  [`80420b3`](https://github.com/CS-SI/eodag-labextension/commit/80420b3c7a37a8dffa92e0df686b160b92bccea3))
+
+- **option menu button**: Add menu dropdown to embbed all links & options
+  ([#193](https://github.com/CS-SI/eodag-labextension/pull/193),
+  [`1c73d23`](https://github.com/CS-SI/eodag-labextension/commit/1c73d2362cae0eeb751fa6270a84e46935ceb04d))
+
+- **user settings**: Add user settings edition menu item button
+  ([#194](https://github.com/CS-SI/eodag-labextension/pull/194),
+  [`4f44126`](https://github.com/CS-SI/eodag-labextension/commit/4f44126a75f7bd8e54a26c45e3a1de0bd9fe5b14))
+
+- Eodag local conf dir symlink ([#200](https://github.com/CS-SI/eodag-labextension/pull/200),
+  [`ee5520f`](https://github.com/CS-SI/eodag-labextension/commit/ee5520ffb48fb2ba346fea5f4f4f71f9b153ff6b))
+
+- Pydantic settings and info handler ([#191](https://github.com/CS-SI/eodag-labextension/pull/191),
+  [`d5827ec`](https://github.com/CS-SI/eodag-labextension/commit/d5827ec6287979ea90ee139cd5939e59bca0c505))
+
+### Bug Fixes
+
+- **autocomplete**: Fix double click needed to empty the autocomplete fields
+  ([#187](https://github.com/CS-SI/eodag-labextension/pull/187),
+  [`23060ea`](https://github.com/CS-SI/eodag-labextension/commit/23060ea112b4bf6fcbd490f815fd22b832824c4e))
+
+- **form**: Resets the optional parameters when an optional parameter is unchecked
+  ([#189](https://github.com/CS-SI/eodag-labextension/pull/189),
+  [`3ba4d63`](https://github.com/CS-SI/eodag-labextension/commit/3ba4d634945c030c4cae36b6610172be03f812dc))
+
+- **mapExtentComponent**: Map settings through extension settings
+  ([#186](https://github.com/CS-SI/eodag-labextension/pull/186),
+  [`36ca7a3`](https://github.com/CS-SI/eodag-labextension/commit/36ca7a3dc3b6e61d39c70e7eb676a4a9d75dd9d1))
+
+- **modal**: Fix multiple display bugs in modal
+  ([#184](https://github.com/CS-SI/eodag-labextension/pull/184),
+  [`9eaf358`](https://github.com/CS-SI/eodag-labextension/commit/9eaf3584461adc6e78f1500d524d2310f74ef376))
+
+### Continuous Integration
+
+- Deploy github action upgrade ([#179](https://github.com/CS-SI/eodag-labextension/pull/179),
+  [`a884aff`](https://github.com/CS-SI/eodag-labextension/commit/a884aff138034f94fa617b9e0a4512cb93107f02))
+
+### Documentation
+
+- Changelog typo ([#178](https://github.com/CS-SI/eodag-labextension/pull/178),
+  [`9cd8075`](https://github.com/CS-SI/eodag-labextension/commit/9cd80758e9f8fc59bfe23b873f78faa46330ccc1))
+
+- Updated README and CONTRIBUTING ([#203](https://github.com/CS-SI/eodag-labextension/pull/203),
+  [`ba05777`](https://github.com/CS-SI/eodag-labextension/commit/ba05777fedd94fd0c62ad26c0fc1cf89bc9c3d09))
+
+### Chores
+
+- **map settings**: Rename title & description
+  ([#190](https://github.com/CS-SI/eodag-labextension/pull/190),
+  [`a553e74`](https://github.com/CS-SI/eodag-labextension/commit/a553e741ffbd160e38a69e95e2ce35795eae62af))
+
+- Python-semantic-release settings ([#202](https://github.com/CS-SI/eodag-labextension/pull/202),
+  [`5ad4801`](https://github.com/CS-SI/eodag-labextension/commit/5ad48016ff73b6d147a605258b0fbe236c0baba1))
+
 ## v5.0.0b1 (2025-05-06)
 
 - Jupyterlab v4 upgrade [(#161)](https://github.com/CS-SI/eodag-labextension/pull/161)
