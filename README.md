@@ -117,9 +117,11 @@ You will be enable to:
   - choose whether newly inserted code should replace existing search code or not;
   - configure the default map settings.
 
-- Edit EODAG user configuration file, to set provider credentials, download directories, or other settings.
+- Edit [EODAG user configuration file](https://eodag.readthedocs.io/en/stable/getting_started_guide/configure.html#yaml-user-configuration-file),
+  to set provider credentials, download directories, or other settings.
   EODAG environment automatically reloads on file save.
-- Open Labextension Documentation, Github repository, or CS GROUP page.
+- Open Labextension [Documentation](https://github.com/CS-SI/eodag-labextension/blob/develop/README.md),
+  [Github repository](https://github.com/CS-SI/eodag-labextension), or [CS GROUP](https://www.cs-soprasteria.com) page.
 - View EODAG packages versions.
 
 ### Results overview
