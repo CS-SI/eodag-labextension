@@ -16,7 +16,7 @@ import {
 } from 'react-hook-form';
 import { ThreeDots } from 'react-loader-spinner';
 import { PlacesType, Tooltip, VariantType } from 'react-tooltip';
-import Autocomplete from '../Autocomplete';
+import { Autocomplete } from '../components/autocomplete';
 
 import { fetchQueryables } from '../helpers/fetchQueryables';
 import { useFetchProduct, useFetchProvider } from '../hooks/useFetchData';
@@ -25,7 +25,7 @@ import {
   CarbonCalendarAddAlt,
   CodiconOpenPreview,
   PhFileCode
-} from '../icones.js';
+} from '../icones';
 import MapExtentComponent from '../MapExtentComponent';
 import SearchService from '../SearchService';
 import { IFormInput, IOptionType, IParameter } from '../types';

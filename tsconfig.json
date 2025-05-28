@@ -25,6 +25,7 @@
     "src/hooks/*",
     "style/index.js",
     "src/formComponent/*",
+    "src/components/*",
     "src/helpers/*"
   ]
 }
