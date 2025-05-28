@@ -226,12 +226,16 @@ class GuessProductTypeHandler(APIHandler):
             ):
                 # 1. List product types starting with given keywords
                 first_keyword = query_dict["keywords"][0].lower()
-                returned_product_types = [pt for pt in all_product_types if pt["ID"].lower().startswith(first_keyword)]
+                returned_product_types = [
+                    {"ID": pt["ID"], "title": pt.get("title")}
+                    for pt in all_product_types
+                    if pt["ID"].lower().startswith(first_keyword)
+                ]
                 returned_product_types_ids = [pt["ID"] for pt in returned_product_types]
 
                 # 2. List product types containing keyword
                 returned_product_types += [
-                    pt
+                    {"ID": pt["ID"], "title": pt.get("title")}
                     for pt in all_product_types
                     if first_keyword in pt["ID"].lower() and pt["ID"] not in returned_product_types_ids
                 ]
@@ -249,12 +253,12 @@ class GuessProductTypeHandler(APIHandler):
                 )
                 # product types with full associated metadata
                 returned_product_types += [
-                    pt
+                    {"ID": pt["ID"], "title": pt.get("title")}
                     for pt in all_product_types
                     if pt["ID"] in guessed_ids_list and pt["ID"] not in returned_product_types_ids
                 ]
             else:
-                returned_product_types = all_product_types
+                returned_product_types = [{"ID": pt["ID"], "title": pt.get("title")} for pt in all_product_types]
 
             self.finish(orjson.dumps(returned_product_types))
         except NoMatchingProductType:
