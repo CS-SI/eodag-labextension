@@ -61,6 +61,7 @@ pip uninstall eodag-labextension
 eodag configuration file should be localized at `~/.config/eodag/eodag.yaml` (see
 [eodag documentation](https://eodag.readthedocs.io/en/latest/getting_started_guide/configure.html)).
 Make sure that that file is configured properly.
+The file can directly be edited through [Settings menu](#settings).
 
 ## QuickStart
 
@@ -105,12 +106,21 @@ Click on this icon to reload [EODAG configuration](https://eodag.readthedocs.io/
 and take into account your updated credentials or providers settings.
 
 ![settings logo](https://raw.githubusercontent.com/CS-SI/eodag-labextension/develop/notebooks/images/eodag_labext_settings_icon.png)
-Click on this icon to open EODAG-Labextension settings. You will be enable to:
-
-- choose whether newly inserted code should replace existing search code or not;
-- configure the default map settings.
+Click on this icon to open EODAG-Labextension settings menu.
 
 ![settings tab](https://raw.githubusercontent.com/CS-SI/eodag-labextension/develop/notebooks/images/eodag_labext_settings_map.png)
+
+You will be enable to:
+
+- Configure Labextension through its settings:
+
+  - choose whether newly inserted code should replace existing search code or not;
+  - configure the default map settings.
+
+- Edit EODAG user configuration file, to set provider credentials, download directories, or other settings.
+  EODAG environment automatically reloads on file save.
+- Open Labextension Documentation, Github repository, or CS GROUP page.
+- View EODAG packages versions.
 
 ### Results overview
 
