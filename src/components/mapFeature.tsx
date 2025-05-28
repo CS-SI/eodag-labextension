@@ -59,6 +59,17 @@ export const MapFeature: React.FC<IMapFeatureProps> = ({
       return;
     }
 
+    if (mapRef.current) {
+      L.control.zoom({ position: 'topright' }).addTo(mapRef.current);
+    }
+  }, [mapRef]);
+
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) {
+      return;
+    }
+
     map.eachLayer((layer: any) => {
       const layerId = get(layer, 'feature.id');
       if (highlightFeature && layerId === highlightFeature.id) {
@@ -109,7 +120,11 @@ export const MapFeature: React.FC<IMapFeatureProps> = ({
   );
 
   return (
-    <MapContainer bounds={boundsLatLng} ref={map => (mapRef.current = map)}>
+    <MapContainer
+      zoomControl={false}
+      bounds={boundsLatLng}
+      ref={map => (mapRef.current = map)}
+    >
       <TileLayer url={EODAG_TILE_URL} attribution={EODAG_TILE_COPYRIGHT} />
       {!isEmpty(features) && (
         <GeoJSON
