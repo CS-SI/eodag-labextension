@@ -9,7 +9,8 @@ export interface IFormInput {
   endDate: Date;
   productType: string;
   provider: string;
-  additionnalParameters?: { name: string; value: string }[];
+  additionalParameters?: { name: string; value: string }[];
+
   [key: string]: any;
 }
 
@@ -18,6 +19,7 @@ export interface ISearchParameters {
   dtend?: string; // format: YYYY-MM-DD
   page?: number;
   geom?: IGeometry;
+
   [key: string]: any;
 }
 
@@ -25,14 +27,13 @@ export interface IGeometry {
   type: string;
   coordinates: number[];
 }
-// export type IFeaturePropertie = [string, any];
-export interface IFeaturePropertie {
+
+export interface IFeatureProperty {
   key: string;
   value: any;
 }
 
-// export type IFeaturePropertie = [string, any];
-export interface IFeaturePropertie {
+export interface IFeatureProperty {
   key: string;
   value: any;
 }
