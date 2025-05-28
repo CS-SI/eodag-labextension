@@ -1,17 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
 import { find, get } from 'lodash';
 import { Box, Modal as MuiModal } from '@mui/material';
 import { MapFeature } from '../mapFeature';
-import BrowseComponent from '../browseComponent/browseComponent';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
-import { DescriptionProduct } from '../descriptionProduct';
 import { PlacesType, Tooltip, VariantType } from 'react-tooltip';
+import { ResultsList } from '../resultsList/resultsList';
 
 export interface IModalProps {
-  open: any;
-  handleClose: any;
+  open: boolean;
+  handleClose: () => void;
   handleGenerateQuery: any;
   features: any;
   isRetrievingMoreFeature: () => boolean;
@@ -39,21 +38,22 @@ export const Modal: React.FC<IModalProps> = ({
   handleGenerateQuery,
   open,
   features,
+  handleClose,
   isRetrievingMoreFeature,
   handleRetrieveMoreFeature
 }) => {
   const [displayFeature, setDisplayFeature] = useState(null);
   const [highlightOnMapFeature, setHighlightOnMapFeature] = useState(null);
   const [highlightOnTableFeature, setHighlightOnTableFeature] = useState(null);
-  const [zoomFeature, setZoomFeature] = useState(null);
+  const [zoomFeature] = useState(null);
   const [selectedFeature, setSelectedFeature] = useState(null);
-  const [modalOpen, setModalOpen] = useState(open);
+  const [modalOpen, setModalOpen] = useState<boolean>(open);
+
+  void displayFeature;
 
   useEffect(() => {
     setModalOpen(open);
   }, [open]);
-
-  const handleClose = () => setModalOpen(false);
 
   useEffect(() => {
     setDisplayFeature(null);
@@ -87,7 +87,7 @@ export const Modal: React.FC<IModalProps> = ({
     }
   };
 
-  const handleHoverTableFeature = (productId: string) => {
+  const handleHoverTableFeature = (productId: string | null) => {
     if (!productId) {
       return setHighlightOnMapFeature(null);
     } else {
@@ -99,28 +99,38 @@ export const Modal: React.FC<IModalProps> = ({
     }
   };
 
-  const handleZoomFeature = (productId: string) => {
-    const feature = getFeature(productId);
-    if (!feature) {
-      return null;
-    }
-    setZoomFeature(feature);
-  };
+  // const handleZoomFeature = (productId: string) => {
+  //   const feature = getFeature(productId);
+  //   if (!feature) {
+  //     return null;
+  //   }
+  //   setZoomFeature(feature);
+  // };
+
+  const { displayedResults, totalResults } = useMemo(() => {
+    const displayedResults = get(features, 'features', []).length;
+    const totalResults = get(features, 'properties.totalResults', 0);
+    return { displayedResults, totalResults };
+  }, [features]);
 
   return (
     <MuiModal open={modalOpen} onClose={handleClose}>
       <Box sx={styles}>
-        <div className="jp-EodagWidget-modal">
-          <div className="jp-EodagWidget-modal-container">
-            <div className="jp-EodagWidget-product-wrapper">
-              <MapFeature
-                features={features}
-                zoomFeature={zoomFeature}
-                highlightFeature={highlightOnMapFeature}
-                handleHoverFeature={handleHoverMapFeature}
-                handleClickFeature={handleClickFeature}
-              />
-              <div className="jp-EodagWidget-browse-title">
+        <div className={'jp-EodagWidget-background-map'}>
+          <MapFeature
+            features={features}
+            zoomFeature={zoomFeature}
+            highlightFeature={highlightOnMapFeature}
+            handleHoverFeature={handleHoverMapFeature}
+            handleClickFeature={handleClickFeature}
+          />
+        </div>
+        <div className={'jp-EodagWidget-modal-results'}>
+          <div className={'jp-EodagWidget-results-wrapper'}>
+            <div className={'jp-EodagWidget-results-title'}>
+              <h2>{`Results (${totalResults})`}</h2>
+              <div className={'jp-EodagWidget-results-subtitle'}>
+                <span>{`Showing the first ${displayedResults} items that matched your filter`}</span>
                 {isRetrievingMoreFeature() && (
                   <div
                     data-tooltip-id="load-tooltip"
@@ -133,36 +143,44 @@ export const Modal: React.FC<IModalProps> = ({
                     <Tooltip id="load-tooltip" className="jp-Eodag-tooltip" />
                   </div>
                 )}
-                {get(features, 'features', []).length} results (total:{' '}
-                {get(features, 'properties.totalResults', 0)})
-              </div>
-              <div className="jp-EodagWidget-browse-wrapper">
-                <BrowseComponent
-                  features={features}
-                  highlightFeature={highlightOnTableFeature}
-                  handleClickFeature={handleClickFeature}
-                  handleZoomFeature={handleZoomFeature}
-                  handleHoverFeature={handleHoverTableFeature}
-                  isRetrievingMoreFeature={isRetrievingMoreFeature}
-                  handleRetrieveMoreFeature={handleRetrieveMoreFeature}
-                  selectedFeature={selectedFeature}
-                />
-              </div>
-              <div className="jp-EodagWidget-modal-footer">
-                <button
-                  className="jp-EodagWidget-apply"
-                  onClick={handleGenerateQuery}
-                >
-                  Generate code
-                </button>
               </div>
             </div>
-            <div className="jp-EodagWidget-desc-wrapper">
-              <DescriptionProduct feature={displayFeature} />
+            <div className="jp-EodagWidget-results-content">
+              <ResultsList
+                features={features}
+                highlightFeature={highlightOnTableFeature}
+                handleClickFeature={handleClickFeature}
+                // handleZoomFeature={handleZoomFeature}
+                handleHoverFeature={handleHoverTableFeature}
+                isRetrievingMoreFeature={isRetrievingMoreFeature}
+                handleRetrieveMoreFeature={handleRetrieveMoreFeature}
+                selectedFeature={selectedFeature}
+              />
+              {/*<BrowseComponent*/}
+              {/*  features={features}*/}
+              {/*  highlightFeature={highlightOnTableFeature}*/}
+              {/*  handleClickFeature={handleClickFeature}*/}
+              {/*  handleZoomFeature={handleZoomFeature}*/}
+              {/*  handleHoverFeature={handleHoverTableFeature}*/}
+              {/*  isRetrievingMoreFeature={isRetrievingMoreFeature}*/}
+              {/*  handleRetrieveMoreFeature={handleRetrieveMoreFeature}*/}
+              {/*  selectedFeature={selectedFeature}*/}
+              {/*/>*/}
+            </div>
+            <div className="jp-EodagWidget-results-footer">
+              <button
+                className="jp-EodagWidget-apply"
+                onClick={handleGenerateQuery}
+              >
+                Generate code
+              </button>
             </div>
           </div>
         </div>
       </Box>
+      {/*<div className="jp-EodagWidget-desc-wrapper">*/}
+      {/*  <DescriptionProduct feature={displayFeature} />*/}
+      {/*</div>*/}
     </MuiModal>
   );
 };
