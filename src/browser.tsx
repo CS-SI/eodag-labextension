@@ -89,8 +89,6 @@ export class EodagBrowser extends React.Component<IProps, IState> {
   };
 
   handleOpenEodagConfig = async () => {
-    // File that uses a symbolic link to the eodag config file,
-    // present in the ~/.config/eodag/eodag.yml
     const filePath = '/eodag-config/eodag.yml';
 
     const widget = await this.props.commands.execute('docmanager:open', {
@@ -100,8 +98,16 @@ export class EodagBrowser extends React.Component<IProps, IState> {
 
     const context = widget.context;
 
-    // Reload user settings when the file is changed
+    let isInitial = true;
+
     context.fileChanged.connect(() => {
+      if (isInitial) {
+        // Ignore the first change (on open)
+        isInitial = false;
+        return;
+      }
+
+      // Only called on subsequent file changes (i.e., saves)
       this.reloadUserSettings();
     });
   };
