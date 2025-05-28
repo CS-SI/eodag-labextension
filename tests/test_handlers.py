@@ -291,17 +291,17 @@ class TestEodagLabExtensionHandler(AsyncHTTPTestCase):
             custom_cfg_file = Path(tmpdir) / "foo.yml"
             custom_cfg_file.touch()
             custom_cfg_file_str = str(custom_cfg_file.absolute())
-            local_cfg_file = Path(".eodag") / "eodag.yml"
+            local_cfg_file = Path("eodag-config") / "eodag.yml"
 
             # custom config file
             with mock.patch.dict(os.environ, {"EODAG_CFG_FILE": custom_cfg_file_str}):
                 eodag_api = await get_eodag_api()
                 set_conf_symlink(eodag_api)
-                self.assertTrue(os.path.isdir(".eodag"))
+                self.assertTrue(os.path.isdir("eodag-config"))
                 self.assertTrue(os.path.islink(str(local_cfg_file)))
                 self.assertEqual(custom_cfg_file, Path(os.readlink(str(local_cfg_file))))
 
             # default config file
             set_conf_symlink(eodag_api)
-            self.assertTrue(os.path.islink(".eodag"))
-            self.assertEqual(Path(eodag_api.conf_dir) / "eodag.yml", Path(os.readlink(".eodag")) / "eodag.yml")
+            self.assertTrue(os.path.islink("eodag-config"))
+            self.assertEqual(Path(eodag_api.conf_dir) / "eodag.yml", Path(os.readlink("eodag-config")) / "eodag.yml")

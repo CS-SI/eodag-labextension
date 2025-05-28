@@ -88,6 +88,30 @@ export class EodagBrowser extends React.Component<IProps, IState> {
     return true;
   };
 
+  handleOpenEodagConfig = async () => {
+    const filePath = '/eodag-config/eodag.yml';
+
+    const widget = await this.props.commands.execute('docmanager:open', {
+      path: filePath,
+      factory: 'Editor'
+    });
+
+    const context = widget.context;
+
+    let isInitial = true;
+
+    context.fileChanged.connect(() => {
+      if (isInitial) {
+        // Ignore the first change (on open)
+        isInitial = false;
+        return;
+      }
+
+      // Only called on subsequent file changes (i.e., saves)
+      this.reloadUserSettings();
+    });
+  };
+
   handleShowFeature = (features: any, openModal: boolean) => {
     this.setState({
       features,
@@ -318,6 +342,7 @@ export class EodagBrowser extends React.Component<IProps, IState> {
             </button>
             <OptionsMenuDropdown
               openSettings={this.handleOpenSettings}
+              openEodagConfigEditor={this.handleOpenEodagConfig}
               version={this.state.eodagVersion ?? 'Loading ...'}
               labExtensionVersion={
                 this.state.eodagLabExtensionVersion ?? 'Loading ...'

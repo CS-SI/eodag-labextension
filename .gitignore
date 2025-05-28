@@ -131,4 +131,4 @@ dmypy.json
 .venv/
 
 # EODAG local conf symlink
-.eodag
+eodag-config
