@@ -13,3 +13,17 @@ use_parentheses = true
 ensure_newline_before_comments = true
 line_length = 120
 known_third_party = ["eodag", "jupyter_packaging", "jupyter_server", "notebook", "setuptools", "tornado"]
+
+[tool.semantic_release.branches.main]
+match = "(master|develop)"
+
+[tool.semantic_release.changelog]
+exclude_commit_patterns = [
+    '''build: bump version.+''',
+]
+mode = "update"
+insertion_flag = "# Release history"
+
+[tool.semantic_release.changelog.default_templates]
+changelog_file = "CHANGES.md"
+output_format = "md"
