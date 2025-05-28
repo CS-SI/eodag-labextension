@@ -3,4 +3,4 @@
  * All rights reserved
  */
 
-import './base.css';
+import './index.css';
