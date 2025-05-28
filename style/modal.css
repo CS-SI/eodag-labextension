@@ -3,8 +3,6 @@
 .jp-EodagWidget-background-map {
     position: absolute;
     inset: 0;
-    width: 100%;
-    height: 100%;
 }
 
 /* Left panel */
@@ -23,7 +21,7 @@
 .jp-EodagWidget-modal-results .jp-EodagWidget-results-wrapper {
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: 1.5rem;
     width: 100%;
     height: 100%;
 }
@@ -87,4 +85,44 @@ span {
     display: flex;
     flex-direction: row;
     justify-content: flex-end;
+    padding: 0 1.5rem;
+}
+
+.jp-EodagWidget-modal-results
+.jp-EodagWidget-results-wrapper
+.jp-EodagWidget-results-footer
+.jp-EodagWidget-apply {
+    border-radius: 6px;
+    text-transform: unset !important;
+}
+
+/* Only !important because we don't use mui styling process */
+
+.jp-EodagWidget-chip {
+    padding: 0 3px !important;
+    background-color: #3bacff !important;
+    color: white !important;
+    height: 22px !important
+}
+
+.jp-EodagWidget-chip svg {
+    font-size: 14px !important;
+    color: white !important;
+}
+
+.jp-EodagWidget-chip span {
+    padding: 0 4px 0 8px !important;
+    font-size: 11px !important;
+}
+
+/* Selected Feature component */
+
+.jp-EodagWidget-modal-selected-result {
+    position: absolute;
+    inset: auto 24px 24px 498px; /* 450px + 24 gap x2 */
+    height: 250px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 3px 0 10px rgb(0 0 0 / 25%);
+    padding: 1.5rem 0; /* No padding left & right, to prevent the shadows from being overflowed */
 }

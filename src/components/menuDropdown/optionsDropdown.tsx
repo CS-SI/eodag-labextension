@@ -1,7 +1,5 @@
-// Libs
 import React, { useMemo, useState } from 'react';
 import { Divider, IconButton, Menu, MenuItem } from '@mui/material';
-// Icons
 import SettingsIcon from '@mui/icons-material/SettingsOutlined';
 import EditIcon from '@mui/icons-material/EditOutlined';
 import BookIcon from '@mui/icons-material/BookOutlined';

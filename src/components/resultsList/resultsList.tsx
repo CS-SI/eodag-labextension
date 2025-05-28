@@ -1,5 +1,7 @@
+// Libs
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { FixedSizeList, ListChildComponentProps } from 'react-window';
+// Components
 import { Result } from './result';
 
 interface IResultsListProps {
@@ -9,9 +11,10 @@ interface IResultsListProps {
   };
   handleClickFeature: (id: string) => void;
   handleHoverFeature: (id: string | null) => void;
+  handleZoomFeature: (id: string) => void;
   highlightFeature: any;
   selectedFeature: any;
-  isRetrievingMoreFeature: () => boolean;
+  isRetrievingMoreFeature: boolean;
   handleRetrieveMoreFeature: () => Promise<void>;
 }
 
@@ -19,6 +22,7 @@ export const ResultsList: React.FC<IResultsListProps> = ({
   features,
   handleClickFeature,
   handleHoverFeature,
+  handleZoomFeature,
   highlightFeature,
   selectedFeature,
   isRetrievingMoreFeature,
@@ -44,11 +48,11 @@ export const ResultsList: React.FC<IResultsListProps> = ({
   );
 
   useEffect(() => {
-    function updateHeight() {
+    const updateHeight = () => {
       if (containerRef.current) {
         setHeight(containerRef.current.clientHeight);
       }
-    }
+    };
 
     updateHeight();
     window.addEventListener('resize', updateHeight);
@@ -64,7 +68,7 @@ export const ResultsList: React.FC<IResultsListProps> = ({
   }) => {
     // Get more data as soon as we reach the end of the container
     if (
-      !isRetrievingMoreFeature() &&
+      !isRetrievingMoreFeature &&
       visibleStopIndex >= loadedCount - 1 &&
       loadedCount < totalCount
     ) {
@@ -76,11 +80,7 @@ export const ResultsList: React.FC<IResultsListProps> = ({
   const Row = ({ index, style }: ListChildComponentProps) => {
     const rowData = getRowData(index);
     if (!rowData) {
-      return (
-        <div style={style} className="result-list-row loading">
-          Chargement...
-        </div>
-      );
+      return null;
     }
 
     const isSelected = selectedFeature?.id === rowData.id;
@@ -91,6 +91,7 @@ export const ResultsList: React.FC<IResultsListProps> = ({
         isHighlighted={isHighlighted}
         isSelected={isSelected}
         onClick={handleClickFeature}
+        onZoom={handleZoomFeature}
         onHover={handleHoverFeature}
         rowData={rowData}
         style={style}
@@ -99,13 +100,7 @@ export const ResultsList: React.FC<IResultsListProps> = ({
   };
 
   return (
-    <div
-      ref={containerRef}
-      style={{
-        height: '100%',
-        width: '100%'
-      }}
-    >
+    <div ref={containerRef} className={'sizeFull'}>
       {height > 0 && (
         <FixedSizeList
           height={height}

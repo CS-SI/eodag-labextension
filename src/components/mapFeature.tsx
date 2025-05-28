@@ -3,12 +3,13 @@ import { GeoJSON, MapContainer, TileLayer } from 'react-leaflet';
 import { get, isEmpty } from 'lodash';
 import L, { LeafletMouseEvent, Map as LeafletMap } from 'leaflet';
 import { EODAG_TILE_COPYRIGHT, EODAG_TILE_URL } from '../config/config';
+import { IFeature, IFeatures } from '../types';
 
 export interface IMapFeatureProps {
-  features: any;
-  zoomFeature: any;
-  highlightFeature: any;
-  handleHoverFeature: any;
+  features: IFeatures | null;
+  zoomFeature: IFeature | null;
+  highlightFeature: IFeature | null;
+  handleHoverFeature: (productId: string | null) => void;
   handleClickFeature: (productId: string) => void;
 }
 
@@ -46,7 +47,30 @@ export const MapFeature: React.FC<IMapFeatureProps> = ({
         if (get(layer, 'feature.id') === highlightFeature?.id) {
           const layerBounds = layer.getBounds?.();
           if (layerBounds) {
-            map.flyToBounds(layerBounds);
+            const center = layerBounds.getCenter();
+
+            // Compute the optimal zoom level for the selected layer
+            const optimalZoom = map.getBoundsZoom(layerBounds);
+            const targetZoom = Math.min(optimalZoom - 0.6, map.getMaxZoom()); // -0.6 is arbitrary but seems to work well
+
+            // Convert to pixel coordinates
+            const centerPoint = map.project(center, targetZoom);
+
+            // Offset the point: shift to the left and down,
+            // to make space for the results components
+            // Values are arbitrary once again, but they seem to work well
+            const offsetX = -map.getSize().x / 18;
+            const offsetY = map.getSize().y / 12;
+
+            const offsetPoint = centerPoint.add([offsetX, offsetY]);
+
+            // Convert back to lat/lng
+            const offsetLatLng = map.unproject(offsetPoint, targetZoom);
+
+            map.flyTo(offsetLatLng, targetZoom, {
+              animate: true,
+              duration: 0.75
+            });
           }
         }
       });
