@@ -55,6 +55,9 @@ following command:
 jupyter lab build --minimize=False
 ```
 
+You can set `EODAG_LABEXTENSION__DEBUG=true` environment variable to display EODAG
+logging at `DEBUG` level.
+
 ## Commit
 
 ### Pre-commit
