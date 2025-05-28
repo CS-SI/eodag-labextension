@@ -43,36 +43,36 @@ if Settings().debug:
 
 
 def set_conf_symlink(eodag_api):
-    """Check and create .eodag symlink to user conf directory"""
+    """Check and create eodag-config symlink to user conf directory"""
     try:
         userconf_env = os.getenv("EODAG_CFG_FILE")
         userconf_src = userconf_env or os.path.join(eodag_api.conf_dir, "eodag.yml")
         # check if exists
-        if os.path.islink(".eodag"):
-            userdir_dst = os.readlink(".eodag")
+        if os.path.islink("eodag-config"):
+            userdir_dst = os.readlink("eodag-config")
             if os.path.isdir(userdir_dst):
                 userconf_dst = os.path.join(userdir_dst, "eodag.yml")
                 if userconf_src == userconf_dst:
-                    logger.debug("Re-using existing .eodag symlink to user configuration")
+                    logger.debug("Re-using existing eodag-config symlink to user configuration")
                     return
         # remove existing
-        if os.path.islink(".eodag") or os.path.isfile(".eodag"):
-            logger.debug("remove existing .eodag symlink")
-            os.remove(".eodag")
-        if os.path.isdir(".eodag"):
-            logger.debug("remove existing .eodag directory")
-            shutil.rmtree(".eodag")
+        if os.path.islink("eodag-config") or os.path.isfile("eodag-config"):
+            logger.debug("remove existing eodag-config symlink")
+            os.remove("eodag-config")
+        if os.path.isdir("eodag-config"):
+            logger.debug("remove existing eodag-config directory")
+            shutil.rmtree("eodag-config")
 
         # create symlink
         if userconf_env:
-            logger.debug(f"Creating .eodag symlink to custom user configuration {userconf_env}")
-            os.mkdir(".eodag")
-            os.symlink(userconf_env, os.path.join(".eodag", "eodag.yml"))
+            logger.debug(f"Creating eodag-config symlink to custom user configuration {userconf_env}")
+            os.mkdir("eodag-config")
+            os.symlink(userconf_env, os.path.join("eodag-config", "eodag.yml"))
         else:
-            logger.debug("Creating .eodag symlink to user configuration")
-            os.symlink(eodag_api.conf_dir, ".eodag")
+            logger.debug("Creating eodag-config symlink to user configuration")
+            os.symlink(eodag_api.conf_dir, "eodag-config")
     except OSError as err:
-        logger.error("Could not create .eodag symlink to user configuration: " + str(err))
+        logger.error("Could not create eodag-config symlink to user configuration: " + str(err))
 
 
 async def get_eodag_api():
