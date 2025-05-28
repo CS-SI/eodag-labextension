@@ -10,11 +10,10 @@ import {
   Notebook,
   NotebookActions
 } from '@jupyterlab/notebook';
-import { concat, get, isNull, isUndefined } from 'lodash';
+import { isNull, isUndefined } from 'lodash';
 import { Modal } from './modal/modal';
 import { formatCode } from '../utils/formatCode';
-import SearchService from '../utils/searchService';
-import { IFormInput, IGeometry, IParameter } from '../types';
+import { IFeatures, IFormInput, IGeometry, IParameter } from '../types';
 import { ServerConnection } from '@jupyterlab/services';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
@@ -26,6 +25,7 @@ import { IcBaselineRefresh } from './icons';
 import { OptionsMenuDropdown } from './menuDropdown/optionsDropdown';
 import { useFetchProviders } from '../hooks/useFetchProviders';
 import { useFetchProducts } from '../hooks/useFetchProducts';
+import { useVirtualizedList } from '../hooks/useVirtualizedList';
 
 export interface IEodagBrowserProps {
   tracker: INotebookTracker;
@@ -48,8 +48,7 @@ export const EodagBrowser: React.FC<IEodagBrowserProps> = ({
   const [openModal, setOpenModal] = useState(false);
   const [formValues, setFormValues] = useState<IFormInput | undefined>();
   const [replaceCellIndex, setReplaceCellIndex] = useState(0);
-  const [features, setFeatures] = useState<any>({});
-  const [searching, setSearching] = useState(false);
+  const [features, setFeatures] = useState<IFeatures | null>(null);
   const [eodagVersion, setEodagVersion] = useState<string | undefined>();
   const [eodagLabExtensionVersion, setEodagLabExtensionVersion] = useState<
     string | undefined
@@ -63,6 +62,9 @@ export const EodagBrowser: React.FC<IEodagBrowserProps> = ({
   const { fetchUserSettings } = useFetchUserSettings();
   const { fetchProviders, fetchProvidersLoading } = useFetchProviders();
   const { fetchProducts, fetchProductLoading } = useFetchProducts();
+
+  const { isRetrievingMoreFeature, handleRetrieveMoreFeature } =
+    useVirtualizedList({ features, formValues, setFeatures });
 
   useEffect(() => {
     fetch('/eodag/info')
@@ -260,28 +262,6 @@ export const EodagBrowser: React.FC<IEodagBrowserProps> = ({
     setOpenModal(false);
   };
 
-  const handleRetrieveMoreFeature = async () => {
-    setSearching(true);
-    return SearchService.search(
-      get(features, 'properties.page', 1) + 1,
-      formValues
-    )
-      .then(results => {
-        const featureList = concat(
-          get(features, 'features', []),
-          results.features
-        );
-        setSearching(false);
-        setFeatures({
-          ...results,
-          features: featureList
-        });
-      })
-      .catch(() => {
-        setSearching(false);
-      });
-  };
-
   const resetIsLoading = () => {
     setIsLoading(!isLoading);
   };
@@ -290,8 +270,6 @@ export const EodagBrowser: React.FC<IEodagBrowserProps> = ({
     fetchUserSettings();
     resetIsLoading();
   };
-
-  const isRetrievingMoreFeature = () => searching;
 
   return (
     <div className="jp-EodagWidget-products-search">
