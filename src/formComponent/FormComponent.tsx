@@ -16,7 +16,7 @@ import {
 } from 'react-hook-form';
 import { ThreeDots } from 'react-loader-spinner';
 import { PlacesType, Tooltip, VariantType } from 'react-tooltip';
-import Autocomplete from '../Autocomplete';
+import { Autocomplete } from '../components/autocomplete';
 
 import { fetchQueryables } from '../helpers/fetchQueryables';
 import { useFetchProduct, useFetchProvider } from '../hooks/useFetchData';
@@ -25,7 +25,7 @@ import {
   CarbonCalendarAddAlt,
   CodiconOpenPreview,
   PhFileCode
-} from '../icones.js';
+} from '../icones';
 import MapExtentComponent from '../MapExtentComponent';
 import SearchService from '../SearchService';
 import { IFormInput, IOptionType, IParameter } from '../types';
@@ -84,6 +84,8 @@ export const FormComponent: FC<IProps> = ({
   const [additionalParameters, setAdditionalParameters] =
     useState<boolean>(true);
   const [optionalParams, setOptionalParams] = useState<IOptionType[]>([]);
+  const { fetchProvider, fetchProvidersLoading } = useFetchProvider();
+  const { fetchProduct, fetchProductLoading } = useFetchProduct();
 
   const formInput = useForm<IFormInput>({
     defaultValues: {
@@ -114,7 +116,6 @@ export const FormComponent: FC<IProps> = ({
 
   useEffect(() => {
     const fetchData = async () => {
-      const fetchProduct = useFetchProduct();
       const productList = await fetchProduct(providerValue);
       setProductTypes(productList);
       if (reloadIndicator) {
@@ -126,7 +127,6 @@ export const FormComponent: FC<IProps> = ({
 
   useEffect(() => {
     const fetchData = async () => {
-      const fetchProvider = useFetchProvider();
       const providerList = await fetchProvider(productTypeValue);
 
       setProviders(providerList);
@@ -178,9 +178,6 @@ export const FormComponent: FC<IProps> = ({
         });
     }
   };
-
-  const loadProductTypesSuggestions = useFetchProduct();
-  const loadProviderSuggestions = useFetchProvider();
 
   const fetchParameters = async (
     query_params: { [key: string]: any } | undefined = undefined
@@ -275,6 +272,7 @@ export const FormComponent: FC<IProps> = ({
       setSelectedOptions(
         selectedOptions.filter(option => option !== param.value)
       );
+      resetField(param.value);
     } else {
       setSelectedOptions([...selectedOptions, param.value]);
     }
@@ -324,13 +322,14 @@ export const FormComponent: FC<IProps> = ({
                   label="Provider"
                   placeholder="Any"
                   suggestions={providers ? providers : []}
-                  value={value}
+                  value={value ?? null}
+                  disabled={fetchProvidersLoading}
                   loadSuggestions={(inputValue: string) =>
-                    loadProviderSuggestions(null, inputValue)
+                    fetchProvider(null, inputValue)
                   }
                   handleChange={(e: IOptionTypeBase | null) => {
-                    onChange(e?.value);
-                    setProviderValue(e?.value);
+                    onChange(e === null ? null : e.value);
+                    setProviderValue(e === null ? null : e.value);
                   }}
                 />
               )}
@@ -344,22 +343,14 @@ export const FormComponent: FC<IProps> = ({
                   label="Product Type"
                   suggestions={productTypes ? productTypes : []}
                   placeholder="S2_..."
-                  value={value}
+                  value={value ?? null}
+                  disabled={fetchProductLoading}
                   loadSuggestions={(inputValue: string) =>
-                    loadProductTypesSuggestions(providerValue, inputValue)
+                    fetchProduct(providerValue, inputValue)
                   }
                   handleChange={(e: IOptionTypeBase | null) => {
-                    onChange(e?.value);
-
-                    if (e?.value !== productTypeValue) {
-                      setSelectedOptions([]);
-                      setValue('additionnalParameters', [
-                        { name: '', value: '' }
-                      ]);
-                    }
-
-                    setProductTypeValue(e?.value);
-                    if (e?.value === undefined) {
+                    if (e === null) {
+                      setProductTypeValue('');
                       setParams([]);
                       setOptionalParams([]);
                       reset({
@@ -367,7 +358,18 @@ export const FormComponent: FC<IProps> = ({
                         provider: formValues.provider,
                         additionnalParameters: formValues.additionnalParameters
                       });
+                      return onChange(null);
                     }
+                    onChange(e.value);
+
+                    if (e.value !== productTypeValue) {
+                      setSelectedOptions([]);
+                      setValue('additionnalParameters', [
+                        { name: '', value: '' }
+                      ]);
+                    }
+
+                    setProductTypeValue(e.value);
                   }}
                 />
               )}

@@ -21,7 +21,8 @@ import { PlacesType, Tooltip, VariantType } from 'react-tooltip';
 import { EODAG_SETTINGS_ADDRESS } from './config';
 import { FormComponent } from './formComponent/FormComponent';
 import { useFetchUserSettings } from './hooks/useFetchData';
-import { CarbonSettings, IcBaselineRefresh } from './icones';
+import { IcBaselineRefresh } from './icones';
+import { OptionsMenuDropdown } from './optionsDropdown';
 
 export interface IProps {
   tracker: INotebookTracker;
@@ -36,6 +37,8 @@ export interface IState {
   replaceCellIndex: number;
   isLoading: boolean;
   reloadIndicator: boolean;
+  eodagVersion?: string;
+  eodagLabExtensionVersion?: string;
 }
 
 const tooltipDark: VariantType = 'dark';
@@ -51,9 +54,29 @@ export class EodagBrowser extends React.Component<IProps, IState> {
       formValues: undefined,
       replaceCellIndex: 0,
       isLoading: false,
-      reloadIndicator: false
+      reloadIndicator: false,
+      eodagVersion: undefined,
+      eodagLabExtensionVersion: undefined
     };
     this.reloadUserSettings = this.reloadUserSettings.bind(this);
+  }
+
+  componentDidMount() {
+    fetch('/eodag/info')
+      .then(res => res.json())
+      .then(data => {
+        this.setState({
+          eodagVersion: data?.packages.eodag.version || 'Unknown version',
+          eodagLabExtensionVersion:
+            data?.packages.eodag_labextension.version || 'Unknown version'
+        });
+      })
+      .catch(() => {
+        this.setState({
+          eodagVersion: 'Error fetching version',
+          eodagLabExtensionVersion: 'Error fetching version'
+        });
+      });
   }
 
   handleCurrentWidgetError = () => {
@@ -63,6 +86,30 @@ export class EodagBrowser extends React.Component<IProps, IState> {
       return;
     }
     return true;
+  };
+
+  handleOpenEodagConfig = async () => {
+    const filePath = '/eodag-config/eodag.yml';
+
+    const widget = await this.props.commands.execute('docmanager:open', {
+      path: filePath,
+      factory: 'Editor'
+    });
+
+    const context = widget.context;
+
+    let isInitial = true;
+
+    context.fileChanged.connect(() => {
+      if (isInitial) {
+        // Ignore the first change (on open)
+        isInitial = false;
+        return;
+      }
+
+      // Only called on subsequent file changes (i.e., saves)
+      this.reloadUserSettings();
+    });
   };
 
   handleShowFeature = (features: any, openModal: boolean) => {
@@ -273,40 +320,34 @@ export class EodagBrowser extends React.Component<IProps, IState> {
     return (
       <div className="jp-EodagWidget-products-search">
         <div className="jp-EodagWidget-header-wrapper">
-          <header className="jp-EodagWidget-header">Products search</header>
+          <header className="jp-EodagWidget-header">
+            Products search by EODAG
+          </header>
           <div className="jp-EodagWidget-settings-wrapper">
-            <div>
-              <button
-                type="button"
-                className={'jp-EodagWidget-settingsbutton'}
-                data-tooltip-id="eodag-setting"
-                data-tooltip-content="Reload eodag environment"
-                data-tooltip-variant={tooltipDark}
-                data-tooltip-place={tooltipBottom}
-                onClick={this.reloadUserSettings}
-              >
-                <IcBaselineRefresh
-                  height="20"
-                  width="20"
-                  className={this.state.isLoading ? 'spin-icon' : ''}
-                />
-                <Tooltip id="eodag-setting" className="jp-Eodag-tooltip" />
-              </button>
-            </div>
-            <div>
-              <button
-                type="button"
-                className="jp-EodagWidget-settingsbutton"
-                data-tooltip-id="eodag-setting"
-                data-tooltip-content="Eodag labextension settings"
-                data-tooltip-variant={tooltipDark}
-                data-tooltip-place={tooltipBottom}
-                onClick={this.handleOpenSettings}
-              >
-                <CarbonSettings height="20" width="20" />
-                <Tooltip id="eodag-setting" className="jp-Eodag-tooltip" />
-              </button>
-            </div>
+            <button
+              type="button"
+              className={'jp-EodagWidget-settingsbutton'}
+              data-tooltip-id="eodag-setting"
+              data-tooltip-content="Reload eodag environment"
+              data-tooltip-variant={tooltipDark}
+              data-tooltip-place={tooltipBottom}
+              onClick={this.reloadUserSettings}
+            >
+              <IcBaselineRefresh
+                height="20"
+                width="20"
+                className={this.state.isLoading ? 'spin-icon' : ''}
+              />
+              <Tooltip id="eodag-setting" className="jp-Eodag-tooltip" />
+            </button>
+            <OptionsMenuDropdown
+              openSettings={this.handleOpenSettings}
+              openEodagConfigEditor={this.handleOpenEodagConfig}
+              version={this.state.eodagVersion ?? 'Loading ...'}
+              labExtensionVersion={
+                this.state.eodagLabExtensionVersion ?? 'Loading ...'
+              }
+            />
           </div>
         </div>
         <FormComponent

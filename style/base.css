@@ -7,6 +7,10 @@
   --base-font-size: 14px;
 }
 
+p {
+  margin: unset;
+}
+
 .jp-EodagWidget {
   display: flex;
   flex-direction: column;
@@ -398,6 +402,15 @@ section button .jp-EodagWidget-additionnalParameters-addbutton svg,
 .jp-EodagWidget-select__indicator-separator,
 .jp-EodagWidget-select__dropdown-indicator > div > svg {
   color: var(--light-gray) !important;
+}
+
+.jp-SettingsPanel legend {
+  font-size: var(--jp-content-font-size2);
+  color: var(--jp-ui-font-color0);
+  flex-basis: 100%;
+  padding: 4px 0;
+  font-weight: var(--jp-content-header-font-weight);
+  border-bottom: 1px solid var(--jp-border-color2);
 }
 
 .jp-EodagWidget-select__placeholder {

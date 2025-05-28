@@ -95,6 +95,18 @@ export default class MapExtentComponent extends React.Component<
     this.map?.invalidateSize();
   }, 500);
 
+  componentDidUpdate(_: IProps, prevState: IState) {
+    const { lat, lon, zoom } = this.state;
+    if (
+      this.map &&
+      (prevState.lat !== lat ||
+        prevState.lon !== lon ||
+        prevState.zoom !== zoom)
+    ) {
+      this.map.flyTo([lat, lon], zoom);
+    }
+  }
+
   onDrawStop = (e: LeafletMouseEvent) => {
     // We use drawStop instead of onCreated because the latter gives same geometry multiple times
     this.saveGeometry(e.target);

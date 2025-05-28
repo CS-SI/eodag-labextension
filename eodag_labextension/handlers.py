@@ -4,13 +4,17 @@
 
 """Tornado web requests handlers"""
 
+import asyncio
 import logging
+import os
 import re
+import shutil
+from functools import partial
 from typing import Any
 
 import orjson
 import tornado
-from eodag import EODataAccessGateway, SearchResult
+from eodag import EODataAccessGateway, SearchResult, setup_logging
 from eodag.api.core import DEFAULT_ITEMS_PER_PAGE, DEFAULT_PAGE
 from eodag.utils import parse_qs
 from eodag.utils.exceptions import (
@@ -25,16 +29,69 @@ from jupyter_server.base.handlers import APIHandler
 from jupyter_server.utils import url_path_join
 from shapely.geometry import shape
 
-eodag_api = EODataAccessGateway()
+from eodag_labextension.config import Settings
+
+eodag_api = None
+
+eodag_lock = tornado.locks.Lock()
 
 logger = logging.getLogger("eodag-labextension.handlers")
+
+
+if Settings().debug:
+    setup_logging(3)
+
+
+def set_conf_symlink(eodag_api):
+    """Check and create eodag-config symlink to user conf directory"""
+    try:
+        userconf_env = os.getenv("EODAG_CFG_FILE")
+        userconf_src = userconf_env or os.path.join(eodag_api.conf_dir, "eodag.yml")
+        # check if exists
+        if os.path.islink("eodag-config"):
+            userdir_dst = os.readlink("eodag-config")
+            if os.path.isdir(userdir_dst):
+                userconf_dst = os.path.join(userdir_dst, "eodag.yml")
+                if userconf_src == userconf_dst:
+                    logger.debug("Re-using existing eodag-config symlink to user configuration")
+                    return
+        # remove existing
+        if os.path.islink("eodag-config") or os.path.isfile("eodag-config"):
+            logger.debug("remove existing eodag-config symlink")
+            os.remove("eodag-config")
+        if os.path.isdir("eodag-config"):
+            logger.debug("remove existing eodag-config directory")
+            shutil.rmtree("eodag-config")
+
+        # create symlink
+        if userconf_env:
+            logger.debug(f"Creating eodag-config symlink to custom user configuration {userconf_env}")
+            os.mkdir("eodag-config")
+            os.symlink(userconf_env, os.path.join("eodag-config", "eodag.yml"))
+        else:
+            logger.debug("Creating eodag-config symlink to user configuration")
+            os.symlink(eodag_api.conf_dir, "eodag-config")
+    except OSError as err:
+        logger.error("Could not create eodag-config symlink to user configuration: " + str(err))
+
+
+async def get_eodag_api():
+    """EODataAccessGateway on-demand instanciation"""
+    global eodag_api
+
+    current_loop = asyncio.get_running_loop()
+    async with eodag_lock:
+        if eodag_api is None:
+            eodag_api = await current_loop.run_in_executor(None, EODataAccessGateway)
+            set_conf_symlink(eodag_api)
+        return eodag_api
 
 
 class ProductTypeHandler(APIHandler):
     """Product type listing handler"""
 
     @tornado.web.authenticated
-    def get(self):
+    async def get(self):
         """Get endpoint"""
         query_dict = parse_qs(self.request.query)
 
@@ -44,29 +101,45 @@ class ProductTypeHandler(APIHandler):
         provider = None if not provider or provider == "null" else provider
 
         try:
-            product_types = eodag_api.list_product_types(provider=provider)
+            dag = await get_eodag_api()
+            current_loop = asyncio.get_running_loop()
+            product_types = await current_loop.run_in_executor(None, partial(dag.list_product_types, provider=provider))
         except UnsupportedProvider as e:
             self.set_status(400)
             self.finish({"error": str(e)})
             return
 
-        self.write(orjson.dumps(product_types))
+        self.finish(orjson.dumps(product_types))
 
 
 class ReloadHandler(APIHandler):
     """EODAG API reload handler"""
 
     @tornado.web.authenticated
-    def get(self):
+    async def get(self):
         """Get endpoint"""
-        eodag_api.__init__()
+        dag = await get_eodag_api()
+        current_loop = asyncio.get_running_loop()
+        async with eodag_lock:
+            await current_loop.run_in_executor(None, dag.__init__)
+
+
+class InfoHandler(APIHandler):
+    """EODAG info handler"""
+
+    @tornado.web.authenticated
+    async def get(self):
+        """Get endpoint"""
+        current_loop = asyncio.get_running_loop()
+        result = await current_loop.run_in_executor(None, lambda: Settings().model_dump())
+        self.finish(orjson.dumps(result))
 
 
 class ProvidersHandler(APIHandler):
     """Providers listing handler"""
 
     @tornado.web.authenticated
-    def get(self):
+    async def get(self):
         """Get endpoint"""
 
         available_providers_kwargs = {}
@@ -77,7 +150,11 @@ class ProvidersHandler(APIHandler):
             and len(query_dict["product_type"]) > 0
         ):
             available_providers_kwargs["product_type"] = query_dict["product_type"][0]
-        available_providers = eodag_api.available_providers(**available_providers_kwargs)
+        dag = await get_eodag_api()
+        current_loop = asyncio.get_running_loop()
+        available_providers = await current_loop.run_in_executor(
+            None, partial(dag.available_providers, **available_providers_kwargs)
+        )
 
         all_providers_list = [
             dict(
@@ -86,7 +163,7 @@ class ProvidersHandler(APIHandler):
                 description=getattr(conf, "description", None),
                 url=getattr(conf, "url", None),
             )
-            for provider, conf in eodag_api.providers_config.items()
+            for provider, conf in dag.providers_config.items()
             if provider in available_providers
         ]
         all_providers_list.sort(key=lambda x: (x["priority"] * -1, x["provider"]))
@@ -115,14 +192,14 @@ class ProvidersHandler(APIHandler):
         else:
             returned_providers = all_providers_list
 
-        self.write(orjson.dumps(returned_providers))
+        self.finish(orjson.dumps(returned_providers))
 
 
 class GuessProductTypeHandler(APIHandler):
     """Guess product type method handler"""
 
     @tornado.web.authenticated
-    def get(self):
+    async def get(self):
         """Get endpoint"""
 
         query_dict = parse_qs(self.request.query)
@@ -132,10 +209,15 @@ class GuessProductTypeHandler(APIHandler):
             provider = query_dict.pop("provider")[0]
         provider = None if not provider or provider == "null" else provider
 
+        dag = await get_eodag_api()
+        current_loop = asyncio.get_running_loop()
+
         returned_product_types = []
         try:
             # fetch all product types
-            all_product_types = eodag_api.list_product_types(provider=provider)
+            all_product_types = await current_loop.run_in_executor(
+                None, partial(dag.list_product_types, provider=provider)
+            )
 
             if (
                 "keywords" in query_dict
@@ -144,12 +226,16 @@ class GuessProductTypeHandler(APIHandler):
             ):
                 # 1. List product types starting with given keywords
                 first_keyword = query_dict["keywords"][0].lower()
-                returned_product_types = [pt for pt in all_product_types if pt["ID"].lower().startswith(first_keyword)]
+                returned_product_types = [
+                    {"ID": pt["ID"], "title": pt.get("title")}
+                    for pt in all_product_types
+                    if pt["ID"].lower().startswith(first_keyword)
+                ]
                 returned_product_types_ids = [pt["ID"] for pt in returned_product_types]
 
                 # 2. List product types containing keyword
                 returned_product_types += [
-                    pt
+                    {"ID": pt["ID"], "title": pt.get("title")}
                     for pt in all_product_types
                     if first_keyword in pt["ID"].lower() and pt["ID"] not in returned_product_types_ids
                 ]
@@ -162,19 +248,21 @@ class GuessProductTypeHandler(APIHandler):
                     guess_kwargs[k] = " AND ".join(re.sub(r"(\S+)", r"*\1*", " ".join(v)).split(" "))
 
                 # guessed product types ids
-                guessed_ids_list = eodag_api.guess_product_type(**guess_kwargs)
+                guessed_ids_list = await current_loop.run_in_executor(
+                    None, partial(dag.guess_product_type, **guess_kwargs)
+                )
                 # product types with full associated metadata
                 returned_product_types += [
-                    pt
+                    {"ID": pt["ID"], "title": pt.get("title")}
                     for pt in all_product_types
                     if pt["ID"] in guessed_ids_list and pt["ID"] not in returned_product_types_ids
                 ]
             else:
-                returned_product_types = all_product_types
+                returned_product_types = [{"ID": pt["ID"], "title": pt.get("title")} for pt in all_product_types]
 
-            self.write(orjson.dumps(returned_product_types))
+            self.finish(orjson.dumps(returned_product_types))
         except NoMatchingProductType:
-            self.write(orjson.dumps(returned_product_types))
+            self.finish(orjson.dumps(returned_product_types))
         except UnsupportedProvider as e:
             self.set_status(400)
             self.finish({"error": str(e)})
@@ -185,7 +273,7 @@ class SearchHandler(APIHandler):
     """Search products handler"""
 
     @tornado.web.authenticated
-    def post(self, product_type):
+    async def post(self, product_type):
         """Post endpoint"""
 
         arguments = orjson.loads(self.request.body)
@@ -218,7 +306,11 @@ class SearchHandler(APIHandler):
         arguments = dict((k, v) for k, v in arguments.items() if v is not None)
 
         try:
-            products = eodag_api.search(productType=product_type, count=True, **arguments)
+            dag = await get_eodag_api()
+            current_loop = asyncio.get_running_loop()
+            products = await current_loop.run_in_executor(
+                None, partial(dag.search, productType=product_type, count=True, **arguments)
+            )
         except ValidationError as e:
             self.set_status(400)
             self.finish({"error": e.message})
@@ -290,7 +382,7 @@ class QueryablesHandler(APIHandler):
     """EODAG queryables handler"""
 
     @tornado.web.authenticated
-    def get(self):
+    async def get(self):
         """Get endpoint"""
         query_dict = parse_qs(self.request.query, keep_blank_values=True)
         queryables_kwargs = {
@@ -300,7 +392,11 @@ class QueryablesHandler(APIHandler):
         }
         logger.error(queryables_kwargs)
         try:
-            queryables_dict = eodag_api.list_queryables(fetch_providers=False, **queryables_kwargs)
+            dag = await get_eodag_api()
+            current_loop = asyncio.get_running_loop()
+            queryables_dict = await current_loop.run_in_executor(
+                None, partial(dag.list_queryables, fetch_providers=False, **queryables_kwargs)
+            )
             json_schema = queryables_dict.get_model().model_json_schema()
             self._remove_null_defaults(json_schema)
             json_schema["additionalProperties"] = queryables_dict.additional_properties
@@ -325,6 +421,7 @@ def setup_handlers(web_app, url_path):
     host_pattern = r".*$"
     product_types_pattern = url_path_join(base_url, url_path, "product-types")
     reload_pattern = url_path_join(base_url, url_path, "reload")
+    info_pattern = url_path_join(base_url, url_path, "info")
     providers_pattern = url_path_join(base_url, url_path, "providers")
     guess_product_types_pattern = url_path_join(base_url, url_path, "guess-product-type")
     queryables_pattern = url_path_join(base_url, url_path, "queryables")
@@ -338,6 +435,7 @@ def setup_handlers(web_app, url_path):
         (providers_pattern, ProvidersHandler),
         (guess_product_types_pattern, GuessProductTypeHandler),
         (queryables_pattern, QueryablesHandler),
+        (info_pattern, InfoHandler),
         (MethodAndPathMatch("POST", search_pattern), SearchHandler),
         (default_pattern, NotFoundHandler),
     ]
