@@ -8,7 +8,12 @@ import 'isomorphic-fetch';
 import React, { FC, useEffect, useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import { Controller, FormProvider, SubmitHandler, useForm } from 'react-hook-form';
+import {
+  Controller,
+  FormProvider,
+  SubmitHandler,
+  useForm
+} from 'react-hook-form';
 import { ThreeDots } from 'react-loader-spinner';
 import { PlacesType, Tooltip, VariantType } from 'react-tooltip';
 import { Autocomplete } from '../autocomplete/autocomplete';
