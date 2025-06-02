@@ -4,6 +4,7 @@ import IconButton from '@mui/material/IconButton';
 import CloudIcon from '@mui/icons-material/Cloud';
 import ZoomInIcon from '@mui/icons-material/ZoomIn';
 import { IFeature } from '../../types';
+import { NoImage } from '../icons';
 
 interface IResultProps {
   rowData: IFeature;
@@ -44,7 +45,10 @@ export const Result: React.FC<IResultProps> = ({
   return (
     <div className={'result_wrapper'} style={style} role="row" tabIndex={0}>
       <div className={'result_preview'}>
-        {preview ? <img src={preview} alt={'data preview'} /> : null}
+        <div className={'result_preview_background'}>
+          <NoImage />
+        </div>
+        {preview && <img src={preview} alt="" className="preview_image" />}
       </div>
       <div
         onMouseEnter={() => onHover(rowData.id)}
@@ -53,9 +57,10 @@ export const Result: React.FC<IResultProps> = ({
         onClick={() => onClick(rowData.id)}
         className={'result_row'}
         style={{
-          border:
-            isSelected || isHighlighted
-              ? '2px solid #007AFF'
+          border: isSelected
+            ? '2px solid #007AFF'
+            : isHighlighted
+              ? '2px solid rgba(0 122 255 / 25%)'
               : '2px solid transparent'
         }}
       >

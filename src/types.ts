@@ -70,4 +70,5 @@ export interface IFeature {
   thumbnail?: string;
   quicklook?: string;
   cloudCover?: number;
+  properties: { [key: string]: any };
 }
