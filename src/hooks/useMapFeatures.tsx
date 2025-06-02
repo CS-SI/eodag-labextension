@@ -1,15 +1,12 @@
-import { useState } from 'react';
-import { IFeature } from 'types';
+import { useCallback, useState } from 'react';
+import { IFeature, IFeatures } from 'types';
+import { find } from 'lodash';
 
 interface IUseMapFeaturesProps {
-  getFeature: (productId: string) => IFeature | null;
-  setDisplayFeature: (feature: IFeature | null) => void;
+  features: IFeatures | null;
 }
 
-export const useMapFeatures = ({
-  getFeature,
-  setDisplayFeature
-}: IUseMapFeaturesProps) => {
+export const useMapFeatures = ({ features }: IUseMapFeaturesProps) => {
   const [highlightFeature, setHighlightFeature] = useState<IFeature | null>(
     null
   );
@@ -18,7 +15,24 @@ export const useMapFeatures = ({
   const [zoomFeature, setZoomFeature] = useState<IFeature | null>(null);
   const [selectedFeature, setSelectedFeature] = useState<IFeature | null>(null);
 
-  const handleClickFeature = (productId: string) => {
+  const getFeature = useCallback(
+    (productId: string): IFeature | null => {
+      if (!features) {
+        return null;
+      }
+      const featureToFind = find(
+        features.features,
+        feature => feature.id === productId
+      );
+      if (featureToFind) {
+        return featureToFind;
+      }
+      return null;
+    },
+    [features]
+  );
+
+  const handleClickFeature = (productId: string | null) => {
     if (!productId) {
       return setSelectedFeature(null);
     } else {
@@ -26,7 +40,7 @@ export const useMapFeatures = ({
       if (!feature) {
         return;
       }
-      setDisplayFeature(feature);
+      setZoomFeature(feature);
       setSelectedFeature(feature);
     }
   };
@@ -63,6 +77,10 @@ export const useMapFeatures = ({
     setZoomFeature(feature);
   };
 
+  const resetSelectedFeature = () => {
+    setSelectedFeature(null);
+  };
+
   return {
     highlightFeature,
     highlightOnTableFeature,
@@ -71,6 +89,7 @@ export const useMapFeatures = ({
     handleZoomFeature,
     handleHoverMapFeature,
     handleHoverTableFeature,
-    handleClickFeature
+    handleClickFeature,
+    resetSelectedFeature
   };
 };
