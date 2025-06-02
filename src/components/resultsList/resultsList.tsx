@@ -3,6 +3,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { FixedSizeList, ListChildComponentProps } from 'react-window';
 // Components
 import { Result } from './result';
+import { IFeature } from '../../types';
 
 interface IResultsListProps {
   features: {
@@ -13,7 +14,7 @@ interface IResultsListProps {
   handleHoverFeature: (id: string | null) => void;
   handleZoomFeature: (id: string) => void;
   highlightFeature: any;
-  selectedFeature: any;
+  selectedFeature: IFeature | null;
   isRetrievingMoreFeature: boolean;
   handleRetrieveMoreFeature: () => Promise<void>;
 }
