@@ -1,12 +1,11 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { find } from 'lodash';
+import React, { useEffect, useState } from 'react';
 import { Box, Modal as MuiModal } from '@mui/material';
 import { ResultsPanel } from './resultsPanel';
 import { MapBackground } from './mapBackground';
 import { SelectedFeaturePanel } from './selectedFeaturePanel';
 import { useMapFeatures } from '../../hooks/useMapFeatures';
 import 'react-datepicker/dist/react-datepicker.css';
-import { IFeature, IFeatures } from '../../types';
+import { IFeatures } from '../../types';
 
 export interface IModalProps {
   open: boolean;
@@ -40,33 +39,6 @@ export const Modal: React.FC<IModalProps> = ({
   handleRetrieveMoreFeature
 }) => {
   const [modalOpen, setModalOpen] = useState<boolean>(open);
-  const [displayFeature, setDisplayFeature] = useState<IFeature | null>(null);
-
-  useEffect(() => {
-    setModalOpen(open);
-  }, [open]);
-
-  useEffect(() => {
-    setDisplayFeature(null);
-  }, [features]);
-
-  const getFeature = useCallback(
-    (productId: string): IFeature | null => {
-      if (!features) {
-        return null;
-      }
-      const featureToFind = find(
-        features.features,
-        feature => feature.id === productId
-      );
-      if (featureToFind) {
-        return featureToFind;
-      }
-      return null;
-    },
-    [features]
-  );
-
   const {
     highlightOnTableFeature,
     highlightFeature,
@@ -75,13 +47,18 @@ export const Modal: React.FC<IModalProps> = ({
     handleClickFeature,
     handleHoverTableFeature,
     handleZoomFeature,
-    handleHoverMapFeature
+    handleHoverMapFeature,
+    resetSelectedFeature
   } = useMapFeatures({
-    getFeature,
-    setDisplayFeature
+    features
   });
 
-  console.log('displayFeature : ', displayFeature);
+  useEffect(() => {
+    if (!open) {
+      resetSelectedFeature();
+    }
+    setModalOpen(open);
+  }, [open]);
 
   return (
     <MuiModal open={modalOpen} onClose={handleClose}>
@@ -104,8 +81,12 @@ export const Modal: React.FC<IModalProps> = ({
           handleGenerateQuery={handleGenerateQuery}
           selectedFeature={selectedFeature}
         />
-        {displayFeature && (
-          <SelectedFeaturePanel selectedFeature={displayFeature} />
+        {selectedFeature && (
+          <SelectedFeaturePanel
+            selectedFeature={selectedFeature}
+            onZoom={handleZoomFeature}
+            generateProductCode={() => {}}
+          />
         )}
       </Box>
     </MuiModal>

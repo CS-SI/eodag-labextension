@@ -5,17 +5,18 @@ import { PlacesType, Tooltip, VariantType } from 'react-tooltip';
 import { ResultsList } from '../resultsList/resultsList';
 import { Button } from '@mui/material';
 import { get } from 'lodash';
+import { IFeature } from '../../types';
 
 interface IResultsPanel {
   features: any;
   isRetrievingMoreFeature: boolean;
-  highlightOnTableFeature: any;
-  handleClickFeature: any;
-  handleZoomFeature: any;
-  handleHoverTableFeature: any;
-  handleRetrieveMoreFeature: any;
-  handleGenerateQuery: any;
-  selectedFeature: any;
+  highlightOnTableFeature: IFeature | null;
+  handleClickFeature: (productId: string) => void;
+  handleZoomFeature: (productId: string) => any;
+  handleHoverTableFeature: (productId: string | null) => void;
+  handleRetrieveMoreFeature: () => Promise<void>;
+  handleGenerateQuery: () => void;
+  selectedFeature: IFeature | null;
 }
 
 const tooltipDark: VariantType = 'dark';
