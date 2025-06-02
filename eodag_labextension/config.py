@@ -7,9 +7,18 @@
 from __future__ import annotations
 
 from importlib.metadata import distributions
+from typing import Optional
 
 from pydantic import BaseModel, computed_field
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+
+class MapInfo(BaseModel):
+    """Map info model"""
+
+    tile_url: Optional[str] = None
+    tile_copyright: Optional[str] = None
+    zoom: Optional[int] = None
 
 
 class PackageInfo(BaseModel):
@@ -21,9 +30,11 @@ class PackageInfo(BaseModel):
 class Settings(BaseSettings):
     """EODAG Labextension config"""
 
-    model_config = SettingsConfigDict(env_prefix="eodag_labextension__")
+    model_config = SettingsConfigDict(env_prefix="eodag_labextension__", env_nested_delimiter="__")
 
     debug: bool = False
+
+    map: MapInfo = MapInfo()
 
     @computed_field
     def packages(self) -> dict[str, PackageInfo]:
