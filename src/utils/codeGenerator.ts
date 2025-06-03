@@ -16,7 +16,7 @@ const formatDate = (date: Date): string => {
   return local.toJSON().slice(0, 10);
 };
 
-export const formatCode = (
+export const codeGenerator = (
   {
     startDate,
     endDate,
@@ -24,6 +24,7 @@ export const formatCode = (
     geometry,
     additionalParameters,
     provider,
+    id,
     ...extraParams
   }: IFormInput,
   replaceCode: boolean
@@ -69,6 +70,10 @@ search_results = dag.search(`;
   if (end) {
     code += `
     end="${end}",`;
+  }
+  if (id) {
+    code += `
+    id="${id}",`;
   }
   let filteredParameters: { name: string; value: string }[] = [];
   if (!isUndefined(additionalParameters)) {

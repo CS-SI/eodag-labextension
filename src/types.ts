@@ -9,6 +9,7 @@ export interface IFormInput {
   endDate: Date;
   productType: string;
   provider: string;
+  id?: string;
   additionalParameters?: { name: string; value: string }[];
 
   [key: string]: any;
