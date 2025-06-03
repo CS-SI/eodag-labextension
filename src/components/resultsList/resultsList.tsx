@@ -1,7 +1,5 @@
-// Libs
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { FixedSizeList, ListChildComponentProps } from 'react-window';
-// Components
 import { Result } from './result';
 import { IFeature } from '../../types';
 
