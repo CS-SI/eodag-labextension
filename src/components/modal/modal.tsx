@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Modal as MuiModal } from '@mui/material';
+import { Box, IconButton, Modal as MuiModal } from '@mui/material';
 import { ResultsPanel } from './resultsPanel';
 import { MapBackground } from './mapBackground';
 import { SelectedFeaturePanel } from './selectedFeaturePanel';
 import { useMapFeatures } from '../../hooks/useMapFeatures';
 import 'react-datepicker/dist/react-datepicker.css';
 import { IFeatures } from '../../types';
+import ClearIcon from '@mui/icons-material/Clear';
 
 export interface IModalProps {
   open: boolean;
@@ -29,6 +30,19 @@ const styles = {
   borderRadius: '8px',
   overflow: 'hidden'
 };
+
+interface IExitModalButtonProps {
+  handleClose: () => void;
+}
+
+const ExitModalButton: React.FC<IExitModalButtonProps> = ({ handleClose }) => (
+  <IconButton
+    className={'jp-EodagWidget-modal-exit-button'}
+    onClick={handleClose}
+  >
+    <ClearIcon />
+  </IconButton>
+);
 
 export const Modal: React.FC<IModalProps> = ({
   handleGenerateQuery,
@@ -63,6 +77,7 @@ export const Modal: React.FC<IModalProps> = ({
   return (
     <MuiModal open={modalOpen} onClose={handleClose}>
       <Box sx={styles}>
+        <ExitModalButton handleClose={handleClose} />
         <MapBackground
           features={features}
           zoomFeature={zoomFeature}
