@@ -148,12 +148,9 @@ export const MapFeature: React.FC<IMapFeatureProps> = ({
       zoomControl={false}
       bounds={boundsLatLng}
       ref={ref => {
-        // Makes it synchronous
-        setTimeout(() => {
-          if (ref) {
-            mapRef.current = ref;
-          }
-        }, 0);
+        if (ref) {
+          mapRef.current = ref;
+        }
       }}
     >
       <TileLayer url={EODAG_TILE_URL} attribution={EODAG_TILE_COPYRIGHT} />
