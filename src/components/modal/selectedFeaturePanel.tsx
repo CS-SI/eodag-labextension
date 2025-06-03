@@ -18,7 +18,9 @@ interface IMetadataLineProps {
 const MetadataLine: React.FC<IMetadataLineProps> = ({ label, value }) => {
   const isRenderable =
     ['string', 'number', 'boolean'].includes(typeof value) && value !== null;
-  if (!isRenderable) {
+  const isFilteredOut = label.startsWith('eodag_');
+
+  if (!isRenderable || isFilteredOut) {
     return null;
   }
 
