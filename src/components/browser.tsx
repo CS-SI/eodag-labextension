@@ -12,7 +12,7 @@ import {
 } from '@jupyterlab/notebook';
 import { isNull, isUndefined } from 'lodash';
 import { Modal } from './modal/modal';
-import { formatCode } from '../utils/formatCode';
+import { codeGenerator } from '../utils/codeGenerator';
 import { IFeatures, IFormInput, IGeometry, IParameter } from '../types';
 import { ServerConnection } from '@jupyterlab/services';
 import * as React from 'react';
@@ -202,7 +202,7 @@ export const EodagBrowser: React.FC<IEodagBrowserProps> = ({
     setOpenModal(openModal);
   };
 
-  const handleGenerateQuery = async (_: IParameter[]) => {
+  const handleGenerateQuery = async (params: IParameter[]) => {
     setOpenModal(false);
     if (!tracker.currentWidget) {
       return;
@@ -232,6 +232,9 @@ export const EodagBrowser: React.FC<IEodagBrowserProps> = ({
       );
     }
 
+    const idParam = params.find(p => p.key === 'id');
+    const idValue = idParam?.value?.id;
+
     const replaceCode = await getEodagSettings();
     let input: IFormInput;
     if (isUndefined(formValues)) {
@@ -245,12 +248,13 @@ export const EodagBrowser: React.FC<IEodagBrowserProps> = ({
         productType: '',
         provider: '',
         cloud: 100,
-        geometry: geom
+        geometry: geom,
+        id: idValue
       };
     } else {
-      input = formValues;
+      input = { ...formValues, id: idValue };
     }
-    const code = formatCode(input, replaceCode);
+    const code = codeGenerator(input, replaceCode);
     handleCellInsertionPosition(notebook, model, code, replaceCode);
   };
 
