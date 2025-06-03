@@ -1,13 +1,11 @@
 import React, { useMemo } from 'react';
-import { IFeature } from '../../types';
-import ZoomInIcon from '@mui/icons-material/ZoomIn';
-import { Button, IconButton, Tooltip } from '@mui/material';
+import { IFeature, IParameter } from '../../types';
+import { Button, Tooltip } from '@mui/material';
 import { NoImage } from '../icons';
 
 interface ISelectedFeaturePanelProps {
   selectedFeature: IFeature;
-  onZoom: (productId: string) => void;
-  generateProductCode: (productId: string) => void;
+  handleGenerateQuery: (params: IParameter[]) => void;
 }
 
 interface IMetadataLineProps {
@@ -39,8 +37,7 @@ const MetadataLine: React.FC<IMetadataLineProps> = ({ label, value }) => {
 
 export const SelectedFeaturePanel: React.FC<ISelectedFeaturePanelProps> = ({
   selectedFeature,
-  onZoom,
-  generateProductCode
+  handleGenerateQuery
 }) => {
   const { properties } = selectedFeature;
 
@@ -71,13 +68,6 @@ export const SelectedFeaturePanel: React.FC<ISelectedFeaturePanelProps> = ({
       <div className={'jp-EodagWidget-modal-selected-result-infos'}>
         <div className={'jp-EodagWidget-modal-selected-result-title'}>
           <span>{selectedFeature.id}</span>
-          <IconButton
-            size={'small'}
-            className={'jp-EodagWidget-modal-selected-result-zoomButton'}
-            onClick={() => onZoom(selectedFeature.id)}
-          >
-            <ZoomInIcon fontSize={'inherit'} />
-          </IconButton>
         </div>
         <div className={'jp-EodagWidget-modal-selected-result-metadata'}>
           <div
@@ -92,7 +82,18 @@ export const SelectedFeaturePanel: React.FC<ISelectedFeaturePanelProps> = ({
           </div>
         </div>
         <div className={'jp-EodagWidget-modal-selected-result-action-buttons'}>
-          <Button onClick={() => generateProductCode(selectedFeature.id)}>
+          <Button
+            variant={'contained'}
+            onClick={() =>
+              handleGenerateQuery([
+                {
+                  key: 'id',
+                  value: { id: selectedFeature.id },
+                  mandatory: false
+                }
+              ])
+            }
+          >
             {'Generate code for this product'}
           </Button>
         </div>

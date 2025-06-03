@@ -252,7 +252,5 @@ span {
 
 .jp-EodagWidget-modal-selected-result-action-buttons button {
     text-transform: unset;
-    background-color: #007aff;
-    border-radius: 5px;
-    color: white;
+    border-radius: 6px;
 }

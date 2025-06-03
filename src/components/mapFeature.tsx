@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { GeoJSON, MapContainer, TileLayer } from 'react-leaflet';
 import { get, isEmpty } from 'lodash';
-import L, { LeafletMouseEvent, Map as LeafletMap } from 'leaflet';
+import L, { LeafletMouseEvent } from 'leaflet';
 import { EODAG_TILE_COPYRIGHT, EODAG_TILE_URL } from '../config/config';
 import { IFeature, IFeatures } from '../types';
 
@@ -30,9 +30,9 @@ export const MapFeature: React.FC<IMapFeatureProps> = ({
   handleHoverFeature,
   handleClickFeature
 }) => {
-  const mapRef = useRef<LeafletMap | null>(null);
   const [featureHover, setFeatureHover] = useState<string | null>(null);
   const [featureSelected, setFeatureSelected] = useState<string>('');
+  const mapRef = useRef<L.Map | null>(null);
 
   const bounds = L.geoJSON(features?.features || []).getBounds();
 
@@ -147,7 +147,14 @@ export const MapFeature: React.FC<IMapFeatureProps> = ({
     <MapContainer
       zoomControl={false}
       bounds={boundsLatLng}
-      ref={map => (mapRef.current = map)}
+      ref={ref => {
+        // Makes it synchronous
+        setTimeout(() => {
+          if (ref) {
+            mapRef.current = ref;
+          }
+        }, 0);
+      }}
     >
       <TileLayer url={EODAG_TILE_URL} attribution={EODAG_TILE_COPYRIGHT} />
       {!isEmpty(features) && (

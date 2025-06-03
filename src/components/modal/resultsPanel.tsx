@@ -5,7 +5,7 @@ import { PlacesType, Tooltip, VariantType } from 'react-tooltip';
 import { ResultsList } from '../resultsList/resultsList';
 import { Button } from '@mui/material';
 import { get } from 'lodash';
-import { IFeature } from '../../types';
+import { IFeature, IParameter } from '../../types';
 
 interface IResultsPanel {
   features: any;
@@ -15,7 +15,7 @@ interface IResultsPanel {
   handleZoomFeature: (productId: string) => any;
   handleHoverTableFeature: (productId: string | null) => void;
   handleRetrieveMoreFeature: () => Promise<void>;
-  handleGenerateQuery: () => void;
+  handleGenerateQuery: (params: IParameter[]) => void;
   selectedFeature: IFeature | null;
 }
 
@@ -76,7 +76,7 @@ export const ResultsPanel: React.FC<IResultsPanel> = ({
           <Button
             variant={'contained'}
             className="jp-EodagWidget-apply"
-            onClick={handleGenerateQuery}
+            onClick={() => handleGenerateQuery([])}
           >
             {'Generate code'}
           </Button>
