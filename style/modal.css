@@ -1,3 +1,16 @@
+/* Exit Button */
+
+.jp-EodagWidget-modal-exit-button {
+    position: absolute !important;
+    z-index: 1;
+    top: 12px;
+    right: 12px;
+    height: 32px;
+    width: 32px;
+    background-color: white !important;
+    border-radius: 32px !important;
+}
+
 /* Background map */
 
 .jp-EodagWidget-background-map {
