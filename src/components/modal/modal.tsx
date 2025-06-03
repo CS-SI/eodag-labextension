@@ -5,13 +5,13 @@ import { MapBackground } from './mapBackground';
 import { SelectedFeaturePanel } from './selectedFeaturePanel';
 import { useMapFeatures } from '../../hooks/useMapFeatures';
 import 'react-datepicker/dist/react-datepicker.css';
-import { IFeatures } from '../../types';
+import { IFeatures, IParameter } from '../../types';
 import ClearIcon from '@mui/icons-material/Clear';
 
 export interface IModalProps {
   open: boolean;
   handleClose: () => void;
-  handleGenerateQuery: any;
+  handleGenerateQuery: (_: IParameter[]) => void;
   features: IFeatures | null;
   isRetrievingMoreFeature: boolean;
   handleRetrieveMoreFeature: () => Promise<void>;
@@ -19,10 +19,7 @@ export interface IModalProps {
 
 const styles = {
   position: 'absolute',
-  top: 32,
-  left: 32,
-  right: 32,
-  bottom: 32,
+  inset: '32px',
   width: 'calc(100vw - 64px)',
   height: 'calc(100vh - 64px)',
   bgcolor: 'background.paper',
@@ -99,8 +96,7 @@ export const Modal: React.FC<IModalProps> = ({
         {selectedFeature && (
           <SelectedFeaturePanel
             selectedFeature={selectedFeature}
-            onZoom={handleZoomFeature}
-            generateProductCode={() => {}}
+            handleGenerateQuery={handleGenerateQuery}
           />
         )}
       </Box>
