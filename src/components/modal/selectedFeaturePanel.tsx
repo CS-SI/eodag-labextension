@@ -70,7 +70,9 @@ export const SelectedFeaturePanel: React.FC<ISelectedFeaturePanelProps> = ({
 
   return (
     <div
-      className={`jp-EodagWidget-modal-selected-result ${isPanelZoomed ? 'panelZoomed' : ''}`}
+      className={`jp-EodagWidget-modal-selected-result ${
+        isPanelZoomed ? 'panelZoomed' : ''
+      }`}
     >
       <div className={'jp-EodagWidget-modal-selected-result-panel-tools'}>
         {isPanelZoomed ? (
