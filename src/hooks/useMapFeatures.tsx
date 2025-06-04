@@ -7,16 +7,14 @@ interface IUseMapFeaturesProps {
 }
 
 export const useMapFeatures = ({ features }: IUseMapFeaturesProps) => {
-  const [highlightFeature, setHighlightFeature] = useState<IFeature | null>(
-    null
-  );
-  const [highlightOnTableFeature, setHighlightOnTableFeature] =
-    useState<IFeature | null>(null);
-  const [zoomFeature, setZoomFeature] = useState<IFeature | null>(null);
+  const [hoveredFeatureId, setHoveredFeatureId] = useState<
+    IFeature['id'] | null
+  >(null);
   const [selectedFeature, setSelectedFeature] = useState<IFeature | null>(null);
+  const [zoomFeature, setZoomFeature] = useState<IFeature | null>(null);
 
   const getFeature = useCallback(
-    (productId: string): IFeature | null => {
+    (productId: IFeature['id']): IFeature | null => {
       if (!features) {
         return null;
       }
@@ -32,7 +30,19 @@ export const useMapFeatures = ({ features }: IUseMapFeaturesProps) => {
     [features]
   );
 
-  const handleClickFeature = (productId: string | null) => {
+  const setHoveredFeature = (productId: IFeature['id'] | null) => {
+    if (productId === null) {
+      return setHoveredFeatureId(null);
+    } else {
+      const feature = getFeature(productId);
+      if (!feature) {
+        return;
+      }
+      setHoveredFeatureId(productId);
+    }
+  };
+
+  const handleClickFeature = (productId: IFeature['id'] | null) => {
     if (!productId) {
       return setSelectedFeature(null);
     } else {
@@ -45,31 +55,7 @@ export const useMapFeatures = ({ features }: IUseMapFeaturesProps) => {
     }
   };
 
-  const handleHoverMapFeature = (productId: string | null) => {
-    if (productId === null) {
-      return setHighlightOnTableFeature(null);
-    } else {
-      const feature = getFeature(productId);
-      if (!feature) {
-        return;
-      }
-      setHighlightOnTableFeature(feature);
-    }
-  };
-
-  const handleHoverTableFeature = (productId: string | null) => {
-    if (!productId) {
-      return setHighlightFeature(null);
-    } else {
-      const feature = getFeature(productId);
-      if (!feature) {
-        return;
-      }
-      setHighlightFeature(feature);
-    }
-  };
-
-  const handleZoomFeature = (productId: string) => {
+  const handleZoomFeature = (productId: IFeature['id']) => {
     const feature = getFeature(productId);
     if (!feature) {
       return null;
@@ -78,17 +64,16 @@ export const useMapFeatures = ({ features }: IUseMapFeaturesProps) => {
   };
 
   const resetSelectedFeature = () => {
+    setHoveredFeatureId(null);
     setSelectedFeature(null);
   };
 
   return {
-    highlightFeature,
-    highlightOnTableFeature,
     zoomFeature,
-    selectedFeature,
     handleZoomFeature,
-    handleHoverMapFeature,
-    handleHoverTableFeature,
+    hoveredFeatureId,
+    setHoveredFeature,
+    selectedFeature,
     handleClickFeature,
     resetSelectedFeature
   };

@@ -1,15 +1,16 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import { GeoJSON, MapContainer, TileLayer } from 'react-leaflet';
 import { get, isEmpty } from 'lodash';
-import L, { LeafletMouseEvent } from 'leaflet';
+import L from 'leaflet';
 import { EODAG_TILE_COPYRIGHT, EODAG_TILE_URL } from '../config/config';
 import { IFeature, IFeatures } from '../types';
 
 export interface IMapFeatureProps {
   features: IFeatures | null;
   zoomFeature: IFeature | null;
-  highlightFeature: IFeature | null;
-  handleHoverFeature: (productId: string | null) => void;
+  selectedFeature: IFeature | null;
+  hoveredFeatureId: string | null;
+  setHoveredFeature: (productId: string | null) => void;
   handleClickFeature: (productId: string) => void;
 }
 
@@ -25,118 +26,88 @@ const HIGHLIGHT_EXTENT_STYLE = {
 
 export const MapFeature: React.FC<IMapFeatureProps> = ({
   features,
+  selectedFeature,
   zoomFeature,
-  highlightFeature,
-  handleHoverFeature,
+  hoveredFeatureId,
+  setHoveredFeature,
   handleClickFeature
 }) => {
-  const [featureHover, setFeatureHover] = useState<string | null>(null);
-  const [featureSelected, setFeatureSelected] = useState<string>('');
   const mapRef = useRef<L.Map | null>(null);
+  const map = mapRef.current;
 
   const bounds = L.geoJSON(features?.features || []).getBounds();
 
-  useEffect(() => {
-    const map = mapRef.current;
-    if (!map) {
+  const zoomToFeature = (feature: IFeature | null) => {
+    if (!map || !feature) {
       return;
     }
+    let found = false;
 
-    if (zoomFeature) {
+    if (map) {
       map.eachLayer((layer: any) => {
-        if (get(layer, 'feature.id') === highlightFeature?.id) {
+        if (found) {
+          // Early return so that we don't loop over useless layers
+          return;
+        }
+
+        const layerId = get(layer, 'feature.id');
+        if (feature && layerId === feature.id) {
+          found = true;
+          layer.bringToFront();
+
           const layerBounds = layer.getBounds?.();
-          if (layerBounds) {
-            const center = layerBounds.getCenter();
-
-            // Compute the optimal zoom level for the selected layer
-            const optimalZoom = map.getBoundsZoom(layerBounds);
-            const targetZoom = Math.min(optimalZoom - 2, map.getMaxZoom()); // -2 is arbitrary but seems to work well
-
-            // Convert to pixel coordinates
-            const centerPoint = map.project(center, targetZoom);
-
-            // Offset the point: shift to the left and down,
-            // to make space for the results components
-            // Values are arbitrary once again, but they seem to work well
-            const offsetX = -map.getSize().x / 7;
-            const offsetY = map.getSize().y / 7;
-
-            const offsetPoint = centerPoint.add([offsetX, offsetY]);
-
-            // Convert back to lat/lng
-            const offsetLatLng = map.unproject(offsetPoint, targetZoom);
-
-            map.flyTo(offsetLatLng, targetZoom, {
-              animate: true,
-              duration: 0.75
-            });
+          if (!layerBounds) {
+            return;
           }
+
+          const center = layerBounds.getCenter();
+
+          // Compute the optimal zoom level for the selected layer
+          const optimalZoom = map.getBoundsZoom(layerBounds);
+          const targetZoom = Math.min(optimalZoom - 2, map.getMaxZoom()); // -2 is arbitrary but seems to work well
+
+          // Convert to pixel coordinates
+          const centerPoint = map.project(center, targetZoom);
+
+          // Offset the point: shift to the left and down,
+          // to make space for the "results" component
+          // Values are arbitrary once again, but they seem to work well
+          const offsetX = -map.getSize().x / 7;
+          const offsetY = map.getSize().y / 7;
+          const offsetPoint = centerPoint.add([offsetX, offsetY]);
+
+          // Convert back to lat/lng
+          const offsetLatLng = map.unproject(offsetPoint, targetZoom);
+
+          map.flyTo(offsetLatLng, targetZoom, {
+            animate: true,
+            duration: 0.75
+          });
         }
       });
     }
+  };
+
+  useEffect(() => {
+    zoomToFeature(selectedFeature);
+  }, [selectedFeature]);
+
+  useEffect(() => {
+    zoomToFeature(zoomFeature);
   }, [zoomFeature]);
 
-  useEffect(() => {
-    const map = mapRef.current;
-    if (!map) {
-      return;
-    }
-
-    if (mapRef.current) {
-      L.control.zoom({ position: 'topright' }).addTo(mapRef.current);
-    }
-  }, [mapRef]);
-
-  useEffect(() => {
-    const map = mapRef.current;
-    if (!map) {
-      return;
-    }
-
-    map.eachLayer((layer: any) => {
-      const layerId = get(layer, 'feature.id');
-      if (highlightFeature && layerId === highlightFeature.id) {
-        layer.bringToFront();
-        layer.setStyle(HIGHLIGHT_EXTENT_STYLE);
-      } else if (!highlightFeature && layerId === featureSelected) {
-        layer.setStyle(DEFAULT_EXTENT_STYLE);
+  const getStyle = useCallback(
+    (feature: any) => {
+      if (
+        hoveredFeatureId === feature.id ||
+        (selectedFeature && selectedFeature.id === feature.id)
+      ) {
+        return HIGHLIGHT_EXTENT_STYLE;
       }
-    });
-  }, [highlightFeature]);
-
-  const onMouseOver = (e: LeafletMouseEvent) => {
-    const productId = e.target.feature.id;
-    handleHoverFeature(productId);
-    e.target.setStyle(HIGHLIGHT_EXTENT_STYLE);
-    e.target.bringToFront();
-    setFeatureHover(productId);
-  };
-
-  const onMouseOut = (e: LeafletMouseEvent) => {
-    handleHoverFeature(null);
-    e.target.setStyle(DEFAULT_EXTENT_STYLE);
-    setFeatureHover(null);
-  };
-
-  const onClick = (e: LeafletMouseEvent) => {
-    const productId = e.target.feature.id;
-    handleClickFeature(productId);
-    e.target.setStyle(HIGHLIGHT_EXTENT_STYLE);
-    e.target.bringToFront();
-    setFeatureSelected(productId);
-  };
-
-  const getStyle = (feature: any) => {
-    if (
-      get(highlightFeature, 'id') === feature.id ||
-      featureHover === feature.id ||
-      featureSelected === feature.id
-    ) {
-      return HIGHLIGHT_EXTENT_STYLE;
-    }
-    return DEFAULT_EXTENT_STYLE;
-  };
+      return DEFAULT_EXTENT_STYLE;
+    },
+    [hoveredFeatureId, selectedFeature]
+  );
 
   const boundsLatLng = L.latLngBounds(
     L.latLng(bounds.getSouthWest().lat, bounds.getSouthWest().lng),
@@ -156,14 +127,13 @@ export const MapFeature: React.FC<IMapFeatureProps> = ({
       <TileLayer url={EODAG_TILE_URL} attribution={EODAG_TILE_COPYRIGHT} />
       {!isEmpty(features) && (
         <GeoJSON
-          key={`features-gson-${get(features, 'features', []).length}`}
           data={features}
           style={getStyle}
-          onEachFeature={(feature, layer) => {
+          onEachFeature={(_, layer) => {
             layer.on({
-              mouseover: onMouseOver,
-              mouseout: onMouseOut,
-              click: onClick
+              mouseover: e => setHoveredFeature(e.target.feature.id),
+              mouseout: () => setHoveredFeature(null),
+              click: e => handleClickFeature(e.target.feature.id)
             });
           }}
         />
