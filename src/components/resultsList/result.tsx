@@ -9,10 +9,10 @@ import { NoImage } from '../icons';
 interface IResultProps {
   rowData: IFeature;
   isSelected: boolean;
-  isHighlighted: boolean;
+  isHovered: boolean;
   onClick: (id: string) => void;
   onZoom: (id: string) => void;
-  onHover: (id: string | null) => void;
+  setHoveredFeature: (id: string | null) => void;
   style: React.CSSProperties;
 }
 
@@ -30,10 +30,10 @@ const formatDate = (date: string) =>
 export const Result: React.FC<IResultProps> = ({
   rowData,
   isSelected,
-  isHighlighted,
+  isHovered,
   onClick,
   onZoom,
-  onHover,
+  setHoveredFeature,
   style
 }) => {
   const preview = rowData.thumbnail
@@ -51,15 +51,15 @@ export const Result: React.FC<IResultProps> = ({
         {preview && <img src={preview} alt="" className="preview_image" />}
       </div>
       <div
-        onMouseEnter={() => onHover(rowData.id)}
-        onMouseLeave={() => onHover(null)}
+        onMouseEnter={() => setHoveredFeature(rowData.id)}
+        onMouseLeave={() => setHoveredFeature(null)}
         role="row"
         onClick={() => onClick(rowData.id)}
         className={'result_row'}
         style={{
           border: isSelected
             ? '2px solid #007AFF'
-            : isHighlighted
+            : isHovered
               ? '2px solid rgba(0 122 255 / 25%)'
               : '2px solid transparent'
         }}

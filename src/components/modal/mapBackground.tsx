@@ -5,24 +5,27 @@ import { IFeature, IFeatures } from '../../types';
 interface IMapBackgroundProps {
   features: IFeatures | null;
   zoomFeature: IFeature | null;
-  highlightFeature: IFeature | null;
-  handleHoverMapFeature: (productId: string | null) => void;
-  handleClickFeature: (productId: string) => void;
+  selectedFeature: IFeature | null;
+  hoveredFeatureId: IFeature['id'] | null;
+  setHoveredFeature: (productId: IFeature['id'] | null) => void;
+  handleClickFeature: (productId: IFeature['id']) => void;
 }
 
 export const MapBackground: React.FC<IMapBackgroundProps> = ({
   features,
   zoomFeature,
-  highlightFeature,
-  handleHoverMapFeature,
+  selectedFeature,
+  hoveredFeatureId,
+  setHoveredFeature,
   handleClickFeature
 }) => (
   <div className={'jp-EodagWidget-background-map sizeFull'}>
     <MapFeature
       features={features}
       zoomFeature={zoomFeature}
-      highlightFeature={highlightFeature}
-      handleHoverFeature={handleHoverMapFeature}
+      selectedFeature={selectedFeature}
+      hoveredFeatureId={hoveredFeatureId}
+      setHoveredFeature={setHoveredFeature}
       handleClickFeature={handleClickFeature}
     />
   </div>
