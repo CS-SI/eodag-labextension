@@ -66,7 +66,7 @@ export const Result: React.FC<IResultProps> = ({
       >
         <div className={'result_infos'}>
           {/* Move this condition under the result_tags div when other infos might come */}
-          {rowData.cloudCover ? (
+          {rowData.cloudCover !== null && rowData.cloudCover !== undefined ? (
             <div className={'result_tags'}>
               <Chip
                 className={'jp-EodagWidget-chip'}
