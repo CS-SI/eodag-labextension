@@ -73,33 +73,36 @@ export const Modal: React.FC<IModalProps> = ({
 
   return (
     <MuiModal open={modalOpen} onClose={handleClose}>
-      <Box sx={styles}>
+      <>
         <ExitModalButton handleClose={handleClose} />
-        <MapBackground
-          features={features}
-          zoomFeature={zoomFeature}
-          highlightFeature={highlightFeature}
-          handleHoverMapFeature={handleHoverMapFeature}
-          handleClickFeature={handleClickFeature}
-        />
-        <ResultsPanel
-          features={features}
-          isRetrievingMoreFeature={isRetrievingMoreFeature}
-          highlightOnTableFeature={highlightOnTableFeature}
-          handleClickFeature={handleClickFeature}
-          handleZoomFeature={handleZoomFeature}
-          handleHoverTableFeature={handleHoverTableFeature}
-          handleRetrieveMoreFeature={handleRetrieveMoreFeature}
-          handleGenerateQuery={handleGenerateQuery}
-          selectedFeature={selectedFeature}
-        />
-        {selectedFeature && (
-          <SelectedFeaturePanel
-            selectedFeature={selectedFeature}
-            handleGenerateQuery={handleGenerateQuery}
+        <Box sx={styles}>
+          <MapBackground
+            features={features}
+            zoomFeature={zoomFeature}
+            highlightFeature={highlightFeature}
+            handleHoverMapFeature={handleHoverMapFeature}
+            handleClickFeature={handleClickFeature}
           />
-        )}
-      </Box>
+          <ResultsPanel
+            features={features}
+            isRetrievingMoreFeature={isRetrievingMoreFeature}
+            highlightOnTableFeature={highlightOnTableFeature}
+            handleClickFeature={handleClickFeature}
+            handleZoomFeature={handleZoomFeature}
+            handleHoverTableFeature={handleHoverTableFeature}
+            handleRetrieveMoreFeature={handleRetrieveMoreFeature}
+            handleGenerateQuery={handleGenerateQuery}
+            selectedFeature={selectedFeature}
+          />
+          {selectedFeature && (
+            <SelectedFeaturePanel
+              selectedFeature={selectedFeature}
+              resetSelectedFeature={resetSelectedFeature}
+              handleGenerateQuery={handleGenerateQuery}
+            />
+          )}
+        </Box>
+      </>
     </MuiModal>
   );
 };
