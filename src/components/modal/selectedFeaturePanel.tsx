@@ -1,10 +1,14 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { IFeature, IParameter } from '../../types';
-import { Button, Tooltip } from '@mui/material';
+import { Button, IconButton, Tooltip } from '@mui/material';
 import { NoImage } from '../icons';
+import ZoomInMapIcon from '@mui/icons-material/ZoomInMap';
+import ZoomOutMapIcon from '@mui/icons-material/ZoomOutMap';
+import Clear from '@mui/icons-material/Clear';
 
 interface ISelectedFeaturePanelProps {
   selectedFeature: IFeature;
+  resetSelectedFeature: () => void;
   handleGenerateQuery: (params: IParameter[]) => void;
 }
 
@@ -37,9 +41,11 @@ const MetadataLine: React.FC<IMetadataLineProps> = ({ label, value }) => {
 
 export const SelectedFeaturePanel: React.FC<ISelectedFeaturePanelProps> = ({
   selectedFeature,
-  handleGenerateQuery
+  handleGenerateQuery,
+  resetSelectedFeature
 }) => {
   const { properties } = selectedFeature;
+  const [isPanelZoomed, setIsPanelZoomed] = useState<boolean>(false);
 
   const preview = useMemo(() => {
     return properties.quicklook
@@ -57,8 +63,29 @@ export const SelectedFeaturePanel: React.FC<ISelectedFeaturePanelProps> = ({
     [selectedFeature.id, properties]
   );
 
+  const closeSelectedResultPanel = () => {
+    setIsPanelZoomed(false);
+    return resetSelectedFeature();
+  };
+
   return (
-    <div className="jp-EodagWidget-modal-selected-result">
+    <div
+      className={`jp-EodagWidget-modal-selected-result ${isPanelZoomed ? 'panelZoomed' : ''}`}
+    >
+      <div className={'jp-EodagWidget-modal-selected-result-panel-tools'}>
+        {isPanelZoomed ? (
+          <IconButton size={'small'} onClick={() => setIsPanelZoomed(false)}>
+            <ZoomInMapIcon fontSize={'inherit'} />
+          </IconButton>
+        ) : (
+          <IconButton size={'small'} onClick={() => setIsPanelZoomed(true)}>
+            <ZoomOutMapIcon fontSize={'inherit'} />
+          </IconButton>
+        )}
+        <IconButton size={'small'} onClick={closeSelectedResultPanel}>
+          <Clear fontSize={'inherit'} />
+        </IconButton>
+      </div>
       <div className={'jp-EodagWidget-modal-selected-result-preview'}>
         <div className={'result_preview_background'}>
           <NoImage />
