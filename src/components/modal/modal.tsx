@@ -50,15 +50,14 @@ export const Modal: React.FC<IModalProps> = ({
   handleRetrieveMoreFeature
 }) => {
   const [modalOpen, setModalOpen] = useState<boolean>(open);
+
   const {
-    highlightOnTableFeature,
-    highlightFeature,
+    hoveredFeatureId,
+    setHoveredFeature,
     selectedFeature,
-    zoomFeature,
     handleClickFeature,
-    handleHoverTableFeature,
+    zoomFeature,
     handleZoomFeature,
-    handleHoverMapFeature,
     resetSelectedFeature
   } = useMapFeatures({
     features
@@ -78,18 +77,19 @@ export const Modal: React.FC<IModalProps> = ({
         <Box sx={styles}>
           <MapBackground
             features={features}
+            selectedFeature={selectedFeature}
             zoomFeature={zoomFeature}
-            highlightFeature={highlightFeature}
-            handleHoverMapFeature={handleHoverMapFeature}
+            hoveredFeatureId={hoveredFeatureId}
+            setHoveredFeature={setHoveredFeature}
             handleClickFeature={handleClickFeature}
           />
           <ResultsPanel
             features={features}
+            hoveredFeatureId={hoveredFeatureId}
+            setHoveredFeature={setHoveredFeature}
             isRetrievingMoreFeature={isRetrievingMoreFeature}
-            highlightOnTableFeature={highlightOnTableFeature}
             handleClickFeature={handleClickFeature}
             handleZoomFeature={handleZoomFeature}
-            handleHoverTableFeature={handleHoverTableFeature}
             handleRetrieveMoreFeature={handleRetrieveMoreFeature}
             handleGenerateQuery={handleGenerateQuery}
             selectedFeature={selectedFeature}

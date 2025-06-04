@@ -10,10 +10,10 @@ import { IFeature, IParameter } from '../../types';
 interface IResultsPanel {
   features: any;
   isRetrievingMoreFeature: boolean;
-  highlightOnTableFeature: IFeature | null;
-  handleClickFeature: (productId: string) => void;
-  handleZoomFeature: (productId: string) => any;
-  handleHoverTableFeature: (productId: string | null) => void;
+  hoveredFeatureId: IFeature['id'] | null;
+  handleClickFeature: (productId: IFeature['id']) => void;
+  handleZoomFeature: (productId: IFeature['id']) => any;
+  setHoveredFeature: (productId: IFeature['id'] | null) => any;
   handleRetrieveMoreFeature: () => Promise<void>;
   handleGenerateQuery: (params: IParameter[]) => void;
   selectedFeature: IFeature | null;
@@ -25,10 +25,10 @@ const tooltipBottom: PlacesType = 'bottom';
 export const ResultsPanel: React.FC<IResultsPanel> = ({
   features,
   isRetrievingMoreFeature,
-  highlightOnTableFeature,
+  setHoveredFeature,
   handleClickFeature,
   handleZoomFeature,
-  handleHoverTableFeature,
+  hoveredFeatureId,
   handleRetrieveMoreFeature,
   selectedFeature,
   handleGenerateQuery
@@ -62,11 +62,11 @@ export const ResultsPanel: React.FC<IResultsPanel> = ({
         </div>
         <div className="jp-EodagWidget-results-content">
           <ResultsList
+            hoveredFeatureId={hoveredFeatureId}
             features={features}
-            highlightFeature={highlightOnTableFeature}
+            setHoveredFeature={setHoveredFeature}
             handleClickFeature={handleClickFeature}
             handleZoomFeature={handleZoomFeature}
-            handleHoverFeature={handleHoverTableFeature}
             isRetrievingMoreFeature={isRetrievingMoreFeature}
             handleRetrieveMoreFeature={handleRetrieveMoreFeature}
             selectedFeature={selectedFeature}
