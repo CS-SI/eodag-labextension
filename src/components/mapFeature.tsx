@@ -51,7 +51,7 @@ export const MapFeature: React.FC<IMapFeatureProps> = ({
 
             // Compute the optimal zoom level for the selected layer
             const optimalZoom = map.getBoundsZoom(layerBounds);
-            const targetZoom = Math.min(optimalZoom - 1.2, map.getMaxZoom()); // -1.2 is arbitrary but seems to work well
+            const targetZoom = Math.min(optimalZoom - 2, map.getMaxZoom()); // -2 is arbitrary but seems to work well
 
             // Convert to pixel coordinates
             const centerPoint = map.project(center, targetZoom);
@@ -59,8 +59,8 @@ export const MapFeature: React.FC<IMapFeatureProps> = ({
             // Offset the point: shift to the left and down,
             // to make space for the results components
             // Values are arbitrary once again, but they seem to work well
-            const offsetX = -map.getSize().x / 8;
-            const offsetY = map.getSize().y / 8;
+            const offsetX = -map.getSize().x / 7;
+            const offsetY = map.getSize().y / 7;
 
             const offsetPoint = centerPoint.add([offsetX, offsetY]);
 
