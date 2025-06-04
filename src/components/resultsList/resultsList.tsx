@@ -9,9 +9,9 @@ interface IResultsListProps {
     properties: { totalResults: number };
   };
   handleClickFeature: (id: string) => void;
-  handleHoverFeature: (id: string | null) => void;
   handleZoomFeature: (id: string) => void;
-  highlightFeature: any;
+  hoveredFeatureId: string | null;
+  setHoveredFeature: (id: string | null) => void;
   selectedFeature: IFeature | null;
   isRetrievingMoreFeature: boolean;
   handleRetrieveMoreFeature: () => Promise<void>;
@@ -20,10 +20,10 @@ interface IResultsListProps {
 export const ResultsList: React.FC<IResultsListProps> = ({
   features,
   handleClickFeature,
-  handleHoverFeature,
   handleZoomFeature,
-  highlightFeature,
+  hoveredFeatureId,
   selectedFeature,
+  setHoveredFeature,
   isRetrievingMoreFeature,
   handleRetrieveMoreFeature
 }) => {
@@ -83,15 +83,14 @@ export const ResultsList: React.FC<IResultsListProps> = ({
     }
 
     const isSelected = selectedFeature?.id === rowData.id;
-    const isHighlighted = highlightFeature?.id === rowData.id && !isSelected;
 
     return (
       <Result
-        isHighlighted={isHighlighted}
+        isHovered={hoveredFeatureId === rowData.id}
         isSelected={isSelected}
         onClick={handleClickFeature}
         onZoom={handleZoomFeature}
-        onHover={handleHoverFeature}
+        setHoveredFeature={setHoveredFeature}
         rowData={rowData}
         style={style}
       />
