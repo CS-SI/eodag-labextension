@@ -126,7 +126,6 @@ export const Autocomplete: React.FC<IAutocompleteProps> = ({
               loadOptions={loadSuggestions}
               components={listComponents}
               value={currentValue}
-              isDisabled={disabled}
               onChange={handleChange}
               placeholder={placeholder}
               isClearable
