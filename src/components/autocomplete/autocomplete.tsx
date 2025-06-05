@@ -17,7 +17,6 @@ interface IAutocompleteProps {
   disabled: boolean;
   handleChange: (option: IOptionTypeBase | null) => void;
   label: string;
-  disabled: boolean;
   placeholder?: string;
   loadSuggestions?: (inputValue: string) => Promise<IOptionTypeBase[]>;
 }
@@ -127,7 +126,8 @@ export const Autocomplete: React.FC<IAutocompleteProps> = ({
               loadOptions={loadSuggestions}
               components={listComponents}
               value={currentValue}
-              isDisabled={disabled}onChange={handleChange}
+              isDisabled={disabled}
+              onChange={handleChange}
               placeholder={placeholder}
               isClearable
             />
