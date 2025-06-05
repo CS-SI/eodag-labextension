@@ -176,7 +176,7 @@ export const EodagBrowser: React.FC<IEodagBrowserProps> = ({
     // present in the ~/.config/eodag/eodag.yml
     const filePath = '/user-config/eodag.yml';
 
-    const widget = await this.props.commands.execute('docmanager:open', {
+    const widget = await commands.execute('docmanager:open', {
       path: filePath,
       factory: 'Editor'
     });
@@ -193,7 +193,7 @@ export const EodagBrowser: React.FC<IEodagBrowserProps> = ({
       }
 
       // Only called on subsequent file changes (i.e., saves)
-      this.reloadUserSettings();
+      reloadUserSettings();
     });
   };
 
