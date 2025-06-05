@@ -4,12 +4,14 @@
  */
 
 export interface IFormInput {
-  geometry: IGeometry;
-  startDate: Date;
-  endDate: Date;
   productType: string;
   provider: string;
+
+  geometry?: IGeometry;
+  startDate?: Date;
+  endDate?: Date;
   id?: string;
+
   additionalParameters?: { name: string; value: string }[];
 
   [key: string]: any;

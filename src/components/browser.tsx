@@ -237,7 +237,9 @@ export const EodagBrowser: React.FC<IEodagBrowserProps> = ({
 
     const replaceCode = await getEodagSettings();
     let input: IFormInput;
+    console.log('formValues : ', formValues);
     if (isUndefined(formValues)) {
+      console.log('here #1');
       const geom: IGeometry = {
         type: 'Point',
         coordinates: [0, 0]
@@ -252,7 +254,15 @@ export const EodagBrowser: React.FC<IEodagBrowserProps> = ({
         id: idValue
       };
     } else {
-      input = { ...formValues, id: idValue };
+      if (idValue) {
+        input = {
+          provider: formValues.provider,
+          productType: formValues.productType,
+          id: idValue
+        };
+      } else {
+        input = formValues;
+      }
     }
     const code = codeGenerator(input, replaceCode);
     handleCellInsertionPosition(notebook, model, code, replaceCode);
