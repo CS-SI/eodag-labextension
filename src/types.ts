@@ -66,7 +66,7 @@ export interface IFeatures {
   features: any[];
 }
 
-export interface IFeature {
+export interface IProduct {
   id: string;
   startTimeFromAscendingNode?: string;
   endTimeFromAscendingNode?: string;

@@ -2,13 +2,13 @@ import React, { useCallback, useEffect, useRef } from 'react';
 import { GeoJSON, MapContainer, TileLayer } from 'react-leaflet';
 import { get, isEmpty } from 'lodash';
 import L from 'leaflet';
-import { EODAG_TILE_COPYRIGHT, EODAG_TILE_URL } from '../config/config';
-import { IFeature, IFeatures } from '../types';
+import { EODAG_TILE_COPYRIGHT, EODAG_TILE_URL } from '../../config/config';
+import { IFeatures, IProduct } from '../../types';
 
 export interface IMapFeatureProps {
   features: IFeatures | null;
-  zoomFeature: IFeature | null;
-  selectedFeature: IFeature | null;
+  zoomFeature: IProduct | null;
+  selectedFeature: IProduct | null;
   hoveredFeatureId: string | null;
   setHoveredFeature: (productId: string | null) => void;
   handleClickFeature: (productId: string) => void;
@@ -37,7 +37,7 @@ export const MapFeature: React.FC<IMapFeatureProps> = ({
 
   const bounds = L.geoJSON(features?.features || []).getBounds();
 
-  const zoomToFeature = (feature: IFeature | null) => {
+  const zoomToFeature = (feature: IProduct | null) => {
     if (!map || !feature) {
       return;
     }

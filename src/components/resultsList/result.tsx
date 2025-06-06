@@ -3,11 +3,11 @@ import Chip from '@mui/material/Chip';
 import IconButton from '@mui/material/IconButton';
 import CloudIcon from '@mui/icons-material/Cloud';
 import ZoomInIcon from '@mui/icons-material/ZoomIn';
-import { IFeature } from '../../types';
+import { IProduct } from '../../types';
 import { NoImage } from '../icons';
 
 interface IResultProps {
-  rowData: IFeature;
+  rowData: IProduct;
   isSelected: boolean;
   isHovered: boolean;
   onClick: (id: string) => void;
