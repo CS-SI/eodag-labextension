@@ -12,6 +12,7 @@ import { EodagBrowser } from './components/browser';
 import { LabIcon } from '@jupyterlab/ui-components';
 import { ISignal, Signal } from '@lumino/signaling';
 import iconSvgStr from '../style/icon.svg';
+import { CommandRegistry } from '@lumino/commands';
 
 export const logoIcon = new LabIcon({
   name: 'eodag-labextension:logo',
@@ -21,12 +22,12 @@ export const logoIcon = new LabIcon({
 export class EodagWidget extends Widget {
   private static _instance: EodagWidget | null = null;
   tracker: INotebookTracker;
-  commands: any;
+  commands: CommandRegistry;
 
   /**
    * Construct a new EodagBrowser widget.
    */
-  constructor(tracker: INotebookTracker, commands: any) {
+  constructor(tracker: INotebookTracker, commands: CommandRegistry) {
     super();
     if (!EodagWidget._instance) {
       EodagWidget._instance = this;

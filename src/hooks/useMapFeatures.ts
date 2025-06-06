@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import { IFeature, IFeatures } from 'types';
+import { IFeatures, IProduct } from 'types';
 import { find } from 'lodash';
 
 interface IUseMapFeaturesProps {
@@ -8,13 +8,13 @@ interface IUseMapFeaturesProps {
 
 export const useMapFeatures = ({ features }: IUseMapFeaturesProps) => {
   const [hoveredFeatureId, setHoveredFeatureId] = useState<
-    IFeature['id'] | null
+    IProduct['id'] | null
   >(null);
-  const [selectedFeature, setSelectedFeature] = useState<IFeature | null>(null);
-  const [zoomFeature, setZoomFeature] = useState<IFeature | null>(null);
+  const [selectedFeature, setSelectedFeature] = useState<IProduct | null>(null);
+  const [zoomFeature, setZoomFeature] = useState<IProduct | null>(null);
 
   const getFeature = useCallback(
-    (productId: IFeature['id']): IFeature | null => {
+    (productId: IProduct['id']): IProduct | null => {
       if (!features) {
         return null;
       }
@@ -30,7 +30,7 @@ export const useMapFeatures = ({ features }: IUseMapFeaturesProps) => {
     [features]
   );
 
-  const setHoveredFeature = (productId: IFeature['id'] | null) => {
+  const setHoveredFeature = (productId: IProduct['id'] | null) => {
     if (productId === null) {
       return setHoveredFeatureId(null);
     } else {
@@ -42,7 +42,7 @@ export const useMapFeatures = ({ features }: IUseMapFeaturesProps) => {
     }
   };
 
-  const handleClickFeature = (productId: IFeature['id'] | null) => {
+  const handleClickFeature = (productId: IProduct['id'] | null) => {
     if (!productId) {
       return setSelectedFeature(null);
     } else {
@@ -55,7 +55,7 @@ export const useMapFeatures = ({ features }: IUseMapFeaturesProps) => {
     }
   };
 
-  const handleZoomFeature = (productId: IFeature['id']) => {
+  const handleZoomFeature = (productId: IProduct['id']) => {
     const feature = getFeature(productId);
     if (!feature) {
       return null;

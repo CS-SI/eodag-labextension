@@ -1,14 +1,14 @@
 import React from 'react';
-import { MapFeature } from '../mapFeature';
-import { IFeature, IFeatures } from '../../types';
+import { MapFeature } from '../map/mapFeature';
+import { IFeatures, IProduct } from '../../types';
 
 interface IMapBackgroundProps {
   features: IFeatures | null;
-  zoomFeature: IFeature | null;
-  selectedFeature: IFeature | null;
-  hoveredFeatureId: IFeature['id'] | null;
-  setHoveredFeature: (productId: IFeature['id'] | null) => void;
-  handleClickFeature: (productId: IFeature['id']) => void;
+  zoomFeature: IProduct | null;
+  selectedFeature: IProduct | null;
+  hoveredFeatureId: IProduct['id'] | null;
+  setHoveredFeature: (productId: IProduct['id'] | null) => void;
+  handleClickFeature: (productId: IProduct['id']) => void;
 }
 
 export const MapBackground: React.FC<IMapBackgroundProps> = ({
