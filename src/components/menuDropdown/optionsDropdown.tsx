@@ -18,7 +18,7 @@ export interface IOptionsMenuDropdownItems {
 
 interface IOptionsMenuDropdownProps {
   openSettings: () => void;
-  openEodagConfigEditor: () => void;
+  openEodagConfigEditor: () => Promise<void>;
   version: string;
   labExtensionVersion: string;
 }

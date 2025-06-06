@@ -3,33 +3,28 @@
  * All rights reserved
  */
 import { showErrorMessage } from '@jupyterlab/apputils';
-import { URLExt } from '@jupyterlab/coreutils';
-import {
-  INotebookModel,
-  INotebookTracker,
-  Notebook,
-  NotebookActions
-} from '@jupyterlab/notebook';
+import { INotebookTracker } from '@jupyterlab/notebook';
 import { isNull, isUndefined } from 'lodash';
 import { Modal } from './modal/modal';
 import { codeGenerator } from '../utils/codeGenerator';
 import { IFeatures, IFormInput, IGeometry, IParameter } from '../types';
-import { ServerConnection } from '@jupyterlab/services';
-import * as React from 'react';
-import { useEffect, useState } from 'react';
-import { PlacesType, Tooltip, VariantType } from 'react-tooltip';
-import { EODAG_SETTINGS_ADDRESS } from '../config/config';
+import React, { useState } from 'react';
+import { Tooltip } from 'react-tooltip';
+import { CommandRegistry } from '@lumino/commands';
 import { FormComponent } from './formComponent/formComponent';
-import { useFetchUserSettings } from '../hooks/useFetchUserSettings';
 import { IcBaselineRefresh } from './icons';
 import { OptionsMenuDropdown } from './menuDropdown/optionsDropdown';
 import { useFetchProviders } from '../hooks/useFetchProviders';
 import { useFetchProducts } from '../hooks/useFetchProducts';
 import { useVirtualizedList } from '../hooks/useVirtualizedList';
+import { useEodagVersions } from '../hooks/useEodagVersions';
+import { useNotebookInjection } from '../hooks/useNotebookInjection';
+import { useEodagSettings } from '../hooks/useEodagSettings';
+import { useUserSettings } from '../hooks/useUserSettings';
 
 export interface IEodagBrowserProps {
   tracker: INotebookTracker;
-  commands: any;
+  commands: CommandRegistry;
 }
 
 export interface IMapSettings {
@@ -38,74 +33,23 @@ export interface IMapSettings {
   zoomOffset: number;
 }
 
-const tooltipDark: VariantType = 'dark';
-const tooltipBottom: PlacesType = 'bottom';
-
 export const EodagBrowser: React.FC<IEodagBrowserProps> = ({
   tracker,
   commands
 }) => {
   const [openModal, setOpenModal] = useState(false);
   const [formValues, setFormValues] = useState<IFormInput | undefined>();
-  const [replaceCellIndex, setReplaceCellIndex] = useState(0);
   const [features, setFeatures] = useState<IFeatures | null>(null);
-  const [eodagVersion, setEodagVersion] = useState<string | undefined>();
-  const [eodagLabExtensionVersion, setEodagLabExtensionVersion] = useState<
-    string | undefined
-  >();
-  const [mapSettings, setMapSettings] = useState<IMapSettings>({
-    zoomOffset: 0,
-    url: '',
-    attributions: ''
-  });
-  const [isLoading, setIsLoading] = useState(false);
-  const { fetchUserSettings } = useFetchUserSettings();
   const { fetchProviders, fetchProvidersLoading } = useFetchProviders();
   const { fetchProducts, fetchProductLoading } = useFetchProducts();
-
+  const { insertCode } = useNotebookInjection();
+  const { getEodagSettings } = useEodagSettings();
+  const { eodagLabExtensionVersion, eodagVersion, mapSettings } =
+    useEodagVersions();
   const { isRetrievingMoreFeature, handleRetrieveMoreFeature } =
     useVirtualizedList({ features, formValues, setFeatures });
-
-  useEffect(() => {
-    fetch('/eodag/info')
-      .then(res => res.json())
-      .then(data => {
-        const { packages } = data;
-        if (packages) {
-          setEodagVersion(packages.eodag.version || 'Unknown version');
-          setEodagLabExtensionVersion(
-            packages.eodag_labextension.version || 'Unknown version'
-          );
-          setMapSettings(packages.mapInfos);
-        }
-      })
-      .catch(() => {
-        setEodagVersion('Error fetching version');
-        setEodagLabExtensionVersion('Error fetching version');
-      });
-  }, []);
-
-  const getEodagSettings = async () => {
-    const _serverSettings = ServerConnection.makeSettings();
-    const _eodag_settings = URLExt.join(
-      _serverSettings.baseUrl,
-      _serverSettings.appUrl,
-      `${EODAG_SETTINGS_ADDRESS}`
-    );
-    return fetch(URLExt.join(_eodag_settings), {
-      credentials: 'same-origin'
-    })
-      .then(res => {
-        if (res.status !== 200) {
-          throw new Error('Bad response from server');
-        }
-        return res.json();
-      })
-      .then(data => {
-        const { replaceCode } = data.settings;
-        return replaceCode;
-      });
-  };
+  const { handleOpenEodagConfig, reloadUserSettings, isUserSettingsLoading } =
+    useUserSettings();
 
   const handleCurrentWidgetError = () => {
     if (!tracker.currentWidget) {
@@ -115,86 +59,6 @@ export const EodagBrowser: React.FC<IEodagBrowserProps> = ({
       );
     }
     return true;
-  };
-
-  const handleCellInsertionPosition = (
-    notebook: Notebook,
-    model: INotebookModel,
-    code: string,
-    replaceCode: boolean
-  ) => {
-    const activeCellIndex = notebook.activeCellIndex;
-    const cells = notebook.widgets;
-    const searchString = '# Code generated by eodag-labextension,';
-    const isReplaceCellExist =
-      cells.filter(cell => cell.node.innerText.includes(searchString)).length >
-      0;
-
-    const getCodeCell = (code: string) => {
-      return {
-        cell_type: 'code',
-        metadata: {
-          trusted: false,
-          collapsed: false,
-          tags: ['Injected by EODAG plugin']
-        },
-        source: code
-      };
-    };
-
-    if (cells.length > 0) {
-      cells.forEach((cell, index) => {
-        if (cell.node.innerText.includes(searchString)) {
-          setReplaceCellIndex(index);
-        }
-      });
-    }
-    const cell = getCodeCell(code);
-
-    if (replaceCode && isReplaceCellExist) {
-      notebook.activeCellIndex = replaceCellIndex;
-      NotebookActions.deleteCells(notebook);
-      NotebookActions.insertBelow(notebook);
-      model.sharedModel.insertCell(replaceCellIndex, cell);
-      notebook.activeCellIndex = replaceCellIndex;
-    }
-
-    if (replaceCode && !isReplaceCellExist) {
-      setReplaceCellIndex(activeCellIndex + 1);
-      model.sharedModel.insertCell(activeCellIndex + 1, cell);
-      NotebookActions.selectBelow(notebook);
-    }
-
-    if (!replaceCode) {
-      model.sharedModel.insertCell(activeCellIndex + 1, cell);
-      NotebookActions.selectBelow(notebook);
-    }
-  };
-
-  const handleOpenEodagConfig = async () => {
-    // File that uses a symbolic link to the eodag config file
-    // present in the ~/.config/eodag/eodag.yml
-    const filePath = '/user-config/eodag.yml';
-
-    const widget = await commands.execute('docmanager:open', {
-      path: filePath,
-      factory: 'Editor'
-    });
-
-    const context = widget.context;
-
-    let isInitial = true;
-
-    context.fileChanged.connect(() => {
-      if (isInitial) {
-        // Ignore the first change (on open)
-        isInitial = false;
-        return;
-      }
-
-      // Only called on subsequent file changes (i.e., saves)
-      reloadUserSettings();
-    });
   };
 
   const handleShowFeature = (features: any, openModal: boolean) => {
@@ -237,9 +101,7 @@ export const EodagBrowser: React.FC<IEodagBrowserProps> = ({
 
     const replaceCode = await getEodagSettings();
     let input: IFormInput;
-    console.log('formValues : ', formValues);
     if (isUndefined(formValues)) {
-      console.log('here #1');
       const geom: IGeometry = {
         type: 'Point',
         coordinates: [0, 0]
@@ -264,25 +126,7 @@ export const EodagBrowser: React.FC<IEodagBrowserProps> = ({
         input = formValues;
       }
     }
-    const code = codeGenerator(input, replaceCode);
-    handleCellInsertionPosition(notebook, model, code, replaceCode);
-  };
-
-  const handleOpenSettings = () => {
-    commands.execute('settingeditor:open', { query: 'EODAG' });
-  };
-
-  const handleCloseModal = () => {
-    setOpenModal(false);
-  };
-
-  const resetIsLoading = () => {
-    setIsLoading(!isLoading);
-  };
-
-  const reloadUserSettings = () => {
-    fetchUserSettings();
-    resetIsLoading();
+    insertCode(notebook, model, codeGenerator(input, replaceCode), replaceCode);
   };
 
   return (
@@ -297,21 +141,23 @@ export const EodagBrowser: React.FC<IEodagBrowserProps> = ({
             className={'jp-EodagWidget-settingsButton'}
             data-tooltip-id="eodag-setting"
             data-tooltip-content="Reload eodag environment"
-            data-tooltip-variant={tooltipDark}
-            data-tooltip-place={tooltipBottom}
+            data-tooltip-variant={'dark'}
+            data-tooltip-place={'bottom'}
             disabled={fetchProductLoading || fetchProvidersLoading}
             onClick={reloadUserSettings}
           >
             <IcBaselineRefresh
               height="20"
               width="20"
-              className={isLoading ? 'spin-icon' : ''}
+              className={isUserSettingsLoading ? 'spin-icon' : ''}
             />
             <Tooltip id="eodag-setting" className="jp-Eodag-tooltip" />
           </button>
           <OptionsMenuDropdown
-            openSettings={handleOpenSettings}
-            openEodagConfigEditor={handleOpenEodagConfig}
+            openSettings={() =>
+              commands.execute('settingeditor:open', { query: 'EODAG' })
+            }
+            openEodagConfigEditor={() => handleOpenEodagConfig(commands)}
             version={eodagVersion ?? 'Loading ...'}
             labExtensionVersion={eodagLabExtensionVersion ?? 'Loading ...'}
           />
@@ -331,7 +177,7 @@ export const EodagBrowser: React.FC<IEodagBrowserProps> = ({
       <Modal
         open={openModal}
         features={features}
-        handleClose={handleCloseModal}
+        handleClose={() => setOpenModal(false)}
         handleGenerateQuery={handleGenerateQuery}
         isRetrievingMoreFeature={isRetrievingMoreFeature}
         handleRetrieveMoreFeature={handleRetrieveMoreFeature}

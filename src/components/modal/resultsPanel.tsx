@@ -1,26 +1,23 @@
 import React, { useMemo } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
-import { PlacesType, Tooltip, VariantType } from 'react-tooltip';
+import { Tooltip } from 'react-tooltip';
 import { ResultsList } from '../resultsList/resultsList';
 import { Button } from '@mui/material';
 import { get } from 'lodash';
-import { IFeature, IParameter } from '../../types';
+import { IParameter, IProduct } from '../../types';
 
 interface IResultsPanel {
   features: any;
   isRetrievingMoreFeature: boolean;
-  hoveredFeatureId: IFeature['id'] | null;
-  handleClickFeature: (productId: IFeature['id']) => void;
-  handleZoomFeature: (productId: IFeature['id']) => any;
-  setHoveredFeature: (productId: IFeature['id'] | null) => any;
+  hoveredFeatureId: IProduct['id'] | null;
+  handleClickFeature: (productId: IProduct['id']) => void;
+  handleZoomFeature: (productId: IProduct['id']) => any;
+  setHoveredFeature: (productId: IProduct['id'] | null) => any;
   handleRetrieveMoreFeature: () => Promise<void>;
   handleGenerateQuery: (params: IParameter[]) => void;
-  selectedFeature: IFeature | null;
+  selectedFeature: IProduct | null;
 }
-
-const tooltipDark: VariantType = 'dark';
-const tooltipBottom: PlacesType = 'bottom';
 
 export const ResultsPanel: React.FC<IResultsPanel> = ({
   features,
@@ -50,8 +47,8 @@ export const ResultsPanel: React.FC<IResultsPanel> = ({
               <div
                 data-tooltip-id="load-tooltip"
                 data-tootip-content="Loading more products"
-                data-tooltip-variant={tooltipDark}
-                data-tooltip-place={tooltipBottom}
+                data-tooltip-variant={'dark'}
+                data-tooltip-place={'bottom'}
                 className="jp-EodagWidget-loading-wrapper"
               >
                 <FontAwesomeIcon icon={faSpinner} spin />

@@ -10,10 +10,10 @@ import { EditControl } from 'react-leaflet-draw';
 import { throttle } from 'lodash';
 import { LeafletMouseEvent } from 'leaflet';
 
-import { EODAG_TILE_COPYRIGHT, EODAG_TILE_URL } from '../config/config';
-import { IGeometry } from '../types';
-import { EodagWidget } from '../widget';
-import { IMapSettings } from './browser';
+import { EODAG_TILE_COPYRIGHT, EODAG_TILE_URL } from '../../config/config';
+import { IGeometry } from '../../types';
+import { EodagWidget } from '../../widget';
+import { IMapSettings } from '../browser';
 
 interface IMapExtentProps {
   onChange: (value: IGeometry | undefined) => void;
