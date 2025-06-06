@@ -1,13 +1,13 @@
 import React, { useMemo, useState } from 'react';
-import { IFeature, IParameter } from '../../types';
+import { IParameter, IProduct } from '../../types';
 import { Button, IconButton, Tooltip } from '@mui/material';
 import { NoImage } from '../icons';
 import ZoomInMapIcon from '@mui/icons-material/ZoomInMap';
 import ZoomOutMapIcon from '@mui/icons-material/ZoomOutMap';
 import Clear from '@mui/icons-material/Clear';
 
-interface ISelectedFeaturePanelProps {
-  selectedFeature: IFeature;
+interface ISelectedProductPanelProps {
+  selectedProduct: IProduct;
   resetSelectedFeature: () => void;
   handleGenerateQuery: (params: IParameter[]) => void;
 }
@@ -39,12 +39,12 @@ const MetadataLine: React.FC<IMetadataLineProps> = ({ label, value }) => {
   );
 };
 
-export const SelectedFeaturePanel: React.FC<ISelectedFeaturePanelProps> = ({
-  selectedFeature,
+export const SelectedProductPanel: React.FC<ISelectedProductPanelProps> = ({
+  selectedProduct,
   handleGenerateQuery,
   resetSelectedFeature
 }) => {
-  const { properties } = selectedFeature;
+  const { properties } = selectedProduct;
   const [isPanelZoomed, setIsPanelZoomed] = useState<boolean>(false);
 
   const preview = useMemo(() => {
@@ -53,14 +53,14 @@ export const SelectedFeaturePanel: React.FC<ISelectedFeaturePanelProps> = ({
       : properties.thumbnail
         ? properties.thumbnail
         : null;
-  }, [selectedFeature.id, properties]);
+  }, [selectedProduct.id, properties]);
 
   const metadataList = useMemo(
     () =>
       Object.entries(properties).map(([key, value]) => (
         <MetadataLine key={key} label={key} value={value} />
       )),
-    [selectedFeature.id, properties]
+    [selectedProduct.id, properties]
   );
 
   const closeSelectedResultPanel = () => {
@@ -96,7 +96,7 @@ export const SelectedFeaturePanel: React.FC<ISelectedFeaturePanelProps> = ({
       </div>
       <div className={'jp-EodagWidget-modal-selected-result-infos'}>
         <div className={'jp-EodagWidget-modal-selected-result-title'}>
-          <span>{selectedFeature.id}</span>
+          <span>{selectedProduct.id}</span>
         </div>
         <div className={'jp-EodagWidget-modal-selected-result-metadata'}>
           <div
@@ -117,7 +117,7 @@ export const SelectedFeaturePanel: React.FC<ISelectedFeaturePanelProps> = ({
               handleGenerateQuery([
                 {
                   key: 'id',
-                  value: { id: selectedFeature.id },
+                  value: { id: selectedProduct.id },
                   mandatory: false
                 }
               ])

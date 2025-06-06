@@ -8,19 +8,14 @@ import 'isomorphic-fetch';
 import React, { FC, useEffect, useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import {
-  Controller,
-  FormProvider,
-  SubmitHandler,
-  useForm
-} from 'react-hook-form';
+import { Controller, FormProvider, SubmitHandler, useForm } from 'react-hook-form';
 import { ThreeDots } from 'react-loader-spinner';
-import { PlacesType, Tooltip, VariantType } from 'react-tooltip';
+import { Tooltip } from 'react-tooltip';
 import { Autocomplete } from '../autocomplete/autocomplete';
 import { fetchQueryables } from '../../utils/fetchers/fetchQueryables';
 import { ServerConnection } from '@jupyterlab/services';
 import { CarbonCalendarAddAlt, CodiconOpenPreview, PhFileCode } from '../icons';
-import { MapExtent } from '../mapExtent';
+import { MapExtent } from '../map/mapExtent';
 import SearchService from '../../utils/searchService';
 import { IFormInput, IOptionType, IParameter } from '../../types';
 import { AdditionalParameterFields } from './additionalParameterFields';
@@ -49,10 +44,6 @@ export interface IFormComponentsProps {
 export interface IOptionTypeBase {
   [key: string]: any;
 }
-
-export const tooltipDark: VariantType = 'dark';
-export const tooltipWarning: VariantType = 'warning';
-export const tooltipTop: PlacesType = 'top';
 
 export const FormComponent: FC<IFormComponentsProps> = ({
   handleShowFeature,
@@ -483,8 +474,8 @@ export const FormComponent: FC<IFormComponentsProps> = ({
                       onClick={() => setOpenModal(true)}
                       data-tooltip-id="btn-preview-results"
                       data-tooltip-content="You need to select a product type to preview the results"
-                      data-tooltip-variant={tooltipDark}
-                      data-tooltip-place={tooltipTop}
+                      data-tooltip-variant={'dark'}
+                      data-tooltip-place={'top'}
                     >
                       <CodiconOpenPreview width="21" height="21" />
                       <p>
@@ -513,8 +504,8 @@ export const FormComponent: FC<IFormComponentsProps> = ({
                       onClick={() => setOpenModal(false)}
                       data-tooltip-id="btn-generate-value"
                       data-tooltip-content="You need to select a product type to generate the code"
-                      data-tooltip-variant={tooltipDark}
-                      data-tooltip-place={tooltipTop}
+                      data-tooltip-variant={'dark'}
+                      data-tooltip-place={'top'}
                     >
                       <PhFileCode height="21" width="21" />
                       <p>
