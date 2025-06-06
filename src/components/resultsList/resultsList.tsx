@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { FixedSizeList, ListChildComponentProps } from 'react-window';
 import { Result } from './result';
-import { IFeature } from '../../types';
+import { IProduct } from '../../types';
 
 interface IResultsListProps {
   features: {
@@ -12,7 +12,7 @@ interface IResultsListProps {
   handleZoomFeature: (id: string) => void;
   hoveredFeatureId: string | null;
   setHoveredFeature: (id: string | null) => void;
-  selectedFeature: IFeature | null;
+  selectedFeature: IProduct | null;
   isRetrievingMoreFeature: boolean;
   handleRetrieveMoreFeature: () => Promise<void>;
 }
@@ -37,10 +37,10 @@ export const ResultsList: React.FC<IResultsListProps> = ({
       if (index >= loadedCount) {
         return null;
       }
-      const feature = features.features[index];
+      const product = features.features[index];
       return {
-        id: feature.id,
-        ...feature.properties
+        id: product.id,
+        ...product.properties
       };
     },
     [features.features, loadedCount]

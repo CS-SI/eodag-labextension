@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Box, IconButton, Modal as MuiModal } from '@mui/material';
 import { ResultsPanel } from './resultsPanel';
 import { MapBackground } from './mapBackground';
-import { SelectedFeaturePanel } from './selectedFeaturePanel';
+import { SelectedProductPanel } from './selectedProductPanel';
 import { useMapFeatures } from '../../hooks/useMapFeatures';
 import 'react-datepicker/dist/react-datepicker.css';
 import { IFeatures, IParameter } from '../../types';
@@ -95,8 +95,8 @@ export const Modal: React.FC<IModalProps> = ({
             selectedFeature={selectedFeature}
           />
           {selectedFeature && (
-            <SelectedFeaturePanel
-              selectedFeature={selectedFeature}
+            <SelectedProductPanel
+              selectedProduct={selectedFeature}
               resetSelectedFeature={resetSelectedFeature}
               handleGenerateQuery={handleGenerateQuery}
             />
