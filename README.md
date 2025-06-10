@@ -63,9 +63,10 @@ EODAG Labextension can be configured using the following environment variables:
 - `EODAG_LABEXTENSION__DEBUG` (`bool`, default: `False`): whether to print
   [EODAG logging](https://eodag.readthedocs.io/en/stable/notebooks/api_user_guide/3_configuration.html#Logging) at DEBUG
   level or not.
-- `EODAG_LABEXTENSION__MAP__TILE_URL` (`str`|`None`, default: `None`): Map tile URL.
-- `EODAG_LABEXTENSION__MAP__TILE_COPYRIGHT` (`str`|`None`, default: `None`): Map tile copyright.
-- `EODAG_LABEXTENSION__MAP__ZOOM` (`int`|`None`, default: `None`): Map zoom level.
+- `EODAG_LABEXTENSION__MAP__TILE_URL` (`str`, default: `https://a.tile.openstreetmap.org/{z}/{x}/{y}.png`): Map tile URL.
+- `EODAG_LABEXTENSION__MAP__TILE_ATTRIBUTION` (`str`, default: "&copy; [OpenStreetMap](http://osm.org/copyright) contributors"):
+  Map tile attribution.
+- `EODAG_LABEXTENSION__MAP__ZOOM_OFFSET` (`int`, default: `0`): Map zoom offset.
 
 ## QuickStart
 
