@@ -112,20 +112,22 @@
 /* Only !important because we don't use mui styling process */
 
 .jp-EodagWidget-chip {
-  padding: 0 3px !important;
-  background-color: #3bacff !important;
-  color: white !important;
-  height: 22px !important;
+  padding: 0 1px !important;
+  background-color: white !important;
+  color: #7bb4ff !important;
+  border: 1px solid #7bb4ff !important;
+  height: 20px !important;
 }
 
 .jp-EodagWidget-chip svg {
   font-size: 14px !important;
-  color: white !important;
+  color: #7bb4ff !important;
 }
 
 .jp-EodagWidget-chip span {
   padding: 0 4px 0 8px !important;
   font-size: 11px !important;
+  font-weight: 600;
 }
 
 /* Selected Feature component */
