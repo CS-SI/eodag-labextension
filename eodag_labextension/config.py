@@ -17,8 +17,8 @@ class MapInfo(BaseModel):
     """Map info model"""
 
     tile_url: Optional[str] = None
-    tile_copyright: Optional[str] = None
-    zoom: Optional[int] = None
+    tile_attribution: Optional[str] = None
+    zoom_offset: Optional[int] = None
 
 
 class PackageInfo(BaseModel):
