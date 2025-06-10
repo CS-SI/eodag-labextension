@@ -1,6 +1,9 @@
 @import url('base.css');
 @import url('leaflet.css');
+
+/* Custom components */
 @import url('modal.css');
-@import url('loader.css');
+@import url('button.css');
 @import url('result_list.css');
 @import url('customErrorDialog.css');
+@import url('loader.css');

@@ -1,0 +1,17 @@
+.jp-EodagWidget-form-buttons-wrapper {
+  display: flex;
+  gap: 1rem;
+  padding: 0 10px;
+}
+
+.jp-EodagButton {
+  gap: 0.5rem;
+  border-radius: 6px !important;
+  text-transform: none !important;
+  line-height: 1.45 !important;
+}
+
+.jp-EodagButton svg {
+  width: 1.5rem;
+  height: 1.5rem;
+}
