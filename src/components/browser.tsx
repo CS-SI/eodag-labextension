@@ -3,7 +3,7 @@
  * All rights reserved
  */
 import { showErrorMessage } from '@jupyterlab/apputils';
-import { INotebookTracker } from '@jupyterlab/notebook';
+import { INotebookTracker, NotebookPanel } from '@jupyterlab/notebook';
 import { isNull, isUndefined } from 'lodash';
 import { Modal } from './modal/modal';
 import { codeGenerator } from '../utils/codeGenerator';
@@ -51,12 +51,25 @@ export const EodagBrowser: React.FC<IEodagBrowserProps> = ({
   const { handleOpenEodagConfig, reloadUserSettings, isUserSettingsLoading } =
     useUserSettings();
 
-  const handleCurrentWidgetError = () => {
+  const ensureNotebookIsOpen = async (): Promise<boolean> => {
+    const openNewNotebook = async (): Promise<NotebookPanel> => {
+      const nbPanel = (await commands.execute('notebook:create-new', {
+        path: '',
+        kernelName: 'python3'
+      })) as NotebookPanel;
+
+      await nbPanel.context.ready;
+      return nbPanel;
+    };
+
     if (!tracker.currentWidget) {
-      return showErrorMessage(
-        'No active notebook',
-        'Please open a notebook first'
-      );
+      try {
+        await openNewNotebook();
+        return true;
+      } catch (error) {
+        showErrorMessage('Failed to open a new notebook', error as string);
+        return false;
+      }
     }
     return true;
   };
@@ -164,7 +177,7 @@ export const EodagBrowser: React.FC<IEodagBrowserProps> = ({
         </div>
       </div>
       <FormComponent
-        isNotebookCreated={handleCurrentWidgetError}
+        ensureNotebookIsOpen={ensureNotebookIsOpen}
         handleShowFeature={handleShowFeature}
         saveFormValues={(formValues: IFormInput) => setFormValues(formValues)}
         handleGenerateQuery={handleGenerateQuery}
