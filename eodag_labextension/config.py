@@ -7,7 +7,6 @@
 from __future__ import annotations
 
 from importlib.metadata import distributions
-from typing import Optional
 
 from pydantic import BaseModel, computed_field
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -16,9 +15,9 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class MapInfo(BaseModel):
     """Map info model"""
 
-    tile_url: Optional[str] = None
-    tile_attribution: Optional[str] = None
-    zoom_offset: Optional[int] = None
+    tile_url: str = "https://a.tile.openstreetmap.org/{z}/{x}/{y}.png"
+    tile_attribution: str = "&copy; <a href=&quot;http://osm.org/copyright&quot;>OpenStreetMap</a> contributors"
+    zoom_offset: int = 0
 
 
 class PackageInfo(BaseModel):
