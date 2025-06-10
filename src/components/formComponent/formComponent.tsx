@@ -9,12 +9,10 @@ import React, { FC, useEffect, useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { Controller, FormProvider, SubmitHandler, useForm } from 'react-hook-form';
-import { ThreeDots } from 'react-loader-spinner';
-import { Tooltip } from 'react-tooltip';
 import { Autocomplete } from '../autocomplete/autocomplete';
 import { fetchQueryables } from '../../utils/fetchers/fetchQueryables';
 import { ServerConnection } from '@jupyterlab/services';
-import { CarbonCalendarAddAlt, CodiconOpenPreview, PhFileCode } from '../icons';
+import { CarbonCalendarAddAlt } from '../icons';
 import { MapExtent } from '../map/mapExtent';
 import SearchService from '../../utils/searchService';
 import { IFormInput, IOptionType, IParameter } from '../../types';
@@ -22,6 +20,7 @@ import { AdditionalParameterFields } from './additionalParameterFields';
 import ParameterGroup from './parameterGroup';
 import { DropdownButton } from './dropdownButton';
 import { IMapSettings } from '../browser';
+import { SubmitButtons } from './submitButtons';
 
 export interface IFormComponentsProps {
   handleShowFeature: any;
@@ -284,7 +283,7 @@ export const FormComponent: FC<IFormComponentsProps> = ({
               />
             </div>
           )}
-          <div className="jp-EodagWidget-field">
+          <div className="jp-EodagWidget-fields">
             <Controller
               name="provider"
               control={control}
@@ -411,7 +410,7 @@ export const FormComponent: FC<IFormComponentsProps> = ({
               </div>
             </div>
 
-            <div style={{ marginTop: '10px' }}>
+            <div>
               <div
                 style={{
                   display: 'flex',
@@ -447,85 +446,12 @@ export const FormComponent: FC<IFormComponentsProps> = ({
             />
           </div>
           <div className="jp-EodagWidget-form-buttons">
-            <div className="jp-EodagWidget-form-buttons-wrapper">
-              {isLoadingSearch ? (
-                <div className="jp-EodagWidget-loader">
-                  <p>Generating</p>
-                  <ThreeDots
-                    height="35"
-                    width="35"
-                    radius="9"
-                    color="#1976d2"
-                    ariaLabel="three-dots-loading"
-                    wrapperStyle={{}}
-                    visible={true}
-                  />
-                </div>
-              ) : (
-                <>
-                  <div className="jp-EodagWidget-buttons">
-                    <button
-                      type="submit"
-                      color="primary"
-                      className={
-                        !productTypeValue
-                          ? 'jp-EodagWidget-buttons-button jp-EodagWidget-buttons-button__disabled'
-                          : 'jp-EodagWidget-buttons-button'
-                      }
-                      disabled={isLoadingSearch}
-                      onClick={() => setOpenModal(true)}
-                      data-tooltip-id="btn-preview-results"
-                      data-tooltip-content="You need to select a product type to preview the results"
-                      data-tooltip-variant={'dark'}
-                      data-tooltip-place={'top'}
-                    >
-                      <CodiconOpenPreview width="21" height="21" />
-                      <p>
-                        Preview
-                        <br />
-                        Results
-                      </p>
-                      {!productTypeValue && (
-                        <Tooltip
-                          id="btn-preview-results"
-                          className="jp-Eodag-tooltip"
-                        />
-                      )}
-                    </button>
-                  </div>
-                  <div className="jp-EodagWidget-buttons">
-                    <button
-                      type="submit"
-                      color="primary"
-                      className={
-                        !productTypeValue
-                          ? 'jp-EodagWidget-buttons-button jp-EodagWidget-buttons-button__disabled'
-                          : 'jp-EodagWidget-buttons-button'
-                      }
-                      disabled={isLoadingSearch}
-                      onClick={() => setOpenModal(false)}
-                      data-tooltip-id="btn-generate-value"
-                      data-tooltip-content="You need to select a product type to generate the code"
-                      data-tooltip-variant={'dark'}
-                      data-tooltip-place={'top'}
-                    >
-                      <PhFileCode height="21" width="21" />
-                      <p>
-                        Generate
-                        <br />
-                        Code
-                      </p>
-                      {!productTypeValue && (
-                        <Tooltip
-                          id="btn-generate-value"
-                          className="jp-Eodag-tooltip"
-                        />
-                      )}
-                    </button>
-                  </div>
-                </>
-              )}
-            </div>
+            <SubmitButtons
+              isLoadingSearch={isLoadingSearch}
+              onPreviewClick={() => setOpenModal(true)}
+              onGeneratingClick={() => setOpenModal(false)}
+              productTypeValue={productTypeValue}
+            />
           </div>
         </form>
       </FormProvider>
