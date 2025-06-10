@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import SearchService from '../utils/searchService';
 import { concat, get } from 'lodash';
+import { IFeatures, IFormInput } from '../types';
 
 interface IProps {
-  features: any;
-  formValues: any;
+  features: IFeatures | null;
+  formValues: IFormInput | undefined;
   setFeatures: (features: any) => void;
 }
 

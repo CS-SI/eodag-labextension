@@ -8,7 +8,7 @@ import { isNull, isUndefined } from 'lodash';
 import { Modal } from './modal/modal';
 import { codeGenerator } from '../utils/codeGenerator';
 import { IFeatures, IFormInput, IGeometry, IParameter } from '../types';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Tooltip } from 'react-tooltip';
 import { CommandRegistry } from '@lumino/commands';
 import { FormComponent } from './formComponent/formComponent';
@@ -21,6 +21,7 @@ import { useEodagVersions } from '../hooks/useEodagVersions';
 import { useNotebookInjection } from '../hooks/useNotebookInjection';
 import { useEodagSettings } from '../hooks/useEodagSettings';
 import { useUserSettings } from '../hooks/useUserSettings';
+import { useCacheResults } from '../hooks/useCacheResults';
 
 export interface IEodagBrowserProps {
   tracker: INotebookTracker;
@@ -50,6 +51,11 @@ export const EodagBrowser: React.FC<IEodagBrowserProps> = ({
     useVirtualizedList({ features, formValues, setFeatures });
   const { handleOpenEodagConfig, reloadUserSettings, isUserSettingsLoading } =
     useUserSettings();
+  const { cachedResults } = useCacheResults(formValues, features);
+
+  useEffect(() => {
+    console.log('cachedResults', cachedResults);
+  }, [cachedResults]);
 
   const handleCurrentWidgetError = () => {
     if (!tracker.currentWidget) {

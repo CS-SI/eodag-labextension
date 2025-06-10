@@ -85,7 +85,8 @@
         "react-spinners": "^0.17.0",
         "react-tooltip": "~5.26.3",
         "react-virtualized": "^9.22.4",
-        "react-window": "^1.8.11"
+        "react-window": "^1.8.11",
+        "uuid": "^11.1.0"
     },
     "devDependencies": {
         "@jupyterlab/builder": "^4.3.4",
