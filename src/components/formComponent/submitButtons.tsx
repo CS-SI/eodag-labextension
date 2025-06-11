@@ -29,7 +29,7 @@ export const SubmitButtons: React.FC<ISubmitButtonsProps> = ({
     <div className="jp-EodagWidget-form-buttons-wrapper">
       <Button
         startIcon={<CodiconOpenPreview />}
-        label={'Preview Results'}
+        label={'Preview results'}
         type={'submit'}
         tooltip={
           !productTypeValue
@@ -42,7 +42,7 @@ export const SubmitButtons: React.FC<ISubmitButtonsProps> = ({
       <Button
         startIcon={<PhFileCode />}
         type={'submit'}
-        label={'Generating Code'}
+        label={'Generate code'}
         tooltip={
           !productTypeValue
             ? 'You need to select a product type to generate the code'
