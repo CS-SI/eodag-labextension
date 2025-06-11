@@ -22,7 +22,7 @@ Lab. The package consist of a Python Jupyter notebook REST service consumed by t
 - [Requirements](#requirements)
 - [Compatibility](#compatibility)
 - [Install](#install)
-  - [Configuration](#configuration)
+  - [System configuration](#system-configuration)
 - [QuickStart](#quickstart)
   - [Search](#search)
   - [Settings](#settings)
@@ -56,12 +56,17 @@ You can also uninstall it quite simply.
 pip uninstall eodag-labextension
 ```
 
-### Configuration
+### System configuration
 
-eodag configuration file should be localized at `~/.config/eodag/eodag.yaml` (see
-[eodag documentation](https://eodag.readthedocs.io/en/latest/getting_started_guide/configure.html)).
-Make sure that that file is configured properly.
-The file can directly be edited through [Settings menu](#settings).
+EODAG Labextension can be configured using the following environment variables:
+
+- `EODAG_LABEXTENSION__DEBUG` (`bool`, default: `False`): whether to print
+  [EODAG logging](https://eodag.readthedocs.io/en/stable/notebooks/api_user_guide/3_configuration.html#Logging) at DEBUG
+  level or not.
+- `EODAG_LABEXTENSION__MAP__TILE_URL` (`str`, default: `https://a.tile.openstreetmap.org/{z}/{x}/{y}.png`): Map tile URL.
+- `EODAG_LABEXTENSION__MAP__TILE_ATTRIBUTION` (`str`, default: "&copy; [OpenStreetMap](http://osm.org/copyright) contributors"):
+  Map tile attribution.
+- `EODAG_LABEXTENSION__MAP__ZOOM_OFFSET` (`int`, default: `0`): Map zoom offset.
 
 ## QuickStart
 
@@ -118,7 +123,7 @@ You will be enable to:
   - configure the default map settings.
 
 - Edit [EODAG user configuration file](https://eodag.readthedocs.io/en/stable/getting_started_guide/configure.html#yaml-user-configuration-file),
-  to set provider credentials, download directories, or other settings.
+  to set provider credentials, download directories, or other settings. Default file path is `~/.config/eodag/eodag.yaml`.
   EODAG environment automatically reloads on file save.
 - Open Labextension [Documentation](https://github.com/CS-SI/eodag-labextension/blob/develop/README.md),
   [Github repository](https://github.com/CS-SI/eodag-labextension), or [CS GROUP](https://www.cs-soprasteria.com) page.

@@ -292,6 +292,21 @@ class TestEodagLabExtensionHandler(AsyncHTTPTestCase):
         infos = await self.fetch_results("/eodag/info")
         self.assertTrue(infos["debug"])
 
+    @mock.patch.dict(
+        os.environ,
+        {
+            "EODAG_LABEXTENSION__MAP__TILE_URL": "http://foo.bar",
+            "EODAG_LABEXTENSION__MAP__TILE_ATTRIBUTION": "Foo attribution",
+            "EODAG_LABEXTENSION__MAP__ZOOM_OFFSET": "2",
+        },
+    )
+    @gen_test
+    async def test_map_info(self):
+        infos = await self.fetch_results("/eodag/info")
+        self.assertEqual(infos["map"]["tile_url"], "http://foo.bar")
+        self.assertEqual(infos["map"]["tile_attribution"], "Foo attribution")
+        self.assertEqual(infos["map"]["zoom_offset"], 2)
+
     @gen_test(timeout=120)
     async def test_set_conf_symlink(self):
         with TemporaryDirectory() as tmpdir:
