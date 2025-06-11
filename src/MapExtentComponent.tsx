@@ -7,7 +7,6 @@ import * as React from 'react';
 import { FeatureGroup, MapContainer, TileLayer } from 'react-leaflet';
 import { EditControl } from 'react-leaflet-draw';
 import { throttle } from 'lodash';
-import { EODAG_TILE_COPYRIGHT, EODAG_TILE_URL } from './config';
 import { IGeometry } from './types';
 import { LeafletMouseEvent } from 'leaflet';
 import { EodagWidget } from './widget';
@@ -16,7 +15,7 @@ import { IMapSettings } from './browser';
 export interface IProps {
   onChange: (value: IGeometry | undefined) => void;
   geometry: IGeometry | undefined;
-  mapSettings?: IMapSettings;
+  mapSettings: IMapSettings;
 }
 
 export interface IState {
@@ -90,7 +89,7 @@ export default class MapExtentComponent extends React.Component<
   }
 
   handleMapSettingsChange(
-    sender: EodagWidget,
+    _sender: EodagWidget,
     settings: { lat: number; lon: number; zoom: number }
   ) {
     const { lat, lon, zoom } = settings;
@@ -180,7 +179,6 @@ export default class MapExtentComponent extends React.Component<
     const { zoom, lat, lon } = this.state;
     const { mapSettings } = this.props;
     const position: [number, number] = [lat, lon];
-    console.log('mapSettings : ', mapSettings);
     return (
       <MapContainer
         center={position}
@@ -190,8 +188,8 @@ export default class MapExtentComponent extends React.Component<
         }}
       >
         <TileLayer
-          url={mapSettings?.url || EODAG_TILE_URL}
-          attribution={mapSettings?.attributions || EODAG_TILE_COPYRIGHT}
+          url={mapSettings.tile_url}
+          attribution={mapSettings.tile_attribution}
         />
         <FeatureGroup>
           <EditControl

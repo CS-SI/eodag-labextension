@@ -4,10 +4,10 @@
  */
 
 import * as React from 'react';
-import { MapContainer, TileLayer, GeoJSON } from 'react-leaflet';
-import { isEmpty, get } from 'lodash';
-import { EODAG_TILE_URL, EODAG_TILE_COPYRIGHT } from './config';
+import { GeoJSON, MapContainer, TileLayer } from 'react-leaflet';
+import { get, isEmpty } from 'lodash';
 import L, { FeatureGroup, LeafletMouseEvent } from 'leaflet';
+import { IMapSettings } from './browser';
 
 export interface IProps {
   features: any;
@@ -15,6 +15,7 @@ export interface IProps {
   highlightFeature: any;
   handleHoverFeature: any;
   handleClickFeature: (productId: string) => void;
+  mapSettings: IMapSettings;
 }
 
 export interface IState {
@@ -27,21 +28,18 @@ export default class MapFeatureComponent extends React.Component<
   IProps,
   IState
 > {
-  /**
-   * Leaflet map object
-   */
-  map: any;
-
   static DEFAULT_EXTENT_STYLE = {
     color: '#3f51b5',
     fillOpacity: 0.01
   };
-
   static HIGHLIGHT_EXTENT_STYLE = {
     color: '#76ff03',
     fillOpacity: 0.01
   };
-
+  /**
+   * Leaflet map object
+   */
+  map: any;
   EditOptions = {
     polyline: false,
     polygon: false,
@@ -49,6 +47,7 @@ export default class MapFeatureComponent extends React.Component<
     marker: false,
     circlemarker: false
   };
+
   constructor(props: IProps) {
     super(props);
     const featureGeoJSONs = new window.L.GeoJSON(props.features.features);
@@ -152,6 +151,7 @@ export default class MapFeatureComponent extends React.Component<
 
   render() {
     const { bounds } = this.state;
+    const { mapSettings } = this.props;
     // make sure that bounds is a LatLngBounds object
     const corner1 = L.latLng(
       bounds.getSouthWest().lat,
@@ -169,7 +169,10 @@ export default class MapFeatureComponent extends React.Component<
           this.map = ref;
         }}
       >
-        <TileLayer url={EODAG_TILE_URL} attribution={EODAG_TILE_COPYRIGHT} />
+        <TileLayer
+          url={mapSettings.tile_url}
+          attribution={mapSettings.tile_attribution}
+        />
         {!isEmpty(this.props.features) ? (
           <GeoJSON
             key={`features-gson-${

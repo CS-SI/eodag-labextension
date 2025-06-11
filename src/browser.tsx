@@ -30,8 +30,8 @@ export interface IProps {
 }
 
 export interface IMapSettings {
-  attributions: string;
-  url: string;
+  tile_attribution: string;
+  tile_url: string;
   zoomOffset: number;
 }
 
@@ -64,11 +64,7 @@ export class EodagBrowser extends React.Component<IProps, IState> {
       reloadIndicator: false,
       eodagVersion: undefined,
       eodagLabExtensionVersion: undefined,
-      mapSettings: {
-        zoomOffset: 0,
-        url: '',
-        attributions: ''
-      }
+      mapSettings: undefined
     };
     this.reloadUserSettings = this.reloadUserSettings.bind(this);
   }
@@ -77,13 +73,13 @@ export class EodagBrowser extends React.Component<IProps, IState> {
     fetch('/eodag/info')
       .then(res => res.json())
       .then(data => {
-        const { packages } = data;
+        const { packages, map } = data;
         if (packages) {
           this.setState({
             eodagVersion: packages.eodag.version || 'Unknown version',
             eodagLabExtensionVersion:
               packages.eodag_labextension.version || 'Unknown version',
-            mapSettings: packages.mapInfos
+            mapSettings: map
           });
         }
       })
@@ -384,6 +380,7 @@ export class EodagBrowser extends React.Component<IProps, IState> {
           handleGenerateQuery={this.handleGenerateQuery}
           isRetrievingMoreFeature={this.isRetrievingMoreFeature}
           handleRetrieveMoreFeature={this.handleRetrieveMoreFeature}
+          mapSettings={mapSettings}
         />
       </div>
     );

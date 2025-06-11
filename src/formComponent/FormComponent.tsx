@@ -306,20 +306,22 @@ export const FormComponent: FC<IProps> = ({
     <div className="jp-EodagWidget-wrapper">
       <FormProvider {...formInput}>
         <form onSubmit={handleSubmit(onSubmit)} className="jp-EodagWidget-form">
-          <div className="jp-EodagWidget-map">
-            <Controller
-              name="geometry"
-              control={control}
-              rules={{ required: false }}
-              render={({ field: { onChange, value } }) => (
-                <MapExtentComponent
-                  geometry={value}
-                  onChange={onChange}
-                  mapSettings={mapSettings}
-                />
-              )}
-            />
-          </div>
+          {mapSettings && (
+            <div className="jp-EodagWidget-map">
+              <Controller
+                name="geometry"
+                control={control}
+                rules={{ required: false }}
+                render={({ field: { onChange, value } }) => (
+                  <MapExtentComponent
+                    geometry={value}
+                    onChange={onChange}
+                    mapSettings={mapSettings}
+                  />
+                )}
+              />
+            </div>
+          )}
           <div className="jp-EodagWidget-field">
             <Controller
               name="provider"
