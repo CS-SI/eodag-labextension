@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { IParameter, IProduct } from '../../types';
-import { Button, IconButton, Tooltip } from '@mui/material';
+import { IconButton, Tooltip } from '@mui/material';
+import { Button } from '../button';
 import { NoImage } from '../icons';
 import ZoomInMapIcon from '@mui/icons-material/ZoomInMap';
 import ZoomOutMapIcon from '@mui/icons-material/ZoomOutMap';
@@ -112,6 +113,7 @@ export const SelectedProductPanel: React.FC<ISelectedProductPanelProps> = ({
         </div>
         <div className={'jp-EodagWidget-modal-selected-result-action-buttons'}>
           <Button
+            label={'Generate code for this product'}
             variant={'contained'}
             onClick={() =>
               handleGenerateQuery([
@@ -126,9 +128,7 @@ export const SelectedProductPanel: React.FC<ISelectedProductPanelProps> = ({
                 }
               ])
             }
-          >
-            {'Generate code for this product'}
-          </Button>
+          />
         </div>
       </div>
     </div>
