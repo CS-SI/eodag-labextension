@@ -1,0 +1,20 @@
+.jp-EodagWidget-alert {
+  padding: 2px 12px !important;
+  align-items: center;
+  font-size: 12px !important;
+  gap: 0.5rem;
+  background-color: rgba(68 68 68 / 5%) !important;
+  color: #444 !important;
+}
+
+.jp-EodagWidget-alert .MuiAlert-icon {
+  height: max-content !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.jp-EodagWidget-alert .MuiAlert-icon svg {
+  fill: #444 !important;
+  width: 18px;
+  height: 18px;
+}

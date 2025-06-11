@@ -8,12 +8,7 @@ import 'isomorphic-fetch';
 import React, { FC, useEffect, useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import {
-  Controller,
-  FormProvider,
-  SubmitHandler,
-  useForm
-} from 'react-hook-form';
+import { Controller, FormProvider, SubmitHandler, useForm } from 'react-hook-form';
 import { Autocomplete } from '../autocomplete/autocomplete';
 import { fetchQueryables } from '../../utils/fetchers/fetchQueryables';
 import { ServerConnection } from '@jupyterlab/services';
@@ -26,6 +21,7 @@ import ParameterGroup from './parameterGroup';
 import { DropdownButton } from './dropdownButton';
 import { IMapSettings } from '../browser';
 import { SubmitButtons } from './submitButtons';
+import { NoParamsAlert } from './noParamsAlert';
 
 export interface IFormComponentsProps {
   handleShowFeature: any;
@@ -247,12 +243,6 @@ export const FormComponent: FC<IFormComponentsProps> = ({
     }
   };
 
-  const renderNoParamsMessage = () => (
-    <div style={{ margin: '10px 0' }}>
-      <p>Select a product type to unlock parameters.</p>
-    </div>
-  );
-
   const renderParameterGroups = () => (
     <>
       {params.some(param => param.mandatory) || selectedOptions.length > 0 ? (
@@ -261,9 +251,7 @@ export const FormComponent: FC<IFormComponentsProps> = ({
           <ParameterGroup {...{ params, setParams, selectedOptions }} />
         </>
       ) : (
-        <div style={{ margin: '10px 0' }}>
-          <p>No required parameter for this product type.</p>
-        </div>
+        <p>No required parameter for this product type.</p>
       )}
     </>
   );
@@ -349,10 +337,8 @@ export const FormComponent: FC<IFormComponentsProps> = ({
                 />
               )}
             />
-            <div className="jp-EodagWidget-form-date-picker">
-              <label htmlFor="startDate" className="jp-EodagWidget-input-name">
-                Date range
-              </label>
+            <div className="jp-EodagWidget-field">
+              <label htmlFor="startDate">Date range</label>
               <div className="jp-EodagWidget-form-date-picker-wrapper">
                 <div className="jp-EodagWidget-input-wrapper">
                   <CarbonCalendarAddAlt height="22" width="22" />
@@ -415,16 +401,8 @@ export const FormComponent: FC<IFormComponentsProps> = ({
               </div>
             </div>
 
-            <div>
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  marginLeft: '10px',
-                  marginRight: '10px'
-                }}
-              >
+            <div className={'jp-EodagWidget-optional-params-wrapper'}>
+              <div className={'jp-EodagWidget-optional-params-title'}>
                 <p className="jp-EodagWidget-section-title">Parameters</p>
                 <DropdownButton
                   options={optionalParams}
@@ -434,9 +412,13 @@ export const FormComponent: FC<IFormComponentsProps> = ({
                 />
               </div>
               <div className="jp-EodagWidget-field">
-                {!params || !params.length
-                  ? renderNoParamsMessage()
-                  : renderParameterGroups()}
+                {!params || !params.length ? (
+                  <NoParamsAlert
+                    label={'Select a product type to unlock custom parameters'}
+                  />
+                ) : (
+                  renderParameterGroups()
+                )}
               </div>
             </div>
 
