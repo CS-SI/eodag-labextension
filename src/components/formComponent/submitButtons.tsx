@@ -7,7 +7,7 @@ interface ISubmitButtonsProps {
   isLoadingSearch?: boolean;
   onPreviewClick: () => void;
   onGeneratingClick: () => void;
-  productTypeValue: string;
+  productTypeValue: string | null | undefined;
 }
 
 export const SubmitButtons: React.FC<ISubmitButtonsProps> = ({

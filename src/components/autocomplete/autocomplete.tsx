@@ -115,24 +115,20 @@ export const Autocomplete: React.FC<IAutocompleteProps> = ({
 
   return (
     <div className="jp-EodagWidget-field">
-      <label className="jp-EodagWidget-input-name">
-        {label}
-        <div style={{ marginTop: 10 }}>
-          <LoadingState disabled={disabled}>
-            <AsyncSelect
-              className="jp-EodagWidget-select"
-              classNamePrefix="jp-EodagWidget-select"
-              defaultOptions={suggestions}
-              loadOptions={loadSuggestions}
-              components={listComponents}
-              value={currentValue}
-              onChange={handleChange}
-              placeholder={placeholder}
-              isClearable
-            />
-          </LoadingState>
-        </div>
-      </label>
+      <label>{label}</label>
+      <LoadingState disabled={disabled}>
+        <AsyncSelect
+          className="jp-EodagWidget-select"
+          classNamePrefix="jp-EodagWidget-select"
+          defaultOptions={suggestions}
+          loadOptions={loadSuggestions}
+          components={listComponents}
+          value={currentValue}
+          onChange={handleChange}
+          placeholder={placeholder}
+          isClearable
+        />
+      </LoadingState>
 
       <Tooltip id={tooltipId} className="jp-Eodag-tooltip" />
     </div>

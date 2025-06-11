@@ -1,7 +1,8 @@
 .jp-EodagWidget-form-buttons-wrapper {
   display: flex;
-  gap: 1rem;
+  gap: 0.5rem;
   padding: 0 10px;
+  justify-content: flex-end;
 }
 
 .jp-EodagButton {

@@ -70,19 +70,14 @@ p {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-}
-
-.jp-EodagWidget-fields {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  padding: 0 10px;
+  height: calc(100% - 2rem);
 }
 
 .jp-EodagWidget .jp-EodagWidget-form {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.5rem;
+  flex: 1;
 }
 
 .jp-EodagWidget-form-buttons {
@@ -114,22 +109,6 @@ p {
   border-radius: 5px;
 }
 
-.jp-EodagWidget-input-wrapper {
-  display: flex;
-  align-items: center;
-}
-
-.jp-EodagWidget-input-wrapper > svg {
-  display: inline-block;
-  color: var(--gray);
-}
-
-.jp-EodagWidget-form-date-picker-wrapper {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 10px;
-}
-
 .jp-EodagWidget .jp-EodagWidget-form .react-datepicker-popper {
   position: relative;
   z-index: 1000;
@@ -144,10 +123,6 @@ p {
 
 .jp-EodagWidget-map {
   height: 300px;
-}
-
-.jp-EodagWidget .jp-EodagWidget-form .jp-EodagWidget-field {
-  max-width: 450px;
 }
 
 .jp-EodagWidget .jp-EodagWidget-form .jp-EodagWidget-field fieldset {
@@ -225,10 +200,31 @@ p {
   cursor: not-allowed;
 }
 
+.jp-EodagWidget-optional-params-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.jp-EodagWidget-optional-params-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .jp-EodagWidget
   .jp-EodagWidget-form
   .jp-EodagWidget-optional-button:not(:disabled):hover {
   color: rgb(59, 172, 255);
+}
+
+.jp-EodagWidget
+  .jp-EodagWidget-form
+  .jp-EodagWidget-fields
+  .jp-EodagWidget-additionalParameters {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
 .jp-EodagWidget
@@ -551,10 +547,6 @@ section button .jp-EodagWidget-additionalParameters-addbutton svg,
 
 .jp-EodagWidget-product h4 {
   padding-left: 20px;
-}
-
-label.jp-EodagWidget-input-name:nth-child(3) {
-  padding: 0 10px;
 }
 
 @keyframes spin {
