@@ -152,6 +152,7 @@ export default class MapFeatureComponent extends React.Component<
   render() {
     const { bounds } = this.state;
     const { mapSettings } = this.props;
+    const { tile_url, tile_attribution, zoom_offset } = mapSettings;
     // make sure that bounds is a LatLngBounds object
     const corner1 = L.latLng(
       bounds.getSouthWest().lat,
@@ -168,10 +169,12 @@ export default class MapFeatureComponent extends React.Component<
         ref={ref => {
           this.map = ref;
         }}
+        minZoom={Math.abs(zoom_offset)}
       >
         <TileLayer
-          url={mapSettings.tile_url}
-          attribution={mapSettings.tile_attribution}
+          url={tile_url}
+          attribution={tile_attribution}
+          zoomOffset={zoom_offset}
         />
         {!isEmpty(this.props.features) ? (
           <GeoJSON

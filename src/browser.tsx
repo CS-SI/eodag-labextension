@@ -32,7 +32,7 @@ export interface IProps {
 export interface IMapSettings {
   tile_attribution: string;
   tile_url: string;
-  zoomOffset: number;
+  zoom_offset: number;
 }
 
 export interface IState {
