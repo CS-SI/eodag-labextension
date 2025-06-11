@@ -7,6 +7,7 @@ import { useMapFeatures } from '../../hooks/useMapFeatures';
 import 'react-datepicker/dist/react-datepicker.css';
 import { IFeatures, IParameter } from '../../types';
 import ClearIcon from '@mui/icons-material/Clear';
+import { IMapSettings } from '../browser';
 
 export interface IModalProps {
   open: boolean;
@@ -15,6 +16,7 @@ export interface IModalProps {
   features: IFeatures | null;
   isRetrievingMoreFeature: boolean;
   handleRetrieveMoreFeature: () => Promise<void>;
+  mapSettings?: IMapSettings;
 }
 
 const styles = {
@@ -47,7 +49,8 @@ export const Modal: React.FC<IModalProps> = ({
   features,
   handleClose,
   isRetrievingMoreFeature,
-  handleRetrieveMoreFeature
+  handleRetrieveMoreFeature,
+  mapSettings
 }) => {
   const [modalOpen, setModalOpen] = useState<boolean>(open);
 
@@ -82,6 +85,7 @@ export const Modal: React.FC<IModalProps> = ({
             hoveredFeatureId={hoveredFeatureId}
             setHoveredFeature={setHoveredFeature}
             handleClickFeature={handleClickFeature}
+            mapSettings={mapSettings}
           />
           <ResultsPanel
             features={features}
