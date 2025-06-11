@@ -327,3 +327,26 @@ class TestEodagLabExtensionHandler(AsyncHTTPTestCase):
             set_conf_symlink(eodag_api)
             self.assertTrue(os.path.islink("eodag-config"))
             self.assertEqual(Path(eodag_api.conf_dir) / "eodag.yml", Path(os.readlink("eodag-config")) / "eodag.yml")
+
+    @gen_test(timeout=120)
+    async def test_reload_dotenv(self):
+        with TemporaryDirectory() as tmpdir:
+            cwd = Path.cwd()
+            try:
+                # temp dir as labextension dir
+                os.chdir(tmpdir)
+
+                # default conf
+                eodag_api = await get_eodag_api()
+                self.assertNotEqual(eodag_api.conf_dir, tmpdir)
+
+                # Create a custom .env file with customized conf dir
+                custom_env_file = Path(tmpdir) / ".env"
+                custom_env_file.write_text(f"EODAG_CFG_DIR={tmpdir}\n")
+
+                await self.fetch_results("/eodag/reload")
+                self.assertEqual(eodag_api.conf_dir, tmpdir)
+
+            finally:
+                # restore cwd
+                os.chdir(cwd)
