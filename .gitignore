@@ -132,3 +132,6 @@ dmypy.json
 
 # EODAG local conf symlink
 eodag-config
+
+# dotenv
+.env

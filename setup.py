@@ -65,6 +65,7 @@ setup_args = dict(
         "orjson",
         "pydantic",
         "pydantic-settings",
+        "python-dotenv",
     ],
     extras_require={
         "dev": [

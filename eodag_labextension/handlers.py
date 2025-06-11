@@ -14,6 +14,7 @@ from typing import Any
 
 import orjson
 import tornado
+from dotenv import dotenv_values
 from eodag import EODataAccessGateway, SearchResult, setup_logging
 from eodag.api.core import DEFAULT_ITEMS_PER_PAGE, DEFAULT_PAGE
 from eodag.utils import parse_qs
@@ -75,6 +76,18 @@ def set_conf_symlink(eodag_api):
         logger.error("Could not create eodag-config symlink to user configuration: " + str(err))
 
 
+def load_dotenv():
+    """Load EODAG environment variables from .env file and update os.environ."""
+    env_path = os.path.join(os.getcwd(), ".env")
+    if os.path.isfile(env_path):
+        logger.debug(f"Loading environment variables from {env_path}")
+        env_vars = dotenv_values(env_path)
+        eodag_env_vars = {key: value for key, value in env_vars.items() if key.startswith("EODAG_")}
+        os.environ.update(eodag_env_vars)
+    else:
+        logger.debug(f"No .env file found at {env_path}, skipping loading environment variables.")
+
+
 async def get_eodag_api():
     """EODataAccessGateway on-demand instanciation"""
     global eodag_api
@@ -82,6 +95,7 @@ async def get_eodag_api():
     current_loop = asyncio.get_running_loop()
     async with eodag_lock:
         if eodag_api is None:
+            load_dotenv()
             eodag_api = await current_loop.run_in_executor(None, EODataAccessGateway)
             set_conf_symlink(eodag_api)
         return eodag_api
@@ -118,10 +132,12 @@ class ReloadHandler(APIHandler):
     @tornado.web.authenticated
     async def get(self):
         """Get endpoint"""
+        load_dotenv()
         dag = await get_eodag_api()
         current_loop = asyncio.get_running_loop()
         async with eodag_lock:
             await current_loop.run_in_executor(None, dag.__init__)
+        self.finish(orjson.dumps({"status": "done"}))
 
 
 class InfoHandler(APIHandler):
