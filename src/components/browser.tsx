@@ -28,8 +28,8 @@ export interface IEodagBrowserProps {
 }
 
 export interface IMapSettings {
-  attributions: string;
-  url: string;
+  tileAttribution: string;
+  tileUrl: string;
   zoomOffset: number;
 }
 
@@ -181,6 +181,7 @@ export const EodagBrowser: React.FC<IEodagBrowserProps> = ({
         handleGenerateQuery={handleGenerateQuery}
         isRetrievingMoreFeature={isRetrievingMoreFeature}
         handleRetrieveMoreFeature={handleRetrieveMoreFeature}
+        mapSettings={mapSettings}
       />
     </div>
   );

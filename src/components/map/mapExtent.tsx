@@ -9,8 +9,6 @@ import { FeatureGroup, MapContainer, TileLayer } from 'react-leaflet';
 import { EditControl } from 'react-leaflet-draw';
 import { throttle } from 'lodash';
 import { LeafletMouseEvent } from 'leaflet';
-
-import { EODAG_TILE_COPYRIGHT, EODAG_TILE_URL } from '../../config/config';
 import { IGeometry } from '../../types';
 import { EodagWidget } from '../../widget';
 import { IMapSettings } from '../browser';
@@ -18,7 +16,7 @@ import { IMapSettings } from '../browser';
 interface IMapExtentProps {
   onChange: (value: IGeometry | undefined) => void;
   geometry: IGeometry | undefined;
-  mapSettings?: IMapSettings;
+  mapSettings: IMapSettings;
 }
 
 export const MapExtent: React.FC<IMapExtentProps> = ({
@@ -28,7 +26,7 @@ export const MapExtent: React.FC<IMapExtentProps> = ({
 }) => {
   const [lat, setLat] = useState(46.8);
   const [lon, setLon] = useState(1.8);
-  const [zoom, setZoom] = useState(mapSettings?.zoomOffset || 4);
+  const [zoom, setZoom] = useState(mapSettings.zoomOffset || 4);
   const [_, setCurrentGeometry] = useState<IGeometry | undefined>(geometry);
 
   const mapRef = useRef<any>(null);
@@ -141,14 +139,16 @@ export const MapExtent: React.FC<IMapExtentProps> = ({
   return (
     <MapContainer
       center={center}
-      zoom={zoom}
       ref={ref => {
         mapRef.current = ref;
       }}
+      zoom={zoom}
+      minZoom={Math.abs(mapSettings.zoomOffset)}
     >
       <TileLayer
-        url={mapSettings?.url || EODAG_TILE_URL}
-        attribution={mapSettings?.attributions || EODAG_TILE_COPYRIGHT}
+        url={mapSettings.tileUrl}
+        attribution={mapSettings.tileAttribution}
+        zoomOffset={mapSettings.zoomOffset}
       />
       <FeatureGroup>
         <EditControl

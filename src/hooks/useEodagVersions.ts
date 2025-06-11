@@ -6,23 +6,27 @@ export const useEodagVersions = () => {
   const [eodagLabExtensionVersion, setEodagLabExtensionVersion] = useState<
     string | undefined
   >();
-  const [mapSettings, setMapSettings] = useState<IMapSettings>({
-    zoomOffset: 0,
-    url: '',
-    attributions: ''
-  });
+  const [mapSettings, setMapSettings] = useState<IMapSettings | undefined>(
+    undefined
+  );
 
   useEffect(() => {
     fetch('/eodag/info')
       .then(res => res.json())
       .then(data => {
-        const { packages } = data;
+        const { packages, map } = data;
         if (packages) {
           setEodagVersion(packages.eodag.version || 'Unknown version');
           setEodagLabExtensionVersion(
             packages.eodag_labextension.version || 'Unknown version'
           );
-          setMapSettings(packages.mapInfos);
+        }
+        if (map) {
+          setMapSettings({
+            tileUrl: map.tile_url,
+            tileAttribution: map.tile_attribution,
+            zoomOffset: map.zoom_offset
+          });
         }
       })
       .catch(() => {

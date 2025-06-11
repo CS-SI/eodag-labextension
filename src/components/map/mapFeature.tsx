@@ -2,8 +2,8 @@ import React, { useCallback, useEffect, useRef } from 'react';
 import { GeoJSON, MapContainer, TileLayer } from 'react-leaflet';
 import { get, isEmpty } from 'lodash';
 import L from 'leaflet';
-import { EODAG_TILE_COPYRIGHT, EODAG_TILE_URL } from '../../config/config';
 import { IFeatures, IProduct } from '../../types';
+import { IMapSettings } from 'components/browser';
 
 export interface IMapFeatureProps {
   features: IFeatures | null;
@@ -12,6 +12,7 @@ export interface IMapFeatureProps {
   hoveredFeatureId: string | null;
   setHoveredFeature: (productId: string | null) => void;
   handleClickFeature: (productId: string) => void;
+  mapSettings: IMapSettings;
 }
 
 const DEFAULT_EXTENT_STYLE = {
@@ -30,7 +31,8 @@ export const MapFeature: React.FC<IMapFeatureProps> = ({
   zoomFeature,
   hoveredFeatureId,
   setHoveredFeature,
-  handleClickFeature
+  handleClickFeature,
+  mapSettings
 }) => {
   const mapRef = useRef<L.Map | null>(null);
   const map = mapRef.current;
@@ -123,8 +125,13 @@ export const MapFeature: React.FC<IMapFeatureProps> = ({
           mapRef.current = ref;
         }
       }}
+      minZoom={Math.abs(mapSettings.zoomOffset)}
     >
-      <TileLayer url={EODAG_TILE_URL} attribution={EODAG_TILE_COPYRIGHT} />
+      <TileLayer
+        url={mapSettings.tileUrl}
+        attribution={mapSettings.tileAttribution}
+        zoomOffset={mapSettings.zoomOffset}
+      />
       {!isEmpty(features) && (
         <GeoJSON
           data={features}
