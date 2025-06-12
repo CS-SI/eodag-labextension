@@ -345,7 +345,14 @@ class TestEodagLabExtensionHandler(AsyncHTTPTestCase):
                 custom_env_file.write_text(f"EODAG_CFG_DIR={tmpdir}\n")
 
                 await self.fetch_results("/eodag/reload")
+                eodag_api = await get_eodag_api()
                 self.assertEqual(eodag_api.conf_dir, tmpdir)
+
+                # remove .env and reload again
+                custom_env_file.unlink()
+                await self.fetch_results("/eodag/reload")
+                eodag_api = await get_eodag_api()
+                self.assertNotEqual(eodag_api.conf_dir, tmpdir)
 
             finally:
                 # restore cwd

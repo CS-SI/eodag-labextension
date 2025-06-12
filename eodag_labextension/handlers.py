@@ -33,6 +33,7 @@ from shapely.geometry import shape
 from eodag_labextension.config import Settings
 
 eodag_api = None
+dotenv_vars = None
 
 eodag_lock = tornado.locks.Lock()
 
@@ -78,7 +79,10 @@ def set_conf_symlink(eodag_api):
 
 def load_dotenv():
     """Load EODAG environment variables from .env file and update os.environ."""
+    global dotenv_vars
+
     env_path = os.path.join(os.getcwd(), ".env")
+    eodag_env_vars = None
     if os.path.isfile(env_path):
         logger.debug(f"Loading environment variables from {env_path}")
         env_vars = dotenv_values(env_path)
@@ -86,6 +90,13 @@ def load_dotenv():
         os.environ.update(eodag_env_vars)
     else:
         logger.debug(f"No .env file found at {env_path}, skipping loading environment variables.")
+
+    # remove vars previously set
+    for v in dotenv_vars or {}:
+        if eodag_env_vars is None or v not in eodag_env_vars:
+            logger.debug(f"Removing {v} from os.environ")
+            os.environ.pop(v, None)
+    dotenv_vars = eodag_env_vars
 
 
 async def get_eodag_api():
@@ -132,11 +143,11 @@ class ReloadHandler(APIHandler):
     @tornado.web.authenticated
     async def get(self):
         """Get endpoint"""
-        load_dotenv()
-        dag = await get_eodag_api()
-        current_loop = asyncio.get_running_loop()
+        global eodag_api
         async with eodag_lock:
-            await current_loop.run_in_executor(None, dag.__init__)
+            eodag_api = None
+        load_dotenv()
+        await get_eodag_api()
         self.finish(orjson.dumps({"status": "done"}))
 
 
