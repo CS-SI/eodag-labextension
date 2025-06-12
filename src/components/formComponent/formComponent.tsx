@@ -21,7 +21,7 @@ import ParameterGroup from './parameterGroup';
 import { IMapSettings } from '../browser';
 import { SubmitButtons } from './submitButtons';
 import { NoParamsAlert } from './noParamsAlert';
-import { DropdownButton } from './dropdownButton';
+import { MoreParametersDropdown } from './moreParametersDropdown';
 
 const defaultStartDate: Date | undefined = undefined;
 const defaultEndDate: Date | undefined = undefined;
@@ -418,7 +418,7 @@ export const FormComponent: FC<IFormComponentsProps> = ({
             <div className={'jp-EodagWidget-optional-params-wrapper'}>
               <div className={'jp-EodagWidget-optional-params-title'}>
                 <p className="jp-EodagWidget-section-title">Parameters</p>
-                <DropdownButton
+                <MoreParametersDropdown
                   options={optionalParams}
                   onSelect={handleSelectDropdown}
                   selectedOptions={selectedOptions}

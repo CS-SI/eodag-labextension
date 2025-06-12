@@ -1,6 +1,6 @@
 .jp-EodagWidget-menuItem {
-  display: flex;
   gap: 0.5rem;
+  font-size: 0.8rem !important;
 }
 
 .jp-EodagWidget-menuItem > svg {

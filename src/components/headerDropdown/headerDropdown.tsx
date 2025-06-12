@@ -1,13 +1,14 @@
-import React, { useMemo, useState } from 'react';
-import { Divider, IconButton, Menu, MenuItem } from '@mui/material';
+import React, { useMemo } from 'react';
+import { IconButton } from '@mui/material';
 import SettingsIcon from '@mui/icons-material/SettingsOutlined';
 import EditIcon from '@mui/icons-material/EditOutlined';
 import BookIcon from '@mui/icons-material/BookOutlined';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import Copyright from '@mui/icons-material/Copyright';
+import { DropdownMenu } from '../dropdownMenu/dropdownMenu';
 
-export interface IOptionsMenuDropdownItems {
+export interface IHeaderDropdownItems {
   name: string;
   type: 'link' | 'onClick' | 'divider';
   link?: string;
@@ -16,22 +17,20 @@ export interface IOptionsMenuDropdownItems {
   onClick?: () => void;
 }
 
-interface IOptionsMenuDropdownProps {
+interface IHeaderDropdownProps {
   openSettings: () => void;
   openEodagConfigEditor: () => Promise<void>;
   version: string;
   labExtensionVersion: string;
 }
 
-export const OptionsMenuDropdown: React.FC<IOptionsMenuDropdownProps> = ({
+export const HeaderDropdown: React.FC<IHeaderDropdownProps> = ({
   openSettings,
   openEodagConfigEditor,
   version,
   labExtensionVersion
 }) => {
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-
-  const menuItems: IOptionsMenuDropdownItems[] = useMemo(
+  const menuItems: IHeaderDropdownItems[] = useMemo(
     () => [
       {
         name: 'Labextension settings',
@@ -85,76 +84,18 @@ export const OptionsMenuDropdown: React.FC<IOptionsMenuDropdownProps> = ({
     [openSettings, version]
   );
 
-  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
-  const menuItemsList = useMemo(
-    () =>
-      menuItems.map(item => {
-        switch (item.type) {
-          case 'divider':
-            return <Divider />;
-          case 'onClick':
-          case 'link':
-            return (
-              <MenuItem
-                disabled={item.disabled}
-                className={'jp-EodagWidget-menuItem'}
-                onClick={
-                  item.link
-                    ? () => window.open(item.link, '_blank')
-                    : item.onClick
-                      ? item.onClick
-                      : undefined
-                }
-                key={item.name}
-                sx={{
-                  fontSize: '.75rem',
-                  display: 'flex',
-                  gap: '.5rem',
-                  '> svg': {
-                    width: '1.25rem',
-                    height: '1.25rem'
-                  }
-                }}
-              >
-                {item.icon ? item.icon : null}
-                {item.name}
-              </MenuItem>
-            );
-        }
-      }),
-    [menuItems]
-  );
-
-  return (
-    <>
-      <IconButton aria-label="Options" onClick={handleClick} size="small">
+  const openingComponent = useMemo(
+    () => (
+      <IconButton aria-label="Options" size="small">
         <MoreHorizIcon
           sx={{ width: '1.25rem', height: '1.25rem', color: '#000000' }}
         />
       </IconButton>
+    ),
+    []
+  );
 
-      <Menu
-        anchorEl={anchorEl}
-        open={Boolean(anchorEl)}
-        onClose={handleClose}
-        onClick={handleClose}
-        PaperProps={{
-          elevation: 4,
-          sx: {
-            mt: 1,
-            minWidth: 200
-          }
-        }}
-      >
-        {menuItemsList}
-      </Menu>
-    </>
+  return (
+    <DropdownMenu OpeningComponent={openingComponent} options={menuItems} />
   );
 };
