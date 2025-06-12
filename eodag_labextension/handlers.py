@@ -9,6 +9,7 @@ import logging
 import os
 import re
 import shutil
+import traceback
 from functools import partial
 from typing import Any
 
@@ -19,7 +20,11 @@ from eodag.api.core import DEFAULT_ITEMS_PER_PAGE, DEFAULT_PAGE
 from eodag.utils import parse_qs
 from eodag.utils.exceptions import (
     AuthenticationError,
+    MisconfiguredError,
     NoMatchingProductType,
+    NotAvailableError,
+    RequestError,
+    TimeOutError,
     UnsupportedProductType,
     UnsupportedProvider,
     ValidationError,
@@ -40,6 +45,53 @@ logger = logging.getLogger("eodag-labextension.handlers")
 
 if Settings().debug:
     setup_logging(3)
+
+
+def exception_handler(func):
+    """Decorator to handle exceptions in Tornado handlers"""
+
+    async def inner_function(handler, *args, **kwargs):
+        try:
+            return await func(handler, *args, **kwargs)
+        except (
+            ValidationError,
+            UnsupportedProvider,
+            UnsupportedProductType,
+            RequestError,
+            RuntimeError,
+            MisconfiguredError,
+        ) as e:
+            tb = traceback.format_exc()
+            handler.set_status(400)
+            handler.finish({"error": str(e), "details": tb})
+            logger.error(tb)
+            return
+        except (NotAvailableError, NoMatchingProductType) as e:
+            tb = traceback.format_exc()
+            handler.set_status(404)
+            handler.finish({"error": str(e), "details": tb})
+            logger.error(tb)
+            return
+        except AuthenticationError as e:
+            tb = traceback.format_exc()
+            handler.set_status(403)
+            handler.finish({"error": f"AuthenticationError: Please check your credentials ({e})", "details": tb})
+            logger.error(tb)
+            return
+        except TimeOutError as e:
+            tb = traceback.format_exc()
+            handler.set_status(504)
+            handler.finish({"error": str(e), "details": tb})
+            logger.error(tb)
+            return
+        except Exception as e:
+            tb = traceback.format_exc()
+            handler.set_status(500)
+            handler.finish({"error": str(e), "details": tb})
+            logger.error(tb)
+            return
+
+    return inner_function
 
 
 def set_conf_symlink(eodag_api):
@@ -90,6 +142,7 @@ async def get_eodag_api():
 class ProductTypeHandler(APIHandler):
     """Product type listing handler"""
 
+    @exception_handler
     @tornado.web.authenticated
     async def get(self):
         """Get endpoint"""
@@ -100,14 +153,9 @@ class ProductTypeHandler(APIHandler):
             provider = query_dict.pop("provider")[0]
         provider = None if not provider or provider == "null" else provider
 
-        try:
-            dag = await get_eodag_api()
-            current_loop = asyncio.get_running_loop()
-            product_types = await current_loop.run_in_executor(None, partial(dag.list_product_types, provider=provider))
-        except UnsupportedProvider as e:
-            self.set_status(400)
-            self.finish({"error": str(e)})
-            return
+        dag = await get_eodag_api()
+        current_loop = asyncio.get_running_loop()
+        product_types = await current_loop.run_in_executor(None, partial(dag.list_product_types, provider=provider))
 
         self.finish(orjson.dumps(product_types))
 
@@ -115,6 +163,7 @@ class ProductTypeHandler(APIHandler):
 class ReloadHandler(APIHandler):
     """EODAG API reload handler"""
 
+    @exception_handler
     @tornado.web.authenticated
     async def get(self):
         """Get endpoint"""
@@ -127,6 +176,7 @@ class ReloadHandler(APIHandler):
 class InfoHandler(APIHandler):
     """EODAG info handler"""
 
+    @exception_handler
     @tornado.web.authenticated
     async def get(self):
         """Get endpoint"""
@@ -138,6 +188,7 @@ class InfoHandler(APIHandler):
 class ProvidersHandler(APIHandler):
     """Providers listing handler"""
 
+    @exception_handler
     @tornado.web.authenticated
     async def get(self):
         """Get endpoint"""
@@ -198,6 +249,7 @@ class ProvidersHandler(APIHandler):
 class GuessProductTypeHandler(APIHandler):
     """Guess product type method handler"""
 
+    @exception_handler
     @tornado.web.authenticated
     async def get(self):
         """Get endpoint"""
@@ -263,15 +315,12 @@ class GuessProductTypeHandler(APIHandler):
             self.finish(orjson.dumps(returned_product_types))
         except NoMatchingProductType:
             self.finish(orjson.dumps(returned_product_types))
-        except UnsupportedProvider as e:
-            self.set_status(400)
-            self.finish({"error": str(e)})
-            return
 
 
 class SearchHandler(APIHandler):
     """Search products handler"""
 
+    @exception_handler
     @tornado.web.authenticated
     async def post(self, product_type):
         """Post endpoint"""
@@ -288,12 +337,7 @@ class SearchHandler(APIHandler):
             return
 
         # dates
-        try:
-            arguments["start"], arguments["end"] = get_datetime(arguments)
-        except ValidationError as e:
-            self.set_status(400)
-            self.finish({"error": str(e)})
-            return
+        arguments["start"], arguments["end"] = get_datetime(arguments)
 
         # provider
         provider = arguments.pop("provider", None)
@@ -305,32 +349,11 @@ class SearchHandler(APIHandler):
         # We remove potential None values to use the default values of the search method
         arguments = dict((k, v) for k, v in arguments.items() if v is not None)
 
-        try:
-            dag = await get_eodag_api()
-            current_loop = asyncio.get_running_loop()
-            products = await current_loop.run_in_executor(
-                None, partial(dag.search, productType=product_type, count=True, **arguments)
-            )
-        except ValidationError as e:
-            self.set_status(400)
-            self.finish({"error": e.message})
-            return
-        except RuntimeError as e:
-            self.set_status(400)
-            self.finish({"error": e})
-            return
-        except UnsupportedProductType as e:
-            self.set_status(404)
-            self.finish({"error": "Not Found: {}".format(e.product_type)})
-            return
-        except AuthenticationError as e:
-            self.set_status(403)
-            self.finish({"error": f"AuthenticationError: Please check your credentials ({e})"})
-            return
-        except Exception as e:
-            self.set_status(502)
-            self.finish({"error": str(e)})
-            return
+        dag = await get_eodag_api()
+        current_loop = asyncio.get_running_loop()
+        products = await current_loop.run_in_executor(
+            None, partial(dag.search, productType=product_type, count=True, **arguments)
+        )
 
         response = SearchResult(products).as_geojson_object()
         response.update(
@@ -381,6 +404,7 @@ class MethodAndPathMatch(tornado.routing.PathMatches):
 class QueryablesHandler(APIHandler):
     """EODAG queryables handler"""
 
+    @exception_handler
     @tornado.web.authenticated
     async def get(self):
         """Get endpoint"""
@@ -391,19 +415,16 @@ class QueryablesHandler(APIHandler):
             if not key.isdigit()
         }
         logger.error(queryables_kwargs)
-        try:
-            dag = await get_eodag_api()
-            current_loop = asyncio.get_running_loop()
-            queryables_dict = await current_loop.run_in_executor(
-                None, partial(dag.list_queryables, fetch_providers=False, **queryables_kwargs)
-            )
-            json_schema = queryables_dict.get_model().model_json_schema()
-            self._remove_null_defaults(json_schema)
-            json_schema["additionalProperties"] = queryables_dict.additional_properties
-            self.finish(json_schema)
-        except Exception as e:
-            self.set_status(400)
-            self.finish({"error": str(e)})
+
+        dag = await get_eodag_api()
+        current_loop = asyncio.get_running_loop()
+        queryables_dict = await current_loop.run_in_executor(
+            None, partial(dag.list_queryables, fetch_providers=False, **queryables_kwargs)
+        )
+        json_schema = queryables_dict.get_model().model_json_schema()
+        self._remove_null_defaults(json_schema)
+        json_schema["additionalProperties"] = queryables_dict.additional_properties
+        self.finish(json_schema)
 
     def _remove_null_defaults(self, json_schema: Any):
         for item in json_schema["properties"].values():
