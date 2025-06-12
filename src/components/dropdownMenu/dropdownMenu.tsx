@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { cloneElement, MouseEvent, useMemo, useState } from 'react';
 import { Checkbox, Divider, Menu, MenuItem } from '@mui/material';
 
 export type DropdownItemType = 'link' | 'onClick' | 'divider' | 'checkbox';
@@ -27,10 +27,6 @@ export const DropdownMenu: React.FC<IDropdownMenuProps> = ({
 }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
-  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
   const menuItemsList = useMemo(() => {
     return options.map((option, index) => {
       switch (option.type) {
@@ -43,7 +39,6 @@ export const DropdownMenu: React.FC<IDropdownMenuProps> = ({
               className={'jp-EodagWidget-menuItem'}
               onClick={() => option.value && onToggleCheckbox?.(option.value)}
               disabled={option.disabled}
-              sx={{ fontSize: '0.875rem' }}
             >
               <Checkbox
                 edge="start"
@@ -81,13 +76,11 @@ export const DropdownMenu: React.FC<IDropdownMenuProps> = ({
     });
   }, [options, onToggleCheckbox]);
 
-  const openingComponent = React.cloneElement(OpeningComponent, {
-    onClick: handleClick
+  const openingComponent = cloneElement(OpeningComponent, {
+    onClick: (e: MouseEvent<HTMLElement>) => {
+      setAnchorEl(e.currentTarget);
+    }
   });
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
 
   return (
     <>
@@ -95,7 +88,8 @@ export const DropdownMenu: React.FC<IDropdownMenuProps> = ({
       <Menu
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
-        onClose={handleClose}
+        onClose={() => setAnchorEl(null)}
+        transitionDuration={200}
         anchorOrigin={{
           vertical: 'top',
           horizontal: 'right'
@@ -103,13 +97,6 @@ export const DropdownMenu: React.FC<IDropdownMenuProps> = ({
         transformOrigin={{
           vertical: 'top',
           horizontal: 'left'
-        }}
-        PaperProps={{
-          elevation: 4,
-          sx: {
-            mt: 1,
-            minWidth: 200
-          }
         }}
       >
         {menuItemsList}
