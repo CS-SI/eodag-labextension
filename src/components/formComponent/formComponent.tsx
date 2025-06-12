@@ -22,7 +22,7 @@ import { IFormInput, IOptionType, IParameter } from '../../types';
 import { AdditionalParameterFields } from './additionalParameterFields';
 import { ParameterGroup } from './parameterGroup';
 import { IMapSettings } from '../browser';
-import { DropdownButton } from './dropdownButton';
+import { MoreParametersDropdown } from './moreParametersDropdown';
 import { SubmitButtons } from './submitButtons';
 import { showCustomErrorDialog } from '../customErrorDialog/customErrorDialog';
 import { formatCustomError } from '../../utils/formatErrors';
@@ -409,7 +409,7 @@ export const FormComponent: FC<IFormComponentsProps> = ({
           <div className={'jp-EodagWidget-optional-params-wrapper'}>
             <div className={'jp-EodagWidget-optional-params-title'}>
               <p className="jp-EodagWidget-section-title">Parameters</p>
-              <DropdownButton
+              <MoreParametersDropdown
                 options={optionalParams}
                 onSelect={handleSelectDropdown}
                 selectedOptions={selectedOptions}

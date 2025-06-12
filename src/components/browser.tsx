@@ -13,7 +13,7 @@ import { Tooltip } from 'react-tooltip';
 import { CommandRegistry } from '@lumino/commands';
 import { FormComponent } from './formComponent/formComponent';
 import { IcBaselineRefresh } from './icons';
-import { OptionsMenuDropdown } from './menuDropdown/optionsDropdown';
+import { HeaderDropdown } from './headerDropdown/headerDropdown';
 import { useFetchProviders } from '../hooks/useFetchProviders';
 import { useFetchProducts } from '../hooks/useFetchProducts';
 import { useVirtualizedList } from '../hooks/useVirtualizedList';
@@ -168,7 +168,7 @@ export const EodagBrowser: React.FC<IEodagBrowserProps> = ({
             />
             <Tooltip id="eodag-setting" className="jp-Eodag-tooltip" />
           </button>
-          <OptionsMenuDropdown
+          <HeaderDropdown
             openSettings={() =>
               commands.execute('settingeditor:open', { query: 'EODAG' })
             }
