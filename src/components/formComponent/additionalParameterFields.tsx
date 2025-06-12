@@ -34,12 +34,7 @@ export const AdditionalParameterFields = ({
 
   return (
     <div className="jp-EodagWidget-additionalParameters">
-      <p
-        className="jp-EodagWidget-section-title"
-        style={{ marginBottom: '10px' }}
-      >
-        Custom Parameters
-      </p>
+      <p>Custom Parameters</p>
 
       {!productType || isUndefined(register) ? (
         <p className="jp-EodagWidget-noParametersMessage">
@@ -47,46 +42,44 @@ export const AdditionalParameterFields = ({
         </p>
       ) : additionalParameters ? (
         fields.map((field, index) => (
-          <div key={field.id}>
-            <section className={'section'}>
-              <input
-                placeholder="Name"
-                {...register(`additionalParameters.${index}.name` as const)}
-              />
-              <input
-                placeholder="Value"
-                {...register(`additionalParameters.${index}.value` as const)}
-              />
-              <button
-                type="button"
-                className="jp-EodagWidget-additionalParameters-deletebutton"
-                onClick={() =>
-                  fields.length === 1 && clearInput
-                    ? clearInput(index)
-                    : remove(index)
-                }
-                data-tooltip-id="parameters-delete"
-                data-tooltip-content="remove custom parameter"
-                data-tooltip-variant={'warning'}
-                data-tooltip-place={'top'}
-              >
-                <CarbonTrashCan height="20" width="20" />
-                <Tooltip id="parameters-delete" className="jp-Eodag-tooltip" />
-              </button>
-              <button
-                type="button"
-                className="jp-EodagWidget-additionalParameters-addbutton"
-                onClick={() => append({ name: '', value: '' })}
-                data-tooltip-id="parameters-add"
-                data-tooltip-content="add a new custom parameter"
-                data-tooltip-variant={'dark'}
-                data-tooltip-place={'top'}
-              >
-                <CarbonAddFilled height="20" width="20" />
-                <Tooltip id="parameters-add" className="jp-Eodag-tooltip" />
-              </button>
-            </section>
-          </div>
+          <section className={'section'} key={field.id}>
+            <input
+              placeholder="Custom parameter name"
+              {...register(`additionalParameters.${index}.name` as const)}
+            />
+            <input
+              placeholder="Value"
+              {...register(`additionalParameters.${index}.value` as const)}
+            />
+            <button
+              type="button"
+              className="jp-EodagWidget-additionalParameters-deletebutton"
+              onClick={() =>
+                fields.length === 1 && clearInput
+                  ? clearInput(index)
+                  : remove(index)
+              }
+              data-tooltip-id="parameters-delete"
+              data-tooltip-content="remove custom parameter"
+              data-tooltip-variant={'warning'}
+              data-tooltip-place={'top'}
+            >
+              <CarbonTrashCan height="20" width="20" />
+              <Tooltip id="parameters-delete" className="jp-Eodag-tooltip" />
+            </button>
+            <button
+              type="button"
+              className="jp-EodagWidget-additionalParameters-addbutton"
+              onClick={() => append({ name: '', value: '' })}
+              data-tooltip-id="parameters-add"
+              data-tooltip-content="add a new custom parameter"
+              data-tooltip-variant={'dark'}
+              data-tooltip-place={'top'}
+            >
+              <CarbonAddFilled height="20" width="20" />
+              <Tooltip id="parameters-add" className="jp-Eodag-tooltip" />
+            </button>
+          </section>
         ))
       ) : (
         <p className="jp-EodagWidget-noParametersMessage">

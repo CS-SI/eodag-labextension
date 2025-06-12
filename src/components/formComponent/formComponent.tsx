@@ -25,8 +25,8 @@ import SearchService from '../../utils/searchService';
 import { IFormInput, IOptionType, IParameter } from '../../types';
 import { AdditionalParameterFields } from './additionalParameterFields';
 import { ParameterGroup } from './parameterGroup';
-import { DropdownButton } from './dropdownButton';
 import { IMapSettings } from '../browser';
+import { DropdownButton } from './dropdownButton';
 
 export interface IFormComponentsProps {
   handleShowFeature: any;
@@ -63,14 +63,13 @@ export const FormComponent: FC<IFormComponentsProps> = ({
 }) => {
   const [productTypes, setProductTypes] = useState<IOptionTypeBase[]>();
   const [providers, setProviders] = useState<IOptionTypeBase[]>();
-  const [startDate, setStartDate] = useState(undefined);
-  const [endDate, setEndDate] = useState(undefined);
+  const [startDate, setStartDate] = useState<Date | null>(null);
+  const [endDate, setEndDate] = useState<Date | null>(null);
   const [isLoadingSearch, setIsLoadingSearch] = useState(false);
   const [openModal, setOpenModal] = useState(true);
   const [params, setParams] = useState<IParameter[]>([]);
   const [loading, setLoading] = useState(false);
-  const [additionalParameters, setAdditionalParameters] =
-    useState<boolean>(true);
+  const [additionalParameters, setAdditionalParameters] = useState(true);
   const [optionalParams, setOptionalParams] = useState<IOptionType[]>([]);
 
   const formValues = useWatch({ control: form.control });
@@ -176,11 +175,25 @@ export const FormComponent: FC<IFormComponentsProps> = ({
           });
 
           const optionals = params
+            // Filters all non-mandatory params
             .filter(param => !param.mandatory)
             .map(param => ({
               value: param.key,
-              label: param.value.title ?? param.key
+              label: param.value.title ?? param.key,
+              divider: false
             }));
+          if (additionalParameters) {
+            optionals.unshift({
+              value: '',
+              label: '',
+              divider: true
+            });
+            optionals.unshift({
+              value: 'custom',
+              label: 'Custom Parameters',
+              divider: false
+            });
+          }
           setOptionalParams(optionals);
         })
         .catch(error => {
@@ -357,7 +370,7 @@ export const FormComponent: FC<IFormComponentsProps> = ({
                       startDate={startDate}
                       endDate={endDate}
                       maxDate={endDate}
-                      onChange={(d: any) => {
+                      onChange={(d: Date | null) => {
                         setStartDate(d);
                         onChange(d);
                       }}
@@ -386,7 +399,7 @@ export const FormComponent: FC<IFormComponentsProps> = ({
                       selectsStart
                       startDate={startDate}
                       endDate={endDate}
-                      onChange={(d: any) => {
+                      onChange={(d: Date | null) => {
                         setEndDate(d);
                         onChange(d);
                       }}
@@ -430,15 +443,17 @@ export const FormComponent: FC<IFormComponentsProps> = ({
             </div>
           </div>
 
-          <AdditionalParameterFields
-            {...{
-              control: form.control,
-              register: form.register,
-              resetField: form.resetField,
-              productType: productTypeValue,
-              additionalParameters
-            }}
-          />
+          {selectedOptions.includes('custom') && (
+              <AdditionalParameterFields
+                {...{
+                  control: form.control,
+                  register: form.register,
+                  resetField: form.resetField,
+                  productType: productTypeValue,
+                  additionalParameters
+                }}
+            />
+          )}
         </div>
         <div className="jp-EodagWidget-form-buttons">
           <div className="jp-EodagWidget-form-buttons-wrapper">
