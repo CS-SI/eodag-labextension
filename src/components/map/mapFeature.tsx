@@ -134,6 +134,7 @@ export const MapFeature: React.FC<IMapFeatureProps> = ({
       />
       {!isEmpty(features) && (
         <GeoJSON
+          key={features?.features?.length}
           data={features}
           style={getStyle}
           onEachFeature={(_, layer) => {
