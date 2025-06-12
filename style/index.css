@@ -8,6 +8,7 @@
 @import url('loader.css');
 @import url('form_field.css');
 @import url('alert.css');
+@import url('menu_dropdown.css');
 
 :root {
   --light-gray: #c1c1c1;

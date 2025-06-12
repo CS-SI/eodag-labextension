@@ -18,10 +18,13 @@ import SearchService from '../../utils/searchService';
 import { IFormInput, IOptionType, IParameter } from '../../types';
 import { AdditionalParameterFields } from './additionalParameterFields';
 import ParameterGroup from './parameterGroup';
-import { DropdownButton } from './dropdownButton';
 import { IMapSettings } from '../browser';
 import { SubmitButtons } from './submitButtons';
 import { NoParamsAlert } from './noParamsAlert';
+import { DropdownButton } from './dropdownButton';
+
+const defaultStartDate: Date | undefined = undefined;
+const defaultEndDate: Date | undefined = undefined;
 
 export interface IFormComponentsProps {
   handleShowFeature: any;
@@ -58,18 +61,15 @@ export const FormComponent: FC<IFormComponentsProps> = ({
 }) => {
   const [productTypes, setProductTypes] = useState<IOptionTypeBase[]>();
   const [providers, setProviders] = useState<IOptionTypeBase[]>();
-  const defaultStartDate: Date | undefined = undefined;
-  const defaultEndDate: Date | undefined = undefined;
-  const [startDate, setStartDate] = useState(undefined);
-  const [endDate, setEndDate] = useState(undefined);
+  const [startDate, setStartDate] = useState<Date | null>(null);
+  const [endDate, setEndDate] = useState<Date | null>(null);
   const [isLoadingSearch, setIsLoadingSearch] = useState(false);
   const [openModal, setOpenModal] = useState(true);
   const [providerValue, setProviderValue] = useState(null);
   const [productTypeValue, setProductTypeValue] = useState<string>('');
   const [params, setParams] = useState<IParameter[]>([]);
   const [loading, setLoading] = useState(false);
-  const [additionalParameters, setAdditionalParameters] =
-    useState<boolean>(true);
+  const [additionalParameters, setAdditionalParameters] = useState(true);
   const [optionalParams, setOptionalParams] = useState<IOptionType[]>([]);
 
   const formInput = useForm<IFormInput>({
@@ -199,11 +199,25 @@ export const FormComponent: FC<IFormComponentsProps> = ({
           });
 
           const optionals = params
-            .filter(param => param.mandatory === false)
+            // Filters all non-mandatory params
+            .filter(param => !param.mandatory)
             .map(param => ({
               value: param.key,
-              label: param.value.title ?? param.key
+              label: param.value.title ?? param.key,
+              divider: false
             }));
+          if (additionalParameters) {
+            optionals.unshift({
+              value: '',
+              label: '',
+              divider: true
+            });
+            optionals.unshift({
+              value: 'custom',
+              label: 'Custom Parameters',
+              divider: false
+            });
+          }
           setOptionalParams(optionals);
         })
         .catch(error => {
@@ -353,7 +367,7 @@ export const FormComponent: FC<IFormComponentsProps> = ({
                         startDate={startDate}
                         endDate={endDate}
                         maxDate={endDate}
-                        onChange={(d: any) => {
+                        onChange={(d: Date | null) => {
                           setStartDate(d);
                           onChange(d);
                         }}
@@ -382,7 +396,7 @@ export const FormComponent: FC<IFormComponentsProps> = ({
                         selectsStart
                         startDate={startDate}
                         endDate={endDate}
-                        onChange={(d: any) => {
+                        onChange={(d: Date | null) => {
                           setEndDate(d);
                           onChange(d);
                         }}
@@ -422,15 +436,17 @@ export const FormComponent: FC<IFormComponentsProps> = ({
               </div>
             </div>
 
-            <AdditionalParameterFields
-              {...{
-                control,
-                register,
-                resetField,
-                productType: productTypeValue,
-                additionalParameters
-              }}
-            />
+            {selectedOptions.includes('custom') && (
+              <AdditionalParameterFields
+                {...{
+                  control,
+                  register,
+                  resetField,
+                  productType: productTypeValue,
+                  additionalParameters
+                }}
+              />
+            )}
           </div>
           <div className="jp-EodagWidget-form-buttons">
             <SubmitButtons

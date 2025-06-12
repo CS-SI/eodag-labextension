@@ -104,6 +104,7 @@ export const OptionsMenuDropdown: React.FC<IOptionsMenuDropdownProps> = ({
             return (
               <MenuItem
                 disabled={item.disabled}
+                className={'jp-EodagWidget-menuItem'}
                 onClick={
                   item.link
                     ? () => window.open(item.link, '_blank')
