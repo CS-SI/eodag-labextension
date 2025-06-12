@@ -29,6 +29,12 @@ export interface IProps {
   commands: any;
 }
 
+export interface IMapSettings {
+  tile_attribution: string;
+  tile_url: string;
+  zoom_offset: number;
+}
+
 export interface IState {
   features: any;
   openDialog: any;
@@ -39,6 +45,7 @@ export interface IState {
   reloadIndicator: boolean;
   eodagVersion?: string;
   eodagLabExtensionVersion?: string;
+  mapSettings?: IMapSettings;
 }
 
 const tooltipDark: VariantType = 'dark';
@@ -56,7 +63,8 @@ export class EodagBrowser extends React.Component<IProps, IState> {
       isLoading: false,
       reloadIndicator: false,
       eodagVersion: undefined,
-      eodagLabExtensionVersion: undefined
+      eodagLabExtensionVersion: undefined,
+      mapSettings: undefined
     };
     this.reloadUserSettings = this.reloadUserSettings.bind(this);
   }
@@ -65,11 +73,15 @@ export class EodagBrowser extends React.Component<IProps, IState> {
     fetch('/eodag/info')
       .then(res => res.json())
       .then(data => {
-        this.setState({
-          eodagVersion: data?.packages.eodag.version || 'Unknown version',
-          eodagLabExtensionVersion:
-            data?.packages.eodag_labextension.version || 'Unknown version'
-        });
+        const { packages, map } = data;
+        if (packages) {
+          this.setState({
+            eodagVersion: packages.eodag.version || 'Unknown version',
+            eodagLabExtensionVersion:
+              packages.eodag_labextension.version || 'Unknown version',
+            mapSettings: map
+          });
+        }
       })
       .catch(() => {
         this.setState({
@@ -316,7 +328,7 @@ export class EodagBrowser extends React.Component<IProps, IState> {
   };
 
   render() {
-    const { openDialog, features } = this.state;
+    const { openDialog, features, mapSettings } = this.state;
     return (
       <div className="jp-EodagWidget-products-search">
         <div className="jp-EodagWidget-header-wrapper">
@@ -359,6 +371,7 @@ export class EodagBrowser extends React.Component<IProps, IState> {
           handleGenerateQuery={this.handleGenerateQuery}
           reloadIndicator={this.state.reloadIndicator}
           onFetchComplete={this.resetIsLoading}
+          mapSettings={mapSettings}
         />
         <ModalComponent
           open={openDialog}
@@ -367,6 +380,7 @@ export class EodagBrowser extends React.Component<IProps, IState> {
           handleGenerateQuery={this.handleGenerateQuery}
           isRetrievingMoreFeature={this.isRetrievingMoreFeature}
           handleRetrieveMoreFeature={this.handleRetrieveMoreFeature}
+          mapSettings={mapSettings}
         />
       </div>
     );

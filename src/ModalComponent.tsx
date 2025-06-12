@@ -5,14 +5,15 @@
 
 import * as React from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
-import { find, isEqual, get, isUndefined } from 'lodash';
+import { find, get, isEqual, isUndefined } from 'lodash';
 import Modal, { Styles } from 'react-modal';
 import MapFeatureComponent from './MapFeatureComponent';
 import BrowseComponent from './BrowseComponent';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTimes, faSpinner } from '@fortawesome/free-solid-svg-icons';
+import { faSpinner, faTimes } from '@fortawesome/free-solid-svg-icons';
 import DescriptionProductComponent from './DescriptionProductComponent';
-import { Tooltip, PlacesType, VariantType } from 'react-tooltip';
+import { PlacesType, Tooltip, VariantType } from 'react-tooltip';
+import { IMapSettings } from './browser';
 
 const customStyles: Styles = {
   overlay: {
@@ -40,6 +41,7 @@ export interface IProps {
   features: any;
   isRetrievingMoreFeature: () => boolean;
   handleRetrieveMoreFeature: () => Promise<void>;
+  mapSettings: IMapSettings | undefined;
 }
 
 export interface IState {
@@ -54,6 +56,7 @@ export interface IState {
 function Transition(props: any) {
   return <div direction="up" {...props} />;
 }
+
 const tooltipDark: VariantType = 'dark';
 const tooltipBottom: PlacesType = 'bottom';
 
@@ -152,7 +155,8 @@ export default class ModalComponent extends React.Component<IProps, IState> {
       handleClose,
       isRetrievingMoreFeature,
       handleRetrieveMoreFeature,
-      handleGenerateQuery
+      handleGenerateQuery,
+      mapSettings
     } = this.props;
     const {
       zoomFeature,
@@ -178,13 +182,16 @@ export default class ModalComponent extends React.Component<IProps, IState> {
           </div>
           <div className="jp-EodagWidget-modal-container">
             <div className="jp-EodagWidget-product-wrapper">
-              <MapFeatureComponent
-                features={features}
-                zoomFeature={zoomFeature}
-                highlightFeature={highlightOnMapFeature}
-                handleHoverFeature={this.handleHoverMapFeature}
-                handleClickFeature={this.handleClickFeature}
-              />
+              {mapSettings && (
+                <MapFeatureComponent
+                  features={features}
+                  zoomFeature={zoomFeature}
+                  highlightFeature={highlightOnMapFeature}
+                  handleHoverFeature={this.handleHoverMapFeature}
+                  handleClickFeature={this.handleClickFeature}
+                  mapSettings={mapSettings}
+                />
+              )}
               <div className="jp-EodagWidget-browse-title">
                 {isRetrievingMoreFeature() ? (
                   <div

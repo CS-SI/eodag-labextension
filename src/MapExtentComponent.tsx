@@ -4,17 +4,18 @@
  */
 
 import * as React from 'react';
-import { MapContainer, TileLayer, FeatureGroup } from 'react-leaflet';
+import { FeatureGroup, MapContainer, TileLayer } from 'react-leaflet';
 import { EditControl } from 'react-leaflet-draw';
 import { throttle } from 'lodash';
-import { EODAG_TILE_URL, EODAG_TILE_COPYRIGHT } from './config';
 import { IGeometry } from './types';
 import { LeafletMouseEvent } from 'leaflet';
 import { EodagWidget } from './widget';
+import { IMapSettings } from './browser';
 
 export interface IProps {
   onChange: (value: IGeometry | undefined) => void;
   geometry: IGeometry | undefined;
+  mapSettings: IMapSettings;
 }
 
 export interface IState {
@@ -41,12 +42,20 @@ export default class MapExtentComponent extends React.Component<
     marker: false,
     circlemarker: false
   };
+  /**
+   * Function called every time the map should change its width,
+   * but only redraw every 500ms thanks to throttle
+   */
+  invalidateMapSize = throttle(() => {
+    this.map?.invalidateSize();
+  }, 500);
+
   constructor(props: IProps) {
     super(props);
     this.state = {
       lat: 46.8,
       lon: 1.8,
-      zoom: 4,
+      zoom: props.mapSettings?.zoom_offset || 4,
       geometry: props.geometry
     };
     this.handleMapSettingsChange = this.handleMapSettingsChange.bind(this);
@@ -80,20 +89,12 @@ export default class MapExtentComponent extends React.Component<
   }
 
   handleMapSettingsChange(
-    sender: EodagWidget,
+    _sender: EodagWidget,
     settings: { lat: number; lon: number; zoom: number }
   ) {
     const { lat, lon, zoom } = settings;
     this.setState({ lat, lon, zoom });
   }
-
-  /**
-   * Function called every time the map should change its width,
-   * but only redraw every 500ms thanks to throttle
-   */
-  invalidateMapSize = throttle(() => {
-    this.map?.invalidateSize();
-  }, 500);
 
   componentDidUpdate(_: IProps, prevState: IState) {
     const { lat, lon, zoom } = this.state;
@@ -176,6 +177,8 @@ export default class MapExtentComponent extends React.Component<
 
   render() {
     const { zoom, lat, lon } = this.state;
+    const { mapSettings } = this.props;
+    const { tile_url, tile_attribution, zoom_offset } = mapSettings;
     const position: [number, number] = [lat, lon];
     return (
       <MapContainer
@@ -184,8 +187,13 @@ export default class MapExtentComponent extends React.Component<
         ref={ref => {
           this.map = ref;
         }}
+        minZoom={Math.abs(zoom_offset)}
       >
-        <TileLayer url={EODAG_TILE_URL} attribution={EODAG_TILE_COPYRIGHT} />
+        <TileLayer
+          url={tile_url}
+          attribution={tile_attribution}
+          zoomOffset={zoom_offset}
+        />
         <FeatureGroup>
           <EditControl
             position="topright"
