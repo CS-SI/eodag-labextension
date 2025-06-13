@@ -15,6 +15,7 @@ from typing import Any
 
 import orjson
 import tornado
+from dotenv import dotenv_values
 from eodag import EODataAccessGateway, SearchResult, setup_logging
 from eodag.api.core import DEFAULT_ITEMS_PER_PAGE, DEFAULT_PAGE
 from eodag.utils import parse_qs
@@ -37,6 +38,7 @@ from shapely.geometry import shape
 from eodag_labextension.config import Settings
 
 eodag_api = None
+dotenv_vars = None
 
 eodag_lock = tornado.locks.Lock()
 
@@ -127,6 +129,28 @@ def set_conf_symlink(eodag_api):
         logger.error("Could not create eodag-config symlink to user configuration: " + str(err))
 
 
+def load_dotenv():
+    """Load EODAG environment variables from .env file and update os.environ."""
+    global dotenv_vars
+
+    env_path = os.path.join(os.getcwd(), ".env")
+    eodag_env_vars = None
+    if os.path.isfile(env_path):
+        logger.debug(f"Loading environment variables from {env_path}")
+        env_vars = dotenv_values(env_path)
+        eodag_env_vars = {key: value for key, value in env_vars.items() if key.startswith("EODAG_")}
+        os.environ.update(eodag_env_vars)
+    else:
+        logger.debug(f"No .env file found at {env_path}, skipping loading environment variables.")
+
+    # remove vars previously set
+    for v in dotenv_vars or {}:
+        if eodag_env_vars is None or v not in eodag_env_vars:
+            logger.debug(f"Removing {v} from os.environ")
+            os.environ.pop(v, None)
+    dotenv_vars = eodag_env_vars
+
+
 async def get_eodag_api():
     """EODataAccessGateway on-demand instanciation"""
     global eodag_api
@@ -134,6 +158,7 @@ async def get_eodag_api():
     current_loop = asyncio.get_running_loop()
     async with eodag_lock:
         if eodag_api is None:
+            load_dotenv()
             eodag_api = await current_loop.run_in_executor(None, EODataAccessGateway)
             set_conf_symlink(eodag_api)
         return eodag_api
@@ -167,10 +192,12 @@ class ReloadHandler(APIHandler):
     @tornado.web.authenticated
     async def get(self):
         """Get endpoint"""
-        dag = await get_eodag_api()
-        current_loop = asyncio.get_running_loop()
+        global eodag_api
         async with eodag_lock:
-            await current_loop.run_in_executor(None, dag.__init__)
+            eodag_api = None
+        load_dotenv()
+        await get_eodag_api()
+        self.finish(orjson.dumps({"status": "done"}))
 
 
 class InfoHandler(APIHandler):

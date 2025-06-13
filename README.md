@@ -26,6 +26,7 @@ Lab. The package consist of a Python Jupyter notebook REST service consumed by t
 - [QuickStart](#quickstart)
   - [Search](#search)
   - [Settings](#settings)
+    - [EODAG user settings through environment variables](#eodag-user-settings-through-environment-variables)
   - [Results overview](#results-overview)
   - [Apply to the Jupyter notebook](#apply-to-the-jupyter-notebook)
   - [User manual](#user-manual)
@@ -73,7 +74,7 @@ EODAG Labextension can be configured using the following environment variables:
 You can use `eodag-labextension` inside a Jupyter notebook. Start Jupyter lab with `jupyter lab`, and in Jupyter lab
 open a notebook.
 
-## Search
+### Search
 
 ![extension logo](https://raw.githubusercontent.com/CS-SI/eodag-labextension/develop/notebooks/images/eodag_labext_icon.png)
 Click on this icon in the left of JupyterLab interface to open EODAG-Labextension tab.
@@ -104,7 +105,7 @@ Once search criteria are filled out, click on:
 - `Generate Code` to automatically generate and insert the corresponding eodag search code bellow the active cell.
 - `Preview Results` to perform a search in background, display results, and generate search code in a second step.
 
-## Settings
+### Settings
 
 ![reload logo](https://raw.githubusercontent.com/CS-SI/eodag-labextension/develop/notebooks/images/eodag_labext_reload_icon.png)
 Click on this icon to reload [EODAG configuration](https://eodag.readthedocs.io/en/stable/getting_started_guide/configure.html)
@@ -128,6 +129,18 @@ You will be enable to:
 - Open Labextension [Documentation](https://github.com/CS-SI/eodag-labextension/blob/develop/README.md),
   [Github repository](https://github.com/CS-SI/eodag-labextension), or [CS GROUP](https://www.cs-soprasteria.com) page.
 - View EODAG packages versions.
+
+#### EODAG user settings through environment variables
+
+EODAG [environment variable configuration](https://eodag.readthedocs.io/en/stable/getting_started_guide/configure.html#environment-variable-configuration)
+can be set by storing variables in a `.env` file in the jupyterlab working directory:
+
+```sh
+echo "EODAG_CFG_FILE=/path/to/custom.yml" >> .env
+```
+
+Hit the reload ![reload logo](https://raw.githubusercontent.com/CS-SI/eodag-labextension/develop/notebooks/images/eodag_labext_reload_icon.png)
+button to update current EODAG environment with updated `.env` file.
 
 ### Results overview
 
