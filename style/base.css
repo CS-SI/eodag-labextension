@@ -7,6 +7,10 @@
   --base-font-size: 14px;
 }
 
+.MuiTooltip-popper {
+  z-index: 10001 !important; /* To go over jp Dialog */
+}
+
 p {
   margin: unset;
 }
