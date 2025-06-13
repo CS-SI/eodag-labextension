@@ -222,13 +222,15 @@ class ProvidersHandler(APIHandler):
 
         available_providers_kwargs = {}
         query_dict = parse_qs(self.request.query)
-        if (
-            "product_type" in query_dict
-            and isinstance(query_dict["product_type"], list)
-            and len(query_dict["product_type"]) > 0
-        ):
-            available_providers_kwargs["product_type"] = query_dict["product_type"][0]
+
         dag = await get_eodag_api()
+
+        if isinstance(pt_list := query_dict.get("product_type", []), list) and pt_list:
+            try:
+                available_providers_kwargs["product_type"] = dag.get_product_type_from_alias(pt_list[0])
+            except NoMatchingProductType:
+                available_providers_kwargs["product_type"] = pt_list[0]
+
         current_loop = asyncio.get_running_loop()
         available_providers = await current_loop.run_in_executor(
             None, partial(dag.available_providers, **available_providers_kwargs)
