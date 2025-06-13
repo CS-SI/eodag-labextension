@@ -31,6 +31,7 @@ from eodag.utils.exceptions import (
     ValidationError,
 )
 from eodag.utils.rest import get_datetime
+from importlib_metadata import PackageNotFoundError, version
 from jupyter_server.base.handlers import APIHandler
 from jupyter_server.utils import url_path_join
 from shapely.geometry import shape
@@ -207,9 +208,27 @@ class InfoHandler(APIHandler):
     @tornado.web.authenticated
     async def get(self):
         """Get endpoint"""
+        await self._check_installed_packages()
         current_loop = asyncio.get_running_loop()
         result = await current_loop.run_in_executor(None, lambda: Settings().model_dump())
         self.finish(orjson.dumps(result))
+
+    async def _check_installed_packages(self):
+        """Check if not-required packages are installed and have the correct version."""
+        try:
+            dep_version = version("ipyleaflet")
+            if dep_version < "0.18.0":
+                pkg_versions = "; ".join(
+                    f"{k}: {v['version']}"
+                    for k, v in Settings().model_dump().get("packages", {}).items()
+                    if "version" in v
+                )
+                raise ImportError(
+                    f"If installed, ipyleaflet >= 0.18.0 is required, found version {dep_version} ({pkg_versions})"
+                )
+        except PackageNotFoundError:
+            # Dependency is optional; continue silently
+            pass
 
 
 class ProvidersHandler(APIHandler):
