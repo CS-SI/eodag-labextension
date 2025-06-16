@@ -34,7 +34,7 @@ export const useUserSettings = () => {
   const handleOpenEodagConfig = async (commands: CommandRegistry) => {
     // File that uses a symbolic link to the eodag config file
     // present in the ~/.config/eodag/eodag.yml
-    const filePath = '/user-config/eodag.yml';
+    const filePath = '/eodag-config/eodag.yml';
 
     const widget = await commands.execute('docmanager:open', {
       path: filePath,
