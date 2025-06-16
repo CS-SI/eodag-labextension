@@ -10,9 +10,9 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import {
   Controller,
-  FormProvider,
   SubmitHandler,
-  useForm
+  UseFormReturn,
+  useWatch
 } from 'react-hook-form';
 import { ThreeDots } from 'react-loader-spinner';
 import { Tooltip } from 'react-tooltip';
@@ -24,22 +24,22 @@ import { MapExtent } from '../map/mapExtent';
 import SearchService from '../../utils/searchService';
 import { IFormInput, IOptionType, IParameter } from '../../types';
 import { AdditionalParameterFields } from './additionalParameterFields';
-import ParameterGroup from './parameterGroup';
+import { ParameterGroup } from './parameterGroup';
 import { DropdownButton } from './dropdownButton';
 import { IMapSettings } from '../browser';
 
 export interface IFormComponentsProps {
   handleShowFeature: any;
-  saveFormValues: (formValue: IFormInput) => void;
-  handleGenerateQuery: any;
+  form: UseFormReturn<IFormInput, any, IFormInput>;
+  handleGenerateQuery: (params: IParameter[]) => Promise<void>;
   ensureNotebookIsOpen: () => Promise<boolean>;
   mapSettings?: IMapSettings;
   fetchProducts: (
-    providerValue: string | null,
+    providerValue: string | null | undefined,
     inputValue?: string
   ) => Promise<IOptionTypeBase[]>;
   fetchProviders: (
-    productTypeValue: string | null,
+    productTypeValue: string | null | undefined,
     inputValue?: string
   ) => Promise<IOptionTypeBase[]>;
   fetchProvidersLoading: boolean;
@@ -52,7 +52,7 @@ export interface IOptionTypeBase {
 
 export const FormComponent: FC<IFormComponentsProps> = ({
   handleShowFeature,
-  saveFormValues,
+  form,
   handleGenerateQuery,
   ensureNotebookIsOpen,
   mapSettings,
@@ -63,53 +63,28 @@ export const FormComponent: FC<IFormComponentsProps> = ({
 }) => {
   const [productTypes, setProductTypes] = useState<IOptionTypeBase[]>();
   const [providers, setProviders] = useState<IOptionTypeBase[]>();
-  const defaultStartDate: Date | undefined = undefined;
-  const defaultEndDate: Date | undefined = undefined;
   const [startDate, setStartDate] = useState(undefined);
   const [endDate, setEndDate] = useState(undefined);
   const [isLoadingSearch, setIsLoadingSearch] = useState(false);
   const [openModal, setOpenModal] = useState(true);
-  const [providerValue, setProviderValue] = useState(null);
-  const [productTypeValue, setProductTypeValue] = useState<string>('');
   const [params, setParams] = useState<IParameter[]>([]);
   const [loading, setLoading] = useState(false);
   const [additionalParameters, setAdditionalParameters] =
     useState<boolean>(true);
   const [optionalParams, setOptionalParams] = useState<IOptionType[]>([]);
 
-  const formInput = useForm<IFormInput>({
-    defaultValues: {
-      startDate: defaultStartDate,
-      endDate: defaultEndDate
-    }
-  });
+  const formValues = useWatch({ control: form.control });
 
-  const {
-    control,
-    handleSubmit,
-    register,
-    reset,
-    resetField,
-    getValues,
-    setValue
-  } = formInput;
-
-  const formValues = getValues();
+  const { provider: providerValue, productType: productTypeValue } = formValues;
 
   useEffect(() => {
-    const fetchData = async () => {
-      const productList = await fetchProducts(providerValue);
-      setProductTypes(productList);
-    };
-    fetchData();
+    const fetchData = async () => await fetchProducts(providerValue);
+    fetchData().then(list => setProductTypes(list));
   }, [providerValue]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const providerList = await fetchProviders(productTypeValue);
-      setProviders(providerList);
-    };
-    fetchData();
+    const fetchData = async () => await fetchProviders(productTypeValue);
+    fetchData().then(list => setProviders(list));
   }, [productTypeValue]);
 
   const onSubmit: SubmitHandler<IFormInput> = async data => {
@@ -118,7 +93,6 @@ export const FormComponent: FC<IFormComponentsProps> = ({
       return;
     }
 
-    saveFormValues(data);
     if (!openModal) {
       handleGenerateQuery(params);
     }
@@ -150,29 +124,32 @@ export const FormComponent: FC<IFormComponentsProps> = ({
     let queryables;
 
     setLoading(true);
-
-    // Isolate the fetch queryables call and handle errors specifically for it
-    try {
-      queryables = await fetchQueryables(
-        providerValue,
-        productTypeValue,
-        query_params
-      );
-    } catch (error) {
-      if (error instanceof ServerConnection.ResponseError) {
-        showErrorMessage('Bad response from server:', error);
-      } else {
-        console.error('Error fetching queryables:', error);
+    if (providerValue && productTypeValue) {
+      // Isolate the fetch queryables call and handle errors specifically for it
+      try {
+        queryables = await fetchQueryables(
+          providerValue,
+          productTypeValue,
+          query_params
+        );
+      } catch (error) {
+        if (error instanceof ServerConnection.ResponseError) {
+          showErrorMessage('Bad response from server:', error);
+        } else {
+          console.error('Error fetching queryables:', error);
+        }
+        return [];
       }
-      return [];
+      setParams(queryables.properties);
+
+      setAdditionalParameters(queryables.additionalProperties);
+
+      setLoading(false);
+
+      return queryables.properties;
+    } else {
+      throw new Error('No parameters found');
     }
-    setParams(queryables.properties);
-
-    setAdditionalParameters(queryables.additionalProperties);
-
-    setLoading(false);
-
-    return queryables.properties;
   };
 
   useEffect(() => {
@@ -190,7 +167,7 @@ export const FormComponent: FC<IFormComponentsProps> = ({
             {}
           );
 
-          reset({
+          form.reset({
             ...defaultValues,
             geometry: formValues.geometry,
             provider: formValues.provider,
@@ -199,7 +176,7 @@ export const FormComponent: FC<IFormComponentsProps> = ({
           });
 
           const optionals = params
-            .filter(param => param.mandatory === false)
+            .filter(param => !param.mandatory)
             .map(param => ({
               value: param.key,
               label: param.value.title ?? param.key
@@ -237,7 +214,7 @@ export const FormComponent: FC<IFormComponentsProps> = ({
       setSelectedOptions(
         selectedOptions.filter(option => option !== param.value)
       );
-      resetField(param.value);
+      form.resetField(param.value);
     } else {
       setSelectedOptions([...selectedOptions, param.value]);
     }
@@ -253,8 +230,18 @@ export const FormComponent: FC<IFormComponentsProps> = ({
     <>
       {params.some(param => param.mandatory) || selectedOptions.length > 0 ? (
         <>
-          <ParameterGroup {...{ params, setParams }} mandatory />
-          <ParameterGroup {...{ params, setParams, selectedOptions }} />
+          <ParameterGroup
+            form={form}
+            params={params}
+            setParams={setParams}
+            mandatory
+          />
+          <ParameterGroup
+            form={form}
+            params={params}
+            setParams={setParams}
+            selectedOptions={selectedOptions}
+          />
         </>
       ) : (
         <div style={{ margin: '10px 0' }}>
@@ -266,269 +253,275 @@ export const FormComponent: FC<IFormComponentsProps> = ({
 
   return (
     <div className="jp-EodagWidget-wrapper">
-      <FormProvider {...formInput}>
-        <form onSubmit={handleSubmit(onSubmit)} className="jp-EodagWidget-form">
-          {mapSettings && (
-            <div className="jp-EodagWidget-map">
-              <Controller
-                name="geometry"
-                control={control}
-                rules={{ required: false }}
-                render={({ field: { onChange, value } }) => (
-                  <MapExtent
-                    geometry={value}
-                    onChange={onChange}
-                    mapSettings={mapSettings}
-                  />
-                )}
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="jp-EodagWidget-form"
+      >
+        {mapSettings && (
+          <div className="jp-EodagWidget-map">
+            <Controller
+              name="geometry"
+              control={form.control}
+              rules={{ required: false }}
+              render={({ field: { onChange, value } }) => (
+                <MapExtent
+                  geometry={value}
+                  onChange={onChange}
+                  mapSettings={mapSettings}
+                />
+              )}
+            />
+          </div>
+        )}
+        <div className="jp-EodagWidget-field">
+          <Controller
+            name="provider"
+            control={form.control}
+            render={({ field: { value } }) => (
+              <Autocomplete
+                label="Provider"
+                placeholder="Any"
+                suggestions={providers ? providers : []}
+                value={value ?? null}
+                disabled={fetchProvidersLoading}
+                loadSuggestions={(inputValue: string) =>
+                  fetchProviders(null, inputValue)
+                }
+                handleChange={(e: IOptionTypeBase | null) => {
+                  const newValue = e === null ? null : e.value;
+                  form.setValue('provider', newValue, {
+                    shouldValidate: true
+                  });
+                }}
+              />
+            )}
+          />
+          <Controller
+            name="productType"
+            control={form.control}
+            rules={{ required: true }}
+            render={({ field: { value } }) => (
+              <Autocomplete
+                label="Product Type"
+                suggestions={productTypes ? productTypes : []}
+                placeholder="S2_..."
+                value={value ?? null}
+                disabled={fetchProductsLoading}
+                loadSuggestions={(inputValue: string) =>
+                  fetchProducts(providerValue, inputValue)
+                }
+                handleChange={(e: IOptionTypeBase | null) => {
+                  if (e === null) {
+                    setParams([]);
+                    setOptionalParams([]);
+                    form.reset({
+                      geometry: formValues.geometry,
+                      provider: formValues.provider,
+                      additionalParameters: formValues.additionalParameters
+                    });
+                    return form.setValue('productType', null, {
+                      shouldValidate: true
+                    });
+                  }
+                  form.setValue('productType', e.value, {
+                    shouldValidate: true
+                  });
+
+                  if (e.value !== productTypeValue) {
+                    setSelectedOptions([]);
+                    form.setValue(
+                      'additionalParameters',
+                      [{ name: '', value: '' }],
+                      { shouldValidate: true }
+                    );
+                  }
+                }}
+              />
+            )}
+          />
+          <div className="jp-EodagWidget-form-date-picker">
+            <label htmlFor="startDate" className="jp-EodagWidget-input-name">
+              Date range
+            </label>
+            <div className="jp-EodagWidget-form-date-picker-wrapper">
+              <div className="jp-EodagWidget-input-wrapper">
+                <CarbonCalendarAddAlt height="22" width="22" />
+                <Controller
+                  name="startDate"
+                  control={form.control}
+                  rules={{ required: false }}
+                  render={({ field: { onChange, onBlur, value } }) => (
+                    <DatePicker
+                      className="jp-EodagWidget-input jp-EodagWidget-input-with-svg"
+                      selectsStart
+                      startDate={startDate}
+                      endDate={endDate}
+                      maxDate={endDate}
+                      onChange={(d: any) => {
+                        setStartDate(d);
+                        onChange(d);
+                      }}
+                      onBlur={onBlur}
+                      selected={value}
+                      dateFormat={'dd/MM/yyyy'}
+                      showMonthDropdown
+                      showYearDropdown
+                      dropdownMode="select"
+                      isClearable
+                      placeholderText="Start"
+                    />
+                  )}
+                />
+              </div>
+
+              <div className="jp-EodagWidget-input-wrapper">
+                <CarbonCalendarAddAlt height="22" width="22" />
+                <Controller
+                  name="endDate"
+                  control={form.control}
+                  rules={{ required: false }}
+                  render={({ field: { onChange, onBlur, value } }) => (
+                    <DatePicker
+                      className="jp-EodagWidget-input jp-EodagWidget-input-with-svg"
+                      selectsStart
+                      startDate={startDate}
+                      endDate={endDate}
+                      onChange={(d: any) => {
+                        setEndDate(d);
+                        onChange(d);
+                      }}
+                      onBlur={onBlur}
+                      selected={value}
+                      dateFormat={'dd/MM/yyyy'}
+                      showMonthDropdown
+                      showYearDropdown
+                      dropdownMode="select"
+                      isClearable
+                      placeholderText="End"
+                    />
+                  )}
+                />
+              </div>
+            </div>
+          </div>
+
+          <div style={{ marginTop: '10px' }}>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginLeft: '10px',
+                marginRight: '10px'
+              }}
+            >
+              <p className="jp-EodagWidget-section-title">Parameters</p>
+              <DropdownButton
+                options={optionalParams}
+                onSelect={handleSelectDropdown}
+                selectedOptions={selectedOptions}
+                disabled={!optionalParams.length}
               />
             </div>
-          )}
-          <div className="jp-EodagWidget-field">
-            <Controller
-              name="provider"
-              control={control}
-              render={({ field: { onChange, value } }) => (
-                <Autocomplete
-                  label="Provider"
-                  placeholder="Any"
-                  suggestions={providers ? providers : []}
-                  value={value ?? null}
-                  disabled={fetchProvidersLoading}
-                  loadSuggestions={(inputValue: string) =>
-                    fetchProviders(null, inputValue)
-                  }
-                  handleChange={(e: IOptionTypeBase | null) => {
-                    onChange(e === null ? null : e.value);
-                    setProviderValue(e === null ? null : e.value);
-                  }}
-                />
-              )}
-            />
-            <Controller
-              name="productType"
-              control={control}
-              rules={{ required: true }}
-              render={({ field: { onChange, value } }) => (
-                <Autocomplete
-                  label="Product Type"
-                  suggestions={productTypes ? productTypes : []}
-                  placeholder="S2_..."
-                  value={value ?? null}
-                  disabled={fetchProductsLoading}
-                  loadSuggestions={(inputValue: string) =>
-                    fetchProducts(providerValue, inputValue)
-                  }
-                  handleChange={(e: IOptionTypeBase | null) => {
-                    if (e === null) {
-                      setProductTypeValue('');
-                      setParams([]);
-                      setOptionalParams([]);
-                      reset({
-                        geometry: formValues.geometry,
-                        provider: formValues.provider,
-                        additionalParameters: formValues.additionalParameters
-                      });
-                      return onChange(null);
-                    }
-                    onChange(e.value);
-
-                    if (e.value !== productTypeValue) {
-                      setSelectedOptions([]);
-                      setValue('additionalParameters', [
-                        { name: '', value: '' }
-                      ]);
-                    }
-
-                    setProductTypeValue(e.value);
-                  }}
-                />
-              )}
-            />
-            <div className="jp-EodagWidget-form-date-picker">
-              <label htmlFor="startDate" className="jp-EodagWidget-input-name">
-                Date range
-              </label>
-              <div className="jp-EodagWidget-form-date-picker-wrapper">
-                <div className="jp-EodagWidget-input-wrapper">
-                  <CarbonCalendarAddAlt height="22" width="22" />
-                  <Controller
-                    name="startDate"
-                    control={control}
-                    rules={{ required: false }}
-                    render={({ field: { onChange, onBlur, value } }) => (
-                      <DatePicker
-                        className="jp-EodagWidget-input jp-EodagWidget-input-with-svg"
-                        selectsStart
-                        startDate={startDate}
-                        endDate={endDate}
-                        maxDate={endDate}
-                        onChange={(d: any) => {
-                          setStartDate(d);
-                          onChange(d);
-                        }}
-                        onBlur={onBlur}
-                        selected={value}
-                        dateFormat={'dd/MM/yyyy'}
-                        showMonthDropdown
-                        showYearDropdown
-                        dropdownMode="select"
-                        isClearable
-                        placeholderText="Start"
-                      />
-                    )}
-                  />
-                </div>
-
-                <div className="jp-EodagWidget-input-wrapper">
-                  <CarbonCalendarAddAlt height="22" width="22" />
-                  <Controller
-                    name="endDate"
-                    control={control}
-                    rules={{ required: false }}
-                    render={({ field: { onChange, onBlur, value } }) => (
-                      <DatePicker
-                        className="jp-EodagWidget-input jp-EodagWidget-input-with-svg"
-                        selectsStart
-                        startDate={startDate}
-                        endDate={endDate}
-                        onChange={(d: any) => {
-                          setEndDate(d);
-                          onChange(d);
-                        }}
-                        onBlur={onBlur}
-                        selected={value}
-                        dateFormat={'dd/MM/yyyy'}
-                        showMonthDropdown
-                        showYearDropdown
-                        dropdownMode="select"
-                        isClearable
-                        placeholderText="End"
-                      />
-                    )}
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div style={{ marginTop: '10px' }}>
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  marginLeft: '10px',
-                  marginRight: '10px'
-                }}
-              >
-                <p className="jp-EodagWidget-section-title">Parameters</p>
-                <DropdownButton
-                  options={optionalParams}
-                  onSelect={handleSelectDropdown}
-                  selectedOptions={selectedOptions}
-                  disabled={!optionalParams.length}
-                />
-              </div>
-              <div className="jp-EodagWidget-field">
-                {!params || !params.length
-                  ? renderNoParamsMessage()
-                  : renderParameterGroups()}
-              </div>
-            </div>
-
-            <AdditionalParameterFields
-              {...{
-                control,
-                register,
-                resetField,
-                productType: productTypeValue,
-                additionalParameters
-              }}
-            />
-          </div>
-          <div className="jp-EodagWidget-form-buttons">
-            <div className="jp-EodagWidget-form-buttons-wrapper">
-              {isLoadingSearch ? (
-                <div className="jp-EodagWidget-loader">
-                  <p>Generating</p>
-                  <ThreeDots
-                    height="35"
-                    width="35"
-                    radius="9"
-                    color="#1976d2"
-                    ariaLabel="three-dots-loading"
-                    wrapperStyle={{}}
-                    visible
-                  />
-                </div>
-              ) : (
-                <>
-                  <div className="jp-EodagWidget-buttons">
-                    <button
-                      type="submit"
-                      color="primary"
-                      className={
-                        !productTypeValue
-                          ? 'jp-EodagWidget-buttons-button jp-EodagWidget-buttons-button__disabled'
-                          : 'jp-EodagWidget-buttons-button'
-                      }
-                      disabled={isLoadingSearch}
-                      onClick={() => setOpenModal(true)}
-                      data-tooltip-id="btn-preview-results"
-                      data-tooltip-content="You need to select a product type to preview the results"
-                      data-tooltip-variant={'dark'}
-                      data-tooltip-place={'top'}
-                    >
-                      <CodiconOpenPreview width="21" height="21" />
-                      <p>
-                        Preview
-                        <br />
-                        Results
-                      </p>
-                      {!productTypeValue && (
-                        <Tooltip
-                          id="btn-preview-results"
-                          className="jp-Eodag-tooltip"
-                        />
-                      )}
-                    </button>
-                  </div>
-                  <div className="jp-EodagWidget-buttons">
-                    <button
-                      type="submit"
-                      color="primary"
-                      className={
-                        !productTypeValue
-                          ? 'jp-EodagWidget-buttons-button jp-EodagWidget-buttons-button__disabled'
-                          : 'jp-EodagWidget-buttons-button'
-                      }
-                      disabled={isLoadingSearch}
-                      onClick={() => setOpenModal(false)}
-                      data-tooltip-id="btn-generate-value"
-                      data-tooltip-content="You need to select a product type to generate the code"
-                      data-tooltip-variant={'dark'}
-                      data-tooltip-place={'top'}
-                    >
-                      <PhFileCode height="21" width="21" />
-                      <p>
-                        Generate
-                        <br />
-                        Code
-                      </p>
-                      {!productTypeValue && (
-                        <Tooltip
-                          id="btn-generate-value"
-                          className="jp-Eodag-tooltip"
-                        />
-                      )}
-                    </button>
-                  </div>
-                </>
-              )}
+            <div className="jp-EodagWidget-field">
+              {!params || !params.length
+                ? renderNoParamsMessage()
+                : renderParameterGroups()}
             </div>
           </div>
-        </form>
-      </FormProvider>
+
+          <AdditionalParameterFields
+            {...{
+              control: form.control,
+              register: form.register,
+              resetField: form.resetField,
+              productType: productTypeValue,
+              additionalParameters
+            }}
+          />
+        </div>
+        <div className="jp-EodagWidget-form-buttons">
+          <div className="jp-EodagWidget-form-buttons-wrapper">
+            {isLoadingSearch ? (
+              <div className="jp-EodagWidget-loader">
+                <p>Generating</p>
+                <ThreeDots
+                  height="35"
+                  width="35"
+                  radius="9"
+                  color="#1976d2"
+                  ariaLabel="three-dots-loading"
+                  wrapperStyle={{}}
+                  visible
+                />
+              </div>
+            ) : (
+              <>
+                <div className="jp-EodagWidget-buttons">
+                  <button
+                    type="submit"
+                    color="primary"
+                    className={
+                      !productTypeValue
+                        ? 'jp-EodagWidget-buttons-button jp-EodagWidget-buttons-button__disabled'
+                        : 'jp-EodagWidget-buttons-button'
+                    }
+                    disabled={isLoadingSearch}
+                    onClick={() => setOpenModal(true)}
+                    data-tooltip-id="btn-preview-results"
+                    data-tooltip-content="You need to select a product type to preview the results"
+                    data-tooltip-variant={'dark'}
+                    data-tooltip-place={'top'}
+                  >
+                    <CodiconOpenPreview width="21" height="21" />
+                    <p>
+                      Preview
+                      <br />
+                      Results
+                    </p>
+                    {!productTypeValue && (
+                      <Tooltip
+                        id="btn-preview-results"
+                        className="jp-Eodag-tooltip"
+                      />
+                    )}
+                  </button>
+                </div>
+                <div className="jp-EodagWidget-buttons">
+                  <button
+                    type="submit"
+                    color="primary"
+                    className={
+                      !productTypeValue
+                        ? 'jp-EodagWidget-buttons-button jp-EodagWidget-buttons-button__disabled'
+                        : 'jp-EodagWidget-buttons-button'
+                    }
+                    disabled={isLoadingSearch}
+                    onClick={() => setOpenModal(false)}
+                    data-tooltip-id="btn-generate-value"
+                    data-tooltip-content="You need to select a product type to generate the code"
+                    data-tooltip-variant={'dark'}
+                    data-tooltip-place={'top'}
+                  >
+                    <PhFileCode height="21" width="21" />
+                    <p>
+                      Generate
+                      <br />
+                      Code
+                    </p>
+                    {!productTypeValue && (
+                      <Tooltip
+                        id="btn-generate-value"
+                        className="jp-Eodag-tooltip"
+                      />
+                    )}
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      </form>
     </div>
   );
 };

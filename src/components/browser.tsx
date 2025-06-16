@@ -7,7 +7,7 @@ import { INotebookTracker, NotebookPanel } from '@jupyterlab/notebook';
 import { isNull, isUndefined } from 'lodash';
 import { Modal } from './modal/modal';
 import { codeGenerator } from '../utils/codeGenerator';
-import { IFeatures, IFormInput, IGeometry, IParameter } from '../types';
+import { IFeatures, IFormInput, IParameter } from '../types';
 import React, { useState } from 'react';
 import { Tooltip } from 'react-tooltip';
 import { CommandRegistry } from '@lumino/commands';
@@ -21,6 +21,7 @@ import { useEodagVersions } from '../hooks/useEodagVersions';
 import { useNotebookInjection } from '../hooks/useNotebookInjection';
 import { useEodagSettings } from '../hooks/useEodagSettings';
 import { useUserSettings } from '../hooks/useUserSettings';
+import { useProductsForm } from '../hooks/useProductsForm';
 
 export interface IEodagBrowserProps {
   tracker: INotebookTracker;
@@ -38,7 +39,6 @@ export const EodagBrowser: React.FC<IEodagBrowserProps> = ({
   commands
 }) => {
   const [openModal, setOpenModal] = useState(false);
-  const [formValues, setFormValues] = useState<IFormInput | undefined>();
   const [features, setFeatures] = useState<IFeatures | null>(null);
   const { fetchProviders, fetchProvidersLoading } = useFetchProviders();
   const { fetchProducts, fetchProductLoading } = useFetchProducts();
@@ -46,10 +46,13 @@ export const EodagBrowser: React.FC<IEodagBrowserProps> = ({
   const { getEodagSettings } = useEodagSettings();
   const { eodagLabExtensionVersion, eodagVersion, mapSettings } =
     useEodagVersions();
-  const { isRetrievingMoreFeature, handleRetrieveMoreFeature } =
-    useVirtualizedList({ features, formValues, setFeatures });
   const { handleOpenEodagConfig, reloadUserSettings, isUserSettingsLoading } =
     useUserSettings();
+
+  const { formValues, form } = useProductsForm();
+
+  const { isRetrievingMoreFeature, handleRetrieveMoreFeature } =
+    useVirtualizedList({ features, formValues, setFeatures });
 
   const ensureNotebookIsOpen = async (): Promise<boolean> => {
     const openNewNotebook = async (): Promise<NotebookPanel> => {
@@ -115,17 +118,16 @@ export const EodagBrowser: React.FC<IEodagBrowserProps> = ({
     const replaceCode = await getEodagSettings();
     let input: IFormInput;
     if (isUndefined(formValues)) {
-      const geom: IGeometry = {
-        type: 'Point',
-        coordinates: [0, 0]
-      };
       input = {
         startDate: new Date(),
         endDate: new Date(),
-        productType: '',
-        provider: '',
+        productType: null,
+        provider: null,
         cloud: 100,
-        geometry: geom,
+        geometry: {
+          type: 'Point',
+          coordinates: [0, 0]
+        },
         id: idValue
       };
     } else {
@@ -136,7 +138,7 @@ export const EodagBrowser: React.FC<IEodagBrowserProps> = ({
           id: idValue
         };
       } else {
-        input = formValues;
+        input = formValues as IFormInput;
       }
     }
     insertCode(notebook, model, codeGenerator(input, replaceCode), replaceCode);
@@ -146,7 +148,7 @@ export const EodagBrowser: React.FC<IEodagBrowserProps> = ({
     <div className="jp-EodagWidget-products-search">
       <div className="jp-EodagWidget-header-wrapper">
         <header className="jp-EodagWidget-header">
-          Products search by EODAG
+          {'Products search by EODAG'}
         </header>
         <div className="jp-EodagWidget-settings-wrapper">
           <button
@@ -177,9 +179,9 @@ export const EodagBrowser: React.FC<IEodagBrowserProps> = ({
         </div>
       </div>
       <FormComponent
+        form={form}
         ensureNotebookIsOpen={ensureNotebookIsOpen}
         handleShowFeature={handleShowFeature}
-        saveFormValues={(formValues: IFormInput) => setFormValues(formValues)}
         handleGenerateQuery={handleGenerateQuery}
         mapSettings={mapSettings}
         fetchProducts={fetchProducts}

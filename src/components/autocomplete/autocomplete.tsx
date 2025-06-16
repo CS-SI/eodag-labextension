@@ -13,7 +13,7 @@ import { LoadingState } from '../loadingState/loadingState';
 
 interface IAutocompleteProps {
   suggestions: IOptionTypeBase[];
-  value: string;
+  value: string | null;
   disabled: boolean;
   handleChange: (option: IOptionTypeBase | null) => void;
   label: string;

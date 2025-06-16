@@ -76,7 +76,7 @@
         "react": "^18.0.2",
         "react-datepicker": "4.8.0",
         "react-dom": "^18.0.2",
-        "react-hook-form": "^7.39.3",
+        "react-hook-form": "^7.53.1",
         "react-leaflet": "4.0.0",
         "react-leaflet-draw": "0.20.0",
         "react-loader-spinner": "^6.1.6",

@@ -6,8 +6,8 @@ import { IFormInput } from '../../types';
 import { isUndefined } from 'lodash';
 
 export interface IAdditionalParameterFieldsProps
-  extends Partial<UseFormReturn<IFormInput>> {
-  productType: string;
+  extends Partial<UseFormReturn<IFormInput, any, IFormInput>> {
+  productType: string | null | undefined;
   additionalParameters: boolean;
 }
 

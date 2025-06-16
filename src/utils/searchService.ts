@@ -41,7 +41,7 @@ class SearchService {
     if (isUndefined(formValues)) {
       throw new Error('Input undefined');
     }
-    const url = this.getSearchURL(formValues.productType);
+    const url = this.getSearchURL(formValues.productType ?? '');
     let parameters: ISearchParameters = {
       dtstart: formValues.startDate
         ? formatDate(formValues.startDate)

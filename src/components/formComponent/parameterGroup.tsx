@@ -1,26 +1,24 @@
 import React, { ChangeEvent } from 'react';
 import Select, { MultiValue } from 'react-select';
-import { Controller, useFormContext } from 'react-hook-form';
-import { IParameter } from '../../types';
+import { Controller, UseFormReturn } from 'react-hook-form';
+import { IFormInput, IParameter } from '../../types';
 
 interface IParameterGroupProps {
+  form: UseFormReturn<IFormInput, any, IFormInput>;
   params: IParameter[];
   setParams: (params: IParameter[]) => void;
   mandatory?: boolean;
   selectedOptions?: string[];
 }
 
-const ParameterGroup: React.FC<IParameterGroupProps> = ({
+export const ParameterGroup: React.FC<IParameterGroupProps> = ({
+  form,
   params,
   setParams,
   mandatory = false,
   selectedOptions = []
 }) => {
-  const {
-    formState: { errors },
-    setValue,
-    control
-  } = useFormContext();
+  const errors = form.formState.errors;
 
   const handleSelectChange = (
     key: string,
@@ -102,7 +100,7 @@ const ParameterGroup: React.FC<IParameterGroupProps> = ({
     return (
       <Controller
         name={key}
-        control={control}
+        control={form.control}
         rules={{ required: mandatory && enumList.length > 0 }}
         render={({ field: { onChange } }) => (
           <Select
@@ -136,7 +134,7 @@ const ParameterGroup: React.FC<IParameterGroupProps> = ({
     return (
       <Controller
         name={key}
-        control={control}
+        control={form.control}
         rules={{ required: mandatory }}
         render={({ field: { onChange } }) => (
           <input
@@ -168,7 +166,7 @@ const ParameterGroup: React.FC<IParameterGroupProps> = ({
     const { key, value, mandatory } = param;
     const { selected = defaultCloudCover } = value;
 
-    setValue(key, selected);
+    form.setValue(key, selected, { shouldValidate: true });
 
     return (
       <label className="jp-EodagWidget-input-name">
@@ -176,7 +174,7 @@ const ParameterGroup: React.FC<IParameterGroupProps> = ({
         <div className="jp-EodagWidget-slider">
           <Controller
             name={key}
-            control={control}
+            control={form.control}
             rules={{ required: mandatory }}
             render={({ field: { onChange, value } }) => (
               <input
@@ -257,5 +255,3 @@ const ParameterGroup: React.FC<IParameterGroupProps> = ({
     </>
   );
 };
-
-export default ParameterGroup;

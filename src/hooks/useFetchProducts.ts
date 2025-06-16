@@ -12,7 +12,7 @@ export const useFetchProducts = () => {
 
   const fetchProducts = useCallback(
     async (
-      providerValue: string | null,
+      providerValue: string | null | undefined,
       inputValue?: string
     ): Promise<IOptionTypeBase[]> => {
       setFetchProductLoading(true);
