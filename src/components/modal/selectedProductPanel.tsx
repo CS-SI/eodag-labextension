@@ -117,7 +117,11 @@ export const SelectedProductPanel: React.FC<ISelectedProductPanelProps> = ({
               handleGenerateQuery([
                 {
                   key: 'id',
-                  value: { id: selectedProduct.id },
+                  value: {
+                    id: selectedProduct.id.includes('ORDERABLE')
+                      ? undefined
+                      : selectedProduct.id
+                  },
                   mandatory: false
                 }
               ])

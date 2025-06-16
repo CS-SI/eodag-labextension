@@ -129,6 +129,7 @@ search_results = dag.search(`;
     code += '\n' + `${tab}}`; // Close dictionary
   }
   code += '\n)';
+  code += '\nsearch_results';
 
   return code;
 };
