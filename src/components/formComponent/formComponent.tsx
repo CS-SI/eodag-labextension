@@ -32,7 +32,7 @@ export interface IFormComponentsProps {
   handleShowFeature: any;
   saveFormValues: (formValue: IFormInput) => void;
   handleGenerateQuery: any;
-  isNotebookCreated: any;
+  ensureNotebookIsOpen: () => Promise<boolean>;
   mapSettings?: IMapSettings;
   fetchProducts: (
     providerValue: string | null,
@@ -54,7 +54,7 @@ export const FormComponent: FC<IFormComponentsProps> = ({
   handleShowFeature,
   saveFormValues,
   handleGenerateQuery,
-  isNotebookCreated,
+  ensureNotebookIsOpen,
   mapSettings,
   fetchProducts,
   fetchProviders,
@@ -87,11 +87,9 @@ export const FormComponent: FC<IFormComponentsProps> = ({
   const {
     control,
     handleSubmit,
-    // clearErrors,
     register,
     reset,
     resetField,
-    // formState: { errors },
     getValues,
     setValue
   } = formInput;
@@ -114,38 +112,35 @@ export const FormComponent: FC<IFormComponentsProps> = ({
     fetchData();
   }, [productTypeValue]);
 
-  const onSubmit: SubmitHandler<IFormInput> = data => {
-    if (!isNotebookCreated()) {
+  const onSubmit: SubmitHandler<IFormInput> = async data => {
+    const notebookReady = await ensureNotebookIsOpen();
+    if (!notebookReady) {
       return;
     }
 
     saveFormValues(data);
-
     if (!openModal) {
       handleGenerateQuery(params);
     }
 
     if (openModal) {
       setIsLoadingSearch(true);
-      SearchService.search(1, data)
-        .then(featureCollection => {
-          if (featureCollection?.features?.length === 0) {
-            throw new Error('No result found');
-          } else {
-            return featureCollection;
-          }
-        })
-        .then(featureCollection => {
-          setIsLoadingSearch(false);
-          handleShowFeature(featureCollection, openModal);
-          if (!openModal) {
-            handleGenerateQuery(params);
-          }
-        })
-        .catch(error => {
-          showErrorMessage('Bad response from server:', error);
-          setIsLoadingSearch(false);
-        });
+      try {
+        const featureCollection = await SearchService.search(1, data);
+        if (!featureCollection?.features?.length) {
+          throw new Error('No result found');
+        }
+
+        setIsLoadingSearch(false);
+        handleShowFeature(featureCollection, openModal);
+
+        if (!openModal) {
+          handleGenerateQuery(params);
+        }
+      } catch (error) {
+        showErrorMessage('Bad response from server:', error as string);
+        setIsLoadingSearch(false);
+      }
     }
   };
 
@@ -463,7 +458,7 @@ export const FormComponent: FC<IFormComponentsProps> = ({
                     color="#1976d2"
                     ariaLabel="three-dots-loading"
                     wrapperStyle={{}}
-                    visible={true}
+                    visible
                   />
                 </div>
               ) : (
