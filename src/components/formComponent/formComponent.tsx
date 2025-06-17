@@ -428,14 +428,14 @@ export const FormComponent: FC<IFormComponentsProps> = ({
           </div>
 
           {selectedOptions.includes('custom') && (
-              <AdditionalParameterFields
-                {...{
-                  control: form.control,
-                  register: form.register,
-                  resetField: form.resetField,
-                  productType: productTypeValue,
-                  additionalParameters
-                }}
+            <AdditionalParameterFields
+              {...{
+                control: form.control,
+                register: form.register,
+                resetField: form.resetField,
+                productType: productTypeValue,
+                additionalParameters
+              }}
             />
           )}
         </div>

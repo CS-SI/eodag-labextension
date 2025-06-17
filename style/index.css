@@ -4,12 +4,12 @@
 /* Custom components */
 @import url('modal.css');
 @import url('button.css');
-@import url('form_field.css');
-@import url('alert.css');
 @import url('menu_dropdown.css');
 @import url('result_list.css');
 @import url('customErrorDialog.css');
 @import url('loader.css');
+@import url('form_field.css');
+@import url('alert.css');
 
 :root {
   --light-gray: #c1c1c1;
