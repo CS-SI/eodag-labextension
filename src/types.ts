@@ -29,16 +29,6 @@ export interface IGeometry {
   coordinates: number[];
 }
 
-export interface IFeatureProperty {
-  key: string;
-  value: any;
-}
-
-export interface IFeatureProperty {
-  key: string;
-  value: any;
-}
-
 export type MapSettings = { lat: number; lon: number; zoom: number };
 
 export interface IQueryables {

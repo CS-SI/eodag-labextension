@@ -10,7 +10,6 @@ node_modules/
 eodag_labextension/labextension
 # Version file is handled by hatchling
 eodag_labextension/_version.py
-eodag-config/
 # Created by https://www.gitignore.io/api/python
 # Edit at https://www.gitignore.io/?templates=python
 
