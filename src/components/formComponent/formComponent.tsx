@@ -413,7 +413,7 @@ export const FormComponent: FC<IFormComponentsProps> = ({
                 options={optionalParams}
                 onSelect={handleSelectDropdown}
                 selectedOptions={selectedOptions}
-                disabled={!optionalParams.length}
+                disabled={!optionalParams.length || loading}
               />
             </div>
             <div className="jp-EodagWidget-field">
