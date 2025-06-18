@@ -30,19 +30,13 @@ export const useEodagVersions = () => {
         }
 
         if (!res.ok) {
-          const customError: ICustomError = Object.assign(
-            new Error(
+          throw {
+            name: '',
+            title:
               data?.error ||
-                'Erreur lors de la récupération des informations EODAG.'
-            ),
-            {
-              error:
-                data?.error ||
-                'Erreur lors de la récupération des informations EODAG.',
-              details: data?.details || ''
-            }
-          );
-          throw customError;
+              'Erreur lors de la récupération des informations EODAG.',
+            details: data?.details || ''
+          };
         }
 
         const { packages, map } = data;
@@ -62,15 +56,12 @@ export const useEodagVersions = () => {
           });
         }
       } catch (error: any) {
-        const customError: ICustomError = Object.assign(
-          new Error(error?.message || 'Erreur inconnue'),
-          {
-            error:
-              error?.error ||
-              'Erreur lors de la récupération des informations.',
-            details: error?.details || ''
-          }
-        );
+        const customError: ICustomError = {
+          name: '',
+          title:
+            error?.error || 'Erreur lors de la récupération des informations.',
+          details: error?.details || ''
+        };
         await showCustomErrorDialog(customError);
 
         setEodagVersion('Error fetching version');

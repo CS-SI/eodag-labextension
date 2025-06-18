@@ -101,7 +101,10 @@ class SearchService {
     const response = await fetch(request);
     if (!response.ok) {
       const msg = await response.json();
-      throw new Error(`${msg.error}`);
+      throw {
+        error: msg.error ?? 'Unknown error',
+        details: msg.details ?? ''
+      };
     }
     return await response.json();
   }

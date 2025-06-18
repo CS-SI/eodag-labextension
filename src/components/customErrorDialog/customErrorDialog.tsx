@@ -19,7 +19,7 @@ const CustomDialogContent: React.FC<ICustomDialogContent> = ({ error }) => {
 
   const onIconButtonClick = async () => {
     const textToCopy = [
-      error.message ?? 'Unknown error',
+      error.title ?? 'Unknown error',
       error.details ?? ''
     ].join('\n\n');
 
@@ -35,7 +35,7 @@ const CustomDialogContent: React.FC<ICustomDialogContent> = ({ error }) => {
   return (
     <div className={'jp-EodagWidget-customErrorMessage'}>
       <div className={'jp-EodagWidget-customErrorMessage-header'}>
-        <h3>{error.message}</h3>
+        <h3>{error.title}</h3>
         <Tooltip
           title={isCopied ? 'Copied ! ' : 'Copy error in clipboard'}
           placement="bottom"
@@ -49,32 +49,37 @@ const CustomDialogContent: React.FC<ICustomDialogContent> = ({ error }) => {
           </IconButton>
         </Tooltip>
       </div>
-      <pre
-        className={`jp-EodagWidget-customErrorMessage-content ${
-          isExpanded ? 'isExpanded' : ''
-        }`}
-      >
-        {!isExpanded && (
-          <div
-            className={
-              'jp-EodagWidget-customErrorMessage-showDetails-container'
-            }
-            role={'button'}
-            onClick={() => setIsExpanded(!isExpanded)}
-          >
-            <ExpandMoreIcon fontSize={'small'} />
-            {'Show details'}
-          </div>
-        )}
-        {error.details}
-      </pre>
+      {error.details && (
+        <pre
+          className={`jp-EodagWidget-customErrorMessage-content ${
+            isExpanded ? 'isExpanded' : ''
+          }`}
+        >
+          {!isExpanded && (
+            <div
+              className={
+                'jp-EodagWidget-customErrorMessage-showDetails-container'
+              }
+              role={'button'}
+              onClick={() => setIsExpanded(!isExpanded)}
+            >
+              <ExpandMoreIcon fontSize={'small'} />
+              {'Show details'}
+            </div>
+          )}
+          {error.details}
+        </pre>
+      )}
     </div>
   );
 };
 
-export const showCustomErrorDialog = async (error: any) => {
+export const showCustomErrorDialog = async (
+  error: ICustomError,
+  title?: string
+) => {
   await showDialog({
-    title: 'EODAG - Labextension error',
+    title: title ?? 'EODAG - Labextension error',
     body: ReactWidget.create(<CustomDialogContent error={error} />),
     buttons: [Dialog.okButton()]
   });

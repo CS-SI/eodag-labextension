@@ -64,7 +64,8 @@ export interface IProduct {
   properties: { [key: string]: any };
 }
 
-export interface ICustomError extends Error {
-  error: string;
+export interface ICustomError {
+  name: string;
+  title: string;
   details: string;
 }

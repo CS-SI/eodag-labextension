@@ -1,10 +1,4 @@
-/**
- * Copyright 2022 CS GROUP - France, http://www.c-s.fr
- * All rights reserved
- */
-
 import { URLExt } from '@jupyterlab/coreutils';
-
 import { ServerConnection } from '@jupyterlab/services';
 import { EODAG_SERVER_ADDRESS } from '../../config/config';
 
@@ -19,11 +13,10 @@ export async function requestAPI<T>(
   endPoint = '',
   init: RequestInit = {}
 ): Promise<T> {
-  // Make request to Jupyter API
   const settings = ServerConnection.makeSettings();
   const requestUrl = URLExt.join(
     settings.baseUrl,
-    EODAG_SERVER_ADDRESS, // API Namespace
+    EODAG_SERVER_ADDRESS,
     endPoint
   );
 
@@ -32,28 +25,40 @@ export async function requestAPI<T>(
     response = await ServerConnection.makeRequest(requestUrl, init, settings);
   } catch (error) {
     if (error instanceof Error) {
-      // Now TypeScript knows `error` is of type `Error`
-      throw new ServerConnection.NetworkError(error as TypeError);
+      throw {
+        name: 'Network Error',
+        message: error.message,
+        details: 'Unable to reach the server.'
+      };
     } else {
-      throw Error('unknown error');
+      throw {
+        name: 'Unknown Error',
+        message: 'An unexpected error occurred during the request.',
+        details: ''
+      };
     }
   }
 
-  let data: any = await response.text();
+  const rawText = await response.text();
+  let data: any = rawText;
 
-  if (data.length > 0) {
+  if (rawText.length > 0) {
     try {
-      data = JSON.parse(data);
+      data = JSON.parse(rawText);
     } catch (error) {
-      console.error('Not a JSON response body.', response);
+      // Invalid JSON: log for devs, but continue using raw text
+      console.error('Invalid JSON response body.', response);
     }
   }
 
   if (!response.ok) {
-    throw new ServerConnection.ResponseError(
-      response,
-      JSON.stringify(data.message || data)
-    );
+    // Construction de l’erreur dans le format attendu
+    throw {
+      name: `API Error (${response.status})`,
+      message:
+        typeof data === 'string' ? data : data?.error || 'Unknown server error',
+      details: data?.details || ''
+    };
   }
 
   return data;

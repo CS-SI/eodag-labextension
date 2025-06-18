@@ -34,14 +34,11 @@ export const fetchData = async <T>({
     }
 
     if (!response.ok) {
-      const customError: ICustomError = Object.assign(
-        new Error(responseBody?.error || 'Bad response from server'),
-        {
-          error: responseBody?.error || 'Bad response from server',
-          details: responseBody?.details || ''
-        }
-      );
-      throw customError;
+      throw {
+        name: '',
+        title: responseBody?.error || 'Bad response from server',
+        details: responseBody?.details || ''
+      };
     }
 
     return onSuccess(responseBody);
