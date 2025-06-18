@@ -44,7 +44,9 @@ export const fetchData = async <T>({
     return onSuccess(responseBody);
   } catch (error: unknown) {
     const typedError = error as ICustomError;
-    await showCustomErrorDialog(typedError);
+    const handler = queryParams.split('?')[0];
+    const title = `EODAG Labextension - ${handler} error`;
+    await showCustomErrorDialog(typedError, title);
     return Promise.reject(typedError);
   }
 };

@@ -72,7 +72,10 @@ export const fetchQueryables = async (
       details: err?.details ?? ''
     };
 
-    await showCustomErrorDialog(formattedError);
+    await showCustomErrorDialog(
+      formattedError,
+      'EODAG Labextension - fetch queryables error'
+    );
     throw formattedError;
   }
 };

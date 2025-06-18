@@ -79,7 +79,7 @@ export const showCustomErrorDialog = async (
   title?: string
 ) => {
   await showDialog({
-    title: title ?? 'EODAG - Labextension error',
+    title: title ?? 'EODAG Labextension - error',
     body: ReactWidget.create(<CustomDialogContent error={error} />),
     buttons: [Dialog.okButton()]
   });

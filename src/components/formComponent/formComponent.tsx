@@ -113,7 +113,7 @@ export const FormComponent: FC<IFormComponentsProps> = ({
       } catch (err: any) {
         await showCustomErrorDialog(
           formatCustomError(err),
-          'Bad response from server:'
+          'EODAG Labextension - search error'
         );
       } finally {
         setIsLoadingSearch(false);

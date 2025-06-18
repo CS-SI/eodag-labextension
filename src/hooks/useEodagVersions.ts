@@ -62,7 +62,10 @@ export const useEodagVersions = () => {
             error?.error || 'Erreur lors de la récupération des informations.',
           details: error?.details || ''
         };
-        await showCustomErrorDialog(customError);
+        await showCustomErrorDialog(
+          customError,
+          'EODAG Labextension - info fetch error'
+        );
 
         setEodagVersion('Error fetching version');
         setEodagLabExtensionVersion('Error fetching version');

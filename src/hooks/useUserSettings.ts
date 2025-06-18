@@ -29,7 +29,10 @@ export const useUserSettings = () => {
         };
       }
     } catch (error) {
-      showCustomErrorDialog(formatCustomError(error), 'EODAG server error');
+      showCustomErrorDialog(
+        formatCustomError(error),
+        'EODAG Labextension - reload error'
+      );
     }
   };
 
