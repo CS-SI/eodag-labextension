@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { Tooltip } from 'react-tooltip';
 import { ResultsList } from '../resultsList/resultsList';
-import { Button } from '@mui/material';
+import { Button } from '../button';
 import { get } from 'lodash';
 import { IParameter, IProduct } from '../../types';
 
@@ -74,9 +74,8 @@ export const ResultsPanel: React.FC<IResultsPanel> = ({
             variant={'contained'}
             className="jp-EodagWidget-apply"
             onClick={() => handleGenerateQuery([])}
-          >
-            {'Generate code'}
-          </Button>
+            label={'Generate code'}
+          />
         </div>
       </div>
     </div>

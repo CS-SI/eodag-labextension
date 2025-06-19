@@ -70,28 +70,33 @@ p {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  height: calc(100% - 2rem);
 }
 
 .jp-EodagWidget .jp-EodagWidget-form {
   display: flex;
   flex-direction: column;
+  gap: 1.5rem;
+  flex: 1;
 }
 
 .jp-EodagWidget-form-buttons {
   width: 100%;
   max-width: 450px;
-  margin: auto;
-}
-
-.jp-EodagWidget-form-buttons-wrapper {
-  display: flex;
-  justify-content: space-evenly;
 }
 
 .jp-EodagWidget-loader {
-  margin-top: 30px;
+  margin-top: 10px;
+  width: 100%;
   display: flex;
   align-items: center;
+  justify-content: center;
+}
+
+.jp-EodagWidget-loader svg {
+  width: 2rem;
+  height: 2rem;
+  fill: #1976d2;
 }
 
 .jp-EodagWidget-loader p {
@@ -102,69 +107,6 @@ p {
 .jp-EodagWidget-input-error {
   border: 2px solid red !important;
   border-radius: 5px;
-}
-
-.jp-EodagWidget-input-wrapper {
-  display: flex;
-  align-items: center;
-}
-
-.jp-EodagWidget-input-wrapper > svg {
-  display: inline-block;
-  color: var(--gray);
-}
-
-.jp-EodagWidget-form-date-picker {
-  padding: 0 10px;
-}
-
-.jp-EodagWidget-form-date-picker-wrapper {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 10px;
-}
-
-.jp-EodagWidget .jp-EodagWidget-form .jp-EodagWidget-buttons {
-  display: flex;
-  justify-content: center;
-  margin-top: 1em;
-}
-
-.jp-EodagWidget-buttons-button__disabled {
-  background-color: grey !important;
-  cursor: not-allowed !important;
-}
-
-.jp-EodagWidget .jp-EodagWidget-form .jp-EodagWidget-buttons-button {
-  cursor: pointer;
-  min-width: 110px;
-  color: #ffffff;
-  background: var(--base-button);
-  border: none;
-  box-sizing: border-box;
-  outline: none;
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  padding: 7px;
-  margin: 0px;
-  border-radius: var(--border-radius);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.jp-EodagWidget-buttons svg {
-  margin-right: 0.5rem;
-}
-
-.jp-EodagWidget-buttons p {
-  text-align: left;
-  font-size: var(--jp-ui-font-size1);
-}
-
-.jp-EodagWidget .jp-EodagWidget-form .jp-EodagWidget-buttons button:hover {
-  background: var(--button-hover);
 }
 
 .jp-EodagWidget .jp-EodagWidget-form .react-datepicker-popper {
@@ -183,19 +125,8 @@ p {
   height: 300px;
 }
 
-.jp-EodagWidget .jp-EodagWidget-form .jp-EodagWidget-field {
-  padding: 0 10px;
-  max-width: 450px;
-  margin: auto;
-}
-
 .jp-EodagWidget .jp-EodagWidget-form .jp-EodagWidget-field fieldset {
   margin-top: 1.5em;
-}
-
-.jp-EodagWidget .jp-EodagWidget-form .jp-EodagWidget-input-name {
-  margin-top: 1em;
-  display: block;
 }
 
 .jp-EodagWidget-input-name-checkbox-wrapper {
@@ -236,7 +167,6 @@ p {
 
 .jp-EodagWidget .jp-EodagWidget-form .jp-EodagWidget-input {
   background: transparent;
-  width: calc(100% - 18px);
   border: none;
   outline: none;
   font-size: var(--jp-ui-font-size1);
@@ -247,11 +177,6 @@ p {
 
 .jp-EodagWidget .jp-EodagWidget-form .jp-EodagWidget-input::placeholder {
   color: var(--gray);
-}
-
-.jp-EodagWidget .jp-EodagWidget-form .jp-EodagWidget-additionalParameters {
-  margin-top: 10px;
-  padding: 0 10px;
 }
 
 .jp-EodagWidget .jp-EodagWidget-form .jp-EodagWidget-section-title {
@@ -275,6 +200,18 @@ p {
   cursor: not-allowed;
 }
 
+.jp-EodagWidget-optional-params-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.jp-EodagWidget-optional-params-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .jp-EodagWidget
   .jp-EodagWidget-form
   .jp-EodagWidget-optional-button:not(:disabled):hover {
@@ -283,22 +220,16 @@ p {
 
 .jp-EodagWidget
   .jp-EodagWidget-form
-  .jp-EodagWidget-field
+  .jp-EodagWidget-fields
   .jp-EodagWidget-additionalParameters {
-  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
 .jp-EodagWidget
   .jp-EodagWidget-form
-  .jp-EodagWidget-field
-  .jp-EodagWidget-additionalParameters
-  .jp-EodagWidget-input-name {
-  margin-bottom: 10px;
-}
-
-.jp-EodagWidget
-  .jp-EodagWidget-form
-  .jp-EodagWidget-field
+  .jp-EodagWidget-fields
   .jp-EodagWidget-additionalParameters
   .section {
   display: flex;
@@ -309,7 +240,7 @@ p {
 
 .jp-EodagWidget
   .jp-EodagWidget-form
-  .jp-EodagWidget-field
+  .jp-EodagWidget-fields
   .jp-EodagWidget-additionalParameters
   input {
   margin: 0 0.1em;
@@ -322,7 +253,7 @@ p {
 
 .jp-EodagWidget
   .jp-EodagWidget-form
-  .jp-EodagWidget-field
+  .jp-EodagWidget-fields
   .jp-EodagWidget-additionalParameters
   .jp-EodagWidget-additionalParameters-label-icon-wrapper {
   display: flex;
@@ -332,7 +263,7 @@ p {
 
 .jp-EodagWidget
   .jp-EodagWidget-form
-  .jp-EodagWidget-field
+  .jp-EodagWidget-fields
   .jp-EodagWidget-additionalParameters
   .jp-EodagWidget-additionalParameters-label-icon-wrapper
   a {
@@ -342,7 +273,7 @@ p {
 
 .jp-EodagWidget
   .jp-EodagWidget-form
-  .jp-EodagWidget-field
+  .jp-EodagWidget-fields
   .jp-EodagWidget-additionalParameters
   .jp-EodagWidget-additionalParameters-label-icon-wrapper
   a:hover {
@@ -351,7 +282,7 @@ p {
 
 .jp-EodagWidget
   .jp-EodagWidget-form
-  .jp-EodagWidget-field
+  .jp-EodagWidget-fields
   .jp-EodagWidget-additionalParameters
   input:focus-within {
   border: 1px solid #2196f3;
@@ -359,7 +290,7 @@ p {
 
 .jp-EodagWidget
   .jp-EodagWidget-form
-  .jp-EodagWidget-field
+  .jp-EodagWidget-fields
   .jp-EodagWidget-additionalParameters
   input::placeholder {
   padding-left: 0.3rem;
@@ -616,10 +547,6 @@ section button .jp-EodagWidget-additionalParameters-addbutton svg,
 
 .jp-EodagWidget-product h4 {
   padding-left: 20px;
-}
-
-label.jp-EodagWidget-input-name:nth-child(3) {
-  padding: 0 10px;
 }
 
 @keyframes spin {

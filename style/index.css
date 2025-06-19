@@ -1,6 +1,29 @@
 @import url('base.css');
 @import url('leaflet.css');
+
+/* Custom components */
 @import url('modal.css');
-@import url('loader.css');
+@import url('button.css');
 @import url('result_list.css');
 @import url('customErrorDialog.css');
+@import url('loader.css');
+@import url('form_field.css');
+@import url('alert.css');
+
+:root {
+  --light-gray: #c1c1c1;
+  --gray: #666666;
+  --base-button: #1976d2;
+  --button-hover: #3bacff;
+  --border-radius: 5px;
+  --base-font-size: 14px;
+}
+
+p {
+  margin: unset;
+}
+
+.sizeFull {
+  width: 100%;
+  height: 100%;
+}

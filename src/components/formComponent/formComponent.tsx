@@ -13,11 +13,9 @@ import {
   UseFormReturn,
   useWatch
 } from 'react-hook-form';
-import { ThreeDots } from 'react-loader-spinner';
-import { Tooltip } from 'react-tooltip';
 import { Autocomplete } from '../autocomplete/autocomplete';
 import { fetchQueryables } from '../../utils/fetchers/fetchQueryables';
-import { CarbonCalendarAddAlt, CodiconOpenPreview, PhFileCode } from '../icons';
+import { CarbonCalendarAddAlt } from '../icons';
 import { MapExtent } from '../map/mapExtent';
 import SearchService from '../../utils/searchService';
 import { IFormInput, IOptionType, IParameter } from '../../types';
@@ -25,8 +23,10 @@ import { AdditionalParameterFields } from './additionalParameterFields';
 import { ParameterGroup } from './parameterGroup';
 import { DropdownButton } from './dropdownButton';
 import { IMapSettings } from '../browser';
+import { SubmitButtons } from './submitButtons';
 import { showCustomErrorDialog } from '../customErrorDialog/customErrorDialog';
 import { formatCustomError } from '../../utils/formatErrors';
+import { NoParamsAlert } from './noParamsAlert';
 
 export interface IFormComponentsProps {
   handleShowFeature: any;
@@ -218,12 +218,6 @@ export const FormComponent: FC<IFormComponentsProps> = ({
     }
   };
 
-  const renderNoParamsMessage = () => (
-    <div style={{ margin: '10px 0' }}>
-      <p>Select a product type to unlock parameters.</p>
-    </div>
-  );
-
   const renderParameterGroups = () => (
     <>
       {params.some(param => param.mandatory) || selectedOptions.length > 0 ? (
@@ -242,9 +236,7 @@ export const FormComponent: FC<IFormComponentsProps> = ({
           />
         </>
       ) : (
-        <div style={{ margin: '10px 0' }}>
-          <p>No required parameter for this product type.</p>
-        </div>
+        <NoParamsAlert label={'No required parameter for this product type.'} />
       )}
     </>
   );
@@ -271,7 +263,7 @@ export const FormComponent: FC<IFormComponentsProps> = ({
             />
           </div>
         )}
-        <div className="jp-EodagWidget-field">
+        <div className="jp-EodagWidget-fields">
           <Controller
             name="provider"
             control={form.control}
@@ -337,10 +329,8 @@ export const FormComponent: FC<IFormComponentsProps> = ({
               />
             )}
           />
-          <div className="jp-EodagWidget-form-date-picker">
-            <label htmlFor="startDate" className="jp-EodagWidget-input-name">
-              Date range
-            </label>
+          <div className="jp-EodagWidget-field">
+            <label htmlFor="startDate">Date range</label>
             <div className="jp-EodagWidget-form-date-picker-wrapper">
               <div className="jp-EodagWidget-input-wrapper">
                 <CarbonCalendarAddAlt height="22" width="22" />
@@ -403,16 +393,8 @@ export const FormComponent: FC<IFormComponentsProps> = ({
             </div>
           </div>
 
-          <div style={{ marginTop: '10px' }}>
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                marginLeft: '10px',
-                marginRight: '10px'
-              }}
-            >
+          <div className={'jp-EodagWidget-optional-params-wrapper'}>
+            <div className={'jp-EodagWidget-optional-params-title'}>
               <p className="jp-EodagWidget-section-title">Parameters</p>
               <DropdownButton
                 options={optionalParams}
@@ -422,9 +404,13 @@ export const FormComponent: FC<IFormComponentsProps> = ({
               />
             </div>
             <div className="jp-EodagWidget-field">
-              {!params || !params.length
-                ? renderNoParamsMessage()
-                : renderParameterGroups()}
+              {!params || !params.length ? (
+                <NoParamsAlert
+                  label={'Select a product type to unlock custom parameters'}
+                />
+              ) : (
+                renderParameterGroups()
+              )}
             </div>
           </div>
 
@@ -439,85 +425,12 @@ export const FormComponent: FC<IFormComponentsProps> = ({
           />
         </div>
         <div className="jp-EodagWidget-form-buttons">
-          <div className="jp-EodagWidget-form-buttons-wrapper">
-            {isLoadingSearch ? (
-              <div className="jp-EodagWidget-loader">
-                <p>Generating</p>
-                <ThreeDots
-                  height="35"
-                  width="35"
-                  radius="9"
-                  color="#1976d2"
-                  ariaLabel="three-dots-loading"
-                  wrapperStyle={{}}
-                  visible
-                />
-              </div>
-            ) : (
-              <>
-                <div className="jp-EodagWidget-buttons">
-                  <button
-                    type="submit"
-                    color="primary"
-                    className={
-                      !productTypeValue
-                        ? 'jp-EodagWidget-buttons-button jp-EodagWidget-buttons-button__disabled'
-                        : 'jp-EodagWidget-buttons-button'
-                    }
-                    disabled={isLoadingSearch}
-                    onClick={() => setOpenModal(true)}
-                    data-tooltip-id="btn-preview-results"
-                    data-tooltip-content="You need to select a product type to preview the results"
-                    data-tooltip-variant={'dark'}
-                    data-tooltip-place={'top'}
-                  >
-                    <CodiconOpenPreview width="21" height="21" />
-                    <p>
-                      Preview
-                      <br />
-                      Results
-                    </p>
-                    {!productTypeValue && (
-                      <Tooltip
-                        id="btn-preview-results"
-                        className="jp-Eodag-tooltip"
-                      />
-                    )}
-                  </button>
-                </div>
-                <div className="jp-EodagWidget-buttons">
-                  <button
-                    type="submit"
-                    color="primary"
-                    className={
-                      !productTypeValue
-                        ? 'jp-EodagWidget-buttons-button jp-EodagWidget-buttons-button__disabled'
-                        : 'jp-EodagWidget-buttons-button'
-                    }
-                    disabled={isLoadingSearch}
-                    onClick={() => setOpenModal(false)}
-                    data-tooltip-id="btn-generate-value"
-                    data-tooltip-content="You need to select a product type to generate the code"
-                    data-tooltip-variant={'dark'}
-                    data-tooltip-place={'top'}
-                  >
-                    <PhFileCode height="21" width="21" />
-                    <p>
-                      Generate
-                      <br />
-                      Code
-                    </p>
-                    {!productTypeValue && (
-                      <Tooltip
-                        id="btn-generate-value"
-                        className="jp-Eodag-tooltip"
-                      />
-                    )}
-                  </button>
-                </div>
-              </>
-            )}
-          </div>
+          <SubmitButtons
+            isLoadingSearch={isLoadingSearch}
+            onPreviewClick={() => setOpenModal(true)}
+            onGeneratingClick={() => setOpenModal(false)}
+            productTypeValue={productTypeValue}
+          />
         </div>
       </form>
     </div>

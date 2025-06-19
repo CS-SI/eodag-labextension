@@ -4,6 +4,7 @@ import { Tooltip } from 'react-tooltip';
 import { CarbonAddFilled, CarbonTrashCan } from '../icons';
 import { IFormInput } from '../../types';
 import { isUndefined } from 'lodash';
+import { NoParamsAlert } from './noParamsAlert';
 
 export interface IAdditionalParameterFieldsProps
   extends Partial<UseFormReturn<IFormInput, any, IFormInput>> {
@@ -34,17 +35,12 @@ export const AdditionalParameterFields = ({
 
   return (
     <div className="jp-EodagWidget-additionalParameters">
-      <p
-        className="jp-EodagWidget-section-title"
-        style={{ marginBottom: '10px' }}
-      >
-        Custom Parameters
-      </p>
+      <p className="jp-EodagWidget-section-title">Custom Parameters</p>
 
       {!productType || isUndefined(register) ? (
-        <p className="jp-EodagWidget-noParametersMessage">
-          Select a product type to unlock custom parameters.
-        </p>
+        <NoParamsAlert
+          label={'Select a product type to unlock custom parameters'}
+        />
       ) : additionalParameters ? (
         fields.map((field, index) => (
           <div key={field.id}>
