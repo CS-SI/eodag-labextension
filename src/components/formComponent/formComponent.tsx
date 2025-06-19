@@ -21,12 +21,13 @@ import SearchService from '../../utils/searchService';
 import { IFormInput, IOptionType, IParameter } from '../../types';
 import { AdditionalParameterFields } from './additionalParameterFields';
 import { ParameterGroup } from './parameterGroup';
-import { DropdownButton } from './dropdownButton';
 import { IMapSettings } from '../browser';
+import { MoreParametersDropdown } from './moreParametersDropdown';
 import { SubmitButtons } from './submitButtons';
 import { showCustomErrorDialog } from '../customErrorDialog/customErrorDialog';
 import { formatCustomError } from '../../utils/formatErrors';
 import { NoParamsAlert } from './noParamsAlert';
+import { LoadingState } from '../loadingState/loadingState';
 
 export interface IFormComponentsProps {
   handleShowFeature: any;
@@ -63,14 +64,13 @@ export const FormComponent: FC<IFormComponentsProps> = ({
 }) => {
   const [productTypes, setProductTypes] = useState<IOptionTypeBase[]>();
   const [providers, setProviders] = useState<IOptionTypeBase[]>();
-  const [startDate, setStartDate] = useState(undefined);
-  const [endDate, setEndDate] = useState(undefined);
+  const [startDate, setStartDate] = useState<Date | null>(null);
+  const [endDate, setEndDate] = useState<Date | null>(null);
   const [isLoadingSearch, setIsLoadingSearch] = useState(false);
   const [openModal, setOpenModal] = useState(true);
   const [params, setParams] = useState<IParameter[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [additionalParameters, setAdditionalParameters] =
-    useState<boolean>(true);
+  const [queryablesLoading, setQueryablesLoading] = useState(false);
+  const [hasAdditionalParameters, setHasAdditionalParameters] = useState(true);
   const [optionalParams, setOptionalParams] = useState<IOptionType[]>([]);
 
   const formValues = useWatch({ control: form.control });
@@ -126,7 +126,7 @@ export const FormComponent: FC<IFormComponentsProps> = ({
   ): Promise<IParameter[]> => {
     let queryables;
 
-    setLoading(true);
+    setQueryablesLoading(true);
     if (providerValue && productTypeValue) {
       // Isolate the fetch queryables call and handle errors specifically for it
       try {
@@ -140,9 +140,9 @@ export const FormComponent: FC<IFormComponentsProps> = ({
       }
       setParams(queryables.properties);
 
-      setAdditionalParameters(queryables.additionalProperties);
+      setHasAdditionalParameters(queryables.additionalProperties);
 
-      setLoading(false);
+      setQueryablesLoading(false);
 
       return queryables.properties;
     } else {
@@ -174,21 +174,40 @@ export const FormComponent: FC<IFormComponentsProps> = ({
           });
 
           const optionals = params
+            // Filters all non-mandatory params
             .filter(param => !param.mandatory)
             .map(param => ({
               value: param.key,
-              label: param.value.title ?? param.key
+              label: param.value.title ?? param.key,
+              divider: false
             }));
+          if (hasAdditionalParameters) {
+            optionals.unshift({
+              value: '',
+              label: '',
+              divider: true
+            });
+            optionals.unshift({
+              value: 'custom',
+              label: 'Custom Parameters',
+              divider: false
+            });
+          }
           setOptionalParams(optionals);
         })
         .catch(error => {
           console.error('Error fetching parameters:', error);
         });
     }
-  }, [providerValue, productTypeValue]);
+  }, [providerValue, productTypeValue, hasAdditionalParameters]);
 
   useEffect(() => {
-    if (!params || additionalParameters || !productTypeValue || loading) {
+    if (
+      !params ||
+      hasAdditionalParameters ||
+      !productTypeValue ||
+      queryablesLoading
+    ) {
       return;
     }
 
@@ -212,6 +231,9 @@ export const FormComponent: FC<IFormComponentsProps> = ({
       setSelectedOptions(
         selectedOptions.filter(option => option !== param.value)
       );
+      if (param.value === 'custom') {
+        form.setValue('additionalParameters', [], { shouldValidate: true });
+      }
       form.resetField(param.value);
     } else {
       setSelectedOptions([...selectedOptions, param.value]);
@@ -345,7 +367,7 @@ export const FormComponent: FC<IFormComponentsProps> = ({
                       startDate={startDate}
                       endDate={endDate}
                       maxDate={endDate}
-                      onChange={(d: any) => {
+                      onChange={(d: Date | null) => {
                         setStartDate(d);
                         onChange(d);
                       }}
@@ -374,7 +396,7 @@ export const FormComponent: FC<IFormComponentsProps> = ({
                       selectsStart
                       startDate={startDate}
                       endDate={endDate}
-                      onChange={(d: any) => {
+                      onChange={(d: Date | null) => {
                         setEndDate(d);
                         onChange(d);
                       }}
@@ -393,36 +415,44 @@ export const FormComponent: FC<IFormComponentsProps> = ({
             </div>
           </div>
 
-          <div className={'jp-EodagWidget-optional-params-wrapper'}>
-            <div className={'jp-EodagWidget-optional-params-title'}>
-              <p className="jp-EodagWidget-section-title">Parameters</p>
-              <DropdownButton
-                options={optionalParams}
-                onSelect={handleSelectDropdown}
-                selectedOptions={selectedOptions}
-                disabled={!optionalParams.length}
-              />
-            </div>
-            <div className="jp-EodagWidget-field">
-              {!params || !params.length ? (
-                <NoParamsAlert
-                  label={'Select a product type to unlock custom parameters'}
-                />
-              ) : (
-                renderParameterGroups()
-              )}
-            </div>
-          </div>
+          <LoadingState disabled={queryablesLoading}>
+            <>
+              <div className={'jp-EodagWidget-optional-params-wrapper'}>
+                <div className={'jp-EodagWidget-optional-params-title'}>
+                  <p className="jp-EodagWidget-section-title">Parameters</p>
+                  <MoreParametersDropdown
+                    options={optionalParams}
+                    onSelect={handleSelectDropdown}
+                    selectedOptions={selectedOptions}
+                    disabled={!optionalParams.length || queryablesLoading}
+                  />
+                </div>
+                <div className="jp-EodagWidget-field">
+                  {!params || !params.length ? (
+                    <NoParamsAlert
+                      label={
+                        'Select a product type to unlock custom parameters'
+                      }
+                    />
+                  ) : (
+                    renderParameterGroups()
+                  )}
+                </div>
+              </div>
 
-          <AdditionalParameterFields
-            {...{
-              control: form.control,
-              register: form.register,
-              resetField: form.resetField,
-              productType: productTypeValue,
-              additionalParameters
-            }}
-          />
+              {selectedOptions.includes('custom') && (
+                <AdditionalParameterFields
+                  {...{
+                    control: form.control,
+                    register: form.register,
+                    resetField: form.resetField,
+                    productType: productTypeValue,
+                    additionalParameters: hasAdditionalParameters
+                  }}
+                />
+              )}
+            </>
+          </LoadingState>
         </div>
         <div className="jp-EodagWidget-form-buttons">
           <SubmitButtons

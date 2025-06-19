@@ -46,6 +46,7 @@ export interface IParameter {
 export interface IOptionType {
   value: string;
   label: string;
+  divider?: boolean;
 }
 
 // TODO: Need to type this

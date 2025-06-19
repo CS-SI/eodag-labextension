@@ -1,10 +1,11 @@
 import React from 'react';
 import { useFieldArray, UseFormReturn } from 'react-hook-form';
-import { Tooltip } from 'react-tooltip';
-import { CarbonAddFilled, CarbonTrashCan } from '../icons';
 import { IFormInput } from '../../types';
 import { isUndefined } from 'lodash';
 import { NoParamsAlert } from './noParamsAlert';
+import { IconButton, Tooltip } from '@mui/material';
+import ClearIcon from '@mui/icons-material/Clear';
+import AddIcon from '@mui/icons-material/Add';
 
 export interface IAdditionalParameterFieldsProps
   extends Partial<UseFormReturn<IFormInput, any, IFormInput>> {
@@ -35,7 +36,17 @@ export const AdditionalParameterFields = ({
 
   return (
     <div className="jp-EodagWidget-additionalParameters">
-      <p className="jp-EodagWidget-section-title">Custom Parameters</p>
+      <div className={'jp-EodagWidget-additionalParameters-title'}>
+        <p>Custom Parameters</p>
+        <Tooltip title={'Add a new custom parameter'} placement={'top'}>
+          <IconButton
+            size={'small'}
+            onClick={() => append({ name: '', value: '' })}
+          >
+            <AddIcon fontSize={'small'} />
+          </IconButton>
+        </Tooltip>
+      </div>
 
       {!productType || isUndefined(register) ? (
         <NoParamsAlert
@@ -43,46 +54,28 @@ export const AdditionalParameterFields = ({
         />
       ) : additionalParameters ? (
         fields.map((field, index) => (
-          <div key={field.id}>
-            <section className={'section'}>
-              <input
-                placeholder="Name"
-                {...register(`additionalParameters.${index}.name` as const)}
-              />
-              <input
-                placeholder="Value"
-                {...register(`additionalParameters.${index}.value` as const)}
-              />
-              <button
-                type="button"
-                className="jp-EodagWidget-additionalParameters-deletebutton"
+          <section className={'section'} key={field.id}>
+            <input
+              placeholder="Name"
+              {...register(`additionalParameters.${index}.name` as const)}
+            />
+            <input
+              placeholder="Value"
+              {...register(`additionalParameters.${index}.value` as const)}
+            />
+            <Tooltip title={'Remove custom parameter'} placement={'right'}>
+              <IconButton
+                size={'small'}
                 onClick={() =>
                   fields.length === 1 && clearInput
                     ? clearInput(index)
                     : remove(index)
                 }
-                data-tooltip-id="parameters-delete"
-                data-tooltip-content="remove custom parameter"
-                data-tooltip-variant={'warning'}
-                data-tooltip-place={'top'}
               >
-                <CarbonTrashCan height="20" width="20" />
-                <Tooltip id="parameters-delete" className="jp-Eodag-tooltip" />
-              </button>
-              <button
-                type="button"
-                className="jp-EodagWidget-additionalParameters-addbutton"
-                onClick={() => append({ name: '', value: '' })}
-                data-tooltip-id="parameters-add"
-                data-tooltip-content="add a new custom parameter"
-                data-tooltip-variant={'dark'}
-                data-tooltip-place={'top'}
-              >
-                <CarbonAddFilled height="20" width="20" />
-                <Tooltip id="parameters-add" className="jp-Eodag-tooltip" />
-              </button>
-            </section>
-          </div>
+                <ClearIcon fontSize={'small'} />
+              </IconButton>
+            </Tooltip>
+          </section>
         ))
       ) : (
         <p className="jp-EodagWidget-noParametersMessage">

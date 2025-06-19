@@ -4,6 +4,7 @@
 /* Custom components */
 @import url('modal.css');
 @import url('button.css');
+@import url('menu_dropdown.css');
 @import url('result_list.css');
 @import url('customErrorDialog.css');
 @import url('loader.css');

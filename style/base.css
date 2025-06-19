@@ -227,6 +227,12 @@ p {
   gap: 0.5rem;
 }
 
+.jp-EodagWidget-additionalParameters-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .jp-EodagWidget
   .jp-EodagWidget-form
   .jp-EodagWidget-fields
@@ -235,7 +241,17 @@ p {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 0.3rem;
+}
+
+.jp-EodagWidget
+  .jp-EodagWidget-form
+  .jp-EodagWidget-fields
+  .jp-EodagWidget-additionalParameters
+  .section
+  input {
+  height: 2rem;
+  padding: 0 0.5rem;
+  border-radius: 5px;
 }
 
 .jp-EodagWidget
@@ -296,27 +312,14 @@ p {
   padding-left: 0.3rem;
 }
 
-.jp-EodagWidget-additionalParameters-deletebutton,
-.jp-EodagWidget-additionalParameters-addbutton,
-.jp-EodagWidget-settingsButton {
-  cursor: pointer;
-  border-radius: 50%;
-  border-width: 0px;
-  background-color: #ffffff;
-  display: flex;
-  align-items: center;
-}
-
 section button .jp-EodagWidget-additionalParameters-deletebutton svg,
-section button .jp-EodagWidget-additionalParameters-addbutton svg,
-.jp-EodagWidget-settingsButton svg {
+section button .jp-EodagWidget-additionalParameters-addbutton svg {
   color: #000000;
   background-color: #ffffff;
 }
 
 .jp-EodagWidget-additionalParameters-deletebutton svg:hover,
-.jp-EodagWidget-additionalParameters-addbutton svg:hover,
-.jp-EodagWidget-settingsButton svg:hover {
+.jp-EodagWidget-additionalParameters-addbutton svg:hover {
   color: #677381;
 }
 
@@ -560,5 +563,5 @@ section button .jp-EodagWidget-additionalParameters-addbutton svg,
 }
 
 .spin-icon {
-  animation: spin 1s linear infinite;
+  animation: spin 0.5s linear infinite;
 }
