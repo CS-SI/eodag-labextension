@@ -295,27 +295,14 @@ p {
   padding-left: 0.3rem;
 }
 
-.jp-EodagWidget-additionalParameters-deletebutton,
-.jp-EodagWidget-additionalParameters-addbutton,
-.jp-EodagWidget-settingsButton {
-  cursor: pointer;
-  border-radius: 50%;
-  border-width: 0px;
-  background-color: #ffffff;
-  display: flex;
-  align-items: center;
-}
-
 section button .jp-EodagWidget-additionalParameters-deletebutton svg,
-section button .jp-EodagWidget-additionalParameters-addbutton svg,
-.jp-EodagWidget-settingsButton svg {
+section button .jp-EodagWidget-additionalParameters-addbutton svg {
   color: #000000;
   background-color: #ffffff;
 }
 
 .jp-EodagWidget-additionalParameters-deletebutton svg:hover,
-.jp-EodagWidget-additionalParameters-addbutton svg:hover,
-.jp-EodagWidget-settingsButton svg:hover {
+.jp-EodagWidget-additionalParameters-addbutton svg:hover {
   color: #677381;
 }
 
@@ -559,5 +546,5 @@ section button .jp-EodagWidget-additionalParameters-addbutton svg,
 }
 
 .spin-icon {
-  animation: spin 1s linear infinite;
+  animation: spin 0.5s linear infinite;
 }
