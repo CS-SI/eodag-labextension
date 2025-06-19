@@ -63,3 +63,9 @@ export interface IProduct {
   cloudCover?: number;
   properties: { [key: string]: any };
 }
+
+export interface ICustomError {
+  name: string;
+  title: string;
+  details: string;
+}

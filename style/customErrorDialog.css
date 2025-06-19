@@ -1,0 +1,53 @@
+.jp-EodagWidget-customErrorMessage {
+  max-width: 750px;
+}
+
+.jp-EodagWidget-customErrorMessage-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.jp-EodagWidget-customErrorMessage-header h3 {
+  margin: 0;
+}
+
+.jp-EodagWidget-customErrorMessage-header .MuiIconButton-root {
+  height: 2rem !important;
+  border-radius: 4px !important;
+}
+
+.jp-EodagWidget-customErrorMessage-content {
+  position: relative;
+  white-space: pre-wrap;
+  max-height: 20px;
+  height: 20px;
+  overflow: hidden;
+  background: rgba(0 0 0 / 5%);
+  padding: 1rem;
+  border-radius: 8px;
+  border: 1px solid rgba(0 0 0 / 3%);
+}
+
+.jp-EodagWidget-customErrorMessage-content.isExpanded {
+  max-height: 200px;
+  overflow-y: auto;
+  height: unset;
+}
+
+.jp-EodagWidget-customErrorMessage-showDetails-container {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  position: absolute;
+  inset: 0;
+  backdrop-filter: blur(3px);
+  background-color: rgba(255 255 255 / 50%);
+}
+
+.jp-EodagWidget-customErrorMessage-showDetails-container:hover {
+  text-decoration: underline;
+}

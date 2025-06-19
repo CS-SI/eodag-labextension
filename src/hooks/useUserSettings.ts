@@ -1,9 +1,10 @@
 import { ServerConnection } from '@jupyterlab/services';
 import { URLExt } from '@jupyterlab/coreutils';
 import { EODAG_SERVER_ADDRESS } from '../config/config';
-import { showErrorMessage } from '@jupyterlab/apputils';
 import { useState } from 'react';
 import { CommandRegistry } from '@lumino/commands';
+import { showCustomErrorDialog } from '../components/customErrorDialog/customErrorDialog';
+import { formatCustomError } from '../utils/formatErrors';
 
 export const serverSettings = ServerConnection.makeSettings();
 export const eodagServer = URLExt.join(
@@ -20,13 +21,17 @@ export const useUserSettings = () => {
       const response = await fetch(URLExt.join(eodagServer, 'reload'), {
         credentials: 'same-origin'
       });
-      if (response.status >= 400) {
-        throw new Error('Bad response from server');
+      if (!response.ok) {
+        const msg = await response.json();
+        throw {
+          error: msg.error ?? 'Unknown error',
+          details: msg.details ?? ''
+        };
       }
     } catch (error) {
-      showErrorMessage(
-        'EODAG server error',
-        `Unable to contact the EODAG server. Are you sure the address is ${eodagServer}/ ?`
+      showCustomErrorDialog(
+        formatCustomError(error),
+        'EODAG Labextension - reload error'
       );
     }
   };

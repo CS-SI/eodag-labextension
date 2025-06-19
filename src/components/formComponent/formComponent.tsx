@@ -3,7 +3,6 @@
  * All rights reserved
  */
 
-import { showErrorMessage } from '@jupyterlab/apputils';
 import 'isomorphic-fetch';
 import React, { FC, useEffect, useState } from 'react';
 import DatePicker from 'react-datepicker';
@@ -18,7 +17,6 @@ import { ThreeDots } from 'react-loader-spinner';
 import { Tooltip } from 'react-tooltip';
 import { Autocomplete } from '../autocomplete/autocomplete';
 import { fetchQueryables } from '../../utils/fetchers/fetchQueryables';
-import { ServerConnection } from '@jupyterlab/services';
 import { CarbonCalendarAddAlt, CodiconOpenPreview, PhFileCode } from '../icons';
 import { MapExtent } from '../map/mapExtent';
 import SearchService from '../../utils/searchService';
@@ -27,6 +25,8 @@ import { AdditionalParameterFields } from './additionalParameterFields';
 import { ParameterGroup } from './parameterGroup';
 import { DropdownButton } from './dropdownButton';
 import { IMapSettings } from '../browser';
+import { showCustomErrorDialog } from '../customErrorDialog/customErrorDialog';
+import { formatCustomError } from '../../utils/formatErrors';
 
 export interface IFormComponentsProps {
   handleShowFeature: any;
@@ -101,18 +101,21 @@ export const FormComponent: FC<IFormComponentsProps> = ({
       setIsLoadingSearch(true);
       try {
         const featureCollection = await SearchService.search(1, data);
+
         if (!featureCollection?.features?.length) {
-          throw new Error('No result found');
+          throw {
+            error: 'No result found',
+            details: 'The search did not return any features.'
+          };
         }
 
-        setIsLoadingSearch(false);
         handleShowFeature(featureCollection, openModal);
-
-        if (!openModal) {
-          handleGenerateQuery(params);
-        }
-      } catch (error) {
-        showErrorMessage('Bad response from server:', error as string);
+      } catch (err: any) {
+        await showCustomErrorDialog(
+          formatCustomError(err),
+          'EODAG Labextension - search error'
+        );
+      } finally {
         setIsLoadingSearch(false);
       }
     }
@@ -133,11 +136,6 @@ export const FormComponent: FC<IFormComponentsProps> = ({
           query_params
         );
       } catch (error) {
-        if (error instanceof ServerConnection.ResponseError) {
-          showErrorMessage('Bad response from server:', error);
-        } else {
-          console.error('Error fetching queryables:', error);
-        }
         return [];
       }
       setParams(queryables.properties);
