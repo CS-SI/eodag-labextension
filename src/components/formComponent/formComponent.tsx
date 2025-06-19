@@ -70,7 +70,7 @@ export const FormComponent: FC<IFormComponentsProps> = ({
   const [openModal, setOpenModal] = useState(true);
   const [params, setParams] = useState<IParameter[]>([]);
   const [queryablesLoading, setQueryablesLoading] = useState(false);
-  const [additionalParameters, setAdditionalParameters] = useState(true);
+  const [hasAdditionalParameters, setHasAdditionalParameters] = useState(true);
   const [optionalParams, setOptionalParams] = useState<IOptionType[]>([]);
 
   const formValues = useWatch({ control: form.control });
@@ -140,7 +140,7 @@ export const FormComponent: FC<IFormComponentsProps> = ({
       }
       setParams(queryables.properties);
 
-      setAdditionalParameters(queryables.additionalProperties);
+      setHasAdditionalParameters(queryables.additionalProperties);
 
       setQueryablesLoading(false);
 
@@ -181,7 +181,7 @@ export const FormComponent: FC<IFormComponentsProps> = ({
               label: param.value.title ?? param.key,
               divider: false
             }));
-          if (additionalParameters) {
+          if (hasAdditionalParameters) {
             optionals.unshift({
               value: '',
               label: '',
@@ -199,12 +199,12 @@ export const FormComponent: FC<IFormComponentsProps> = ({
           console.error('Error fetching parameters:', error);
         });
     }
-  }, [providerValue, productTypeValue]);
+  }, [providerValue, productTypeValue, hasAdditionalParameters]);
 
   useEffect(() => {
     if (
       !params ||
-      additionalParameters ||
+      hasAdditionalParameters ||
       !productTypeValue ||
       queryablesLoading
     ) {
@@ -447,7 +447,7 @@ export const FormComponent: FC<IFormComponentsProps> = ({
                     register: form.register,
                     resetField: form.resetField,
                     productType: productTypeValue,
-                    additionalParameters
+                    additionalParameters: hasAdditionalParameters
                   }}
                 />
               )}
