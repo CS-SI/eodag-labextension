@@ -236,7 +236,7 @@ export const FormComponent: FC<IFormComponentsProps> = ({
           />
         </>
       ) : (
-        <p>No required parameter for this product type.</p>
+        <NoParamsAlert label={'No required parameter for this product type.'} />
       )}
     </>
   );
