@@ -73,10 +73,6 @@ export const FormComponent: FC<IFormComponentsProps> = ({
   const [additionalParameters, setAdditionalParameters] = useState(true);
   const [optionalParams, setOptionalParams] = useState<IOptionType[]>([]);
 
-  useEffect(() => {
-    console.log('queryables loading : ', queryablesLoading);
-  }, [queryablesLoading]);
-
   const formValues = useWatch({ control: form.control });
 
   const { provider: providerValue, productType: productTypeValue } = formValues;
@@ -235,6 +231,9 @@ export const FormComponent: FC<IFormComponentsProps> = ({
       setSelectedOptions(
         selectedOptions.filter(option => option !== param.value)
       );
+      if (param.value === 'custom') {
+        form.setValue('additionalParameters', [], { shouldValidate: true });
+      }
       form.resetField(param.value);
     } else {
       setSelectedOptions([...selectedOptions, param.value]);
