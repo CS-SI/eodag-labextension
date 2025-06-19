@@ -27,6 +27,7 @@ import { SubmitButtons } from './submitButtons';
 import { showCustomErrorDialog } from '../customErrorDialog/customErrorDialog';
 import { formatCustomError } from '../../utils/formatErrors';
 import { NoParamsAlert } from './noParamsAlert';
+import { LoadingState } from '../loadingState/loadingState';
 
 export interface IFormComponentsProps {
   handleShowFeature: any;
@@ -68,9 +69,13 @@ export const FormComponent: FC<IFormComponentsProps> = ({
   const [isLoadingSearch, setIsLoadingSearch] = useState(false);
   const [openModal, setOpenModal] = useState(true);
   const [params, setParams] = useState<IParameter[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [queryablesLoading, setQueryablesLoading] = useState(false);
   const [additionalParameters, setAdditionalParameters] = useState(true);
   const [optionalParams, setOptionalParams] = useState<IOptionType[]>([]);
+
+  useEffect(() => {
+    console.log('queryables loading : ', queryablesLoading);
+  }, [queryablesLoading]);
 
   const formValues = useWatch({ control: form.control });
 
@@ -125,7 +130,7 @@ export const FormComponent: FC<IFormComponentsProps> = ({
   ): Promise<IParameter[]> => {
     let queryables;
 
-    setLoading(true);
+    setQueryablesLoading(true);
     if (providerValue && productTypeValue) {
       // Isolate the fetch queryables call and handle errors specifically for it
       try {
@@ -141,7 +146,7 @@ export const FormComponent: FC<IFormComponentsProps> = ({
 
       setAdditionalParameters(queryables.additionalProperties);
 
-      setLoading(false);
+      setQueryablesLoading(false);
 
       return queryables.properties;
     } else {
@@ -201,7 +206,12 @@ export const FormComponent: FC<IFormComponentsProps> = ({
   }, [providerValue, productTypeValue]);
 
   useEffect(() => {
-    if (!params || additionalParameters || !productTypeValue || loading) {
+    if (
+      !params ||
+      additionalParameters ||
+      !productTypeValue ||
+      queryablesLoading
+    ) {
       return;
     }
 
@@ -406,38 +416,44 @@ export const FormComponent: FC<IFormComponentsProps> = ({
             </div>
           </div>
 
-          <div className={'jp-EodagWidget-optional-params-wrapper'}>
-            <div className={'jp-EodagWidget-optional-params-title'}>
-              <p className="jp-EodagWidget-section-title">Parameters</p>
-              <MoreParametersDropdown
-                options={optionalParams}
-                onSelect={handleSelectDropdown}
-                selectedOptions={selectedOptions}
-                disabled={!optionalParams.length || loading}
-              />
-            </div>
-            <div className="jp-EodagWidget-field">
-              {!params || !params.length ? (
-                <NoParamsAlert
-                  label={'Select a product type to unlock custom parameters'}
-                />
-              ) : (
-                renderParameterGroups()
-              )}
-            </div>
-          </div>
+          <LoadingState disabled={queryablesLoading}>
+            <>
+              <div className={'jp-EodagWidget-optional-params-wrapper'}>
+                <div className={'jp-EodagWidget-optional-params-title'}>
+                  <p className="jp-EodagWidget-section-title">Parameters</p>
+                  <MoreParametersDropdown
+                    options={optionalParams}
+                    onSelect={handleSelectDropdown}
+                    selectedOptions={selectedOptions}
+                    disabled={!optionalParams.length || queryablesLoading}
+                  />
+                </div>
+                <div className="jp-EodagWidget-field">
+                  {!params || !params.length ? (
+                    <NoParamsAlert
+                      label={
+                        'Select a product type to unlock custom parameters'
+                      }
+                    />
+                  ) : (
+                    renderParameterGroups()
+                  )}
+                </div>
+              </div>
 
-          {selectedOptions.includes('custom') && (
-            <AdditionalParameterFields
-              {...{
-                control: form.control,
-                register: form.register,
-                resetField: form.resetField,
-                productType: productTypeValue,
-                additionalParameters
-              }}
-            />
-          )}
+              {selectedOptions.includes('custom') && (
+                <AdditionalParameterFields
+                  {...{
+                    control: form.control,
+                    register: form.register,
+                    resetField: form.resetField,
+                    productType: productTypeValue,
+                    additionalParameters
+                  }}
+                />
+              )}
+            </>
+          </LoadingState>
         </div>
         <div className="jp-EodagWidget-form-buttons">
           <SubmitButtons
