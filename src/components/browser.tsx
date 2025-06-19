@@ -9,10 +9,8 @@ import { Modal } from './modal/modal';
 import { codeGenerator } from '../utils/codeGenerator';
 import { IFeatures, IFormInput, IParameter } from '../types';
 import React, { useState } from 'react';
-import { Tooltip } from 'react-tooltip';
 import { CommandRegistry } from '@lumino/commands';
 import { FormComponent } from './formComponent/formComponent';
-import { IcBaselineRefresh } from './icons';
 import { HeaderDropdown } from './headerDropdown/headerDropdown';
 import { useFetchProviders } from '../hooks/useFetchProviders';
 import { useFetchProducts } from '../hooks/useFetchProducts';
@@ -22,6 +20,8 @@ import { useNotebookInjection } from '../hooks/useNotebookInjection';
 import { useEodagSettings } from '../hooks/useEodagSettings';
 import { useUserSettings } from '../hooks/useUserSettings';
 import { useProductsForm } from '../hooks/useProductsForm';
+import { IconButton, Tooltip as MuiTooltip } from '@mui/material';
+import RefreshIcon from '@mui/icons-material/Refresh';
 
 export interface IEodagBrowserProps {
   tracker: INotebookTracker;
@@ -151,23 +151,26 @@ export const EodagBrowser: React.FC<IEodagBrowserProps> = ({
           {'Products search by EODAG'}
         </header>
         <div className="jp-EodagWidget-settings-wrapper">
-          <button
-            type="button"
-            className={'jp-EodagWidget-settingsButton'}
-            data-tooltip-id="eodag-setting"
-            data-tooltip-content="Reload eodag environment"
-            data-tooltip-variant={'dark'}
-            data-tooltip-place={'bottom'}
-            disabled={fetchProductLoading || fetchProvidersLoading}
-            onClick={reloadUserSettings}
-          >
-            <IcBaselineRefresh
-              height="20"
-              width="20"
-              className={isUserSettingsLoading ? 'spin-icon' : ''}
-            />
-            <Tooltip id="eodag-setting" className="jp-Eodag-tooltip" />
-          </button>
+          <MuiTooltip title={'Reload eodag environment'}>
+            <IconButton
+              aria-label="Options"
+              size="small"
+              onClick={reloadUserSettings}
+              sx={{
+                color: '#000000'
+              }}
+              disabled={
+                fetchProductLoading ||
+                fetchProvidersLoading ||
+                isUserSettingsLoading
+              }
+            >
+              <RefreshIcon
+                sx={{ width: '1.25rem', height: '1.25rem' }}
+                className={isUserSettingsLoading ? 'spin-icon' : ''}
+              />
+            </IconButton>
+          </MuiTooltip>
           <HeaderDropdown
             openSettings={() =>
               commands.execute('settingeditor:open', { query: 'EODAG' })

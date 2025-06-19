@@ -63,9 +63,15 @@ export const useUserSettings = () => {
   };
 
   const reloadUserSettings = async () => {
-    fetchUserSettings().then(() => {
+    setIsUserSettingsLoading(true);
+
+    const delay = new Promise(resolve => setTimeout(resolve, 500));
+
+    try {
+      await Promise.all([fetchUserSettings(), delay]);
+    } finally {
       setIsUserSettingsLoading(false);
-    });
+    }
   };
 
   return {

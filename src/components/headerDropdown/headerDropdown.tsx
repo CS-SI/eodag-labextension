@@ -86,10 +86,14 @@ export const HeaderDropdown: React.FC<IHeaderDropdownProps> = ({
 
   const openingComponent = useMemo(
     () => (
-      <IconButton aria-label="Options" size="small">
-        <MoreHorizIcon
-          sx={{ width: '1.25rem', height: '1.25rem', color: '#000000' }}
-        />
+      <IconButton
+        aria-label="Options"
+        size="small"
+        sx={{
+          color: '#000000'
+        }}
+      >
+        <MoreHorizIcon sx={{ width: '1.25rem', height: '1.25rem' }} />
       </IconButton>
     ),
     []
