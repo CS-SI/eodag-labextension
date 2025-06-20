@@ -209,7 +209,17 @@ export const FormComponent: FC<IFormComponentsProps> = ({
     const query_params = params
       ? params.reduce(
           (acc: { [key: string]: string }, curr: any) => {
-            acc[curr.key] = curr.value.selected;
+            const value = curr.value;
+
+            acc[curr.key] =
+              'selected' in value
+                ? value.selected
+                : 'default' in value
+                  ? value.default
+                  : 'const' in value
+                    ? value.const
+                    : undefined;
+
             return acc;
           },
           {} as { [key: string]: string }
