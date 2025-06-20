@@ -110,7 +110,7 @@ export const ParameterGroup: React.FC<IParameterGroupProps> = ({
             classNamePrefix="jp-EodagWidget-select"
             aria-label={title}
             placeholder={`Select a ${lowercaseTitle}...`}
-            defaultValue={getSelectedValue(type, defaultValue)}
+            value={getSelectedValue(type, defaultValue)}
             onChange={selectedOption => {
               handleSelectChange(key, selectedOption, onChange);
             }}
@@ -165,8 +165,6 @@ export const ParameterGroup: React.FC<IParameterGroupProps> = ({
 
     const { key, value, mandatory } = param;
     const { selected = defaultCloudCover } = value;
-
-    form.setValue(key, selected, { shouldValidate: true });
 
     return (
       <label className="jp-EodagWidget-input-name">
