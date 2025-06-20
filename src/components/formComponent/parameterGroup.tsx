@@ -166,8 +166,6 @@ export const ParameterGroup: React.FC<IParameterGroupProps> = ({
     const { key, value, mandatory } = param;
     const { selected = defaultCloudCover } = value;
 
-    form.setValue(key, selected, { shouldValidate: true });
-
     return (
       <label className="jp-EodagWidget-input-name">
         Max cloud cover {selected}%

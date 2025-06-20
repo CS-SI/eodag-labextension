@@ -127,11 +127,11 @@ export const FormComponent: FC<IFormComponentsProps> = ({
     let queryables;
 
     setQueryablesLoading(true);
-    if (providerValue && productTypeValue) {
+    if (productTypeValue) {
       // Isolate the fetch queryables call and handle errors specifically for it
       try {
         queryables = await fetchQueryables(
-          providerValue,
+          providerValue ?? '',
           productTypeValue,
           query_params
         );
