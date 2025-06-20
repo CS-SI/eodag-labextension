@@ -15,6 +15,7 @@ export interface IHeaderDropdownItems {
   icon?: React.ReactElement;
   disabled?: boolean;
   onClick?: () => void;
+  className?: string;
 }
 
 interface IHeaderDropdownProps {
@@ -73,12 +74,14 @@ export const HeaderDropdown: React.FC<IHeaderDropdownProps> = ({
       {
         name: `EODAG v${version}`,
         type: 'link',
-        disabled: true
+        disabled: true,
+        className: 'selectable'
       },
       {
         name: `EODAG LabExtension v${labExtensionVersion}`,
         type: 'link',
-        disabled: true
+        disabled: true,
+        className: 'selectable'
       }
     ],
     [openSettings, version]

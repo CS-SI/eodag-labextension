@@ -12,6 +12,7 @@ export interface IDropdownItem {
   onClick?: () => void;
   checked?: boolean;
   value?: string;
+  className?: string;
 }
 
 interface IDropdownMenuProps {
@@ -36,7 +37,7 @@ export const DropdownMenu: React.FC<IDropdownMenuProps> = ({
           return (
             <MenuItem
               key={option.value}
-              className={'jp-EodagWidget-menuItem'}
+              className={`${'jp-EodagWidget-menuItem'} ${option.className}`}
               onClick={() => option.value && onToggleCheckbox?.(option.value)}
               disabled={option.disabled}
             >
@@ -58,7 +59,7 @@ export const DropdownMenu: React.FC<IDropdownMenuProps> = ({
           return (
             <MenuItem
               disabled={option.disabled}
-              className={'jp-EodagWidget-menuItem'}
+              className={`${'jp-EodagWidget-menuItem'} ${option.className}`}
               onClick={
                 option.link
                   ? () => window.open(option.link, '_blank')
