@@ -110,7 +110,7 @@ export const ParameterGroup: React.FC<IParameterGroupProps> = ({
             classNamePrefix="jp-EodagWidget-select"
             aria-label={title}
             placeholder={`Select a ${lowercaseTitle}...`}
-            defaultValue={getSelectedValue(type, defaultValue)}
+            value={getSelectedValue(type, defaultValue)}
             onChange={selectedOption => {
               handleSelectChange(key, selectedOption, onChange);
             }}
