@@ -88,11 +88,6 @@ export const FormComponent: FC<IFormComponentsProps> = ({
   }, [productTypeValue]);
 
   const onSubmit: SubmitHandler<IFormInput> = async data => {
-    const notebookReady = await ensureNotebookIsOpen();
-    if (!notebookReady) {
-      return;
-    }
-
     if (!openModal) {
       handleGenerateQuery(params);
     }

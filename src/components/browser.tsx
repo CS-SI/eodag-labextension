@@ -83,6 +83,10 @@ export const EodagBrowser: React.FC<IEodagBrowserProps> = ({
   };
 
   const handleGenerateQuery = async (params: IParameter[]) => {
+    const notebookReady = await ensureNotebookIsOpen();
+    if (!notebookReady) {
+      return;
+    }
     setOpenModal(false);
     if (!tracker.currentWidget) {
       return;
