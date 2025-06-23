@@ -43,6 +43,8 @@ dotenv_vars = None
 
 eodag_lock = tornado.locks.Lock()
 
+results_iterator = None
+
 logger = logging.getLogger("eodag-labextension.handlers")
 
 
@@ -372,6 +374,7 @@ class SearchHandler(APIHandler):
     @tornado.web.authenticated
     async def post(self, product_type):
         """Post endpoint"""
+        global results_iterator
 
         arguments = orjson.loads(self.request.body)
 
@@ -399,17 +402,25 @@ class SearchHandler(APIHandler):
 
         dag = await get_eodag_api()
         current_loop = asyncio.get_running_loop()
-        products = await current_loop.run_in_executor(
-            None, partial(dag.search, productType=product_type, count=True, **arguments)
-        )
+        page = int(arguments.pop("page", DEFAULT_PAGE))
+        if int(page) == DEFAULT_PAGE:
+            # first search
+            results_iterator = await current_loop.run_in_executor(
+                None, partial(dag.search_iter_page, productType=product_type, count=True, **arguments)
+            )
+        if results_iterator is None:
+            raise ValidationError(
+                f"Please perform an initial search on {product_type} before iterating to page {page}."
+            )
+        products = await current_loop.run_in_executor(None, partial(next, results_iterator, None))
 
         response = SearchResult(products).as_geojson_object()
         response.update(
             {
                 "properties": {
-                    "page": int(arguments.get("page", DEFAULT_PAGE)),
+                    "page": page,
                     "itemsPerPage": DEFAULT_ITEMS_PER_PAGE,
-                    "totalResults": products.number_matched,
+                    "totalResults": getattr(products, "number_matched", None),
                 }
             }
         )
