@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import {
   INotebookModel,
   Notebook,
@@ -6,7 +5,7 @@ import {
 } from '@jupyterlab/notebook';
 
 export const useNotebookInjection = () => {
-  const [replaceCellIndex, setReplaceCellIndex] = useState(0);
+  let replaceCellIndex = 0;
 
   const insertCode = (
     notebook: Notebook,
@@ -36,7 +35,7 @@ export const useNotebookInjection = () => {
     if (cells.length > 0) {
       cells.forEach((cell, index) => {
         if (cell.node.innerText.includes(searchString)) {
-          setReplaceCellIndex(index);
+          replaceCellIndex = index;
         }
       });
     }
@@ -45,14 +44,20 @@ export const useNotebookInjection = () => {
     if (replaceCode && isReplaceCellExist) {
       notebook.activeCellIndex = replaceCellIndex;
       NotebookActions.deleteCells(notebook);
-      NotebookActions.insertBelow(notebook);
       model.sharedModel.insertCell(replaceCellIndex, cell);
       notebook.activeCellIndex = replaceCellIndex;
     }
 
     if (replaceCode && !isReplaceCellExist) {
-      setReplaceCellIndex(activeCellIndex + 1);
-      model.sharedModel.insertCell(activeCellIndex + 1, cell);
+      replaceCellIndex = !cells[activeCellIndex].model.sharedModel.getSource()
+        ? activeCellIndex
+        : activeCellIndex + 1;
+
+      if (activeCellIndex === replaceCellIndex) {
+        NotebookActions.deleteCells(notebook);
+      }
+
+      model.sharedModel.insertCell(replaceCellIndex, cell);
       NotebookActions.selectBelow(notebook);
     }
 
