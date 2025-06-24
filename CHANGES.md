@@ -55,6 +55,11 @@
 - **search form**: Refactor form component ([#213](https://github.com/CS-SI/eodag-labextension/pull/213),
   [`69553f9`](https://github.com/CS-SI/eodag-labextension/commit/69553f94512121be836998daeccc9e82ce0bf468))
 
+### Documentation
+
+- Update documentation screenshots ([#243](https://github.com/CS-SI/eodag-labextension/pull/243),
+  [`1910cb9`](https://github.com/CS-SI/eodag-labextension/commit/1910cb9dfcc11000a8407240382fb649ce1f95be))
+
 ## v5.0.0 (2025-05-28)
 
 ### Refactoring
