@@ -1,5 +1,70 @@
 # Release history
 
+## v5.1.0 (2025-06-24)
+
+### Features
+
+- **configuration**: Dotenv usage for EODAG conf with environment variables
+  ([#212](https://github.com/CS-SI/eodag-labextension/pull/212),
+  [`031f6af`](https://github.com/CS-SI/eodag-labextension/commit/031f6af2b2960f47f994163e6f33b43c6ef4c1ac))
+
+- **error messages**: Displays error messages with custom modal layout
+  ([#219](https://github.com/CS-SI/eodag-labextension/pull/219),
+  [`0013f22`](https://github.com/CS-SI/eodag-labextension/commit/0013f222b37b9865234b79967d015c3d9aecf588))
+
+- **map settings**: Configurable map using environment variables
+  ([#206](https://github.com/CS-SI/eodag-labextension/pull/206),
+  [`15467c6`](https://github.com/CS-SI/eodag-labextension/commit/15467c68ee402ea65b459513dd098a95860e8a4a)), add map
+  settings from API ([#195](https://github.com/CS-SI/eodag-labextension/pull/195),
+  [`a6392bb`](https://github.com/CS-SI/eodag-labextension/commit/a6392bb29c3775068a30aec9a7e2758d440a5f33))
+
+- **menuitems**: Add selectable versions for header dropdown
+  ([#230](https://github.com/CS-SI/eodag-labextension/pull/230),
+  [`51c9ff7`](https://github.com/CS-SI/eodag-labextension/commit/51c9ff7caa32e37988fbedd61c1f9c55d94b0fb6))
+
+- **parameters**: Add custom parameters in more parameters button dropdown
+  ([#222](https://github.com/CS-SI/eodag-labextension/pull/222),
+  [`1891ca6`](https://github.com/CS-SI/eodag-labextension/commit/1891ca6493a18350b88ccac0a5b5f7a9143326e5))
+
+- **results modal**: Reskin all result modal, and automatically creates a new notebook if none is open when generating
+  code ([#207](https://github.com/CS-SI/eodag-labextension/pull/207),
+  [`cc4a0eb`](https://github.com/CS-SI/eodag-labextension/commit/cc4a0eb661847c507e01b1dd744cedbc1c731178))
+
+### Bug Fixes
+
+- **code generation**: Insert code on first line ([#235](https://github.com/CS-SI/eodag-labextension/pull/235),
+  [`d9881d5`](https://github.com/CS-SI/eodag-labextension/commit/d9881d5589efa8cd555826121c7561bf93bf3a12)), only
+  automatically create notebook if user generates code
+  ([#229](https://github.com/CS-SI/eodag-labextension/pull/229),
+  [`612c1ca`](https://github.com/CS-SI/eodag-labextension/commit/612c1ca8c04d5713993cd988711f22bc0220265c))
+
+- **errors**: Handlers error handling ([#214](https://github.com/CS-SI/eodag-labextension/pull/214),
+  [`0858c1d`](https://github.com/CS-SI/eodag-labextension/commit/0858c1de28a5796b5588578550040982c52132c4)), Raise
+  error on conflicting ipyleaflet version ([#218](https://github.com/CS-SI/eodag-labextension/pull/218),
+  [`bf68052`](https://github.com/CS-SI/eodag-labextension/commit/bf680527b3f6fe217b57a971a26678348d046cd5))
+
+- **preview**: Search page iteration through provider next page
+  ([#240](https://github.com/CS-SI/eodag-labextension/pull/240),
+  [`edee67e`](https://github.com/CS-SI/eodag-labextension/commit/edee67e6606f6d9d866054487d15fe889fb72d60)), Pagination
+  without total count ([#241](https://github.com/CS-SI/eodag-labextension/pull/241),
+  [`2964460`](https://github.com/CS-SI/eodag-labextension/commit/2964460d54da91a48a2dcf7b28545f86af528eb2))
+
+- **providers**: Retrieve provider id from alias in ProvidersHandler
+  ([#216](https://github.com/CS-SI/eodag-labextension/pull/216),
+  [`d6b5a59`](https://github.com/CS-SI/eodag-labextension/commit/d6b5a59c064107e16ce472a0bca4c0bb14895f33))
+
+- **queryables**: Send all param values to backend
+  ([#234](https://github.com/CS-SI/eodag-labextension/pull/234),
+  [`7c92108`](https://github.com/CS-SI/eodag-labextension/commit/7c92108fcbe6467abe7a9e2037ac9d1a28325f52))
+
+- **search form**: Fix various form issues ([#228](https://github.com/CS-SI/eodag-labextension/pull/228),
+  [`e8b0637`](https://github.com/CS-SI/eodag-labextension/commit/e8b063762cdbecd2a2b5ffa4087b2a4f0ae87772))
+
+### Chores
+
+- **search form**: Refactor form component ([#213](https://github.com/CS-SI/eodag-labextension/pull/213),
+  [`69553f9`](https://github.com/CS-SI/eodag-labextension/commit/69553f94512121be836998daeccc9e82ce0bf468))
+
 ## v5.0.0 (2025-05-28)
 
 ### Refactoring
