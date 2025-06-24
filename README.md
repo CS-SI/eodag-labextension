@@ -175,11 +175,12 @@ setup_logging(1) # 0: nothing, 1: only progress bars, 2: INFO, 3: DEBUG
 dag = EODataAccessGateway()
 geometry = "POLYGON ((0.550136 43.005451, 0.550136 44.151469, 2.572104 44.151469, 2.572104 43.005451, 0.550136 43.005451))"
 search_results = dag.search(
+  provider="cop_dataspace",
   productType="S2_MSI_L1C",
   geom=geometry,
-  start="2021-08-01",
-  end="2021-08-11",
-  cloudCover=17,
+  start="2025-04-01",
+  end="2025-04-05",
+  cloudCover=51,
 )
 ```
 
