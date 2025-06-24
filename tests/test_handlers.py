@@ -172,13 +172,12 @@ class TestEodagLabExtensionHandler(AsyncHTTPTestCase):
     async def test_post_not_found(self):
         await self.fetch_results_error("/eodag/foo/bar", 404, method="POST", body=json.dumps({}))
 
-    @mock.patch(
-        "eodag.api.core.EODataAccessGateway.search",
-        autospec=True,
-        return_value=SearchResult([], 0),
-    )
-    @gen_test
+    @mock.patch("eodag.api.core.EODataAccessGateway.search_iter_page", autospec=True)
+    @gen_test(timeout=120)
     async def test_search(self, mock_search):
+        mock_search.return_value = mock.MagicMock()
+        mock_search.return_value.__next__.return_value = SearchResult([], 0)
+
         geom_dict = {
             "type": "Polygon",
             "coordinates": [[[0, 2], [0, 3], [1, 3], [1, 2], [0, 2]]],
@@ -205,7 +204,6 @@ class TestEodagLabExtensionHandler(AsyncHTTPTestCase):
             start="2024-01-01T00:00:00",
             end="2024-01-02T00:00:00",
             geom=shape(geom_dict),
-            page=1,
             cloudCover=50,
             foo="bar",
             provider="cop_dataspace",
