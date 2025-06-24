@@ -9,22 +9,29 @@ import logging
 import os
 import re
 import shutil
+import traceback
 from functools import partial
 from typing import Any
 
 import orjson
 import tornado
+from dotenv import dotenv_values
 from eodag import EODataAccessGateway, SearchResult, setup_logging
 from eodag.api.core import DEFAULT_ITEMS_PER_PAGE, DEFAULT_PAGE
 from eodag.utils import parse_qs
 from eodag.utils.exceptions import (
     AuthenticationError,
+    MisconfiguredError,
     NoMatchingProductType,
+    NotAvailableError,
+    RequestError,
+    TimeOutError,
     UnsupportedProductType,
     UnsupportedProvider,
     ValidationError,
 )
 from eodag.utils.rest import get_datetime
+from importlib_metadata import PackageNotFoundError, version
 from jupyter_server.base.handlers import APIHandler
 from jupyter_server.utils import url_path_join
 from shapely.geometry import shape
@@ -32,14 +39,64 @@ from shapely.geometry import shape
 from eodag_labextension.config import Settings
 
 eodag_api = None
+dotenv_vars = None
 
 eodag_lock = tornado.locks.Lock()
+
+results_iterator = None
 
 logger = logging.getLogger("eodag-labextension.handlers")
 
 
 if Settings().debug:
     setup_logging(3)
+
+
+def exception_handler(func):
+    """Decorator to handle exceptions in Tornado handlers"""
+
+    async def inner_function(handler, *args, **kwargs):
+        try:
+            return await func(handler, *args, **kwargs)
+        except (
+            ValidationError,
+            UnsupportedProvider,
+            UnsupportedProductType,
+            RequestError,
+            RuntimeError,
+            MisconfiguredError,
+        ) as e:
+            tb = traceback.format_exc()
+            handler.set_status(400)
+            handler.finish({"error": str(e), "details": tb})
+            logger.error(tb)
+            return
+        except (NotAvailableError, NoMatchingProductType) as e:
+            tb = traceback.format_exc()
+            handler.set_status(404)
+            handler.finish({"error": str(e), "details": tb})
+            logger.error(tb)
+            return
+        except AuthenticationError as e:
+            tb = traceback.format_exc()
+            handler.set_status(403)
+            handler.finish({"error": f"AuthenticationError: Please check your credentials ({e})", "details": tb})
+            logger.error(tb)
+            return
+        except TimeOutError as e:
+            tb = traceback.format_exc()
+            handler.set_status(504)
+            handler.finish({"error": str(e), "details": tb})
+            logger.error(tb)
+            return
+        except Exception as e:
+            tb = traceback.format_exc()
+            handler.set_status(500)
+            handler.finish({"error": str(e), "details": tb})
+            logger.error(tb)
+            return
+
+    return inner_function
 
 
 def set_conf_symlink(eodag_api):
@@ -75,6 +132,28 @@ def set_conf_symlink(eodag_api):
         logger.error("Could not create eodag-config symlink to user configuration: " + str(err))
 
 
+def load_dotenv():
+    """Load EODAG environment variables from .env file and update os.environ."""
+    global dotenv_vars
+
+    env_path = os.path.join(os.getcwd(), ".env")
+    eodag_env_vars = None
+    if os.path.isfile(env_path):
+        logger.debug(f"Loading environment variables from {env_path}")
+        env_vars = dotenv_values(env_path)
+        eodag_env_vars = {key: value for key, value in env_vars.items() if key.startswith("EODAG_")}
+        os.environ.update(eodag_env_vars)
+    else:
+        logger.debug(f"No .env file found at {env_path}, skipping loading environment variables.")
+
+    # remove vars previously set
+    for v in dotenv_vars or {}:
+        if eodag_env_vars is None or v not in eodag_env_vars:
+            logger.debug(f"Removing {v} from os.environ")
+            os.environ.pop(v, None)
+    dotenv_vars = eodag_env_vars
+
+
 async def get_eodag_api():
     """EODataAccessGateway on-demand instanciation"""
     global eodag_api
@@ -82,6 +161,7 @@ async def get_eodag_api():
     current_loop = asyncio.get_running_loop()
     async with eodag_lock:
         if eodag_api is None:
+            load_dotenv()
             eodag_api = await current_loop.run_in_executor(None, EODataAccessGateway)
             set_conf_symlink(eodag_api)
         return eodag_api
@@ -90,6 +170,7 @@ async def get_eodag_api():
 class ProductTypeHandler(APIHandler):
     """Product type listing handler"""
 
+    @exception_handler
     @tornado.web.authenticated
     async def get(self):
         """Get endpoint"""
@@ -100,14 +181,9 @@ class ProductTypeHandler(APIHandler):
             provider = query_dict.pop("provider")[0]
         provider = None if not provider or provider == "null" else provider
 
-        try:
-            dag = await get_eodag_api()
-            current_loop = asyncio.get_running_loop()
-            product_types = await current_loop.run_in_executor(None, partial(dag.list_product_types, provider=provider))
-        except UnsupportedProvider as e:
-            self.set_status(400)
-            self.finish({"error": str(e)})
-            return
+        dag = await get_eodag_api()
+        current_loop = asyncio.get_running_loop()
+        product_types = await current_loop.run_in_executor(None, partial(dag.list_product_types, provider=provider))
 
         self.finish(orjson.dumps(product_types))
 
@@ -115,42 +191,67 @@ class ProductTypeHandler(APIHandler):
 class ReloadHandler(APIHandler):
     """EODAG API reload handler"""
 
+    @exception_handler
     @tornado.web.authenticated
     async def get(self):
         """Get endpoint"""
-        dag = await get_eodag_api()
-        current_loop = asyncio.get_running_loop()
+        global eodag_api
         async with eodag_lock:
-            await current_loop.run_in_executor(None, dag.__init__)
+            eodag_api = None
+        load_dotenv()
+        await get_eodag_api()
+        self.finish(orjson.dumps({"status": "done"}))
 
 
 class InfoHandler(APIHandler):
     """EODAG info handler"""
 
+    @exception_handler
     @tornado.web.authenticated
     async def get(self):
         """Get endpoint"""
+        await self._check_installed_packages()
         current_loop = asyncio.get_running_loop()
         result = await current_loop.run_in_executor(None, lambda: Settings().model_dump())
         self.finish(orjson.dumps(result))
+
+    async def _check_installed_packages(self):
+        """Check if not-required packages are installed and have the correct version."""
+        try:
+            dep_version = version("ipyleaflet")
+            if dep_version < "0.18.0":
+                pkg_versions = "; ".join(
+                    f"{k}: {v['version']}"
+                    for k, v in Settings().model_dump().get("packages", {}).items()
+                    if "version" in v
+                )
+                raise ImportError(
+                    f"If installed, ipyleaflet >= 0.18.0 is required, found version {dep_version} ({pkg_versions})"
+                )
+        except PackageNotFoundError:
+            # Dependency is optional; continue silently
+            pass
 
 
 class ProvidersHandler(APIHandler):
     """Providers listing handler"""
 
+    @exception_handler
     @tornado.web.authenticated
     async def get(self):
         """Get endpoint"""
 
         available_providers_kwargs = {}
         query_dict = parse_qs(self.request.query)
-        if (
-            "product_type" in query_dict
-            and isinstance(query_dict["product_type"], list)
-            and len(query_dict["product_type"]) > 0
-        ):
-            available_providers_kwargs["product_type"] = query_dict["product_type"][0]
+
         dag = await get_eodag_api()
+
+        if isinstance(pt_list := query_dict.get("product_type", []), list) and pt_list:
+            try:
+                available_providers_kwargs["product_type"] = dag.get_product_type_from_alias(pt_list[0])
+            except NoMatchingProductType:
+                available_providers_kwargs["product_type"] = pt_list[0]
+
         current_loop = asyncio.get_running_loop()
         available_providers = await current_loop.run_in_executor(
             None, partial(dag.available_providers, **available_providers_kwargs)
@@ -198,6 +299,7 @@ class ProvidersHandler(APIHandler):
 class GuessProductTypeHandler(APIHandler):
     """Guess product type method handler"""
 
+    @exception_handler
     @tornado.web.authenticated
     async def get(self):
         """Get endpoint"""
@@ -263,18 +365,16 @@ class GuessProductTypeHandler(APIHandler):
             self.finish(orjson.dumps(returned_product_types))
         except NoMatchingProductType:
             self.finish(orjson.dumps(returned_product_types))
-        except UnsupportedProvider as e:
-            self.set_status(400)
-            self.finish({"error": str(e)})
-            return
 
 
 class SearchHandler(APIHandler):
     """Search products handler"""
 
+    @exception_handler
     @tornado.web.authenticated
     async def post(self, product_type):
         """Post endpoint"""
+        global results_iterator
 
         arguments = orjson.loads(self.request.body)
 
@@ -288,12 +388,7 @@ class SearchHandler(APIHandler):
             return
 
         # dates
-        try:
-            arguments["start"], arguments["end"] = get_datetime(arguments)
-        except ValidationError as e:
-            self.set_status(400)
-            self.finish({"error": str(e)})
-            return
+        arguments["start"], arguments["end"] = get_datetime(arguments)
 
         # provider
         provider = arguments.pop("provider", None)
@@ -305,40 +400,27 @@ class SearchHandler(APIHandler):
         # We remove potential None values to use the default values of the search method
         arguments = dict((k, v) for k, v in arguments.items() if v is not None)
 
-        try:
-            dag = await get_eodag_api()
-            current_loop = asyncio.get_running_loop()
-            products = await current_loop.run_in_executor(
-                None, partial(dag.search, productType=product_type, count=True, **arguments)
+        dag = await get_eodag_api()
+        current_loop = asyncio.get_running_loop()
+        page = int(arguments.pop("page", DEFAULT_PAGE))
+        if int(page) == DEFAULT_PAGE:
+            # first search
+            results_iterator = await current_loop.run_in_executor(
+                None, partial(dag.search_iter_page, productType=product_type, count=True, **arguments)
             )
-        except ValidationError as e:
-            self.set_status(400)
-            self.finish({"error": e.message})
-            return
-        except RuntimeError as e:
-            self.set_status(400)
-            self.finish({"error": e})
-            return
-        except UnsupportedProductType as e:
-            self.set_status(404)
-            self.finish({"error": "Not Found: {}".format(e.product_type)})
-            return
-        except AuthenticationError as e:
-            self.set_status(403)
-            self.finish({"error": f"AuthenticationError: Please check your credentials ({e})"})
-            return
-        except Exception as e:
-            self.set_status(502)
-            self.finish({"error": str(e)})
-            return
+        if results_iterator is None:
+            raise ValidationError(
+                f"Please perform an initial search on {product_type} before iterating to page {page}."
+            )
+        products = await current_loop.run_in_executor(None, partial(next, results_iterator, None))
 
         response = SearchResult(products).as_geojson_object()
         response.update(
             {
                 "properties": {
-                    "page": int(arguments.get("page", DEFAULT_PAGE)),
+                    "page": page,
                     "itemsPerPage": DEFAULT_ITEMS_PER_PAGE,
-                    "totalResults": products.number_matched,
+                    "totalResults": getattr(products, "number_matched", None),
                 }
             }
         )
@@ -381,6 +463,7 @@ class MethodAndPathMatch(tornado.routing.PathMatches):
 class QueryablesHandler(APIHandler):
     """EODAG queryables handler"""
 
+    @exception_handler
     @tornado.web.authenticated
     async def get(self):
         """Get endpoint"""
@@ -391,19 +474,16 @@ class QueryablesHandler(APIHandler):
             if not key.isdigit()
         }
         logger.error(queryables_kwargs)
-        try:
-            dag = await get_eodag_api()
-            current_loop = asyncio.get_running_loop()
-            queryables_dict = await current_loop.run_in_executor(
-                None, partial(dag.list_queryables, fetch_providers=False, **queryables_kwargs)
-            )
-            json_schema = queryables_dict.get_model().model_json_schema()
-            self._remove_null_defaults(json_schema)
-            json_schema["additionalProperties"] = queryables_dict.additional_properties
-            self.finish(json_schema)
-        except Exception as e:
-            self.set_status(400)
-            self.finish({"error": str(e)})
+
+        dag = await get_eodag_api()
+        current_loop = asyncio.get_running_loop()
+        queryables_dict = await current_loop.run_in_executor(
+            None, partial(dag.list_queryables, fetch_providers=False, **queryables_kwargs)
+        )
+        json_schema = queryables_dict.get_model().model_json_schema()
+        self._remove_null_defaults(json_schema)
+        json_schema["additionalProperties"] = queryables_dict.additional_properties
+        self.finish(json_schema)
 
     def _remove_null_defaults(self, json_schema: Any):
         for item in json_schema["properties"].values():

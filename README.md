@@ -22,10 +22,11 @@ Lab. The package consist of a Python Jupyter notebook REST service consumed by t
 - [Requirements](#requirements)
 - [Compatibility](#compatibility)
 - [Install](#install)
-  - [Configuration](#configuration)
+  - [System configuration](#system-configuration)
 - [QuickStart](#quickstart)
   - [Search](#search)
   - [Settings](#settings)
+    - [EODAG user settings through environment variables](#eodag-user-settings-through-environment-variables)
   - [Results overview](#results-overview)
   - [Apply to the Jupyter notebook](#apply-to-the-jupyter-notebook)
   - [User manual](#user-manual)
@@ -56,19 +57,24 @@ You can also uninstall it quite simply.
 pip uninstall eodag-labextension
 ```
 
-### Configuration
+### System configuration
 
-eodag configuration file should be localized at `~/.config/eodag/eodag.yaml` (see
-[eodag documentation](https://eodag.readthedocs.io/en/latest/getting_started_guide/configure.html)).
-Make sure that that file is configured properly.
-The file can directly be edited through [Settings menu](#settings).
+EODAG Labextension can be configured using the following environment variables:
+
+- `EODAG_LABEXTENSION__DEBUG` (`bool`, default: `False`): whether to print
+  [EODAG logging](https://eodag.readthedocs.io/en/stable/notebooks/api_user_guide/3_configuration.html#Logging) at DEBUG
+  level or not.
+- `EODAG_LABEXTENSION__MAP__TILE_URL` (`str`, default: `https://a.tile.openstreetmap.org/{z}/{x}/{y}.png`): Map tile URL.
+- `EODAG_LABEXTENSION__MAP__TILE_ATTRIBUTION` (`str`, default: "&copy; [OpenStreetMap](http://osm.org/copyright) contributors"):
+  Map tile attribution.
+- `EODAG_LABEXTENSION__MAP__ZOOM_OFFSET` (`int`, default: `0`): Map zoom offset.
 
 ## QuickStart
 
 You can use `eodag-labextension` inside a Jupyter notebook. Start Jupyter lab with `jupyter lab`, and in Jupyter lab
 open a notebook.
 
-## Search
+### Search
 
 ![extension logo](https://raw.githubusercontent.com/CS-SI/eodag-labextension/develop/notebooks/images/eodag_labext_icon.png)
 Click on this icon in the left of JupyterLab interface to open EODAG-Labextension tab.
@@ -99,7 +105,7 @@ Once search criteria are filled out, click on:
 - `Generate Code` to automatically generate and insert the corresponding eodag search code bellow the active cell.
 - `Preview Results` to perform a search in background, display results, and generate search code in a second step.
 
-## Settings
+### Settings
 
 ![reload logo](https://raw.githubusercontent.com/CS-SI/eodag-labextension/develop/notebooks/images/eodag_labext_reload_icon.png)
 Click on this icon to reload [EODAG configuration](https://eodag.readthedocs.io/en/stable/getting_started_guide/configure.html)
@@ -118,11 +124,23 @@ You will be enable to:
   - configure the default map settings.
 
 - Edit [EODAG user configuration file](https://eodag.readthedocs.io/en/stable/getting_started_guide/configure.html#yaml-user-configuration-file),
-  to set provider credentials, download directories, or other settings.
+  to set provider credentials, download directories, or other settings. Default file path is `~/.config/eodag/eodag.yaml`.
   EODAG environment automatically reloads on file save.
 - Open Labextension [Documentation](https://github.com/CS-SI/eodag-labextension/blob/develop/README.md),
   [Github repository](https://github.com/CS-SI/eodag-labextension), or [CS GROUP](https://www.cs-soprasteria.com) page.
 - View EODAG packages versions.
+
+#### EODAG user settings through environment variables
+
+EODAG [environment variable configuration](https://eodag.readthedocs.io/en/stable/getting_started_guide/configure.html#environment-variable-configuration)
+can be set by storing variables in a `.env` file in the jupyterlab working directory:
+
+```sh
+echo "EODAG_CFG_FILE=/path/to/custom.yml" >> .env
+```
+
+Hit the reload ![reload logo](https://raw.githubusercontent.com/CS-SI/eodag-labextension/develop/notebooks/images/eodag_labext_reload_icon.png)
+button to update current EODAG environment with updated `.env` file.
 
 ### Results overview
 
@@ -157,11 +175,12 @@ setup_logging(1) # 0: nothing, 1: only progress bars, 2: INFO, 3: DEBUG
 dag = EODataAccessGateway()
 geometry = "POLYGON ((0.550136 43.005451, 0.550136 44.151469, 2.572104 44.151469, 2.572104 43.005451, 0.550136 43.005451))"
 search_results = dag.search(
+  provider="cop_dataspace",
   productType="S2_MSI_L1C",
   geom=geometry,
-  start="2021-08-01",
-  end="2021-08-11",
-  cloudCover=17,
+  start="2025-04-01",
+  end="2025-04-05",
+  cloudCover=51,
 )
 ```
 

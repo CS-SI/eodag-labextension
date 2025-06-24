@@ -12,6 +12,14 @@ from pydantic import BaseModel, computed_field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
+class MapInfo(BaseModel):
+    """Map info model"""
+
+    tile_url: str = "https://a.tile.openstreetmap.org/{z}/{x}/{y}.png"
+    tile_attribution: str = "&copy; <a href=&quot;http://osm.org/copyright&quot;>OpenStreetMap</a> contributors"
+    zoom_offset: int = 0
+
+
 class PackageInfo(BaseModel):
     """Package info model"""
 
@@ -21,9 +29,11 @@ class PackageInfo(BaseModel):
 class Settings(BaseSettings):
     """EODAG Labextension config"""
 
-    model_config = SettingsConfigDict(env_prefix="eodag_labextension__")
+    model_config = SettingsConfigDict(env_prefix="eodag_labextension__", env_nested_delimiter="__")
 
     debug: bool = False
+
+    map: MapInfo = MapInfo()
 
     @computed_field
     def packages(self) -> dict[str, PackageInfo]:

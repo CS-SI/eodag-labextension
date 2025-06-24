@@ -1,0 +1,28 @@
+.jp-EodagWidget-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 0 10px;
+}
+
+.jp-EodagWidget-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-width: 450px;
+}
+
+.jp-EodagWidget-form-date-picker-wrapper {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.jp-EodagWidget-input-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.jp-EodagWidget-input-wrapper > svg {
+  display: inline-block;
+  color: var(--gray);
+}

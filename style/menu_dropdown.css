@@ -1,0 +1,15 @@
+.jp-EodagWidget-menuItem {
+  gap: 0.5rem;
+  font-size: 0.8rem !important;
+}
+
+.jp-EodagWidget-menuItem.selectable {
+  pointer-events: auto !important;
+  user-select: text !important;
+  cursor: text !important;
+}
+
+.jp-EodagWidget-menuItem > svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}

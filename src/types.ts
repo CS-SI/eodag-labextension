@@ -4,12 +4,14 @@
  */
 
 export interface IFormInput {
-  geometry: IGeometry;
-  startDate: Date;
-  endDate: Date;
-  productType: string;
-  provider: string;
-  additionnalParameters?: { name: string; value: string }[];
+  productType?: string | null;
+  provider?: string | null;
+  geometry?: IGeometry;
+  startDate?: Date;
+  endDate?: Date;
+  id?: string;
+  additionalParameters?: { name: string; value: string }[];
+
   [key: string]: any;
 }
 
@@ -18,23 +20,13 @@ export interface ISearchParameters {
   dtend?: string; // format: YYYY-MM-DD
   page?: number;
   geom?: IGeometry;
+
   [key: string]: any;
 }
 
 export interface IGeometry {
   type: string;
   coordinates: number[];
-}
-// export type IFeaturePropertie = [string, any];
-export interface IFeaturePropertie {
-  key: string;
-  value: any;
-}
-
-// export type IFeaturePropertie = [string, any];
-export interface IFeaturePropertie {
-  key: string;
-  value: any;
 }
 
 export type MapSettings = { lat: number; lon: number; zoom: number };
@@ -54,4 +46,27 @@ export interface IParameter {
 export interface IOptionType {
   value: string;
   label: string;
+  divider?: boolean;
+}
+
+// TODO: Need to type this
+export interface IFeatures {
+  type: any;
+  features: any[];
+}
+
+export interface IProduct {
+  id: string;
+  startTimeFromAscendingNode?: string;
+  endTimeFromAscendingNode?: string;
+  thumbnail?: string;
+  quicklook?: string;
+  cloudCover?: number;
+  properties: { [key: string]: any };
+}
+
+export interface ICustomError {
+  name: string;
+  title: string;
+  details: string;
 }

@@ -10,7 +10,6 @@ node_modules/
 eodag_labextension/labextension
 # Version file is handled by hatchling
 eodag_labextension/_version.py
-
 # Created by https://www.gitignore.io/api/python
 # Edit at https://www.gitignore.io/?templates=python
 
@@ -132,3 +131,6 @@ dmypy.json
 
 # EODAG local conf symlink
 eodag-config
+
+# dotenv
+.env
