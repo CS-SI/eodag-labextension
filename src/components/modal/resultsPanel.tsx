@@ -34,7 +34,7 @@ export const ResultsPanel: React.FC<IResultsPanel> = ({
     const displayedResults = get(features, 'features', []).length;
     const totalResults = get(features, 'properties.totalResults', 0);
     const ResultsTitle =
-      totalResults != null ? `Results (${totalResults})` : 'Results';
+      totalResults !== null ? `Results (${totalResults})` : 'Results';
     return { displayedResults, ResultsTitle };
   }, [features]);
 
