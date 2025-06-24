@@ -30,17 +30,19 @@ export const ResultsPanel: React.FC<IResultsPanel> = ({
   selectedFeature,
   handleGenerateQuery
 }) => {
-  const { displayedResults, totalResults } = useMemo(() => {
+  const { displayedResults, ResultsTitle } = useMemo(() => {
     const displayedResults = get(features, 'features', []).length;
     const totalResults = get(features, 'properties.totalResults', 0);
-    return { displayedResults, totalResults };
+    const ResultsTitle =
+      totalResults != null ? `Results (${totalResults})` : 'Results';
+    return { displayedResults, ResultsTitle };
   }, [features]);
 
   return (
     <div className={'jp-EodagWidget-modal-results'}>
       <div className={'jp-EodagWidget-results-wrapper'}>
         <div className={'jp-EodagWidget-results-title'}>
-          <h2>{`Results (${totalResults})`}</h2>
+          <h2>{ResultsTitle}</h2>
           <div className={'jp-EodagWidget-results-subtitle'}>
             <span>{`Showing the first ${displayedResults} items that matched your filter`}</span>
             {isRetrievingMoreFeature && (

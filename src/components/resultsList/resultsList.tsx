@@ -27,7 +27,6 @@ export const ResultsList: React.FC<IResultsListProps> = ({
   isRetrievingMoreFeature,
   handleRetrieveMoreFeature
 }) => {
-  const totalCount = features.properties.totalResults;
   const loadedCount = features.features.length;
   const containerRef = useRef<HTMLDivElement>(null);
   const [height, setHeight] = useState<number>(0);
@@ -66,11 +65,7 @@ export const ResultsList: React.FC<IResultsListProps> = ({
     visibleStopIndex: number;
   }) => {
     // Get more data as soon as we reach the end of the container
-    if (
-      !isRetrievingMoreFeature &&
-      visibleStopIndex >= loadedCount - 1 &&
-      loadedCount < totalCount
-    ) {
+    if (!isRetrievingMoreFeature && visibleStopIndex >= loadedCount - 1) {
       handleRetrieveMoreFeature();
     }
   };
