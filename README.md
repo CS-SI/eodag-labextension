@@ -121,6 +121,8 @@ You will be enable to:
 - Configure Labextension through its settings:
 
   - choose whether newly inserted code should replace existing search code or not;
+  - enable search count, which would significantly slow down search requests for some providers, and might be
+    unavailable for some others;
   - configure the default map settings.
 
 - Edit [EODAG user configuration file](https://eodag.readthedocs.io/en/stable/getting_started_guide/configure.html#yaml-user-configuration-file),

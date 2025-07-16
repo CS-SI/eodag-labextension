@@ -195,6 +195,7 @@ class TestEodagLabExtensionHandler(AsyncHTTPTestCase):
                     "cloudCover": 50,
                     "foo": "bar",
                     "provider": "cop_dataspace",
+                    "count": False,
                 }
             ),
         )
@@ -207,7 +208,7 @@ class TestEodagLabExtensionHandler(AsyncHTTPTestCase):
             cloudCover=50,
             foo="bar",
             provider="cop_dataspace",
-            count=True,
+            count=False,
             raise_errors=True,
         )
         self.assertDictEqual(
@@ -233,7 +234,6 @@ class TestEodagLabExtensionHandler(AsyncHTTPTestCase):
         mock_search.assert_called_once_with(
             mock.ANY,
             productType="S2_MSI_L1C",
-            count=True,
         )
 
         # date error

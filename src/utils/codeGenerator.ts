@@ -9,6 +9,7 @@ import { geojsonToWKT } from '@terraformer/wkt';
 
 import { IFormInput } from '../types';
 import { isUndefined } from 'lodash';
+import { useEodagSettings } from '../hooks/useEodagSettings';
 
 const formatDate = (date: Date): string => {
   const local = new Date(date);
@@ -16,7 +17,7 @@ const formatDate = (date: Date): string => {
   return local.toJSON().slice(0, 10);
 };
 
-export const codeGenerator = (
+export const codeGenerator = async (
   {
     startDate,
     endDate,
@@ -29,6 +30,10 @@ export const codeGenerator = (
   }: IFormInput,
   replaceCode: boolean
 ) => {
+  const { getEodagSettings } = useEodagSettings();
+  const settings = await getEodagSettings();
+  const searchCount = settings.searchCount;
+
   const start = startDate ? formatDate(startDate) : undefined;
   const end = endDate ? formatDate(endDate) : undefined;
   const tab = ' '.repeat(4);
@@ -74,6 +79,10 @@ search_results = dag.search(`;
   if (id) {
     code += `
     id="${id}",`;
+  }
+  if (searchCount === true) {
+    code += `
+    count=True,`;
   }
   let filteredParameters: { name: string; value: string }[] = [];
   if (!isUndefined(additionalParameters)) {
