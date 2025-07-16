@@ -406,7 +406,7 @@ class SearchHandler(APIHandler):
         if int(page) == DEFAULT_PAGE:
             # first search
             results_iterator = await current_loop.run_in_executor(
-                None, partial(dag.search_iter_page, productType=product_type, count=True, **arguments)
+                None, partial(dag.search_iter_page, productType=product_type, **arguments)
             )
         if results_iterator is None:
             raise ValidationError(

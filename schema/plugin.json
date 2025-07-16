@@ -10,6 +10,12 @@
       "type": "boolean",
       "default": false
     },
+    "searchCount": {
+      "title": "Search count enable",
+      "description": "Enabling count will significantly slow down search requests for some providers, and might be unavailable for some others.",
+      "type": "boolean",
+      "default": false
+    },
     "map": {
       "title": "Map settings",
       "description": "Settings for editing the center and zoom of the map",

@@ -20,8 +20,7 @@ export const useEodagSettings = () => {
         return res.json();
       })
       .then(data => {
-        const { replaceCode } = data.settings;
-        return replaceCode;
+        return data.settings;
       });
   };
 

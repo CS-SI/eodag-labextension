@@ -119,7 +119,8 @@ export const EodagBrowser: React.FC<IEodagBrowserProps> = ({
     const idParam = params.find(p => p.key === 'id');
     const idValue = idParam?.value?.id;
 
-    const replaceCode = await getEodagSettings();
+    const settings = await getEodagSettings();
+    const replaceCode = settings.replaceCode;
     let input: IFormInput;
     if (isUndefined(formValues)) {
       input = {
@@ -145,7 +146,12 @@ export const EodagBrowser: React.FC<IEodagBrowserProps> = ({
         input = formValues as IFormInput;
       }
     }
-    insertCode(notebook, model, codeGenerator(input, replaceCode), replaceCode);
+    insertCode(
+      notebook,
+      model,
+      await codeGenerator(input, replaceCode),
+      replaceCode
+    );
   };
 
   return (
