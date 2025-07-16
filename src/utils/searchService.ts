@@ -10,6 +10,7 @@ import { ServerConnection } from '@jupyterlab/services';
 import { URLExt } from '@jupyterlab/coreutils';
 import { IFormInput, ISearchParameters } from '../types';
 import _, { isUndefined } from 'lodash';
+import { useEodagSettings } from '../hooks/useEodagSettings';
 
 const formatDate = (date: Date): string => {
   const local = new Date(date);
@@ -78,6 +79,11 @@ class SearchService {
         parameters[key] = formValues[key];
       }
     });
+
+    // count
+    const { getEodagSettings } = useEodagSettings();
+    const settings = await getEodagSettings();
+    parameters.count = settings.searchCount;
 
     const headers = new Headers({
       'Content-Type': 'application/json'
