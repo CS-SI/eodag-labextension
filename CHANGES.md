@@ -1,5 +1,18 @@
 # Release history
 
+## v5.2.0 (2025-07-16)
+
+### Features
+
+- **settings**: Search count disabled by default
+  ([#247](https://github.com/CS-SI/eodag-labextension/pull/247),
+  [`883cb41`](https://github.com/CS-SI/eodag-labextension/commit/883cb41b4f95e11efba7174701f1a9b60554e456))
+
+### Bug Fixes
+
+- **settings**: Info fetch url ([#246](https://github.com/CS-SI/eodag-labextension/pull/246),
+  [`87894ab`](https://github.com/CS-SI/eodag-labextension/commit/87894ab85b3c7cf33cd879c33d3a7de2403a59e6))
+
 ## v5.1.0 (2025-06-24)
 
 ### Features
