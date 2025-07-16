@@ -1,6 +1,6 @@
 {
     "name": "eodag-labextension",
-    "version": "5.1.0",
+    "version": "5.2.0",
     "description": "Searching remote sensed imagery from various image providers",
     "keywords": [
         "jupyter",
@@ -14,7 +14,7 @@
     "license": "Apache-2.0",
     "author": {
         "name": "CS Group",
-        "email": "admin@geostorm.eu"
+        "email": "eodag@csgroup.space"
     },
     "files": [
         "lib/**/*.{d.ts,eot,gif,html,jpg,js,js.map,json,png,svg,woff2,ttf}",
