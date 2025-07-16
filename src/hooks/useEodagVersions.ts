@@ -1,4 +1,7 @@
 import { useEffect, useState } from 'react';
+import { URLExt } from '@jupyterlab/coreutils';
+import { ServerConnection } from '@jupyterlab/services';
+import { EODAG_SERVER_ADDRESS } from '../config/config';
 import { IMapSettings } from '../components/browser';
 import { ICustomError } from '../types';
 import { showCustomErrorDialog } from '../components/customErrorDialog/customErrorDialog';
@@ -15,7 +18,12 @@ export const useEodagVersions = () => {
   useEffect(() => {
     const fetchInfo = async () => {
       try {
-        const res = await fetch('/eodag/info', {
+        const serverSettings = ServerConnection.makeSettings();
+        const eodagServer = URLExt.join(
+          serverSettings.baseUrl,
+          EODAG_SERVER_ADDRESS
+        );
+        const res = await fetch(URLExt.join(eodagServer, 'info'), {
           credentials: 'same-origin'
         });
 
@@ -32,9 +40,7 @@ export const useEodagVersions = () => {
         if (!res.ok) {
           throw {
             name: '',
-            title:
-              data?.error ||
-              'Erreur lors de la récupération des informations EODAG.',
+            title: data?.error || 'Error while fetching EODAG information',
             details: data?.details || ''
           };
         }
@@ -58,8 +64,7 @@ export const useEodagVersions = () => {
       } catch (error: any) {
         const customError: ICustomError = {
           name: '',
-          title:
-            error?.error || 'Erreur lors de la récupération des informations.',
+          title: error?.error || 'Error while fetching information.',
           details: error?.details || ''
         };
         await showCustomErrorDialog(
