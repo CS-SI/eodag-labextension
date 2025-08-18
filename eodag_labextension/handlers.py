@@ -12,13 +12,13 @@ import shutil
 import traceback
 from functools import partial
 from typing import Any
+from urllib.parse import parse_qs
 
 import orjson
 import tornado
 from dotenv import dotenv_values
 from eodag import EODataAccessGateway, SearchResult, setup_logging
 from eodag.api.core import DEFAULT_ITEMS_PER_PAGE, DEFAULT_PAGE
-from eodag.utils import parse_qs
 from eodag.utils.exceptions import (
     AuthenticationError,
     MisconfiguredError,
