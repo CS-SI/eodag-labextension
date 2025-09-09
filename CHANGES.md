@@ -1,5 +1,12 @@
 # Release history
 
+## v5.2.1 (2025-09-09)
+
+### Bug Fixes
+
+- urllib parse_qs method import ([#249](https://github.com/CS-SI/eodag-labextension/pull/249),
+  [`d1968dc`](https://github.com/CS-SI/eodag-labextension/commit/d1968dc76c6f66adc92b67bd7c534065d69358c9))
+
 ## v5.2.0 (2025-07-16)
 
 ### Features
