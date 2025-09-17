@@ -1,5 +1,13 @@
 # Release history
 
+## v5.2.2 (2025-09-17)
+
+### Bug Fixes
+
+- Requests using jupyterlab dedicated API
+  ([#251](https://github.com/CS-SI/eodag-labextension/pull/251),
+  [`c2384bf`](https://github.com/CS-SI/eodag-labextension/commit/c2384bfd5664e9ddd6e766c1b95f98791a41b6d3))
+
 ## v5.2.1 (2025-09-09)
 
 ### Bug Fixes

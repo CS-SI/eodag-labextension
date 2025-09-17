@@ -15,7 +15,7 @@ line_length = 120
 known_third_party = ["eodag", "jupyter_packaging", "jupyter_server", "notebook", "setuptools", "tornado"]
 
 [tool.semantic_release.branches.main]
-match = "(master|develop)"
+match = "(master|develop|new-release)"
 
 [tool.semantic_release.changelog]
 exclude_commit_patterns = [
