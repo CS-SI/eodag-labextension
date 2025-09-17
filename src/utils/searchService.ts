@@ -85,26 +85,21 @@ class SearchService {
     const settings = await getEodagSettings();
     parameters.count = settings.searchCount;
 
-    const headers = new Headers({
-      'Content-Type': 'application/json'
-    });
+    const _serverSettings = ServerConnection.makeSettings();
 
-    // Set a cross-site cookie header
-    if (typeof document !== 'undefined' && document?.cookie) {
-      const xsrfToken = this.getCookie('_xsrf');
-      if (xsrfToken !== undefined) {
-        headers.append('X-XSRFToken', xsrfToken);
-      }
-    }
-
-    const request = new Request(url, {
-      credentials: 'same-origin',
+    const init = {
       method: 'POST',
       body: JSON.stringify(parameters),
-      headers: headers
-    });
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    };
 
-    const response = await fetch(request);
+    const response = await ServerConnection.makeRequest(
+      url,
+      init,
+      _serverSettings
+    );
     if (!response.ok) {
       const msg = await response.json();
       throw {

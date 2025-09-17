@@ -8,19 +8,23 @@ import { ICustomError } from '../../types';
 interface IFetchDataProps<T> {
   queryParams: string;
   onSuccess: (data: T[]) => Promise<IOptionTypeBase[]>;
+  init?: RequestInit;
 }
 
 export const fetchData = async <T>({
   queryParams,
-  onSuccess
+  onSuccess,
+  init = {}
 }: IFetchDataProps<T>): Promise<IOptionTypeBase[]> => {
   const serverSettings = ServerConnection.makeSettings();
   const eodagServer = URLExt.join(serverSettings.baseUrl, EODAG_SERVER_ADDRESS);
 
   try {
-    const response = await fetch(URLExt.join(eodagServer, queryParams), {
-      credentials: 'same-origin'
-    });
+    const response = await ServerConnection.makeRequest(
+      URLExt.join(eodagServer, queryParams),
+      init,
+      serverSettings
+    );
 
     const isJson = response.headers
       .get('content-type')
