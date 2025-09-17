@@ -23,9 +23,11 @@ export const useEodagVersions = () => {
           serverSettings.baseUrl,
           EODAG_SERVER_ADDRESS
         );
-        const res = await fetch(URLExt.join(eodagServer, 'info'), {
-          credentials: 'same-origin'
-        });
+        const res = await ServerConnection.makeRequest(
+          URLExt.join(eodagServer, 'info'),
+          {},
+          serverSettings
+        );
 
         const contentType = res.headers.get('content-type');
         const isJson = contentType?.includes('application/json');

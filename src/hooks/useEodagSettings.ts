@@ -10,9 +10,11 @@ export const useEodagSettings = () => {
       _serverSettings.appUrl,
       `${EODAG_SETTINGS_ADDRESS}`
     );
-    return fetch(URLExt.join(_eodag_settings), {
-      credentials: 'same-origin'
-    })
+    return ServerConnection.makeRequest(
+      URLExt.join(_eodag_settings),
+      {},
+      _serverSettings
+    )
       .then(res => {
         if (res.status !== 200) {
           throw new Error('Bad response from server');

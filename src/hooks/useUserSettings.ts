@@ -18,9 +18,11 @@ export const useUserSettings = () => {
 
   const fetchUserSettings = async () => {
     try {
-      const response = await fetch(URLExt.join(eodagServer, 'reload'), {
-        credentials: 'same-origin'
-      });
+      const response = await ServerConnection.makeRequest(
+        URLExt.join(eodagServer, 'reload'),
+        {},
+        serverSettings
+      );
       if (!response.ok) {
         const msg = await response.json();
         throw {
