@@ -7,7 +7,6 @@
 import asyncio
 import logging
 import os
-import re
 import shutil
 import traceback
 from functools import partial
@@ -327,38 +326,29 @@ class GuessProductTypeHandler(APIHandler):
                 and len(query_dict["keywords"]) > 0
             ):
                 # 1. List product types starting with given keywords
-                first_keyword = query_dict["keywords"][0].lower()
-                returned_product_types = [
+                split_keywords = query_dict["keywords"][0].lower().split(" ")
+                first_keyword = split_keywords[0]
+                pts_matching_start = [
                     {"ID": pt["ID"], "title": pt.get("title")}
                     for pt in all_product_types
                     if pt["ID"].lower().startswith(first_keyword)
                 ]
-                returned_product_types_ids = [pt["ID"] for pt in returned_product_types]
+                pts_matching_start_ids = [pt["ID"] for pt in pts_matching_start]
 
-                # 2. List product types containing keyword
-                returned_product_types += [
+                # 2. List product types containing keywords
+                pts_matching_all = [
                     {"ID": pt["ID"], "title": pt.get("title")}
                     for pt in all_product_types
-                    if first_keyword in pt["ID"].lower() and pt["ID"] not in returned_product_types_ids
+                    if all(kw in " ".join(str(v) for v in pt.values()).lower() for kw in split_keywords)
                 ]
-                returned_product_types_ids += [pt["ID"] for pt in returned_product_types]
+                if not pts_matching_all:
+                    returned_product_types = []
+                else:
+                    pts_matching_all_ids = [pt["ID"] for pt in pts_matching_all]
 
-                # 3. Append guessed product types
-                guess_kwargs = {}
-                # ["aa bb", "cc-dd_ee"] to "*aa* AND *bb* AND *cc-dd_ee*"
-                for k, v in query_dict.items():
-                    guess_kwargs[k] = " AND ".join(re.sub(r"(\S+)", r"*\1*", " ".join(v)).split(" "))
-
-                # guessed product types ids
-                guessed_ids_list = await current_loop.run_in_executor(
-                    None, partial(dag.guess_product_type, **guess_kwargs)
-                )
-                # product types with full associated metadata
-                returned_product_types += [
-                    {"ID": pt["ID"], "title": pt.get("title")}
-                    for pt in all_product_types
-                    if pt["ID"] in guessed_ids_list and pt["ID"] not in returned_product_types_ids
-                ]
+                    returned_product_types = [pt for pt in pts_matching_start if pt["ID"] in pts_matching_all_ids] + [
+                        pt for pt in pts_matching_all if pt["ID"] not in pts_matching_start_ids
+                    ]
             else:
                 returned_product_types = [{"ID": pt["ID"], "title": pt.get("title")} for pt in all_product_types]
 
