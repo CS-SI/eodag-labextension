@@ -1,5 +1,13 @@
 # Release history
 
+## v5.2.4 (2025-09-26)
+
+### Bug Fixes
+
+- **handlers**: Product types filtering
+  ([#255](https://github.com/CS-SI/eodag-labextension/pull/255),
+  [`059d240`](https://github.com/CS-SI/eodag-labextension/commit/059d24089c4c259434d0373436c65250635a4553))
+
 ## v5.2.3 (2025-09-26)
 
 ### Bug Fixes
