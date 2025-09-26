@@ -19,6 +19,7 @@ import tornado
 from dotenv import dotenv_values
 from eodag import EODataAccessGateway, SearchResult, setup_logging
 from eodag.api.core import DEFAULT_ITEMS_PER_PAGE, DEFAULT_PAGE
+from eodag.utils.dates import get_datetime
 from eodag.utils.exceptions import (
     AuthenticationError,
     MisconfiguredError,
@@ -30,7 +31,6 @@ from eodag.utils.exceptions import (
     UnsupportedProvider,
     ValidationError,
 )
-from eodag.utils.rest import get_datetime
 from importlib_metadata import PackageNotFoundError, version
 from jupyter_server.base.handlers import APIHandler
 from jupyter_server.utils import url_path_join
