@@ -1,5 +1,16 @@
 # Release history
 
+## v5.2.3 (2025-09-26)
+
+### Bug Fixes
+
+- **handlers**: Utils.dates import ([#253](https://github.com/CS-SI/eodag-labextension/pull/253),
+  [`01f0630`](https://github.com/CS-SI/eodag-labextension/commit/01f0630e6239af47b908b83a167ac5c4d5a7b35c))
+
+### Build System
+
+- EODAG minimal version to `3.9.0`
+
 ## v5.2.2 (2025-09-17)
 
 ### Bug Fixes
