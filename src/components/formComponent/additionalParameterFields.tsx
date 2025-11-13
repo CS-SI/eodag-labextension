@@ -9,7 +9,7 @@ import AddIcon from '@mui/icons-material/Add';
 
 export interface IAdditionalParameterFieldsProps
   extends Partial<UseFormReturn<IFormInput, any, IFormInput>> {
-  productType: string | null | undefined;
+  collection: string | null | undefined;
   additionalParameters: boolean;
 }
 
@@ -17,7 +17,7 @@ export const AdditionalParameterFields = ({
   control,
   register,
   resetField,
-  productType,
+  collection: collection,
   additionalParameters
 }: IAdditionalParameterFieldsProps) => {
   const { fields, append, remove } = useFieldArray({
@@ -48,9 +48,9 @@ export const AdditionalParameterFields = ({
         </Tooltip>
       </div>
 
-      {!productType || isUndefined(register) ? (
+      {!collection || isUndefined(register) ? (
         <NoParamsAlert
-          label={'Select a product type to unlock custom parameters'}
+          label={'Select a collection to unlock custom parameters'}
         />
       ) : additionalParameters ? (
         fields.map((field, index) => (
@@ -79,7 +79,7 @@ export const AdditionalParameterFields = ({
         ))
       ) : (
         <p className="jp-EodagWidget-noParametersMessage">
-          Custom parameters are not allowed with this product type.
+          Custom parameters are not allowed with this collection.
         </p>
       )}
     </div>

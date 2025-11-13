@@ -40,7 +40,7 @@ export interface IFormComponentsProps {
     inputValue?: string
   ) => Promise<IOptionTypeBase[]>;
   fetchProviders: (
-    productTypeValue: string | null | undefined,
+    collectionValue: string | null | undefined,
     inputValue?: string
   ) => Promise<IOptionTypeBase[]>;
   fetchProvidersLoading: boolean;
@@ -62,7 +62,7 @@ export const FormComponent: FC<IFormComponentsProps> = ({
   fetchProvidersLoading,
   fetchProductsLoading
 }) => {
-  const [productTypes, setProductTypes] = useState<IOptionTypeBase[]>();
+  const [collections, setCollections] = useState<IOptionTypeBase[]>();
   const [providers, setProviders] = useState<IOptionTypeBase[]>();
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
@@ -75,17 +75,17 @@ export const FormComponent: FC<IFormComponentsProps> = ({
 
   const formValues = useWatch({ control: form.control });
 
-  const { provider: providerValue, productType: productTypeValue } = formValues;
+  const { provider: providerValue, collection: collectionValue } = formValues;
 
   useEffect(() => {
     const fetchData = async () => await fetchProducts(providerValue);
-    fetchData().then(list => setProductTypes(list));
+    fetchData().then(list => setCollections(list));
   }, [providerValue]);
 
   useEffect(() => {
-    const fetchData = async () => await fetchProviders(productTypeValue);
+    const fetchData = async () => await fetchProviders(collectionValue);
     fetchData().then(list => setProviders(list));
-  }, [productTypeValue]);
+  }, [collectionValue]);
 
   const onSubmit: SubmitHandler<IFormInput> = async data => {
     if (!openModal) {
@@ -122,12 +122,12 @@ export const FormComponent: FC<IFormComponentsProps> = ({
     let queryables;
 
     setQueryablesLoading(true);
-    if (productTypeValue) {
+    if (collectionValue) {
       // Isolate the fetch queryables call and handle errors specifically for it
       try {
         queryables = await fetchQueryables(
           providerValue ?? '',
-          productTypeValue,
+          collectionValue,
           query_params
         );
       } catch (error) {
@@ -146,7 +146,7 @@ export const FormComponent: FC<IFormComponentsProps> = ({
   };
 
   useEffect(() => {
-    if (productTypeValue) {
+    if (collectionValue) {
       fetchParameters()
         .then(params => {
           const defaultValues = params.reduce(
@@ -164,7 +164,7 @@ export const FormComponent: FC<IFormComponentsProps> = ({
             ...defaultValues,
             geometry: formValues.geometry,
             provider: formValues.provider,
-            productType: formValues.productType,
+            collection: formValues.collection,
             additionalParameters: formValues.additionalParameters
           });
 
@@ -194,13 +194,13 @@ export const FormComponent: FC<IFormComponentsProps> = ({
           console.error('Error fetching parameters:', error);
         });
     }
-  }, [providerValue, productTypeValue, hasAdditionalParameters]);
+  }, [providerValue, collectionValue, hasAdditionalParameters]);
 
   useEffect(() => {
     if (
       !params ||
       hasAdditionalParameters ||
-      !productTypeValue ||
+      !collectionValue ||
       queryablesLoading
     ) {
       return;
@@ -263,7 +263,7 @@ export const FormComponent: FC<IFormComponentsProps> = ({
           />
         </>
       ) : (
-        <NoParamsAlert label={'No required parameter for this product type.'} />
+        <NoParamsAlert label={'No required parameter for this collection.'} />
       )}
     </>
   );
@@ -314,13 +314,13 @@ export const FormComponent: FC<IFormComponentsProps> = ({
             )}
           />
           <Controller
-            name="productType"
+            name="collection"
             control={form.control}
             rules={{ required: true }}
             render={({ field: { value } }) => (
               <Autocomplete
-                label="Product Type"
-                suggestions={productTypes ? productTypes : []}
+                label="Collection"
+                suggestions={collections ? collections : []}
                 placeholder="S2_..."
                 value={value ?? null}
                 disabled={fetchProductsLoading}
@@ -336,15 +336,15 @@ export const FormComponent: FC<IFormComponentsProps> = ({
                       provider: formValues.provider,
                       additionalParameters: formValues.additionalParameters
                     });
-                    return form.setValue('productType', null, {
+                    return form.setValue('collection', null, {
                       shouldValidate: true
                     });
                   }
-                  form.setValue('productType', e.value, {
+                  form.setValue('collection', e.value, {
                     shouldValidate: true
                   });
 
-                  if (e.value !== productTypeValue) {
+                  if (e.value !== collectionValue) {
                     setSelectedOptions([]);
                     form.setValue(
                       'additionalParameters',
@@ -435,9 +435,7 @@ export const FormComponent: FC<IFormComponentsProps> = ({
                 <div className="jp-EodagWidget-field">
                   {!params || !params.length ? (
                     <NoParamsAlert
-                      label={
-                        'Select a product type to unlock custom parameters'
-                      }
+                      label={'Select a collection to unlock custom parameters'}
                     />
                   ) : (
                     renderParameterGroups()
@@ -451,7 +449,7 @@ export const FormComponent: FC<IFormComponentsProps> = ({
                     control: form.control,
                     register: form.register,
                     resetField: form.resetField,
-                    productType: productTypeValue,
+                    collection: collectionValue,
                     additionalParameters: hasAdditionalParameters
                   }}
                 />
@@ -464,7 +462,7 @@ export const FormComponent: FC<IFormComponentsProps> = ({
             isLoadingSearch={isLoadingSearch}
             onPreviewClick={() => setOpenModal(true)}
             onGeneratingClick={() => setOpenModal(false)}
-            productTypeValue={productTypeValue}
+            collectionValue={collectionValue}
           />
         </div>
       </form>

@@ -13,7 +13,7 @@ export const useFetchProviders = () => {
 
   const fetchProviders = useCallback(
     async (
-      productTypeValue: string | null | undefined,
+      collectionValue: string | null | undefined,
       inputValue?: string
     ): Promise<IOptionTypeBase[]> => {
       setFetchProviderLoading(true);
@@ -22,9 +22,9 @@ export const useFetchProviders = () => {
       if (inputValue) {
         queryParams += `keywords=${inputValue}`;
       }
-      if (productTypeValue) {
+      if (collectionValue) {
         queryParams += queryParams.includes('keywords') ? '&' : '';
-        queryParams += `product_type=${productTypeValue}`;
+        queryParams += `collection=${collectionValue}`;
       }
 
       try {

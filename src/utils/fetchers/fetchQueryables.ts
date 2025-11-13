@@ -4,13 +4,13 @@ import { showCustomErrorDialog } from '../../components/customErrorDialog/custom
 
 export const fetchQueryables = async (
   provider: string | null,
-  productType: string,
+  collection: string,
   filterParameters: { [key: string]: any } | undefined
 ): Promise<{
   properties: IParameter[];
   additionalProperties: boolean;
 }> => {
-  const params = new URLSearchParams({ productType });
+  const params = new URLSearchParams({ collection });
 
   if (provider) {
     params.append('provider', provider);
@@ -38,12 +38,10 @@ export const fetchQueryables = async (
     }
 
     const excludedKeys = new Set([
-      'productType',
+      'collection',
       'bbox',
       'geom',
       'geometry',
-      'startTimeFromAscendingNode',
-      'completionTimeFromAscendingNode',
       'start_datetime',
       'end_datetime',
       'startdate',

@@ -33,8 +33,8 @@ class TestEodagLabExtensionHandler(AsyncHTTPTestCase):
         # backup os.environ as it will be modified by tests
         cls.eodag_env_pattern = re.compile(r"EODAG_\w+")
         cls.eodag_env_backup = {k: v for k, v in os.environ.items() if cls.eodag_env_pattern.match(k)}
-        # disable product types fetch
-        os.environ["EODAG_EXT_PRODUCT_TYPES_CFG_FILE"] = ""
+        # disable collections fetch
+        os.environ["EODAG_EXT_COLLECTIONS_CFG_FILE"] = ""
 
     @classmethod
     def tearDownClass(cls):
@@ -88,18 +88,18 @@ class TestEodagLabExtensionHandler(AsyncHTTPTestCase):
             self.fail(f"Expected {response} to raise HTTP {error_code}")
 
     @gen_test
-    async def test_product_types(self):
-        # all product types
-        results = await self.fetch_results("/eodag/product-types")
-        self.assertIn("S2_MSI_L1C", [pt["ID"] for pt in results])
+    async def test_collections(self):
+        # all collections
+        results = await self.fetch_results("/eodag/collections")
+        self.assertIn("S2_MSI_L1C", [coll["ID"] for coll in results])
 
-        # single provider product types
-        less_results = await self.fetch_results("/eodag/product-types?provider=peps")
+        # single provider collections
+        less_results = await self.fetch_results("/eodag/collections?provider=peps")
         self.assertGreater(len(less_results), 0)
         self.assertLess(len(less_results), len(results))
 
         # unknown provider
-        await self.fetch_results_error("/eodag/product-types?provider=foo", 400)
+        await self.fetch_results_error("/eodag/collections?provider=foo", 400)
 
     @gen_test
     async def test_providers(self):
@@ -107,7 +107,7 @@ class TestEodagLabExtensionHandler(AsyncHTTPTestCase):
         results = await self.fetch_results("/eodag/providers")
         self.assertIn("peps", [res["provider"] for res in results])
 
-        less_results = await self.fetch_results("/eodag/providers?product_type=S2_MSI_L1C")
+        less_results = await self.fetch_results("/eodag/providers?collection=S2_MSI_L1C")
         self.assertGreater(len(less_results), 0)
         self.assertLess(len(less_results), len(results))
 
@@ -120,49 +120,49 @@ class TestEodagLabExtensionHandler(AsyncHTTPTestCase):
         providers = [r["provider"] for r in result_with_description]
         self.assertIn("cop_marine", providers)
 
-        no_result = await self.fetch_results("/eodag/providers?product_type=foo")
+        no_result = await self.fetch_results("/eodag/providers?collection=foo")
         self.assertEqual(len(no_result), 0)
 
     @gen_test
-    async def test_guess_product_types(self):
-        all_results = await self.fetch_results("/eodag/guess-product-type")
+    async def test_guess_collections(self):
+        all_results = await self.fetch_results("/eodag/guess-collection")
         self.assertIn("S2_MSI_L1C", [pt["ID"] for pt in all_results])
         self.assertListEqual(sorted(list(all_results[0].keys())), ["ID", "title"])
 
-        one_provider_results = await self.fetch_results("/eodag/guess-product-type?provider=creodias")
+        one_provider_results = await self.fetch_results("/eodag/guess-collection?provider=creodias")
         self.assertLess(len(one_provider_results), len(all_results))
         self.assertIn("COP_DEM_GLO90_DGED", [pt["ID"] for pt in all_results])
         self.assertListEqual(sorted(list(one_provider_results[0].keys())), ["ID", "title"])
 
-        one_result = await self.fetch_results("/eodag/guess-product-type?keywords=S2_MSI_L1C")
+        one_result = await self.fetch_results("/eodag/guess-collection?keywords=S2_MSI_L1C")
         self.assertEqual(len(one_result), 1)
         self.assertEqual(one_result[0]["ID"], "S2_MSI_L1C")
         self.assertListEqual(sorted(list(one_result[0].keys())), ["ID", "title"])
 
-        another_result = await self.fetch_results("/eodag/guess-product-type?keywords=Sentinel2%20L1C")
+        another_result = await self.fetch_results("/eodag/guess-collection?keywords=Sentinel2%20L1C")
         self.assertEqual(len(another_result), 1)
         self.assertEqual(another_result[0]["ID"], "S2_MSI_L1C")
         self.assertListEqual(sorted(list(another_result[0].keys())), ["ID", "title"])
 
-        more_results = await self.fetch_results("/eodag/guess-product-type?keywords=Sentinel")
+        more_results = await self.fetch_results("/eodag/guess-collection?keywords=Sentinel")
         self.assertGreater(len(more_results), 1)
         self.assertLess(len(more_results), len(all_results))
         self.assertIn("S2_MSI_L1C", [pt["ID"] for pt in more_results])
         self.assertListEqual(sorted(list(more_results[0].keys())), ["ID", "title"])
 
-        less_results = await self.fetch_results("/eodag/guess-product-type?keywords=Sentinel&provider=peps")
+        less_results = await self.fetch_results("/eodag/guess-collection?keywords=Sentinel&provider=peps")
         self.assertGreater(len(more_results), 1)
         self.assertLess(len(less_results), len(more_results))
         self.assertEqual(less_results[0]["ID"], "S1_SAR_GRD")
         self.assertListEqual(sorted(list(less_results[0].keys())), ["ID", "title"])
 
-        other_results = await self.fetch_results("/eodag/guess-product-type?keywords=cop")
+        other_results = await self.fetch_results("/eodag/guess-collection?keywords=cop")
         self.assertGreater(len(other_results), 1)
         self.assertLess(len(other_results), len(all_results))
         self.assertTrue(other_results[0]["ID"].lower().startswith("cop"))
         self.assertListEqual(sorted(list(other_results[0].keys())), ["ID", "title"])
 
-        await self.fetch_results_error("/eodag/guess-product-type?provider=foo", 400)
+        await self.fetch_results_error("/eodag/guess-collection?provider=foo", 400)
 
     @gen_test
     async def test_get_not_found(self):
@@ -192,7 +192,7 @@ class TestEodagLabExtensionHandler(AsyncHTTPTestCase):
                     "dtend": "2024-01-02",
                     "page": 1,
                     "geom": geom_dict,
-                    "cloudCover": 50,
+                    "cloud_cover": 50,
                     "foo": "bar",
                     "provider": "cop_dataspace",
                     "count": False,
@@ -201,11 +201,11 @@ class TestEodagLabExtensionHandler(AsyncHTTPTestCase):
         )
         mock_search.assert_called_once_with(
             mock.ANY,
-            productType="S2_MSI_L1C",
+            collection="S2_MSI_L1C",
             start="2024-01-01T00:00:00",
             end="2024-01-02T00:00:00",
             geom=shape(geom_dict),
-            cloudCover=50,
+            cloud_cover=50,
             foo="bar",
             provider="cop_dataspace",
             count=False,
@@ -233,7 +233,7 @@ class TestEodagLabExtensionHandler(AsyncHTTPTestCase):
         )
         mock_search.assert_called_once_with(
             mock.ANY,
-            productType="S2_MSI_L1C",
+            collection="S2_MSI_L1C",
         )
 
         # date error
@@ -263,7 +263,7 @@ class TestEodagLabExtensionHandler(AsyncHTTPTestCase):
     async def test_queryables(self, mock_list_queryables):
         results = await self.fetch_results(
             "/eodag/queryables?"
-            "provider=some_provider&productType=some_product_type"
+            "provider=some_provider&collection=some_product_type"
             "&param1=paramValue1&param2=paramValue2"
         )
         self.assertEqual(results["properties"], {})
@@ -272,7 +272,7 @@ class TestEodagLabExtensionHandler(AsyncHTTPTestCase):
             mock.ANY,
             fetch_providers=False,
             provider="some_provider",
-            productType="some_product_type",
+            collection="some_product_type",
             param1="paramValue1",
             param2="paramValue2",
         )

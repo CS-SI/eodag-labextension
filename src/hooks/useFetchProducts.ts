@@ -16,7 +16,7 @@ export const useFetchProducts = () => {
       inputValue?: string
     ): Promise<IOptionTypeBase[]> => {
       setFetchProductLoading(true);
-      let queryParams = 'guess-product-type?';
+      let queryParams = 'guess-collection?';
 
       if (inputValue) {
         queryParams += `keywords=${inputValue}`;

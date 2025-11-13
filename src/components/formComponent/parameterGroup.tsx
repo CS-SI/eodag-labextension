@@ -232,7 +232,7 @@ export const ParameterGroup: React.FC<IParameterGroupProps> = ({
         })
         .map(param => (
           <div key={param.key}>
-            {param.key === 'cloudCover' ? (
+            {param.key === 'cloud_cover' ? (
               renderCloudCoverField(param)
             ) : (
               <label className="jp-EodagWidget-input-name">
