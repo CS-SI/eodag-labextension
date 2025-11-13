@@ -5,7 +5,7 @@ const defaultStartDate: Date | undefined = undefined;
 const defaultEndDate: Date | undefined = undefined;
 
 const defaultValues = {
-  productType: null,
+  collection: null,
   provider: null,
   startDate: defaultStartDate,
   endDate: defaultEndDate

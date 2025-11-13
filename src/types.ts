@@ -4,7 +4,7 @@
  */
 
 export interface IFormInput {
-  productType?: string | null;
+  collection?: string | null;
   provider?: string | null;
   geometry?: IGeometry;
   startDate?: Date;
@@ -57,11 +57,11 @@ export interface IFeatures {
 
 export interface IProduct {
   id: string;
-  startTimeFromAscendingNode?: string;
-  endTimeFromAscendingNode?: string;
+  start_datetime?: string;
+  end_datetime?: string;
   thumbnail?: string;
   quicklook?: string;
-  cloudCover?: number;
+  cloud_cover?: number;
   properties: { [key: string]: any };
 }
 

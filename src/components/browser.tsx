@@ -126,7 +126,7 @@ export const EodagBrowser: React.FC<IEodagBrowserProps> = ({
       input = {
         startDate: new Date(),
         endDate: new Date(),
-        productType: null,
+        collection: null,
         provider: null,
         cloud: 100,
         geometry: {
@@ -139,7 +139,7 @@ export const EodagBrowser: React.FC<IEodagBrowserProps> = ({
       if (idValue) {
         input = {
           provider: formValues.provider,
-          productType: formValues.productType,
+          collection: formValues.collection,
           id: idValue
         };
       } else {
