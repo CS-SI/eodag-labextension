@@ -36,10 +36,10 @@ export const Result: React.FC<IResultProps> = ({
   setHoveredFeature,
   style
 }) => {
-  const preview = rowData.thumbnail
-    ? rowData.thumbnail
-    : rowData.quicklook
-      ? rowData.quicklook
+  const preview = rowData['eodag:thumbnail']
+    ? rowData['eodag:thumbnail']
+    : rowData['eodag:quicklook']
+      ? rowData['eodag:quicklook']
       : null;
 
   return (

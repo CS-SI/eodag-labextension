@@ -49,10 +49,10 @@ export const SelectedProductPanel: React.FC<ISelectedProductPanelProps> = ({
   const [isPanelZoomed, setIsPanelZoomed] = useState<boolean>(false);
 
   const preview = useMemo(() => {
-    return properties.quicklook
-      ? properties.quicklook
-      : properties.thumbnail
-        ? properties.thumbnail
+    return properties['eodag:quicklook']
+      ? properties['eodag:quicklook']
+      : properties['eodag:thumbnail']
+        ? properties['eodag:thumbnail']
         : null;
   }, [selectedProduct.id, properties]);
 

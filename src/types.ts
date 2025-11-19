@@ -59,8 +59,8 @@ export interface IProduct {
   id: string;
   start_datetime?: string;
   end_datetime?: string;
-  thumbnail?: string;
-  quicklook?: string;
+  'eodag:thumbnail'?: string;
+  'eodag:quicklook'?: string;
   cloud_cover?: number;
   properties: { [key: string]: any };
 }
