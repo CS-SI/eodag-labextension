@@ -36,10 +36,10 @@ export const Result: React.FC<IResultProps> = ({
   setHoveredFeature,
   style
 }) => {
-  const preview = rowData.thumbnail
-    ? rowData.thumbnail
-    : rowData.quicklook
-      ? rowData.quicklook
+  const preview = rowData['eodag:thumbnail']
+    ? rowData['eodag:thumbnail']
+    : rowData['eodag:quicklook']
+      ? rowData['eodag:quicklook']
       : null;
 
   return (
@@ -66,20 +66,20 @@ export const Result: React.FC<IResultProps> = ({
       >
         <div className={'result_infos'}>
           {/* Move this condition under the result_tags div when other infos might come */}
-          {rowData.cloudCover !== null && rowData.cloudCover !== undefined ? (
+          {rowData.cloud_cover !== null && rowData.cloud_cover !== undefined ? (
             <div className={'result_tags'}>
               <Chip
                 className={'jp-EodagWidget-chip'}
                 icon={<CloudIcon />}
-                label={`${Number(rowData.cloudCover).toFixed(2)}%`}
+                label={`${Number(rowData.cloud_cover).toFixed(2)}%`}
                 size={'small'}
               />
             </div>
           ) : null}
           <span className={'result_id'}>{rowData.id}</span>
-          {rowData.startTimeFromAscendingNode ? (
+          {rowData.start_datetime ? (
             <span className={'result_time'}>
-              {`${formatDate(rowData.startTimeFromAscendingNode)} (UTC)`}
+              {`${formatDate(rowData.start_datetime)} (UTC)`}
             </span>
           ) : null}
           <IconButton

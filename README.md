@@ -86,19 +86,19 @@ With displayed search form, you can enter search extent and following search cri
 - **Provider**: the provider on which to perform the search. If no provider is selected, search will loop on providers
   by [priority](https://eodag.readthedocs.io/en/stable/getting_started_guide/configure.html#priority-setting), and
   return the first non empty results.
-- **Product type**: the searched product type. List filtering is performed using product types description keywords.
+- **Collection**: the searched collection. List filtering is performed using collections description keywords.
   For each entry of the drop-down list, a tooltip is displayed at hovering time with corresponding title.
-  ![product types](https://raw.githubusercontent.com/CS-SI/eodag-labextension/develop/notebooks/images/eodag_labext_product_types.png)
+  ![collections](https://raw.githubusercontent.com/CS-SI/eodag-labextension/develop/notebooks/images/eodag_labext_collections.png)
 
 - **Date range**: minimal and maximal dates of the search temporal window.
-- **Parameters**: Select a product type to unlock parameters. Click on _"More parameters"_, select desired parameters
+- **Parameters**: Select a collection to unlock parameters. Click on _"More parameters"_, select desired parameters
   and set their associated value that should be sent as search criteria.
 - **Custom parameters**: used to enter key-value pairs criteria for the request that are not available as queryable
   through _"Parameters"_.
 
 As **search geometry** you can draw multiple extents, or use none. Each extent can be a rectangle or a free polygon.
 
-_Product type is mandatory. Other criteria are optional._
+_Collection is mandatory. Other criteria are optional._
 
 Once search criteria are filled out, click on:
 
@@ -178,7 +178,7 @@ dag = EODataAccessGateway()
 geometry = "POLYGON ((0.550136 43.005451, 0.550136 44.151469, 2.572104 44.151469, 2.572104 43.005451, 0.550136 43.005451))"
 search_results = dag.search(
   provider="cop_dataspace",
-  productType="S2_MSI_L1C",
+  collection="S2_MSI_L1C",
   geom=geometry,
   start="2025-04-01",
   end="2025-04-05",

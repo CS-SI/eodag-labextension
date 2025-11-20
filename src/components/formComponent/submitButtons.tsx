@@ -7,14 +7,14 @@ interface ISubmitButtonsProps {
   isLoadingSearch?: boolean;
   onPreviewClick: () => void;
   onGeneratingClick: () => void;
-  productTypeValue: string | null | undefined;
+  collectionValue: string | null | undefined;
 }
 
 export const SubmitButtons: React.FC<ISubmitButtonsProps> = ({
   isLoadingSearch,
   onPreviewClick,
   onGeneratingClick,
-  productTypeValue
+  collectionValue
 }) => {
   if (isLoadingSearch) {
     return (
@@ -32,11 +32,11 @@ export const SubmitButtons: React.FC<ISubmitButtonsProps> = ({
         label={'Preview results'}
         type={'submit'}
         tooltip={
-          !productTypeValue
-            ? 'You need to select a product type to preview the results'
+          !collectionValue
+            ? 'You need to select a collection to preview the results'
             : undefined
         }
-        disabled={isLoadingSearch || !productTypeValue}
+        disabled={isLoadingSearch || !collectionValue}
         onClick={onPreviewClick}
       />
       <Button
@@ -44,11 +44,11 @@ export const SubmitButtons: React.FC<ISubmitButtonsProps> = ({
         type={'submit'}
         label={'Generate code'}
         tooltip={
-          !productTypeValue
-            ? 'You need to select a product type to generate the code'
+          !collectionValue
+            ? 'You need to select a collection to generate the code'
             : undefined
         }
-        disabled={isLoadingSearch || !productTypeValue}
+        disabled={isLoadingSearch || !collectionValue}
         onClick={onGeneratingClick}
       />
     </div>

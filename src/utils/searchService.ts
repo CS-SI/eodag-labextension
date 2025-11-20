@@ -21,15 +21,15 @@ const formatDate = (date: Date): string => {
 class SearchService {
   /**
    * @returns the URL to fetch from the EODAG server to get products
-   * @param productType
+   * @param collection
    */
-  getSearchURL(productType: string) {
+  getSearchURL(collection: string) {
     const _serverSettings = ServerConnection.makeSettings();
     const _eodag_server = URLExt.join(
       _serverSettings.baseUrl,
       `${EODAG_SERVER_ADDRESS}`
     );
-    return URLExt.join(_eodag_server, `${productType}`);
+    return URLExt.join(_eodag_server, `${collection}`);
   }
 
   /**
@@ -42,7 +42,7 @@ class SearchService {
     if (isUndefined(formValues)) {
       throw new Error('Input undefined');
     }
-    const url = this.getSearchURL(formValues.productType ?? '');
+    const url = this.getSearchURL(formValues.collection ?? '');
     let parameters: ISearchParameters = {
       dtstart: formValues.startDate
         ? formatDate(formValues.startDate)
@@ -68,7 +68,7 @@ class SearchService {
     const excludedKeys = new Set([
       'startDate',
       'endDate',
-      'productType',
+      'collection',
       'geometry',
       'provider',
       'additionalParameters'
