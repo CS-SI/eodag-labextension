@@ -88,7 +88,7 @@ With displayed search form, you can enter search extent and following search cri
   return the first non empty results.
 - **Collection**: the searched collection. List filtering is performed using collections description keywords.
   For each entry of the drop-down list, a tooltip is displayed at hovering time with corresponding title.
-  ![collections](https://raw.githubusercontent.com/CS-SI/eodag-labextension/develop/notebooks/images/eodag_labext_product_types.png)
+  ![collections](https://raw.githubusercontent.com/CS-SI/eodag-labextension/develop/notebooks/images/eodag_labext_collections.png)
 
 - **Date range**: minimal and maximal dates of the search temporal window.
 - **Parameters**: Select a collection to unlock parameters. Click on _"More parameters"_, select desired parameters

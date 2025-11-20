@@ -263,7 +263,7 @@ class TestEodagLabExtensionHandler(AsyncHTTPTestCase):
     async def test_queryables(self, mock_list_queryables):
         results = await self.fetch_results(
             "/eodag/queryables?"
-            "provider=some_provider&collection=some_product_type"
+            "provider=some_provider&collection=some_collection"
             "&param1=paramValue1&param2=paramValue2"
         )
         self.assertEqual(results["properties"], {})
@@ -272,7 +272,7 @@ class TestEodagLabExtensionHandler(AsyncHTTPTestCase):
             mock.ANY,
             fetch_providers=False,
             provider="some_provider",
-            collection="some_product_type",
+            collection="some_collection",
             param1="paramValue1",
             param2="paramValue2",
         )
