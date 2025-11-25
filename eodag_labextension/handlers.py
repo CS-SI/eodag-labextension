@@ -183,8 +183,9 @@ class CollectionHandler(APIHandler):
         dag = await get_eodag_api()
         current_loop = asyncio.get_running_loop()
         collections = await current_loop.run_in_executor(None, partial(dag.list_collections, provider=provider))
+        collections_list = [coll.model_dump() for coll in collections]
 
-        self.finish(orjson.dumps(collections))
+        self.finish(orjson.dumps(collections_list))
 
 
 class ReloadHandler(APIHandler):
@@ -327,17 +328,17 @@ class GuessCollectionHandler(APIHandler):
                 split_keywords = query_dict["keywords"][0].lower().split(" ")
                 first_keyword = split_keywords[0]
                 pts_matching_start = [
-                    {"ID": pt["ID"], "title": pt.get("title")}
+                    {"ID": pt.id, "title": pt.title}
                     for pt in all_collections
-                    if pt["ID"].lower().startswith(first_keyword)
+                    if pt.id.lower().startswith(first_keyword)
                 ]
                 pts_matching_start_ids = [pt["ID"] for pt in pts_matching_start]
 
                 # 2. List collections containing keywords
                 pts_matching_all = [
-                    {"ID": pt["ID"], "title": pt.get("title")}
+                    {"ID": pt.id, "title": pt.title}
                     for pt in all_collections
-                    if all(kw in " ".join(str(v) for v in pt.values()).lower() for kw in split_keywords)
+                    if all(kw in " ".join(str(v) for v in pt.model_dump().values()).lower() for kw in split_keywords)
                 ]
                 if not pts_matching_all:
                     returned_collections = []
@@ -348,7 +349,7 @@ class GuessCollectionHandler(APIHandler):
                         pt for pt in pts_matching_all if pt["ID"] not in pts_matching_start_ids
                     ]
             else:
-                returned_collections = [{"ID": pt["ID"], "title": pt.get("title")} for pt in all_collections]
+                returned_collections = [{"ID": pt.id, "title": pt.title} for pt in all_collections]
 
             self.finish(orjson.dumps(returned_collections))
         except NoMatchingCollection:
@@ -400,16 +401,27 @@ class SearchHandler(APIHandler):
             raise ValidationError(f"Please perform an initial search on {collection} before iterating to page {page}.")
         products = await current_loop.run_in_executor(None, partial(next, results_iterator, None))
 
-        response = products.as_geojson_object()
-        response.update(
-            {
-                "properties": {
-                    "page": page,
-                    "itemsPerPage": DEFAULT_ITEMS_PER_PAGE,
-                    "totalResults": getattr(products, "number_matched", None),
+        if products:
+            response = products.as_geojson_object()
+            response.update(
+                {
+                    "properties": {
+                        "page": page,
+                        "itemsPerPage": DEFAULT_ITEMS_PER_PAGE,
+                        "totalResults": getattr(products, "number_matched", None),
+                    }
                 }
+            )
+        else:
+            response = {
+                "type": "FeatureCollection",
+                "features": [],
+                "properties": {
+                    "page": 1,
+                    "itemsPerPage": DEFAULT_ITEMS_PER_PAGE,
+                    "totalResults": 0,
+                },
             }
-        )
 
         self.finish(response)
 
