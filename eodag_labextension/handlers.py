@@ -264,7 +264,7 @@ class ProvidersHandler(APIHandler):
                 description=getattr(conf, "description", None),
                 url=getattr(conf, "url", None),
             )
-            for provider, conf in dag.providers_config.items()
+            for provider, conf in dag.providers.items()
             if provider in available_providers
         ]
         all_providers_list.sort(key=lambda x: (x["priority"] * -1, x["provider"]))
