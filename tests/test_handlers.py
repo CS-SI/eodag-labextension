@@ -91,7 +91,7 @@ class TestEodagLabExtensionHandler(AsyncHTTPTestCase):
     async def test_collections(self):
         # all collections
         results = await self.fetch_results("/eodag/collections")
-        self.assertIn("S2_MSI_L1C", [coll["ID"] for coll in results])
+        self.assertIn("S2_MSI_L1C", [coll["id"] for coll in results])
 
         # single provider collections
         less_results = await self.fetch_results("/eodag/collections?provider=peps")

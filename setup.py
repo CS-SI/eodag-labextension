@@ -61,7 +61,7 @@ setup_args = dict(
         "jupyterlab~=4.0",
         "tornado>=6.4.1,<7.0.0",
         "notebook>=6.0.3,<7.0.0",
-        "eodag[notebook]==4.0.0a1",
+        "eodag[notebook]==4.0.0a2",
         "orjson",
         "pydantic",
         "pydantic-settings",
