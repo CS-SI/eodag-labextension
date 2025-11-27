@@ -16,17 +16,17 @@ from urllib.parse import parse_qs
 import orjson
 import tornado
 from dotenv import dotenv_values
-from eodag import EODataAccessGateway, SearchResult, setup_logging
+from eodag import EODataAccessGateway, setup_logging
 from eodag.api.core import DEFAULT_ITEMS_PER_PAGE, DEFAULT_PAGE
 from eodag.utils.dates import get_datetime
 from eodag.utils.exceptions import (
     AuthenticationError,
     MisconfiguredError,
-    NoMatchingProductType,
+    NoMatchingCollection,
     NotAvailableError,
     RequestError,
     TimeOutError,
-    UnsupportedProductType,
+    UnsupportedCollection,
     UnsupportedProvider,
     ValidationError,
 )
@@ -60,7 +60,7 @@ def exception_handler(func):
         except (
             ValidationError,
             UnsupportedProvider,
-            UnsupportedProductType,
+            UnsupportedCollection,
             RequestError,
             RuntimeError,
             MisconfiguredError,
@@ -70,7 +70,7 @@ def exception_handler(func):
             handler.finish({"error": str(e), "details": tb})
             logger.error(tb)
             return
-        except (NotAvailableError, NoMatchingProductType) as e:
+        except (NotAvailableError, NoMatchingCollection) as e:
             tb = traceback.format_exc()
             handler.set_status(404)
             handler.finish({"error": str(e), "details": tb})
@@ -166,8 +166,8 @@ async def get_eodag_api():
         return eodag_api
 
 
-class ProductTypeHandler(APIHandler):
-    """Product type listing handler"""
+class CollectionHandler(APIHandler):
+    """Collection listing handler"""
 
     @exception_handler
     @tornado.web.authenticated
@@ -182,9 +182,10 @@ class ProductTypeHandler(APIHandler):
 
         dag = await get_eodag_api()
         current_loop = asyncio.get_running_loop()
-        product_types = await current_loop.run_in_executor(None, partial(dag.list_product_types, provider=provider))
+        collections = await current_loop.run_in_executor(None, partial(dag.list_collections, provider=provider))
+        collections_list = [coll.model_dump() for coll in collections]
 
-        self.finish(orjson.dumps(product_types))
+        self.finish(orjson.dumps(collections_list))
 
 
 class ReloadHandler(APIHandler):
@@ -245,11 +246,11 @@ class ProvidersHandler(APIHandler):
 
         dag = await get_eodag_api()
 
-        if isinstance(pt_list := query_dict.get("product_type", []), list) and pt_list:
+        if isinstance(coll_list := query_dict.get("collection", []), list) and coll_list:
             try:
-                available_providers_kwargs["product_type"] = dag.get_product_type_from_alias(pt_list[0])
-            except NoMatchingProductType:
-                available_providers_kwargs["product_type"] = pt_list[0]
+                available_providers_kwargs["collection"] = dag.get_collection_from_alias(coll_list[0])
+            except NoMatchingCollection:
+                available_providers_kwargs["collection"] = coll_list[0]
 
         current_loop = asyncio.get_running_loop()
         available_providers = await current_loop.run_in_executor(
@@ -295,8 +296,8 @@ class ProvidersHandler(APIHandler):
         self.finish(orjson.dumps(returned_providers))
 
 
-class GuessProductTypeHandler(APIHandler):
-    """Guess product type method handler"""
+class GuessCollectionHandler(APIHandler):
+    """Guess collection method handler"""
 
     @exception_handler
     @tornado.web.authenticated
@@ -313,48 +314,46 @@ class GuessProductTypeHandler(APIHandler):
         dag = await get_eodag_api()
         current_loop = asyncio.get_running_loop()
 
-        returned_product_types = []
+        returned_collections = []
         try:
-            # fetch all product types
-            all_product_types = await current_loop.run_in_executor(
-                None, partial(dag.list_product_types, provider=provider)
-            )
+            # fetch all collections
+            all_collections = await current_loop.run_in_executor(None, partial(dag.list_collections, provider=provider))
 
             if (
                 "keywords" in query_dict
                 and isinstance(query_dict["keywords"], list)
                 and len(query_dict["keywords"]) > 0
             ):
-                # 1. List product types starting with given keywords
+                # 1. List collections starting with given keywords
                 split_keywords = query_dict["keywords"][0].lower().split(" ")
                 first_keyword = split_keywords[0]
                 pts_matching_start = [
-                    {"ID": pt["ID"], "title": pt.get("title")}
-                    for pt in all_product_types
-                    if pt["ID"].lower().startswith(first_keyword)
+                    {"ID": pt.id, "title": pt.title}
+                    for pt in all_collections
+                    if pt.id.lower().startswith(first_keyword)
                 ]
                 pts_matching_start_ids = [pt["ID"] for pt in pts_matching_start]
 
-                # 2. List product types containing keywords
+                # 2. List collections containing keywords
                 pts_matching_all = [
-                    {"ID": pt["ID"], "title": pt.get("title")}
-                    for pt in all_product_types
-                    if all(kw in " ".join(str(v) for v in pt.values()).lower() for kw in split_keywords)
+                    {"ID": pt.id, "title": pt.title}
+                    for pt in all_collections
+                    if all(kw in " ".join(str(v) for v in pt.model_dump().values()).lower() for kw in split_keywords)
                 ]
                 if not pts_matching_all:
-                    returned_product_types = []
+                    returned_collections = []
                 else:
                     pts_matching_all_ids = [pt["ID"] for pt in pts_matching_all]
 
-                    returned_product_types = [pt for pt in pts_matching_start if pt["ID"] in pts_matching_all_ids] + [
+                    returned_collections = [pt for pt in pts_matching_start if pt["ID"] in pts_matching_all_ids] + [
                         pt for pt in pts_matching_all if pt["ID"] not in pts_matching_start_ids
                     ]
             else:
-                returned_product_types = [{"ID": pt["ID"], "title": pt.get("title")} for pt in all_product_types]
+                returned_collections = [{"ID": pt.id, "title": pt.title} for pt in all_collections]
 
-            self.finish(orjson.dumps(returned_product_types))
-        except NoMatchingProductType:
-            self.finish(orjson.dumps(returned_product_types))
+            self.finish(orjson.dumps(returned_collections))
+        except NoMatchingCollection:
+            self.finish(orjson.dumps(returned_collections))
 
 
 class SearchHandler(APIHandler):
@@ -362,7 +361,7 @@ class SearchHandler(APIHandler):
 
     @exception_handler
     @tornado.web.authenticated
-    async def post(self, product_type):
+    async def post(self, collection):
         """Post endpoint"""
         global results_iterator
 
@@ -396,24 +395,33 @@ class SearchHandler(APIHandler):
         if int(page) == DEFAULT_PAGE:
             # first search
             results_iterator = await current_loop.run_in_executor(
-                None, partial(dag.search_iter_page, productType=product_type, **arguments)
+                None, partial(dag.search_iter_page, collection=collection, **arguments)
             )
         if results_iterator is None:
-            raise ValidationError(
-                f"Please perform an initial search on {product_type} before iterating to page {page}."
-            )
+            raise ValidationError(f"Please perform an initial search on {collection} before iterating to page {page}.")
         products = await current_loop.run_in_executor(None, partial(next, results_iterator, None))
 
-        response = SearchResult(products).as_geojson_object()
-        response.update(
-            {
-                "properties": {
-                    "page": page,
-                    "itemsPerPage": DEFAULT_ITEMS_PER_PAGE,
-                    "totalResults": getattr(products, "number_matched", None),
+        if products:
+            response = products.as_geojson_object()
+            response.update(
+                {
+                    "properties": {
+                        "page": page,
+                        "itemsPerPage": DEFAULT_ITEMS_PER_PAGE,
+                        "totalResults": getattr(products, "number_matched", None),
+                    }
                 }
+            )
+        else:
+            response = {
+                "type": "FeatureCollection",
+                "features": [],
+                "properties": {
+                    "page": 1,
+                    "itemsPerPage": DEFAULT_ITEMS_PER_PAGE,
+                    "totalResults": 0,
+                },
             }
-        )
 
         self.finish(response)
 
@@ -489,21 +497,21 @@ def setup_handlers(web_app, url_path):
 
     # matching patterns
     host_pattern = r".*$"
-    product_types_pattern = url_path_join(base_url, url_path, "product-types")
+    collections_pattern = url_path_join(base_url, url_path, "collections")
     reload_pattern = url_path_join(base_url, url_path, "reload")
     info_pattern = url_path_join(base_url, url_path, "info")
     providers_pattern = url_path_join(base_url, url_path, "providers")
-    guess_product_types_pattern = url_path_join(base_url, url_path, "guess-product-type")
+    guess_collections_pattern = url_path_join(base_url, url_path, "guess-collection")
     queryables_pattern = url_path_join(base_url, url_path, "queryables")
-    search_pattern = url_path_join(base_url, url_path, r"(?P<product_type>[\w\-\.]+)")
+    search_pattern = url_path_join(base_url, url_path, r"(?P<collection>[\w\-\.]+)")
     default_pattern = url_path_join(base_url, url_path, r".*")
 
     # handlers added for each pattern
     handlers = [
-        (product_types_pattern, ProductTypeHandler),
+        (collections_pattern, CollectionHandler),
         (reload_pattern, ReloadHandler),
         (providers_pattern, ProvidersHandler),
-        (guess_product_types_pattern, GuessProductTypeHandler),
+        (guess_collections_pattern, GuessCollectionHandler),
         (queryables_pattern, QueryablesHandler),
         (info_pattern, InfoHandler),
         (MethodAndPathMatch("POST", search_pattern), SearchHandler),

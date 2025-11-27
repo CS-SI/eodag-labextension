@@ -1,5 +1,16 @@
 # Release history
 
+## v5.3.0a1 (2025-11-27)
+
+### Refactoring
+
+- Adapt to eodag collection object ([#260](https://github.com/CS-SI/eodag-labextension/pull/260),
+  [`cb73072`](https://github.com/CS-SI/eodag-labextension/commit/cb730729d048fcb7aefd39d7cc5e09e874ed649b))
+
+- Stac formatted properties from eodag v4
+  ([#259](https://github.com/CS-SI/eodag-labextension/pull/259),
+  [`cf46cc2`](https://github.com/CS-SI/eodag-labextension/commit/cf46cc29ca669f3b6f4893fb9728d841d7bef41b))
+
 ## v5.2.4 (2025-09-26)
 
 ### Bug Fixes

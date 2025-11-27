@@ -21,7 +21,7 @@ export const codeGenerator = async (
   {
     startDate,
     endDate,
-    productType,
+    collection,
     geometry,
     additionalParameters,
     provider,
@@ -63,7 +63,7 @@ search_results = dag.search(`;
     provider="${provider}",`;
   }
   code += `
-    productType="${productType}",`;
+    collection="${collection}",`;
   if (geometryIsOk) {
     code += `
     geom=geometry,`;
