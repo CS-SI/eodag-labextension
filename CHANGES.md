@@ -1,5 +1,11 @@
 # Release history
 
+## v5.3.0a2 (2025-11-28)
+
+### Refactoring
+
+- Adapt to providers object ([#261](https://github.com/CS-SI/eodag-labextension/pull/260))
+
 ## v5.3.0a1 (2025-11-27)
 
 ### Refactoring

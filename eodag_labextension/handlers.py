@@ -259,12 +259,12 @@ class ProvidersHandler(APIHandler):
 
         all_providers_list = [
             dict(
-                provider=provider,
-                priority=conf.priority,
-                description=getattr(conf, "description", None),
-                url=getattr(conf, "url", None),
+                provider=provider.name,
+                priority=provider.priority,
+                description=provider.title,
+                url=provider.url,
             )
-            for provider, conf in dag.providers_config.items()
+            for provider in dag.providers.values()
             if provider in available_providers
         ]
         all_providers_list.sort(key=lambda x: (x["priority"] * -1, x["provider"]))
