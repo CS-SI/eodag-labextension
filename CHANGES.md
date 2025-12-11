@@ -1,5 +1,11 @@
 # Release history
 
+## v5.3.0a3 (2025-12-11)
+
+### Build System
+
+- Unpin eodag max version ([#264](https://github.com/CS-SI/eodag-labextension/pull/264))
+
 ## v5.3.0a2 (2025-11-28)
 
 ### Refactoring
