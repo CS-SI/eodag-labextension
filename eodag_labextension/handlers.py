@@ -10,7 +10,7 @@ import os
 import shutil
 import traceback
 from functools import partial
-from typing import Any
+from typing import Any, get_args
 from urllib.parse import parse_qs
 
 import orjson
@@ -469,7 +469,7 @@ class QueryablesHandler(APIHandler):
         queryables_kwargs = {
             key: value[0].split(",") if "," in value[0] else value[0]
             for key, value in query_dict.items()
-            if not key.isdigit()
+            if not key.isdigit() and value[0]
         }
         logger.error(queryables_kwargs)
 
@@ -478,7 +478,12 @@ class QueryablesHandler(APIHandler):
         queryables_dict = await current_loop.run_in_executor(
             None, partial(dag.list_queryables, fetch_providers=False, **queryables_kwargs)
         )
+        queryables_aliases = [get_args(v)[1].serialization_alias for v in queryables_dict.values()]
         json_schema = queryables_dict.get_model().model_json_schema()
+        json_schema_properties = {
+            k: v for k, v in json_schema["properties"].items() if k in queryables_dict or k in queryables_aliases
+        }
+        json_schema["properties"] = json_schema_properties
         self._remove_null_defaults(json_schema)
         json_schema["additionalProperties"] = queryables_dict.additional_properties
         self.finish(json_schema)
