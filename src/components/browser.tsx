@@ -48,6 +48,12 @@ export const EodagBrowser: React.FC<IEodagBrowserProps> = ({
     useEodagVersions();
   const { handleOpenEodagConfig, reloadUserSettings, isUserSettingsLoading } =
     useUserSettings();
+  const [providerRefreshKey, setProviderRefreshKey] = useState<number>(0);
+
+  const handleReload = async () => {
+    await reloadUserSettings();
+    setProviderRefreshKey(k => k + 1);
+  };
 
   const { formValues, form } = useProductsForm();
 
@@ -165,7 +171,7 @@ export const EodagBrowser: React.FC<IEodagBrowserProps> = ({
             <IconButton
               aria-label="Options"
               size="small"
-              onClick={reloadUserSettings}
+              onClick={handleReload}
               sx={{
                 color: '#000000'
               }}
@@ -201,6 +207,7 @@ export const EodagBrowser: React.FC<IEodagBrowserProps> = ({
         fetchProductsLoading={fetchProductLoading}
         fetchProviders={fetchProviders}
         fetchProvidersLoading={fetchProvidersLoading}
+        providerRefreshKey={providerRefreshKey}
       />
       <Modal
         open={openModal}
