@@ -191,7 +191,9 @@ export const EodagBrowser: React.FC<IEodagBrowserProps> = ({
             openSettings={() =>
               commands.execute('settingeditor:open', { query: 'EODAG' })
             }
-            openEodagConfigEditor={() => handleOpenEodagConfig(commands)}
+            openEodagConfigEditor={() =>
+              handleOpenEodagConfig(commands, handleReload)
+            }
             version={eodagVersion ?? 'Loading ...'}
             labExtensionVersion={eodagLabExtensionVersion ?? 'Loading ...'}
           />

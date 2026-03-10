@@ -38,7 +38,10 @@ export const useUserSettings = () => {
     }
   };
 
-  const handleOpenEodagConfig = async (commands: CommandRegistry) => {
+  const handleOpenEodagConfig = async (
+    commands: CommandRegistry,
+    onAfterReload?: () => void
+  ) => {
     // File that uses a symbolic link to the eodag config file
     // present in the ~/.config/eodag/eodag.yml
     const filePath = '/eodag-config/eodag.yml';
@@ -60,7 +63,7 @@ export const useUserSettings = () => {
       }
 
       // Only called on subsequent file changes (i.e., saves)
-      reloadUserSettings();
+      reloadUserSettings().then(() => onAfterReload?.());
     });
   };
 
