@@ -12,6 +12,7 @@ from eodag import SearchResult
 from eodag import __version__ as eodag_version
 from eodag.api.core import DEFAULT_ITEMS_PER_PAGE
 from eodag.types.queryables import QueryablesDict
+from jupyter_server.auth.identity import IdentityProvider, User
 from notebook.notebookapp import NotebookApp
 from shapely.geometry import shape
 from tornado.httpclient import HTTPClientError
@@ -23,8 +24,9 @@ from eodag_labextension import load_jupyter_server_extension
 from eodag_labextension.handlers import APIHandler, get_eodag_api, set_conf_symlink
 
 
-class MockUser:
-    name = "test"
+class MockIdentityProvider(IdentityProvider):
+    def get_user(self, handler):
+        return User(username="test")
 
 
 class TestEodagLabExtensionHandler(AsyncHTTPTestCase):
@@ -47,17 +49,14 @@ class TestEodagLabExtensionHandler(AsyncHTTPTestCase):
 
     def setUp(self):
         super().setUp()
-        self.patcher_xsrf = mock.patch.object(APIHandler, "check_xsrf_cookie", return_value=MockUser())
-        self.patcher_user = mock.patch.object(APIHandler, "get_current_user", return_value=MockUser())
+        self.patcher_xsrf = mock.patch.object(APIHandler, "check_xsrf_cookie", return_value=None)
         self.patcher_auth = mock.patch.object(authenticated, "__call__", return_value=lambda x: x)
         self.mock_xsrf = self.patcher_xsrf.start()
-        self.mock_user = self.patcher_user.start()
         self.mock_auth = self.patcher_auth.start()
 
     def tearDown(self):
         super().tearDown()
         self.patcher_xsrf.stop()
-        self.patcher_user.stop()
         self.patcher_auth.stop()
 
     def get_app(self):
@@ -67,6 +66,9 @@ class TestEodagLabExtensionHandler(AsyncHTTPTestCase):
 
         # Load extension
         load_jupyter_server_extension(app)
+
+        # Use IdentityProvider instead of deprecated get_current_user override
+        app.web_app.settings["identity_provider"] = MockIdentityProvider()
 
         return app.web_app
 
