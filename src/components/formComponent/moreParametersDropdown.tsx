@@ -20,7 +20,7 @@ export const MoreParametersDropdown: React.FC<IDropdownButtonProps> = ({
   const dropdownItems: IDropdownItem[] = useMemo(() => {
     return options.map(option => ({
       type: option.divider ? 'divider' : 'checkbox',
-      name: option.label,
+      name: option.value,
       value: option.value,
       checked: selectedOptions.includes(option.value)
     }));
