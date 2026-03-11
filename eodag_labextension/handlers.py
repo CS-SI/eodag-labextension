@@ -485,6 +485,7 @@ class QueryablesHandler(APIHandler):
         }
         json_schema["properties"] = json_schema_properties
         self._remove_null_defaults(json_schema)
+        self._remove_anyof(json_schema, **queryables_kwargs)
         json_schema["additionalProperties"] = queryables_dict.additional_properties
         self.finish(json_schema)
 
@@ -492,6 +493,36 @@ class QueryablesHandler(APIHandler):
         for item in json_schema["properties"].values():
             if item.get("default") is None:
                 item.pop("default", None)
+
+    def _remove_anyof(self, json_schema: Any, **queryables_kwargs):
+        """Remove anyOf from json schema for better frontend compatibility.
+
+        Only keep the first non-null type.
+        """
+        anyofs = set()
+        for key, item in json_schema["properties"].items():
+            if key == "geometry":
+                # no need to handle geometry queryable
+                continue
+            if anyof := item.get("anyOf"):
+                item.pop("anyOf")
+                for anyof_item in anyof:
+                    if anyof_item.get("type") == "null":
+                        anyofs.add(key)
+                        break
+                non_null_anyof_item = next(i for i in anyof if i.get("type") != "null")
+                item.update(non_null_anyof_item)
+                logger.warning(
+                    "Only the first anyOf type (incompatible with frontend) kept for key %s: %s",
+                    key,
+                    non_null_anyof_item,
+                )
+        if anyofs:
+            logger.warning(
+                "Removed Optional type incompatible with frontend for key(s): (%s), on (%s)",
+                ", ".join(anyofs),
+                ", ".join(queryables_kwargs.values()),
+            )
 
 
 def setup_handlers(web_app, url_path):
