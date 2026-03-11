@@ -60,7 +60,6 @@ setup_args = dict(
     install_requires=[
         "jupyterlab~=4.0",
         "tornado>=6.4.1,<7.0.0",
-        "notebook>=6.0.3,<7.0.0",
         "eodag[notebook]>=4.0.0a4",
         "orjson",
         "pydantic",
@@ -79,15 +78,18 @@ setup_args = dict(
     include_package_data=True,
     python_requires=">=3.9",
     platforms="Linux, Mac OS X, Windows",
-    keywords=["Jupyter", "JupyterLab", "JupyterLab3"],
+    keywords=["Jupyter", "JupyterLab", "JupyterLab4"],
+    license_expression="Apache-2.0",
     classifiers=[
-        "License :: OSI Approved :: Apache Software License",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
         "Framework :: Jupyter",
+        "Framework :: Jupyter :: JupyterLab",
+        "Framework :: Jupyter :: JupyterLab :: 4",
     ],
 )
 
