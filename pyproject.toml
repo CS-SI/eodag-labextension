@@ -40,7 +40,9 @@ dev = [
 ]
 
 [tool.hatch.version]
-source = "nodejs"
+source = "regex"
+path = "package.json"
+pattern = '"version":\s*"(?P<version>[^"]+)"'
 
 [tool.hatch.metadata.hooks.nodejs]
 fields = ["description", "authors", "urls"]
