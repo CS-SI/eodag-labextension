@@ -14,12 +14,11 @@ from eodag import __version__ as eodag_version
 from eodag.api.core import DEFAULT_ITEMS_PER_PAGE
 from eodag.types.queryables import QueryablesDict
 from jupyter_server.auth.identity import IdentityProvider, User
-from notebook.notebookapp import NotebookApp
+from jupyter_server.serverapp import ServerApp
 from pydantic.fields import Field
 from shapely.geometry import shape
 from tornado.httpclient import HTTPClientError
 from tornado.testing import AsyncHTTPTestCase, gen_test
-from tornado.web import authenticated
 
 from eodag_labextension import __version__ as labextension_version
 from eodag_labextension import load_jupyter_server_extension
@@ -27,6 +26,10 @@ from eodag_labextension.handlers import APIHandler, get_eodag_api, set_conf_syml
 
 
 class MockIdentityProvider(IdentityProvider):
+    """Identity provider that allows all requests without authentication."""
+
+    token = ""
+
     def get_user(self, handler):
         return User(username="test")
 
@@ -52,25 +55,22 @@ class TestEodagLabExtensionHandler(AsyncHTTPTestCase):
     def setUp(self):
         super().setUp()
         self.patcher_xsrf = mock.patch.object(APIHandler, "check_xsrf_cookie", return_value=None)
-        self.patcher_auth = mock.patch.object(authenticated, "__call__", return_value=lambda x: x)
         self.mock_xsrf = self.patcher_xsrf.start()
-        self.mock_auth = self.patcher_auth.start()
 
     def tearDown(self):
         super().tearDown()
         self.patcher_xsrf.stop()
-        self.patcher_auth.stop()
 
     def get_app(self):
-        # Create a new NotebookApp instance
-        app = NotebookApp()
+        # Create a new ServerApp instance (Notebook 7 / jupyter_server)
+        app = ServerApp()
         app.initialize(argv=[])
+
+        # Use MockIdentityProvider to bypass authentication in tests
+        app.web_app.settings["identity_provider"] = MockIdentityProvider(parent=app)
 
         # Load extension
         load_jupyter_server_extension(app)
-
-        # Use IdentityProvider instead of deprecated get_current_user override
-        app.web_app.settings["identity_provider"] = MockIdentityProvider()
 
         return app.web_app
 
