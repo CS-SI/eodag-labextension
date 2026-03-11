@@ -6,6 +6,7 @@ import os
 import re
 from pathlib import Path
 from tempfile import TemporaryDirectory
+from typing import Annotated, Any, Optional, Union
 from unittest import mock
 
 from eodag import SearchResult
@@ -14,6 +15,7 @@ from eodag.api.core import DEFAULT_ITEMS_PER_PAGE
 from eodag.types.queryables import QueryablesDict
 from jupyter_server.auth.identity import IdentityProvider, User
 from notebook.notebookapp import NotebookApp
+from pydantic.fields import Field
 from shapely.geometry import shape
 from tornado.httpclient import HTTPClientError
 from tornado.testing import AsyncHTTPTestCase, gen_test
@@ -278,6 +280,23 @@ class TestEodagLabExtensionHandler(AsyncHTTPTestCase):
             param1="paramValue1",
             param2="paramValue2",
         )
+
+    @mock.patch(
+        "eodag.api.core.EODataAccessGateway.list_queryables",
+        autospec=True,
+        return_value=QueryablesDict(
+            param_int=Annotated[int, Field(None)],
+            param_opt_str=Annotated[Optional[str], Field(None)],
+            param_union=Annotated[Union[dict[str, Any], str], Field(None)],
+        ),
+    )
+    @gen_test
+    async def test_queryables_values(self, mock_list_queryables):
+        results = await self.fetch_results("/eodag/queryables")
+        self.assertEqual(results["properties"]["param_int"]["type"], "integer")
+        self.assertEqual(results["properties"]["param_opt_str"]["type"], "string")
+        self.assertEqual(results["properties"]["param_union"]["type"], "object")
+        self.assertTrue(results["additionalProperties"])
 
     @gen_test
     async def test_info(self):
