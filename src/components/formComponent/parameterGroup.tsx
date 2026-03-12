@@ -236,7 +236,7 @@ export const ParameterGroup: React.FC<IParameterGroupProps> = ({
               renderCloudCoverField(param)
             ) : (
               <label className="jp-EodagWidget-input-name">
-                {param.value.title}
+                {param.key}
                 {param.mandatory && (
                   <span
                     style={{ color: 'red', marginLeft: 4, fontWeight: 'bold' }}
