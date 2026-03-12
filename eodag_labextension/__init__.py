@@ -4,20 +4,12 @@
 
 """Jupyter Notebook server extension for eodag REST service"""
 
-import json
-from pathlib import Path
-
 from ._version import __version__  # noqa: F401
 from .handlers import setup_handlers
 
-HERE = Path(__file__).parent.resolve()
-
-with (HERE / "labextension" / "package.json").open() as fid:
-    data = json.load(fid)
-
 
 def _jupyter_labextension_paths():
-    return [{"src": "labextension", "dest": data["name"]}]
+    return [{"src": "labextension", "dest": "eodag-labextension"}]
 
 
 def _jupyter_server_extension_points():
