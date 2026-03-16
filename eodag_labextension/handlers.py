@@ -17,7 +17,7 @@ import orjson
 import tornado
 from dotenv import dotenv_values
 from eodag import EODataAccessGateway, setup_logging
-from eodag.api.core import DEFAULT_ITEMS_PER_PAGE, DEFAULT_PAGE
+from eodag.api.core import DEFAULT_LIMIT, DEFAULT_PAGE
 from eodag.utils.dates import get_datetime
 from eodag.utils.exceptions import (
     AuthenticationError,
@@ -241,20 +241,20 @@ class ProvidersHandler(APIHandler):
     async def get(self):
         """Get endpoint"""
 
-        available_providers_kwargs = {}
+        available_providers_args = []
         query_dict = parse_qs(self.request.query)
 
         dag = await get_eodag_api()
 
         if isinstance(coll_list := query_dict.get("collection", []), list) and coll_list:
             try:
-                available_providers_kwargs["collection"] = dag.get_collection_from_alias(coll_list[0])
+                available_providers_args.append(dag.get_collection_from_alias(coll_list[0]))
             except NoMatchingCollection:
-                available_providers_kwargs["collection"] = coll_list[0]
+                available_providers_args.append(coll_list[0])
 
         current_loop = asyncio.get_running_loop()
         available_providers = await current_loop.run_in_executor(
-            None, partial(dag.available_providers, **available_providers_kwargs)
+            None, partial(dag.providers.filter, *available_providers_args)
         )
 
         all_providers_list = [
@@ -265,7 +265,7 @@ class ProvidersHandler(APIHandler):
                 url=provider.url,
             )
             for provider in dag.providers.values()
-            if provider in available_providers
+            if provider in available_providers.names
         ]
         all_providers_list.sort(key=lambda x: (x["priority"] * -1, x["provider"]))
 
@@ -407,7 +407,7 @@ class SearchHandler(APIHandler):
                 {
                     "properties": {
                         "page": page,
-                        "itemsPerPage": DEFAULT_ITEMS_PER_PAGE,
+                        "itemsPerPage": DEFAULT_LIMIT,
                         "totalResults": getattr(products, "number_matched", None),
                     }
                 }
@@ -418,7 +418,7 @@ class SearchHandler(APIHandler):
                 "features": [],
                 "properties": {
                     "page": 1,
-                    "itemsPerPage": DEFAULT_ITEMS_PER_PAGE,
+                    "itemsPerPage": DEFAULT_LIMIT,
                     "totalResults": 0,
                 },
             }

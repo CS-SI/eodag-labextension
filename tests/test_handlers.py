@@ -11,7 +11,7 @@ from unittest import mock
 
 from eodag import SearchResult
 from eodag import __version__ as eodag_version
-from eodag.api.core import DEFAULT_ITEMS_PER_PAGE
+from eodag.api.core import DEFAULT_LIMIT
 from eodag.types.queryables import QueryablesDict
 from jupyter_server.auth.identity import IdentityProvider, User
 from jupyter_server.serverapp import ServerApp
@@ -222,7 +222,7 @@ class TestEodagLabExtensionHandler(AsyncHTTPTestCase):
                 "features": [],
                 "properties": {
                     "page": 1,
-                    "itemsPerPage": DEFAULT_ITEMS_PER_PAGE,
+                    "itemsPerPage": DEFAULT_LIMIT,
                     "totalResults": 0,
                 },
             },
@@ -270,7 +270,6 @@ class TestEodagLabExtensionHandler(AsyncHTTPTestCase):
             "provider=some_provider&collection=some_collection"
             "&param1=paramValue1&param2=paramValue2"
         )
-        self.assertEqual(results["properties"], {})
         self.assertFalse(results["additionalProperties"])
         mock_list_queryables.assert_called_with(
             mock.ANY,

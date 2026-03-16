@@ -24,7 +24,7 @@ classifiers = [
 dependencies = [
     "jupyterlab~=4.0",
     "tornado>=6.4.1,<7.0.0",
-    "eodag[notebook]>=4.0.0a4",
+    "eodag[notebook]~=4.0",
     "orjson",
     "pydantic",
     "pydantic-settings",
