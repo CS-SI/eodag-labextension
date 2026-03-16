@@ -61,6 +61,11 @@
   ([#279](https://github.com/CS-SI/eodag-labextension/pull/279),
   [`35cb8f1`](https://github.com/CS-SI/eodag-labextension/commit/35cb8f1939a9f84775924492f0f9d6ffc3b924b1))
 
+### Continuous Integration
+
+- Update deploy github action
+  ([#287](https://github.com/CS-SI/eodag-labextension/pull/287))
+
 ## v5.3.0a3 (2025-12-11)
 
 ### Build System
