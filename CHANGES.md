@@ -1,5 +1,66 @@
 # Release history
 
+## v5.3.0 (2026-03-16)
+
+### Major changes since last stable minor version ([v5.2.4](#v524-2025-09-26))
+
+#### Refactoring
+
+- Stac formatted properties from eodag v4
+  ([#259](https://github.com/CS-SI/eodag-labextension/pull/259),
+  [`cf46cc2`](https://github.com/CS-SI/eodag-labextension/commit/cf46cc29ca669f3b6f4893fb9728d841d7bef41b))
+
+- Adapt to eodag collection object ([#260](https://github.com/CS-SI/eodag-labextension/pull/260),
+  [`cb73072`](https://github.com/CS-SI/eodag-labextension/commit/cb730729d048fcb7aefd39d7cc5e09e874ed649b))
+
+- Adapt to providers object ([#261](https://github.com/CS-SI/eodag-labextension/pull/261),
+  [`2ec134c`](https://github.com/CS-SI/eodag-labextension/commit/2ec134cc014939f2ed816f8f022910b91767db96))
+
+- Adapt to eodag v4 changes ([#266](https://github.com/CS-SI/eodag-labextension/pull/266),
+  [`d94d803`](https://github.com/CS-SI/eodag-labextension/commit/d94d8039002dd6d650f8f4a9f6ddeac43795b21a))
+
+### Remaining changes since [v5.3.0a3](#v530a3-2025-12-11)
+
+#### Bug Fixes
+
+- Could not update selected parameter value if default exists
+  ([#271](https://github.com/CS-SI/eodag-labextension/pull/271),
+  [`e633fca`](https://github.com/CS-SI/eodag-labextension/commit/e633fca1711738f4a07c863552bf8d944ed65a47))
+
+- Queryables request ([#268](https://github.com/CS-SI/eodag-labextension/pull/268),
+  [`073693d`](https://github.com/CS-SI/eodag-labextension/commit/073693de605451ba3fce3b01c5bf29ffcdc11a96))
+
+- Reload providers list after configuration changes
+  ([#272](https://github.com/CS-SI/eodag-labextension/pull/272),
+  [`ceba1c3`](https://github.com/CS-SI/eodag-labextension/commit/ceba1c3d39f3ee466f7c9f915c42c010b089419d))
+
+- Show raw STAC parameters keys in search form
+  ([#277](https://github.com/CS-SI/eodag-labextension/pull/277),
+  [`13e6f59`](https://github.com/CS-SI/eodag-labextension/commit/13e6f597fe4bb0f21a71d7d7ec08c554e4fdfcf4))
+
+- Single type usage for queryables ([#282](https://github.com/CS-SI/eodag-labextension/pull/282),
+  [`ced88f8`](https://github.com/CS-SI/eodag-labextension/commit/ced88f8e9439706720b98ff31327e25e552b56f9))
+
+- Store map settings and apply on new jupyter session
+  ([#278](https://github.com/CS-SI/eodag-labextension/pull/278),
+  [`a5d88ba`](https://github.com/CS-SI/eodag-labextension/commit/a5d88bae125065f82b94107035bb671bb60cf6ec))
+
+#### Build System
+
+- Move from NotebookApp to ServerApp and py312 support
+  ([#283](https://github.com/CS-SI/eodag-labextension/pull/283),
+  [`34d0100`](https://github.com/CS-SI/eodag-labextension/commit/34d010088dede89bafe56c75d95753016936ff8b))
+
+- Move to pyproject.toml and use hatchling instead of jupyter-packaging
+  ([#284](https://github.com/CS-SI/eodag-labextension/pull/284),
+  [`5709a88`](https://github.com/CS-SI/eodag-labextension/commit/5709a88b1bf084e5475347c9ec86e2f8c798559a))
+
+#### Testing
+
+- Use IdentityProvider instead of deprecated get_current_user
+  ([#279](https://github.com/CS-SI/eodag-labextension/pull/279),
+  [`35cb8f1`](https://github.com/CS-SI/eodag-labextension/commit/35cb8f1939a9f84775924492f0f9d6ffc3b924b1))
+
 ## v5.3.0a3 (2025-12-11)
 
 ### Build System
