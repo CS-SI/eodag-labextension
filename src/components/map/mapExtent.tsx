@@ -24,13 +24,16 @@ export const MapExtent: React.FC<IMapExtentProps> = ({
   geometry,
   mapSettings
 }) => {
-  const [lat, setLat] = useState(46.8);
-  const [lon, setLon] = useState(1.8);
-  const [zoom, setZoom] = useState(mapSettings.zoomOffset || 4);
+  const stored = EodagWidget.getCurrentInstance()?.lastMapSettings;
+  const [lat, setLat] = useState(stored?.lat ?? 46.8);
+  const [lon, setLon] = useState(stored?.lon ?? 1.8);
+  const [zoom, setZoom] = useState(stored?.zoom ?? mapSettings.zoomOffset ?? 4);
   const [_, setCurrentGeometry] = useState<IGeometry | undefined>(geometry);
 
   const mapRef = useRef<any>(null);
-  const widgetRef = useRef<EodagWidget | null>(null);
+  const widgetRef = useRef<EodagWidget | null>(
+    EodagWidget.getCurrentInstance()
+  );
 
   const EditOptions = useMemo(
     () => ({
@@ -73,7 +76,6 @@ export const MapExtent: React.FC<IMapExtentProps> = ({
       invalidateMapSize();
     }, 100);
 
-    widgetRef.current = EodagWidget.getCurrentInstance();
     widgetRef.current?.mapSettingsChanged.connect(handleMapSettingsChange);
 
     return () => {

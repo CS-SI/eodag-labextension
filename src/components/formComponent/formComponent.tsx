@@ -45,6 +45,7 @@ export interface IFormComponentsProps {
   ) => Promise<IOptionTypeBase[]>;
   fetchProvidersLoading: boolean;
   fetchProductsLoading: boolean;
+  providerRefreshKey: number;
 }
 
 export interface IOptionTypeBase {
@@ -60,7 +61,8 @@ export const FormComponent: FC<IFormComponentsProps> = ({
   fetchProducts,
   fetchProviders,
   fetchProvidersLoading,
-  fetchProductsLoading
+  fetchProductsLoading,
+  providerRefreshKey
 }) => {
   const [collections, setCollections] = useState<IOptionTypeBase[]>();
   const [providers, setProviders] = useState<IOptionTypeBase[]>();
@@ -85,7 +87,7 @@ export const FormComponent: FC<IFormComponentsProps> = ({
   useEffect(() => {
     const fetchData = async () => await fetchProviders(collectionValue);
     fetchData().then(list => setProviders(list));
-  }, [collectionValue]);
+  }, [collectionValue, providerRefreshKey]);
 
   const onSubmit: SubmitHandler<IFormInput> = async data => {
     if (!openModal) {

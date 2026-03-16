@@ -93,7 +93,7 @@ export const ParameterGroup: React.FC<IParameterGroupProps> = ({
 
   const renderSelectField = (param: IParameter, enumList: string[]) => {
     const { key, value, mandatory } = param;
-    const { type, title, default: defaultValue } = value;
+    const { type, title, default: defaultValue, selected } = value;
 
     const lowercaseTitle = title.charAt(0).toLowerCase() + title.slice(1);
 
@@ -110,7 +110,7 @@ export const ParameterGroup: React.FC<IParameterGroupProps> = ({
             classNamePrefix="jp-EodagWidget-select"
             aria-label={title}
             placeholder={`Select a ${lowercaseTitle}...`}
-            value={getSelectedValue(type, defaultValue)}
+            value={getSelectedValue(type, selected ?? defaultValue)}
             onChange={selectedOption => {
               handleSelectChange(key, selectedOption, onChange);
             }}
@@ -236,7 +236,7 @@ export const ParameterGroup: React.FC<IParameterGroupProps> = ({
               renderCloudCoverField(param)
             ) : (
               <label className="jp-EodagWidget-input-name">
-                {param.value.title}
+                {param.key}
                 {param.mandatory && (
                   <span
                     style={{ color: 'red', marginLeft: 4, fontWeight: 'bold' }}

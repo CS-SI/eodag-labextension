@@ -10,14 +10,14 @@ import os
 import shutil
 import traceback
 from functools import partial
-from typing import Any
+from typing import Any, get_args
 from urllib.parse import parse_qs
 
 import orjson
 import tornado
 from dotenv import dotenv_values
 from eodag import EODataAccessGateway, setup_logging
-from eodag.api.core import DEFAULT_ITEMS_PER_PAGE, DEFAULT_PAGE
+from eodag.api.core import DEFAULT_LIMIT, DEFAULT_PAGE
 from eodag.utils.dates import get_datetime
 from eodag.utils.exceptions import (
     AuthenticationError,
@@ -241,20 +241,20 @@ class ProvidersHandler(APIHandler):
     async def get(self):
         """Get endpoint"""
 
-        available_providers_kwargs = {}
+        available_providers_args = []
         query_dict = parse_qs(self.request.query)
 
         dag = await get_eodag_api()
 
         if isinstance(coll_list := query_dict.get("collection", []), list) and coll_list:
             try:
-                available_providers_kwargs["collection"] = dag.get_collection_from_alias(coll_list[0])
+                available_providers_args.append(dag.get_collection_from_alias(coll_list[0]))
             except NoMatchingCollection:
-                available_providers_kwargs["collection"] = coll_list[0]
+                available_providers_args.append(coll_list[0])
 
         current_loop = asyncio.get_running_loop()
         available_providers = await current_loop.run_in_executor(
-            None, partial(dag.available_providers, **available_providers_kwargs)
+            None, partial(dag.providers.filter, *available_providers_args)
         )
 
         all_providers_list = [
@@ -265,7 +265,7 @@ class ProvidersHandler(APIHandler):
                 url=provider.url,
             )
             for provider in dag.providers.values()
-            if provider in available_providers
+            if provider in available_providers.names
         ]
         all_providers_list.sort(key=lambda x: (x["priority"] * -1, x["provider"]))
 
@@ -407,7 +407,7 @@ class SearchHandler(APIHandler):
                 {
                     "properties": {
                         "page": page,
-                        "itemsPerPage": DEFAULT_ITEMS_PER_PAGE,
+                        "itemsPerPage": DEFAULT_LIMIT,
                         "totalResults": getattr(products, "number_matched", None),
                     }
                 }
@@ -418,7 +418,7 @@ class SearchHandler(APIHandler):
                 "features": [],
                 "properties": {
                     "page": 1,
-                    "itemsPerPage": DEFAULT_ITEMS_PER_PAGE,
+                    "itemsPerPage": DEFAULT_LIMIT,
                     "totalResults": 0,
                 },
             }
@@ -469,7 +469,7 @@ class QueryablesHandler(APIHandler):
         queryables_kwargs = {
             key: value[0].split(",") if "," in value[0] else value[0]
             for key, value in query_dict.items()
-            if not key.isdigit()
+            if not key.isdigit() and value[0]
         }
         logger.error(queryables_kwargs)
 
@@ -478,8 +478,14 @@ class QueryablesHandler(APIHandler):
         queryables_dict = await current_loop.run_in_executor(
             None, partial(dag.list_queryables, fetch_providers=False, **queryables_kwargs)
         )
+        queryables_aliases = [get_args(v)[1].serialization_alias for v in queryables_dict.values()]
         json_schema = queryables_dict.get_model().model_json_schema()
+        json_schema_properties = {
+            k: v for k, v in json_schema["properties"].items() if k in queryables_dict or k in queryables_aliases
+        }
+        json_schema["properties"] = json_schema_properties
         self._remove_null_defaults(json_schema)
+        self._remove_anyof(json_schema, **queryables_kwargs)
         json_schema["additionalProperties"] = queryables_dict.additional_properties
         self.finish(json_schema)
 
@@ -487,6 +493,36 @@ class QueryablesHandler(APIHandler):
         for item in json_schema["properties"].values():
             if item.get("default") is None:
                 item.pop("default", None)
+
+    def _remove_anyof(self, json_schema: Any, **queryables_kwargs):
+        """Remove anyOf from json schema for better frontend compatibility.
+
+        Only keep the first non-null type.
+        """
+        anyofs = set()
+        for key, item in json_schema["properties"].items():
+            if key == "geometry":
+                # no need to handle geometry queryable
+                continue
+            if anyof := item.get("anyOf"):
+                item.pop("anyOf")
+                for anyof_item in anyof:
+                    if anyof_item.get("type") == "null":
+                        anyofs.add(key)
+                        break
+                non_null_anyof_item = next(i for i in anyof if i.get("type") != "null")
+                item.update(non_null_anyof_item)
+                logger.warning(
+                    "Only the first anyOf type (incompatible with frontend) kept for key %s: %s",
+                    key,
+                    non_null_anyof_item,
+                )
+        if anyofs:
+            logger.warning(
+                "Removed Optional type incompatible with frontend for key(s): (%s), on (%s)",
+                ", ".join(anyofs),
+                ", ".join(queryables_kwargs.values()),
+            )
 
 
 def setup_handlers(web_app, url_path):

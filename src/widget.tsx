@@ -46,6 +46,9 @@ export class EodagWidget extends Widget {
     { lat: number; lon: number; zoom: number }
   >(this);
 
+  private _lastMapSettings: { lat: number; lon: number; zoom: number } | null =
+    null;
+
   get mapSettingsChanged(): ISignal<
     this,
     { lat: number; lon: number; zoom: number }
@@ -53,11 +56,16 @@ export class EodagWidget extends Widget {
     return this._mapSettingsChanged;
   }
 
+  get lastMapSettings(): { lat: number; lon: number; zoom: number } | null {
+    return this._lastMapSettings;
+  }
+
   static getCurrentInstance(): EodagWidget | null {
     return EodagWidget._instance;
   }
 
   updateMapSettings(lat: number, lon: number, zoom: number): void {
+    this._lastMapSettings = { lat, lon, zoom };
     this._mapSettingsChanged.emit({ lat, lon, zoom });
   }
 

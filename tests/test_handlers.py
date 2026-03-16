@@ -6,25 +6,32 @@ import os
 import re
 from pathlib import Path
 from tempfile import TemporaryDirectory
+from typing import Annotated, Any, Optional, Union
 from unittest import mock
 
 from eodag import SearchResult
 from eodag import __version__ as eodag_version
-from eodag.api.core import DEFAULT_ITEMS_PER_PAGE
+from eodag.api.core import DEFAULT_LIMIT
 from eodag.types.queryables import QueryablesDict
-from notebook.notebookapp import NotebookApp
+from jupyter_server.auth.identity import IdentityProvider, User
+from jupyter_server.serverapp import ServerApp
+from pydantic.fields import Field
 from shapely.geometry import shape
 from tornado.httpclient import HTTPClientError
 from tornado.testing import AsyncHTTPTestCase, gen_test
-from tornado.web import authenticated
 
 from eodag_labextension import __version__ as labextension_version
 from eodag_labextension import load_jupyter_server_extension
 from eodag_labextension.handlers import APIHandler, get_eodag_api, set_conf_symlink
 
 
-class MockUser:
-    name = "test"
+class MockIdentityProvider(IdentityProvider):
+    """Identity provider that allows all requests without authentication."""
+
+    token = ""
+
+    def get_user(self, handler):
+        return User(username="test")
 
 
 class TestEodagLabExtensionHandler(AsyncHTTPTestCase):
@@ -47,23 +54,20 @@ class TestEodagLabExtensionHandler(AsyncHTTPTestCase):
 
     def setUp(self):
         super().setUp()
-        self.patcher_xsrf = mock.patch.object(APIHandler, "check_xsrf_cookie", return_value=MockUser())
-        self.patcher_user = mock.patch.object(APIHandler, "get_current_user", return_value=MockUser())
-        self.patcher_auth = mock.patch.object(authenticated, "__call__", return_value=lambda x: x)
+        self.patcher_xsrf = mock.patch.object(APIHandler, "check_xsrf_cookie", return_value=None)
         self.mock_xsrf = self.patcher_xsrf.start()
-        self.mock_user = self.patcher_user.start()
-        self.mock_auth = self.patcher_auth.start()
 
     def tearDown(self):
         super().tearDown()
         self.patcher_xsrf.stop()
-        self.patcher_user.stop()
-        self.patcher_auth.stop()
 
     def get_app(self):
-        # Create a new NotebookApp instance
-        app = NotebookApp()
+        # Create a new ServerApp instance (Notebook 7 / jupyter_server)
+        app = ServerApp()
         app.initialize(argv=[])
+
+        # Use MockIdentityProvider to bypass authentication in tests
+        app.web_app.settings["identity_provider"] = MockIdentityProvider(parent=app)
 
         # Load extension
         load_jupyter_server_extension(app)
@@ -218,7 +222,7 @@ class TestEodagLabExtensionHandler(AsyncHTTPTestCase):
                 "features": [],
                 "properties": {
                     "page": 1,
-                    "itemsPerPage": DEFAULT_ITEMS_PER_PAGE,
+                    "itemsPerPage": DEFAULT_LIMIT,
                     "totalResults": 0,
                 },
             },
@@ -266,7 +270,6 @@ class TestEodagLabExtensionHandler(AsyncHTTPTestCase):
             "provider=some_provider&collection=some_collection"
             "&param1=paramValue1&param2=paramValue2"
         )
-        self.assertEqual(results["properties"], {})
         self.assertFalse(results["additionalProperties"])
         mock_list_queryables.assert_called_with(
             mock.ANY,
@@ -276,6 +279,23 @@ class TestEodagLabExtensionHandler(AsyncHTTPTestCase):
             param1="paramValue1",
             param2="paramValue2",
         )
+
+    @mock.patch(
+        "eodag.api.core.EODataAccessGateway.list_queryables",
+        autospec=True,
+        return_value=QueryablesDict(
+            param_int=Annotated[int, Field(None)],
+            param_opt_str=Annotated[Optional[str], Field(None)],
+            param_union=Annotated[Union[dict[str, Any], str], Field(None)],
+        ),
+    )
+    @gen_test
+    async def test_queryables_values(self, mock_list_queryables):
+        results = await self.fetch_results("/eodag/queryables")
+        self.assertEqual(results["properties"]["param_int"]["type"], "integer")
+        self.assertEqual(results["properties"]["param_opt_str"]["type"], "string")
+        self.assertEqual(results["properties"]["param_union"]["type"], "object")
+        self.assertTrue(results["additionalProperties"])
 
     @gen_test
     async def test_info(self):
