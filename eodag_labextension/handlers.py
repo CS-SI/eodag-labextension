@@ -241,20 +241,20 @@ class ProvidersHandler(APIHandler):
     async def get(self):
         """Get endpoint"""
 
-        available_providers_kwargs = []
+        available_providers_args = []
         query_dict = parse_qs(self.request.query)
 
         dag = await get_eodag_api()
 
         if isinstance(coll_list := query_dict.get("collection", []), list) and coll_list:
             try:
-                available_providers_kwargs.append(dag.get_collection_from_alias(coll_list[0]))
+                available_providers_args.append(dag.get_collection_from_alias(coll_list[0]))
             except NoMatchingCollection:
-                available_providers_kwargs.append(coll_list[0])
+                available_providers_args.append(coll_list[0])
 
         current_loop = asyncio.get_running_loop()
         available_providers = await current_loop.run_in_executor(
-            None, partial(dag.providers.filter, *available_providers_kwargs)
+            None, partial(dag.providers.filter, *available_providers_args)
         )
 
         all_providers_list = [
