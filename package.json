@@ -73,9 +73,9 @@
         "leaflet": "1.9.4",
         "leaflet-draw": "^1.0.4",
         "lodash": "4.17.21",
-        "react": "^18.0.2",
+        "react": "18.2.0",
         "react-datepicker": "4.8.0",
-        "react-dom": "^18.0.2",
+        "react-dom": "18.2.0",
         "react-hook-form": "^7.53.1",
         "react-leaflet": "4.0.0",
         "react-leaflet-draw": "0.20.0",
@@ -97,10 +97,11 @@
         "@types/leaflet-draw": "^1.0.5",
         "@types/lodash": "^4.14.185",
         "@types/luxon": "^3.0.1",
-        "@types/react": "^18.0.26",
+        "@types/node": "18.19.47",
+        "@types/react": "18.2.79",
         "@types/react-addons-linked-state-mixin": "^0.14.22",
         "@types/react-datepicker": "4.4.2",
-        "@types/react-dom": "^18.3",
+        "@types/react-dom": "18.2.25",
         "@types/react-leaflet": "^2.8.2",
         "@types/react-modal": "3.13.1",
         "@types/react-select": "4.0.18",
@@ -125,7 +126,8 @@
         "stylelint-csstree-validator": "^3.0.0",
         "stylelint-prettier": "^4.0.0",
         "typescript": "~5.0.2",
-        "yjs": "^13.5.40"
+        "vscode-languageserver-protocol": "3.17.0",
+        "yjs": "13.5.40"
     },
     "jupyterlab": {
         "extension": true,
@@ -224,9 +226,25 @@
             "value-no-vendor-prefix": null
         }
     },
+    "overrides": {
+        "sanitize-html": "2.17.7",
+        "@types/node": "18.19.47",
+        "yjs": "13.5.40",
+        "react": "18.2.0",
+        "react-dom": "18.2.0",
+        "@types/react": "18.2.79",
+        "@types/react-dom": "18.2.25",
+        "lib0": "0.2.111"
+    },
     "resolutions": {
-        "@types/react-dom": "18.3.5",
-        "@types/react": "^18.0.26"
+        "sanitize-html": "2.17.7",
+        "@types/node": "18.19.47",
+        "yjs": "13.5.40",
+        "react": "18.2.0",
+        "react-dom": "18.2.0",
+        "@types/react": "18.2.79",
+        "@types/react-dom": "18.2.25",
+        "lib0": "0.2.111"
     },
     "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
 }
