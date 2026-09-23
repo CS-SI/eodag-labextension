@@ -3,7 +3,7 @@ import { GeoJSON, MapContainer, TileLayer } from 'react-leaflet';
 import { get, isEmpty } from 'lodash';
 import L from 'leaflet';
 import { IFeatures, IProduct } from '../../types';
-import { IMapSettings } from 'components/browser';
+import { IMapSettings } from '../browser';
 
 export interface IMapFeatureProps {
   features: IFeatures | null;

@@ -41,11 +41,15 @@ class TestEodagLabExtensionHandler(AsyncHTTPTestCase):
         cls.eodag_env_pattern = re.compile(r"EODAG_\w+")
         cls.eodag_env_backup = {k: v for k, v in os.environ.items() if cls.eodag_env_pattern.match(k)}
         # disable collections fetch
-        os.environ["EODAG_EXT_COLLECTIONS_CFG_FILE"] = ""
+        cls.patcher_fetch_collections_list = mock.patch(
+            "eodag.api.core.EODataAccessGateway.fetch_collections_list", return_value=None
+        )
+        cls.patcher_fetch_collections_list.start()
 
     @classmethod
     def tearDownClass(cls):
         super(TestEodagLabExtensionHandler, cls).tearDownClass()
+        cls.patcher_fetch_collections_list.stop()
         # restore os.environ
         for k, v in os.environ.items():
             if cls.eodag_env_pattern.match(k):
@@ -82,7 +86,6 @@ class TestEodagLabExtensionHandler(AsyncHTTPTestCase):
 
     async def fetch_results_error(self, url, error_code=None, **kwargs):
         """Check that request returns a 400 error"""
-        # with self.assertRaises(HTTPClientError) as err:
         try:
             response = await self.http_client.fetch(self.get_url(url), **kwargs)
         except HTTPClientError as err:
@@ -98,7 +101,7 @@ class TestEodagLabExtensionHandler(AsyncHTTPTestCase):
         self.assertIn("S2_MSI_L1C", [coll["id"] for coll in results])
 
         # single provider collections
-        less_results = await self.fetch_results("/eodag/collections?provider=peps")
+        less_results = await self.fetch_results("/eodag/collections?provider=geodes")
         self.assertGreater(len(less_results), 0)
         self.assertLess(len(less_results), len(results))
 
@@ -109,15 +112,15 @@ class TestEodagLabExtensionHandler(AsyncHTTPTestCase):
     async def test_providers(self):
         # all providers
         results = await self.fetch_results("/eodag/providers")
-        self.assertIn("peps", [res["provider"] for res in results])
+        self.assertIn("geodes", [res["provider"] for res in results])
 
         less_results = await self.fetch_results("/eodag/providers?collection=S2_MSI_L1C")
         self.assertGreater(len(less_results), 0)
         self.assertLess(len(less_results), len(results))
 
-        result_with_name = await self.fetch_results("/eodag/providers?keywords=peps")
+        result_with_name = await self.fetch_results("/eodag/providers?keywords=geodes")
         self.assertEqual(len(result_with_name), 1)
-        self.assertEqual(result_with_name[0]["provider"], "peps")
+        self.assertEqual(result_with_name[0]["provider"], "geodes")
 
         result_with_description = await self.fetch_results("/eodag/providers?keywords=cop")
         self.assertGreater(len(result_with_description), 2)
@@ -154,7 +157,7 @@ class TestEodagLabExtensionHandler(AsyncHTTPTestCase):
         self.assertIn("S2_MSI_L1C", [pt["ID"] for pt in more_results])
         self.assertListEqual(sorted(list(more_results[0].keys())), ["ID", "title"])
 
-        less_results = await self.fetch_results("/eodag/guess-collection?keywords=Sentinel&provider=peps")
+        less_results = await self.fetch_results("/eodag/guess-collection?keywords=Sentinel&provider=geodes")
         self.assertGreater(len(more_results), 1)
         self.assertLess(len(less_results), len(more_results))
         self.assertEqual(less_results[0]["ID"], "S1_SAR_GRD")
@@ -176,11 +179,12 @@ class TestEodagLabExtensionHandler(AsyncHTTPTestCase):
     async def test_post_not_found(self):
         await self.fetch_results_error("/eodag/foo/bar", 404, method="POST", body=json.dumps({}))
 
-    @mock.patch("eodag.api.core.EODataAccessGateway.search_iter_page", autospec=True)
+    @mock.patch("eodag.api.core.EODataAccessGateway.search", autospec=True)
     @gen_test(timeout=120)
     async def test_search(self, mock_search):
         mock_search.return_value = mock.MagicMock()
-        mock_search.return_value.__next__.return_value = SearchResult([], 0)
+        mock_search.return_value.next_page.return_value = mock.MagicMock()
+        mock_search.return_value.next_page.return_value.__next__.return_value = SearchResult([], 0)
 
         geom_dict = {
             "type": "Polygon",
@@ -206,8 +210,8 @@ class TestEodagLabExtensionHandler(AsyncHTTPTestCase):
         mock_search.assert_called_once_with(
             mock.ANY,
             collection="S2_MSI_L1C",
-            start="2024-01-01T00:00:00",
-            end="2024-01-02T00:00:00",
+            start="2024-01-01T00:00:00.000Z",
+            end="2024-01-02T00:00:00.000Z",
             geom=shape(geom_dict),
             cloud_cover=50,
             foo="bar",
@@ -246,7 +250,7 @@ class TestEodagLabExtensionHandler(AsyncHTTPTestCase):
             "/eodag/S2_MSI_L1C",
             400,
             method="POST",
-            body=json.dumps({"dtstart": "2024-015-01"}),
+            body=json.dumps({"dtstart": "2024-ABC-01"}),
         )
 
         # geom error
@@ -344,7 +348,9 @@ class TestEodagLabExtensionHandler(AsyncHTTPTestCase):
             # default config file
             set_conf_symlink(eodag_api)
             self.assertTrue(os.path.islink("eodag-config"))
-            self.assertEqual(Path(eodag_api.conf_dir) / "eodag.yml", Path(os.readlink("eodag-config")) / "eodag.yml")
+            self.assertEqual(
+                Path(eodag_api.settings.cfg_dir) / "eodag.yml", Path(os.readlink("eodag-config")) / "eodag.yml"
+            )
 
     @gen_test(timeout=120)
     async def test_reload_dotenv(self):
@@ -356,7 +362,7 @@ class TestEodagLabExtensionHandler(AsyncHTTPTestCase):
 
                 # default conf
                 eodag_api = await get_eodag_api()
-                self.assertNotEqual(eodag_api.conf_dir, tmpdir)
+                self.assertNotEqual(str(eodag_api.settings.cfg_dir), tmpdir)
 
                 # Create a custom .env file with customized conf dir
                 custom_env_file = Path(tmpdir) / ".env"
@@ -364,13 +370,13 @@ class TestEodagLabExtensionHandler(AsyncHTTPTestCase):
 
                 await self.fetch_results("/eodag/reload")
                 eodag_api = await get_eodag_api()
-                self.assertEqual(eodag_api.conf_dir, tmpdir)
+                self.assertEqual(str(eodag_api.settings.cfg_dir), tmpdir)
 
                 # remove .env and reload again
                 custom_env_file.unlink()
                 await self.fetch_results("/eodag/reload")
                 eodag_api = await get_eodag_api()
-                self.assertNotEqual(eodag_api.conf_dir, tmpdir)
+                self.assertNotEqual(str(eodag_api.settings.cfg_dir), tmpdir)
 
             finally:
                 # restore cwd

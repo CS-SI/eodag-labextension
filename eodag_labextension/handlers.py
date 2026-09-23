@@ -102,7 +102,7 @@ def set_conf_symlink(eodag_api):
     """Check and create eodag-config symlink to user conf directory"""
     try:
         userconf_env = os.getenv("EODAG_CFG_FILE")
-        userconf_src = userconf_env or os.path.join(eodag_api.conf_dir, "eodag.yml")
+        userconf_src = userconf_env or os.path.join(eodag_api.settings.cfg_dir, "eodag.yml")
         # check if exists
         if os.path.islink("eodag-config"):
             userdir_dst = os.readlink("eodag-config")
@@ -126,7 +126,7 @@ def set_conf_symlink(eodag_api):
             os.symlink(userconf_env, os.path.join("eodag-config", "eodag.yml"))
         else:
             logger.debug("Creating eodag-config symlink to user configuration")
-            os.symlink(eodag_api.conf_dir, "eodag-config")
+            os.symlink(eodag_api.settings.cfg_dir, "eodag-config")
     except OSError as err:
         logger.error("Could not create eodag-config symlink to user configuration: " + str(err))
 
@@ -394,9 +394,8 @@ class SearchHandler(APIHandler):
         page = int(arguments.pop("page", DEFAULT_PAGE))
         if int(page) == DEFAULT_PAGE:
             # first search
-            results_iterator = await current_loop.run_in_executor(
-                None, partial(dag.search_iter_page, collection=collection, **arguments)
-            )
+            results = await current_loop.run_in_executor(None, partial(dag.search, collection=collection, **arguments))
+            results_iterator = results.next_page()
         if results_iterator is None:
             raise ValidationError(f"Please perform an initial search on {collection} before iterating to page {page}.")
         products = await current_loop.run_in_executor(None, partial(next, results_iterator, None))
