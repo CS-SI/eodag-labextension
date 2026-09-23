@@ -1,5 +1,24 @@
 # Release history
 
+## v5.3.1 (2026-09-23)
+
+### Bug Fixes
+
+- Adapt to EODAG v4.8.0 settings ([#289](https://github.com/CS-SI/eodag-labextension/pull/289),
+  [`e022ea5`](https://github.com/CS-SI/eodag-labextension/commit/e022ea515f6550e345134ff5ba5306f0571a1793))
+
+- **deps**: Patch dependencies and update tooling
+  ([#290](https://github.com/CS-SI/eodag-labextension/pull/290),
+  [`b062013`](https://github.com/CS-SI/eodag-labextension/commit/b0620132ede43e4e181999e6a83adf425abfb030))
+
+- **deps**: Upgrade loadash ([#292](https://github.com/CS-SI/eodag-labextension/pull/292),
+  [`6e588ff`](https://github.com/CS-SI/eodag-labextension/commit/6e588ff9d2150e55c3f9f3a2de7ef7f49b61e434))
+
+### Build System
+
+- Clean up pyproject ([#293](https://github.com/CS-SI/eodag-labextension/pull/293),
+  [`f244546`](https://github.com/CS-SI/eodag-labextension/commit/f244546c90bff608b03dd054b9c93eba2dd34955))
+
 ## v5.3.0 (2026-03-16)
 
 ### Major changes since last stable minor version ([v5.2.4](#v524-2025-09-26))
