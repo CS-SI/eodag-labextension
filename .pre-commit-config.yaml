@@ -23,6 +23,7 @@ repos:
     rev: 6.1.1
     hooks:
       - id: pydocstyle
+        additional_dependencies: [toml]
 
   - repo: https://github.com/psf/black
     rev: 23.1.0
@@ -33,6 +34,7 @@ repos:
     rev: 5.0.4 # needed for py < 3.8.1
     hooks:
       - id: flake8
+        additional_dependencies: [Flake8-pyproject]
 
   - repo: local
     hooks:

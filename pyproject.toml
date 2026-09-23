@@ -34,9 +34,13 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
     "black",
+    "Flake8-pyproject",
+    "flake8",
     "pre-commit",
+    "pydocstyle",
     "pytest",
     "shapely",
+    "toml",
 ]
 
 [tool.hatch.version]
@@ -48,7 +52,25 @@ pattern = '"version":\s*"(?P<version>[^"]+)"'
 fields = ["description", "authors", "urls"]
 
 [tool.hatch.build.targets.sdist]
-exclude = [".github", "binder", "node_modules"]
+include = [
+    "/CHANGES.md",
+    "/CONTRIBUTING.md",
+    "/LICENSE",
+    "/NOTICE",
+    "/README.md",
+    "/eodag_labextension",
+    "/install.json",
+    "/jupyter-config",
+    "/package.json",
+    "/pyproject.toml",
+    "/schema",
+    "/src",
+    "/style",
+    "/tests",
+    "/tsconfig.json",
+    "/yarn.lock",
+]
+exclude = [".github", "binder", "lib", "node_modules"]
 
 [tool.hatch.build.targets.wheel.shared-data]
 "eodag_labextension/labextension" = "share/jupyter/labextensions/eodag-labextension"
@@ -83,6 +105,16 @@ use_parentheses = true
 ensure_newline_before_comments = true
 line_length = 120
 known_third_party = ["eodag", "jupyter_server", "notebook", "tornado"]
+
+[tool.flake8]
+max-line-length = 120
+extend-ignore = ["E203"]
+exclude = ["jupyterhub_config.py"]
+
+[tool.pydocstyle]
+inherit = false
+select = ["D1"]
+match = "(?!test).*\\.py"
 
 [tool.semantic_release.branches.main]
 match = "(master|develop|new-release)"

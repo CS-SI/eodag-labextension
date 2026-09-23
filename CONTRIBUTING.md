@@ -19,7 +19,7 @@ The `jlpm` command is JupyterLab's pinned version of
 virtualenv -p `which python3` venv
 source venv/bin/activate
 # Install package in development mode
-pip install -r requirements-dev.txt
+pip install -e '.[dev]'
 # Install the exact dependency tree recorded in yarn.lock
 jlpm install
 # Link your development version of the extension with JupyterLab
