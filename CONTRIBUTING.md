@@ -20,8 +20,9 @@ virtualenv -p `which python3` venv
 source venv/bin/activate
 # Install package in development mode
 pip install -r requirements-dev.txt
-# Link your development version of the extension with JupyterLab
+# Install the exact dependency tree recorded in yarn.lock
 jlpm install
+# Link your development version of the extension with JupyterLab
 jupyter labextension develop . --overwrite
 # Rebuild extension Typescript source after making changes
 jlpm run build
