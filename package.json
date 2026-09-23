@@ -124,7 +124,7 @@
         "stylelint-config-standard": "^34.0.0",
         "stylelint-csstree-validator": "^3.0.0",
         "stylelint-prettier": "^4.0.0",
-        "typescript": "~5.0.2",
+        "typescript": "~5.4.5",
         "typescript-eslint": "^8.0.0",
         "vscode-languageserver-protocol": "3.17.0",
         "yjs": "13.5.40"

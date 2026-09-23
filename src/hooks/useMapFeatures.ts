@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import { IFeatures, IProduct } from 'types';
+import { IFeatures, IProduct } from '../types';
 import { find } from 'lodash';
 
 interface IUseMapFeaturesProps {

@@ -8,7 +8,7 @@
     "jsx": "react",
     "lib": ["es2020", "dom"],
     "module": "esnext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "noEmitOnError": true,
     "noImplicitAny": true,
     "noUnusedLocals": true,
@@ -18,8 +18,7 @@
     "rootDir": "src",
     "strict": true,
     "strictNullChecks": true,
-    "target": "ES2018",
-    "baseUrl": "./src"
+    "target": "ES2018"
   },
   "include": ["src/**/*", "style/index.js", "src/utils/**/*"]
 }
