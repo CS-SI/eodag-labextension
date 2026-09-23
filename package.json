@@ -39,8 +39,8 @@
         "clean:all": "jlpm run clean:lib && jlpm run clean:labextension",
         "clean:labextension": "rimraf eodag_labextension/labextension",
         "clean:lib": "rimraf lib tsconfig.tsbuildinfo",
-        "eslint": "eslint . --ext .ts,.tsx --fix",
-        "eslint:check": "eslint . --ext .ts,.tsx",
+        "eslint": "eslint . --fix",
+        "eslint:check": "eslint .",
         "install:extension": "jupyter labextension develop --overwrite .",
         "prepare": "jlpm run clean && jlpm run build:prod",
         "watch": "run-p watch:src watch:labextension",
@@ -53,7 +53,7 @@
         "@emotion/styled": "^11.14.0",
         "@fortawesome/fontawesome-svg-core": "6.2.0",
         "@fortawesome/free-solid-svg-icons": "6.2.0",
-        "@fortawesome/react-fontawesome": "^0.2.0",
+        "@fortawesome/react-fontawesome": "^3.1.1",
         "@jupyterlab/application": "^4.3.0",
         "@jupyterlab/apputils": "^4.4.0",
         "@jupyterlab/cells": "^4.3.0",
@@ -73,6 +73,7 @@
         "leaflet": "1.9.4",
         "leaflet-draw": "^1.0.4",
         "lodash": "4.17.21",
+        "prop-types": "^15.8.1",
         "react": "18.2.0",
         "react-datepicker": "4.8.0",
         "react-dom": "18.2.0",
@@ -88,8 +89,8 @@
         "react-window": "^1.8.11"
     },
     "devDependencies": {
+        "@eslint/js": "^9.0.0",
         "@jupyterlab/builder": "^4.3.4",
-        "@types/classnames": "^2.3.4",
         "@types/geojson": "^7946.0.15",
         "@types/isomorphic-fetch": "^0.0.36",
         "@types/json-schema": "^7.0.11",
@@ -107,94 +108,36 @@
         "@types/react-select": "4.0.18",
         "@types/react-virtualized": "^9.21.21",
         "@types/react-window": "^1.8.8",
-        "@typescript-eslint/eslint-plugin": "^6.1.0",
-        "@typescript-eslint/parser": "^6.1.0",
+        "@typescript-eslint/eslint-plugin": "^8.0.0",
+        "@typescript-eslint/parser": "^8.0.0",
         "corepack": "^0.30.0",
         "css-loader": "^7.1.2",
-        "eslint": "^8.36.0",
-        "eslint-config-prettier": "^8.8.0",
+        "eslint": "^9.0.0",
+        "eslint-config-prettier": "^10.0.0",
         "eslint-plugin-prettier": "^5.0.0",
         "mkdirp": "^1.0.3",
         "npm-run-all": "^4.1.5",
         "prettier": "3.1.0",
         "rimraf": "^5.0.1",
-        "source-map-loader": "^1.0.2",
-        "style-loader": "^4.0.0",
         "stylelint": "^15.10.1",
         "stylelint-config-recommended": "^13.0.0",
         "stylelint-config-standard": "^34.0.0",
         "stylelint-csstree-validator": "^3.0.0",
         "stylelint-prettier": "^4.0.0",
         "typescript": "~5.0.2",
+        "typescript-eslint": "^8.0.0",
         "vscode-languageserver-protocol": "3.17.0",
         "yjs": "13.5.40"
     },
     "jupyterlab": {
         "extension": true,
         "schemaDir": "schema",
-        "outputDir": "eodag_labextension/labextension"
-    },
-    "styleModule": "style/index.js",
-    "eslintConfig": {
-        "extends": [
-            "eslint:recommended",
-            "plugin:@typescript-eslint/eslint-recommended",
-            "plugin:@typescript-eslint/recommended",
-            "plugin:prettier/recommended"
-        ],
-        "parser": "@typescript-eslint/parser",
-        "parserOptions": {
-            "project": "tsconfig.json",
-            "sourceType": "module"
-        },
-        "plugins": [
-            "@typescript-eslint"
-        ],
-        "rules": {
-            "@typescript-eslint/naming-convention": [
-                "error",
-                {
-                    "selector": "interface",
-                    "format": [
-                        "PascalCase"
-                    ],
-                    "custom": {
-                        "regex": "^I[A-Z]",
-                        "match": true
-                    }
-                }
-            ],
-            "@typescript-eslint/no-unused-vars": [
-                "warn",
-                {
-                    "args": "none"
-                }
-            ],
-            "@typescript-eslint/no-explicit-any": "off",
-            "@typescript-eslint/no-namespace": "off",
-            "@typescript-eslint/no-use-before-define": "off",
-            "@typescript-eslint/quotes": [
-                "error",
-                "single",
-                {
-                    "avoidEscape": true,
-                    "allowTemplateLiterals": false
-                }
-            ],
-            "curly": [
-                "error",
-                "all"
-            ],
-            "eqeqeq": "error",
-            "prefer-arrow-callback": "error"
+        "outputDir": "eodag_labextension/labextension",
+        "sharedPackages": {
+            "@mui/material": false
         }
     },
-    "eslintIgnore": [
-        "node_modules",
-        "dist",
-        "coverage",
-        "**/*.d.ts"
-    ],
+    "styleModule": "style/index.js",
     "prettier": {
         "singleQuote": true,
         "trailingComma": "none",
@@ -246,5 +189,5 @@
         "@types/react-dom": "18.2.25",
         "lib0": "0.2.111"
     },
-    "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
+    "packageManager": "yarn@3.6.4"
 }
