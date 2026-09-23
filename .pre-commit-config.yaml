@@ -34,20 +34,14 @@ repos:
     hooks:
       - id: flake8
 
-  - repo: https://github.com/pre-commit/mirrors-eslint
-    rev: v8.24.0
+  - repo: local
     hooks:
       - id: eslint
-        language: node
-        language_version: '22.11.0'
-        additional_dependencies:
-          - eslint@8.36.0
-          - typescript@5.0.2
-          - prettier@3.0.0
-          - '@typescript-eslint/eslint-plugin@5.38.0'
-          - '@typescript-eslint/parser@5.38.0'
-          - eslint-config-prettier@^8.8.0
-          - eslint-plugin-prettier@^5.0.0
+        name: eslint
+        entry: corepack yarn eslint:check
+        language: system
+        types_or: [ts, tsx]
+        pass_filenames: false
 
   - repo: https://github.com/pre-commit/mirrors-prettier
     rev: v3.1.0
