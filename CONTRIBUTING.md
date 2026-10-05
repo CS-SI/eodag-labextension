@@ -3,7 +3,7 @@
 ## Prerequisites
 
 - NodeJS
-- Python version between 3.9 and 3.12 included (3.13 not yet supported)
+- Python version between 3.10 and 3.12 included (3.13 not yet supported)
 - Cargo (Rust package manager)
 
 ## Development install
@@ -23,7 +23,7 @@ pip install -e '.[dev]'
 # Install the exact dependency tree recorded in yarn.lock
 jlpm install
 # Link your development version of the extension with JupyterLab
-jupyter labextension develop . --overwrite
+jlpm run install:extension
 # Rebuild extension Typescript source after making changes
 jlpm run build
 # You need to enable the extension
