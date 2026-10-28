@@ -40,7 +40,7 @@ repos:
     hooks:
       - id: eslint
         name: eslint
-        entry: corepack yarn eslint:check
+        entry: jlpm eslint:check
         language: system
         types_or: [ts, tsx]
         pass_filenames: false
