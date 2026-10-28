@@ -8,9 +8,7 @@
 
 ## Development install
 
-The `jlpm` command is JupyterLab's pinned version of
-[yarn](https://yarnpkg.com/) that is installed with JupyterLab. You may use
-`yarn` or `npm` in lieu of `jlpm` below.
+Use JupyterLab's `jlpm` command to run the Yarn version used by CI and builds.
 
 ```bash
 # Clone the repo to your local environment
