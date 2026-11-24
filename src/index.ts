@@ -37,12 +37,17 @@ const extension: JupyterFrontEndPlugin<void> = {
  */
 function loadSetting(setting: ISettingRegistry.ISettings): void {
   const eodagWidget = EodagWidget.getCurrentInstance();
-  const mapSettings = setting.get('map').composite as MapSettings;
+  const mapSettings = setting.get('map').composite as
+    | Partial<MapSettings>
+    | undefined;
   const defaultMapSettings = setting.default('map') as MapSettings;
 
   if (eodagWidget) {
-    const { lat, lon, zoom } = mapSettings || defaultMapSettings;
-    eodagWidget.updateMapSettings(lat, lon, zoom);
+    eodagWidget.updateMapSettings(
+      mapSettings?.lat ?? defaultMapSettings.lat,
+      mapSettings?.lon ?? defaultMapSettings.lon,
+      mapSettings?.zoom ?? defaultMapSettings.zoom
+    );
   }
 }
 
