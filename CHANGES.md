@@ -1,5 +1,54 @@
 # Release history
 
+## v5.3.2 (2026-11-24)
+
+### Bug Fixes
+
+- Use standard-library metadata in server handlers
+  ([#305](https://github.com/CS-SI/eodag-labextension/pull/305),
+  [`a26a45c`](https://github.com/CS-SI/eodag-labextension/commit/a26a45cd804c234afd09f1833b35265a5166dfcb))
+
+- **map**: Apply defaults to partial map settings
+  ([#308](https://github.com/CS-SI/eodag-labextension/pull/308),
+  [`c67b919`](https://github.com/CS-SI/eodag-labextension/commit/c67b919b31c57c3a1545165bb9e34d409d36be80))
+
+### Build System
+
+- Add python support through 3.15 ([#309](https://github.com/CS-SI/eodag-labextension/pull/309),
+  [`60e0cd5`](https://github.com/CS-SI/eodag-labextension/commit/60e0cd5ddeeddc315eac7d14816e52878d80ec54))
+
+- Align yarn tooling and test Jupyterlab version range
+  ([#302](https://github.com/CS-SI/eodag-labextension/pull/302),
+  [`02e311a`](https://github.com/CS-SI/eodag-labextension/commit/02e311aa5eb7897c529a9727267827e9b58661e9))
+
+- Dropped python 3.9 and development install update
+  ([#297](https://github.com/CS-SI/eodag-labextension/pull/297),
+  [`6f4494b`](https://github.com/CS-SI/eodag-labextension/commit/6f4494b27136249e691041ad39b8b5fdc8fd659b))
+
+- **deps**: Bump dompurify from 3.4.15 to 3.4.17
+  ([#301](https://github.com/CS-SI/eodag-labextension/pull/301),
+  [`5da98db`](https://github.com/CS-SI/eodag-labextension/commit/5da98db755145b9fda0cbc2e6eed050767993cf7))
+
+- **deps**: Bump fast-uri from 3.1.8 to 3.1.9
+  ([#304](https://github.com/CS-SI/eodag-labextension/pull/304),
+  [`437bf5a`](https://github.com/CS-SI/eodag-labextension/commit/437bf5afc85e7ffe7de884975fb7eaf4d11a82a8))
+
+- **deps**: Bump postcss-selector-parser from 6.1.4 to 6.1.5
+  ([#303](https://github.com/CS-SI/eodag-labextension/pull/303),
+  [`b6aed85`](https://github.com/CS-SI/eodag-labextension/commit/b6aed85339a81e33b927dca423ef5829bc858a41))
+
+- **deps**: Bump shell-quote from 1.10.0 to 1.12.0
+  ([#298](https://github.com/CS-SI/eodag-labextension/pull/298),
+  [`d39196c`](https://github.com/CS-SI/eodag-labextension/commit/d39196c9135f8e51de48aed0802db232dfc9ccdd))
+
+- **deps**: Bump source-map-js from 1.2.1 to 1.2.2
+  ([#299](https://github.com/CS-SI/eodag-labextension/pull/299),
+  [`05e8af3`](https://github.com/CS-SI/eodag-labextension/commit/05e8af3f74df6606ef1106646965c3f1d9707f1c))
+
+- **deps**: Patch vulnerable Yarn dependencies
+  ([#306](https://github.com/CS-SI/eodag-labextension/pull/306),
+  [`84897b5`](https://github.com/CS-SI/eodag-labextension/commit/84897b58eb3ea45e236389e6ae55eee9e6763b37))
+
 ## v5.3.1 (2026-09-23)
 
 ### Bug Fixes
