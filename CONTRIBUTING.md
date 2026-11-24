@@ -3,7 +3,7 @@
 ## Prerequisites
 
 - NodeJS
-- Python version between 3.10 and 3.12 included (3.13 not yet supported)
+- Python 3.10 or later (CI tests Python 3.10 and 3.15)
 - Cargo (Rust package manager)
 
 ## Development install
