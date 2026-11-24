@@ -3,14 +3,12 @@
 ## Prerequisites
 
 - NodeJS
-- Python version between 3.9 and 3.12 included (3.13 not yet supported)
+- Python 3.10 or later (CI tests Python 3.10 and 3.15)
 - Cargo (Rust package manager)
 
 ## Development install
 
-The `jlpm` command is JupyterLab's pinned version of
-[yarn](https://yarnpkg.com/) that is installed with JupyterLab. You may use
-`yarn` or `npm` in lieu of `jlpm` below.
+Use JupyterLab's `jlpm` command to run the Yarn version used by CI and builds.
 
 ```bash
 # Clone the repo to your local environment
@@ -23,7 +21,7 @@ pip install -e '.[dev]'
 # Install the exact dependency tree recorded in yarn.lock
 jlpm install
 # Link your development version of the extension with JupyterLab
-jupyter labextension develop . --overwrite
+jlpm run install:extension
 # Rebuild extension Typescript source after making changes
 jlpm run build
 # You need to enable the extension

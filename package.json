@@ -1,6 +1,6 @@
 {
     "name": "eodag-labextension",
-    "version": "5.3.1",
+    "version": "5.3.2",
     "description": "Searching remote sensed imagery from various image providers",
     "keywords": [
         "jupyter",
@@ -31,8 +31,8 @@
     },
     "scripts": {
         "build": "jlpm run build:lib && jlpm run build:labextension:dev",
-        "build:labextension": "jupyter labextension build .",
-        "build:labextension:dev": "jupyter labextension build --development True .",
+        "build:labextension": "jupyter-builder build .",
+        "build:labextension:dev": "jupyter-builder build --development True .",
         "build:lib": "tsc",
         "build:prod": "jlpm run build:lib && jlpm run build:labextension",
         "clean": "jlpm run clean:lib",
@@ -41,10 +41,10 @@
         "clean:lib": "rimraf lib tsconfig.tsbuildinfo",
         "eslint": "eslint . --fix",
         "eslint:check": "eslint .",
-        "install:extension": "jupyter labextension develop --overwrite .",
+        "install:extension": "jupyter-builder develop --overwrite .",
         "prepare": "jlpm run clean && jlpm run build:prod",
         "watch": "run-p watch:src watch:labextension",
-        "watch:labextension": "jupyter labextension watch .",
+        "watch:labextension": "jupyter-builder watch .",
         "watch:src": "tsc -w"
     },
     "dependencies": {
@@ -90,7 +90,7 @@
     },
     "devDependencies": {
         "@eslint/js": "^9.0.0",
-        "@jupyterlab/builder": "^4.3.4",
+        "@jupyter/builder": "^1.2.3",
         "@types/geojson": "^7946.0.15",
         "@types/isomorphic-fetch": "^0.0.36",
         "@types/json-schema": "^7.0.11",
@@ -180,7 +180,10 @@
         "lib0": "0.2.111"
     },
     "resolutions": {
-        "sanitize-html": "2.17.7",
+        "sanitize-html": "2.18.1",
+        "mermaid/katex": "0.18.2",
+        "minimatch@^10.2.2": "11.0.5",
+        "minimatch@^9.0.4": "11.0.5",
         "@types/node": "18.19.47",
         "yjs": "13.5.40",
         "react": "18.2.0",
@@ -189,5 +192,5 @@
         "@types/react-dom": "18.2.25",
         "lib0": "0.2.111"
     },
-    "packageManager": "yarn@3.6.4"
+    "packageManager": "yarn@3.5.0"
 }

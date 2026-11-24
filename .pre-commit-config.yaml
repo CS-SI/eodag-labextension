@@ -31,7 +31,7 @@ repos:
       - id: black
 
   - repo: https://github.com/PyCQA/flake8
-    rev: 5.0.4 # needed for py < 3.8.1
+    rev: 7.4.1
     hooks:
       - id: flake8
         additional_dependencies: [Flake8-pyproject]
@@ -40,7 +40,7 @@ repos:
     hooks:
       - id: eslint
         name: eslint
-        entry: corepack yarn eslint:check
+        entry: jlpm eslint:check
         language: system
         types_or: [ts, tsx]
         pass_filenames: false

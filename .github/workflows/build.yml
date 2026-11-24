@@ -19,13 +19,13 @@ jobs:
       - name: Install node
         uses: actions/setup-node@v4
         with:
-          node-version: '18.x'
-      - name: Set up Python 3.9
+          node-version: '22.x'
+      - name: Set up Python 3.10
         uses: actions/setup-python@v5
         with:
-          python-version: '3.9'
+          python-version: '3.10'
       - name: Install JupyterLab
-        run: python -m pip install -U jupyterlab~=4.0
+        run: python -m pip install jupyterlab==4.6.4
       - name: Setup yarn cache
         uses: actions/cache@v4
         with:
@@ -45,22 +45,20 @@ jobs:
       - name: Install node
         uses: actions/setup-node@v4
         with:
-          node-version: '18.x'
-      - name: Enable Corepack
-        run: corepack enable
+          node-version: '22.x'
       - name: Install Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.9'
+          python-version: '3.10'
           architecture: 'x64'
 
       - name: Setup pip cache
         uses: actions/cache@v4
         with:
           path: ~/.cache/pip
-          key: pip-3.9-${{ hashFiles('package.json') }}
+          key: pip-3.10-${{ hashFiles('package.json') }}
           restore-keys: |
-            pip-3.9-
+            pip-3.10-
             pip-
 
       - name: Setup yarn cache
@@ -72,11 +70,11 @@ jobs:
           restore-keys: |
             yarn-
       - name: Install dependencies
-        run: python -m pip install -U jupyterlab~=4.0 jupyter_packaging~=0.7.9
+        run: python -m pip install jupyterlab==4.6.4 jupyter_packaging~=0.7.9
       - name: Build the extension
         run: |
           jlpm
-          jlpm run eslint:check
+          jlpm eslint:check
           python -m pip install .
 
           jupyter server extension list 2>&1 | grep -ie "eodag[_-]labextension.*OK"\

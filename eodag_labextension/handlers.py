@@ -10,6 +10,7 @@ import os
 import shutil
 import traceback
 from functools import partial
+from importlib.metadata import PackageNotFoundError, version
 from typing import Any, get_args
 from urllib.parse import parse_qs
 
@@ -30,7 +31,6 @@ from eodag.utils.exceptions import (
     UnsupportedProvider,
     ValidationError,
 )
-from importlib_metadata import PackageNotFoundError, version
 from jupyter_server.base.handlers import APIHandler
 from jupyter_server.utils import url_path_join
 from shapely.geometry import shape
