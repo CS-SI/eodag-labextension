@@ -10,6 +10,7 @@ import { EditControl } from 'react-leaflet-draw';
 import { throttle } from 'lodash';
 import { LeafletMouseEvent } from 'leaflet';
 import { IGeometry } from '../../types';
+import { finiteCoordinate } from '../../utils/mapCenter';
 import { EodagWidget } from '../../widget';
 import { IMapSettings } from '../browser';
 
@@ -56,9 +57,9 @@ export const MapExtent: React.FC<IMapExtentProps> = ({
 
   const handleMapSettingsChange = useCallback(
     (_: EodagWidget, settings: { lat: number; lon: number; zoom: number }) => {
-      setLat(settings.lat);
-      setLon(settings.lon);
-      setZoom(settings.zoom);
+      setLat(current => finiteCoordinate(settings.lat, current));
+      setLon(current => finiteCoordinate(settings.lon, current));
+      setZoom(current => finiteCoordinate(settings.zoom, current));
     },
     []
   );
@@ -84,7 +85,12 @@ export const MapExtent: React.FC<IMapExtentProps> = ({
   }, [handleMapSettingsChange, invalidateMapSize]);
 
   useEffect(() => {
-    if (mapRef.current) {
+    if (
+      mapRef.current &&
+      Number.isFinite(lat) &&
+      Number.isFinite(lon) &&
+      Number.isFinite(zoom)
+    ) {
       mapRef.current.flyTo([lat, lon], zoom);
     }
   }, [lat, lon, zoom]);
