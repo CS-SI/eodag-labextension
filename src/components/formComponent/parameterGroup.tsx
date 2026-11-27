@@ -2,6 +2,7 @@ import React, { ChangeEvent } from 'react';
 import Select, { MultiValue } from 'react-select';
 import { Controller, UseFormReturn } from 'react-hook-form';
 import { IFormInput, IParameter } from '../../types';
+import { selectParameterValue } from '../../utils/parameterValue';
 
 interface IParameterGroupProps {
   form: UseFormReturn<IFormInput, any, IFormInput>;
@@ -30,24 +31,13 @@ export const ParameterGroup: React.FC<IParameterGroupProps> = ({
       | null,
     onChange: ((...event: any[]) => void) | undefined = undefined
   ) => {
-    let selectedValue: undefined | number | string | string[];
-
-    if (typeof newValue === 'string' || typeof newValue === 'number') {
-      // If it's a literal, use it as it is
-      selectedValue = newValue;
-    } else if (Array.isArray(newValue)) {
-      // If it's an array (multi-select), check the type of each item
-      selectedValue = newValue.map(item =>
-        typeof item === 'string' ? item : item.value
-      );
-    } else if (newValue && 'value' in newValue) {
-      // If it's a single object (single select), use the 'value' from the object
-      selectedValue = newValue.value;
-    } else if (newValue === null) {
-      selectedValue = undefined;
-    } else {
-      throw new Error('Invalid value type ' + typeof newValue);
-    }
+    const current = params.find(param => param.key === key);
+    const previous = current?.value?.selected ?? current?.value?.default;
+    const selectedValue = selectParameterValue(
+      current?.value?.type,
+      previous,
+      newValue
+    );
 
     if (onChange) {
       onChange(selectedValue);
