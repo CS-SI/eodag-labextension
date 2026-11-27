@@ -2,6 +2,7 @@ import React, { ChangeEvent } from 'react';
 import Select, { MultiValue } from 'react-select';
 import { Controller, UseFormReturn } from 'react-hook-form';
 import { IFormInput, IParameter } from '../../types';
+import { parameterOptionLabel } from '../../utils/parameterLabel';
 
 interface IParameterGroupProps {
   form: UseFormReturn<IFormInput, any, IFormInput>;
@@ -119,7 +120,7 @@ export const ParameterGroup: React.FC<IParameterGroupProps> = ({
             isMulti={type === 'array'}
             options={enumList.map(item => ({
               value: item,
-              label: item.charAt(0).toUpperCase() + item.slice(1)
+              label: parameterOptionLabel(item)
             }))}
           />
         )}
