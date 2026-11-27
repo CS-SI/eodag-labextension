@@ -17,6 +17,7 @@ import 'leaflet-draw/dist/leaflet.draw.css';
 
 import { EodagWidget } from './widget';
 import { MapSettings } from './types';
+import { finiteCoordinate } from './utils/mapCenter';
 
 const NAMESPACE = 'eodag-widget';
 const PLUGIN_ID = 'eodag-labextension:plugin';
@@ -44,9 +45,9 @@ function loadSetting(setting: ISettingRegistry.ISettings): void {
 
   if (eodagWidget) {
     eodagWidget.updateMapSettings(
-      mapSettings?.lat ?? defaultMapSettings.lat,
-      mapSettings?.lon ?? defaultMapSettings.lon,
-      mapSettings?.zoom ?? defaultMapSettings.zoom
+      finiteCoordinate(mapSettings?.lat, defaultMapSettings.lat),
+      finiteCoordinate(mapSettings?.lon, defaultMapSettings.lon),
+      finiteCoordinate(mapSettings?.zoom, defaultMapSettings.zoom)
     );
   }
 }
